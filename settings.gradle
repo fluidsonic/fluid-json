@@ -1,0 +1,16 @@
+pluginManagement {
+    //noinspection GroovyAssignabilityCheck
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "org.junit.platform.gradle.plugin") {
+                useModule("org.junit.platform:junit-platform-gradle-plugin:$requested.version")
+            }
+        }
+    }
+    repositories {
+        gradlePluginPortal()
+        maven {
+            url "https://repo1.maven.org/maven2"
+        }
+    }
+}
