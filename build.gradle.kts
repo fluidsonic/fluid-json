@@ -1,9 +1,4 @@
 import org.gradle.api.internal.HasConvention
-import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.tasks.JavaExec
-import org.gradle.kotlin.dsl.kotlin
-import org.jetbrains.kotlin.com.intellij.util.indexing.ID.findByName
-import org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.junit.platform.gradle.plugin.EnginesExtension
