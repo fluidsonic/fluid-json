@@ -158,7 +158,7 @@ class JSONParser {
 						when (character) {
 							'0' -> NumberParserState.afterZeroInteger
 							'1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterInteger
-							'+', '-' -> NumberParserState.afterSign
+							'-' -> NumberParserState.afterSign
 							else -> throwException("unexpected character '$character' in number at index $index, expected '+', '-' or a digit")
 						}
 					}
