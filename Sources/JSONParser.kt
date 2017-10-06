@@ -16,7 +16,7 @@ class JSONParser {
 	@API(status = API.Status.EXPERIMENTAL)
 	fun parseList(string: String) =
 		JSONPathBuildingException.track {
-			Run(string).root as? List<*> ?: throwException("expected a list")
+			Run(string).root as? List<*> ?: throw JSONPathBuildingException("expected a list")
 		}
 
 
@@ -24,18 +24,8 @@ class JSONParser {
 	fun parseMap(string: String) =
 		JSONPathBuildingException.track {
 			@Suppress("UNCHECKED_CAST")
-			Run(string).root as? Map<String, *> ?: throwException("expected a map")
+			Run(string).root as? Map<String, *> ?: throw JSONPathBuildingException("expected a map")
 		}
-
-
-	private companion object {
-
-		fun throwException(message: String): Nothing {
-			val exception = JSONPathBuildingException(message)
-			exception.stackTrace = exception.stackTrace.drop(1).toTypedArray()
-			throw exception
-		}
-	}
 
 
 	private class Run(
@@ -51,9 +41,7 @@ class JSONParser {
 
 		private fun consumeCharacter(): Char {
 			val index = inputIndex
-			if (index >= inputLength) {
-				throwException("unexpected end of input string") // $COVERAGE-IGNORE$ all calls are already checked
-			}
+			assert(index < inputLength) // all calls are already checked
 
 			++inputIndex
 
@@ -64,14 +52,14 @@ class JSONParser {
 		private fun consumeCharacter(expectedCharacter: Char) {
 			val index = inputIndex
 			if (index >= inputLength) {
-				throwException("unexpected end of input string, expected '$expectedCharacter'")
+				throw JSONPathBuildingException("unexpected end of input string, expected '$expectedCharacter'")
 			}
 
 			++inputIndex
 
 			val character = inputString[index]
 			if (character != expectedCharacter) {
-				throwException("unexpected character '$character' at index ${inputIndex - 1}, expected '$expectedCharacter'")
+				throw JSONPathBuildingException("unexpected character '$character' at index ${inputIndex - 1}, expected '$expectedCharacter'")
 			}
 		}
 
@@ -93,7 +81,7 @@ class JSONParser {
 				if (list.isNotEmpty()) {
 					val character = consumeCharacter()
 					if (character != ',') {
-						throwException("unexpected character '$character' at index $inputIndex, expected ']' or ','")
+						throw JSONPathBuildingException("unexpected character '$character' at index $inputIndex, expected ']' or ','")
 					}
 
 					skipWhitespaces()
@@ -121,7 +109,7 @@ class JSONParser {
 
 				if (map.isNotEmpty()) {
 					if (character != ',') {
-						throwException("unexpected character '$character' at index $inputIndex, expected '}' or ','")
+						throw JSONPathBuildingException("unexpected character '$character' at index $inputIndex, expected '}' or ','")
 					}
 
 					consumeCharacter()
@@ -130,7 +118,7 @@ class JSONParser {
 				}
 
 				if (character != '"') {
-					throwException("unexpected character '$character' at index $inputIndex, expected '}' or '\"'")
+					throw JSONPathBuildingException("unexpected character '$character' at index $inputIndex, expected '}' or '\"'")
 				}
 
 				val key = internalParseString()
@@ -159,7 +147,7 @@ class JSONParser {
 							'0' -> NumberParserState.afterZeroInteger
 							'1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterInteger
 							'-' -> NumberParserState.afterSign
-							else -> throwException("unexpected character '$character' in number at index $index, expected '+', '-' or a digit")
+							else -> throw JSONPathBuildingException("unexpected character '$character' in number at index $index, expected '+', '-' or a digit")
 						}
 					}
 
@@ -167,7 +155,7 @@ class JSONParser {
 						when (character) {
 							'0' -> NumberParserState.afterZeroInteger
 							'1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterInteger
-							else -> throwException("unexpected character '$character' in number at index $index, expected a digit")
+							else -> throw JSONPathBuildingException("unexpected character '$character' in number at index $index, expected a digit")
 						}
 					}
 
@@ -191,7 +179,7 @@ class JSONParser {
 					NumberParserState.afterDecimalSeparator -> {
 						when (character) {
 							'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterFractional
-							else -> throwException("unexpected character '$character' in number at index $index, expected a digit")
+							else -> throw JSONPathBuildingException("unexpected character '$character' in number at index $index, expected a digit")
 						}
 					}
 
@@ -207,14 +195,14 @@ class JSONParser {
 						when (character) {
 							'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterExponent
 							'+', '-' -> NumberParserState.afterExponentSign
-							else -> throwException("unexpected character '$character' in number at index $index, expected '+', '-' or a digit")
+							else -> throw JSONPathBuildingException("unexpected character '$character' in number at index $index, expected '+', '-' or a digit")
 						}
 					}
 
 					NumberParserState.afterExponentSign -> {
 						when (character) {
 							'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterExponent
-							else -> throwException("unexpected character '$character' in number at index $index, expected a digit")
+							else -> throw JSONPathBuildingException("unexpected character '$character' in number at index $index, expected a digit")
 						}
 					}
 
@@ -245,7 +233,7 @@ class JSONParser {
 				NumberParserState.afterDecimalSeparator,
 				NumberParserState.afterExponentSeparator,
 				NumberParserState.afterExponentSign ->
-					throwException("unexpected end of input string when parsing number at index $startIndex")
+					throw JSONPathBuildingException("unexpected end of input string when parsing number at index $startIndex")
 
 				NumberParserState.afterInteger,
 				NumberParserState.afterFractional,
@@ -262,7 +250,7 @@ class JSONParser {
 				}
 			}
 
-			return substring.toDoubleOrNull() ?: throwException("invalid number '$substring' at index $startIndex")
+			return substring.toDouble()
 		}
 
 
@@ -292,7 +280,7 @@ class JSONParser {
 					'\u000B', '\u000C', '\u000E', '\u000F', '\u0010', '\u0011', '\u0012', '\u0013',
 					'\u0014', '\u0015', '\u0016', '\u0017', '\u0018', '\u0019', '\u001A', '\u001B',
 					'\u001C', '\u001D', '\u001E', '\u001F', '\b', '\n', '\r', '\t' ->
-						throwException("unescaped control character in string at index $index")
+						throw JSONPathBuildingException("unescaped control character in string at index $index")
 				}
 
 				++escapedStringLength
@@ -300,7 +288,7 @@ class JSONParser {
 			}
 
 			if (character != '"') {
-				throwException("unterminated string value")
+				throw JSONPathBuildingException("unterminated string value")
 			}
 
 			val endIndex = index
@@ -337,17 +325,17 @@ class JSONParser {
 								val sequenceBeginIndex = index + 1
 								val sequenceEndIndex = sequenceBeginIndex + 4
 								if (sequenceEndIndex > inputLength) {
-									throwException("unexpected end of Unicode escape sequence at index $sequenceBeginIndex")
+									throw JSONPathBuildingException("unexpected end of Unicode escape sequence at index $sequenceBeginIndex")
 								}
 
 								val sequence = inputString.substring(sequenceBeginIndex, sequenceEndIndex)
 								character = sequence.toIntOrNull(16)?.toChar()
-									?: throwException("invalid unicode escape sequence '$sequence' at index $sequenceBeginIndex")
+									?: throw JSONPathBuildingException("invalid unicode escape sequence '$sequence' at index $sequenceBeginIndex")
 
 								builder.append(character)
 								index += 4
 							}
-							else -> throwException("unknown escape sequence character '$character' at index $index")
+							else -> throw JSONPathBuildingException("unknown escape sequence character '$character' at index $index")
 						}
 					}
 					else -> builder.append(character)
@@ -402,7 +390,7 @@ class JSONParser {
 				}
 
 				else ->
-					throwException("unexpected character '$character' at index $inputIndex")
+					throw JSONPathBuildingException("unexpected character '$character' at index $inputIndex")
 			}
 		}
 
@@ -412,7 +400,7 @@ class JSONParser {
 			skipWhitespaces()
 
 			if (inputIndex < inputLength) {
-				throwException("unexpected extra data at index $inputIndex")
+				throw JSONPathBuildingException("unexpected extra data at index $inputIndex")
 			}
 
 			return root
@@ -422,7 +410,7 @@ class JSONParser {
 		private fun peekCharacter(): Char {
 			val index = inputIndex
 			if (index >= inputLength) {
-				throwException("unexpected end of input string")
+				throw JSONPathBuildingException("unexpected end of input string")
 			}
 
 			return inputString[index]
