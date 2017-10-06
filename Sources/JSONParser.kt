@@ -52,7 +52,7 @@ class JSONParser {
 		private fun consumeCharacter(): Char {
 			val index = inputIndex
 			if (index >= inputLength) {
-				throwException("unexpected end of input string")
+				throwException("unexpected end of input string") // $COVERAGE-IGNORE$ all calls are already checked
 			}
 
 			++inputIndex

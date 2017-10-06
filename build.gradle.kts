@@ -78,6 +78,7 @@ dependencies {
 	implementation(kotlin("stdlib", "1.1.51"))
 	implementation("org.apiguardian:apiguardian-api:1.0.0")
 
+	testImplementation("com.winterbe:expekt:0.5.0")
 	testImplementation("org.jetbrains.spek:spek-api:1.1.5")
 	testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.1.5")
 	testRuntime("org.junit.platform:junit-platform-runner:${junitPlatform.platformVersion}")
