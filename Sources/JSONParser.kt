@@ -39,211 +39,195 @@ class JSONParser {
 		val root = parse()
 
 
-		private fun consumeCharacter(): Char {
+		private fun consumeCharacter(): Int {
 			val index = inputIndex
-			assert(index < inputLength) // all calls are already checked
+			this.inputIndex += 1
 
-			++inputIndex
-
-			return inputString[index]
-		}
-
-
-		private fun consumeCharacter(expectedCharacter: Char) {
-			val index = inputIndex
 			if (index >= inputLength) {
-				throw JSONPathBuildingException("unexpected end of input string, expected '$expectedCharacter'")
+				return InputCharacter.end
 			}
 
-			++inputIndex
-
-			val character = inputString[index]
-			if (character != expectedCharacter) {
-				throw JSONPathBuildingException("unexpected character '$character' at index ${inputIndex - 1}, expected '$expectedCharacter'")
-			}
+			return inputString[index].toInt()
 		}
 
 
-		private fun internalParseList(): List<*> {
-			skipWhitespaces()
-			consumeCharacter('[')
+		private fun consumeCharacter(expected: Int) =
+			consumeCharacter(expected) { InputCharacter.toString(expected) }
 
-			val list = mutableListOf<Any?>()
 
-			while (true) {
-				skipWhitespaces()
+		private inline fun consumeCharacter(expected: Int, accepted: () -> String): Int =
+			consumeCharacter(expected = { it == expected }, accepted = accepted)
 
-				if (peekCharacter() == ']') {
-					consumeCharacter()
-					return list
-				}
 
-				if (list.isNotEmpty()) {
-					val character = consumeCharacter()
-					if (character != ',') {
-						throw JSONPathBuildingException("unexpected character '$character' at index $inputIndex, expected ']' or ','")
-					}
+		private inline fun consumeCharacter(expected: (character: Int) -> Boolean, accepted: () -> String): Int {
+			val index = inputIndex
 
-					skipWhitespaces()
-				}
-
-				list += internalParseValue()
+			val character = consumeCharacter()
+			if (!expected(character)) {
+				throw unexpectedCharacter(
+					character,
+					accepted = accepted(),
+					index = index
+				)
 			}
+
+			return character
 		}
 
 
-		private fun internalParseMap(): Map<String, *> {
-			skipWhitespaces()
-			consumeCharacter('{')
+		private fun consumeWhitespaces() {
+			val length = inputLength
+			val string = inputString
 
-			val map = mutableMapOf<String, Any?>()
-
-			while (true) {
-				skipWhitespaces()
-
-				var character = peekCharacter()
-				if (character == '}') {
-					consumeCharacter()
-					return map
-				}
-
-				if (map.isNotEmpty()) {
-					if (character != ',') {
-						throw JSONPathBuildingException("unexpected character '$character' at index $inputIndex, expected '}' or ','")
-					}
-
-					consumeCharacter()
-					skipWhitespaces()
-					character = peekCharacter()
-				}
-
-				if (character != '"') {
-					throw JSONPathBuildingException("unexpected character '$character' at index $inputIndex, expected '}' or '\"'")
-				}
-
-				val key = internalParseString()
-				skipWhitespaces()
-				consumeCharacter(':')
-				map[key] = internalParseValue()
-			}
-		}
-
-
-		private fun internalParseNumber(): Number {
-			skipWhitespaces()
-			peekCharacter()
-
-			var state = NumberParserState.start
-
-			val startIndex = inputIndex
-			var mustParseFloatingPoint = false
-
-			var index = startIndex
-			loop@ while (index < inputLength) {
-				val character = inputString[index]
-				state = when (state) {
-					NumberParserState.start -> {
-						when (character) {
-							'0' -> NumberParserState.afterZeroInteger
-							'1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterInteger
-							'-' -> NumberParserState.afterSign
-							else -> throw JSONPathBuildingException("unexpected character '$character' in number at index $index, expected '+', '-' or a digit")
-						}
-					}
-
-					NumberParserState.afterSign -> {
-						when (character) {
-							'0' -> NumberParserState.afterZeroInteger
-							'1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterInteger
-							else -> throw JSONPathBuildingException("unexpected character '$character' in number at index $index, expected a digit")
-						}
-					}
-
-					NumberParserState.afterZeroInteger -> {
-						when (character) {
-							'.' -> NumberParserState.afterDecimalSeparator
-							'e', 'E' -> NumberParserState.afterExponentSeparator
-							else -> null
-						}
-					}
-
-					NumberParserState.afterInteger -> {
-						when (character) {
-							'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterInteger
-							'.' -> NumberParserState.afterDecimalSeparator
-							'e', 'E' -> NumberParserState.afterExponentSeparator
-							else -> null
-						}
-					}
-
-					NumberParserState.afterDecimalSeparator -> {
-						when (character) {
-							'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterFractional
-							else -> throw JSONPathBuildingException("unexpected character '$character' in number at index $index, expected a digit")
-						}
-					}
-
-					NumberParserState.afterFractional -> {
-						when (character) {
-							'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterFractional
-							'e', 'E' -> NumberParserState.afterExponentSeparator
-							else -> null
-						}
-					}
-
-					NumberParserState.afterExponentSeparator -> {
-						when (character) {
-							'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterExponent
-							'+', '-' -> NumberParserState.afterExponentSign
-							else -> throw JSONPathBuildingException("unexpected character '$character' in number at index $index, expected '+', '-' or a digit")
-						}
-					}
-
-					NumberParserState.afterExponentSign -> {
-						when (character) {
-							'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterExponent
-							else -> throw JSONPathBuildingException("unexpected character '$character' in number at index $index, expected a digit")
-						}
-					}
-
-					NumberParserState.afterExponent -> {
-						when (character) {
-							'0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> NumberParserState.afterExponent
-							else -> null
-						}
-					}
-				} ?: break
-
-				if (state == NumberParserState.afterDecimalSeparator) {
-					mustParseFloatingPoint = true
+			var index = inputIndex
+			loop@ while (index < length) {
+				when (string[index]) {
+					' ', '\n', '\r', '\t' -> Unit
+					else -> break@loop
 				}
 
 				index += 1
 			}
 
-			val endIndex = index
-			inputIndex = endIndex
+			inputIndex = index
+		}
 
-			when (state) {
-				NumberParserState.afterZeroInteger ->
-					return 0
 
-				NumberParserState.start,
-				NumberParserState.afterSign,
-				NumberParserState.afterDecimalSeparator,
-				NumberParserState.afterExponentSeparator,
-				NumberParserState.afterExponentSign ->
-					throw JSONPathBuildingException("unexpected end of input string when parsing number at index $startIndex")
+		private fun internalParseList(): List<*> {
+			consumeWhitespaces()
+			consumeCharacter(InputCharacter.Symbol.leftSquareBracket)
+			consumeWhitespaces()
 
-				NumberParserState.afterInteger,
-				NumberParserState.afterFractional,
-				NumberParserState.afterExponent ->
-					Unit
+			val list = mutableListOf<Any?>()
+
+			while (peekCharacter() != InputCharacter.Symbol.rightSquareBracket) {
+				if (list.isNotEmpty()) {
+					consumeCharacter(InputCharacter.Symbol.comma) {
+						InputCharacter.toString(
+							InputCharacter.Symbol.comma,
+							InputCharacter.Symbol.rightSquareBracket
+						)
+					}
+				}
+
+				list += internalParseValue()
+				consumeWhitespaces()
 			}
 
+			consumeCharacter()
+			return list
+		}
+
+
+		private fun internalParseMap(): Map<String, *> {
+			consumeWhitespaces()
+			consumeCharacter(InputCharacter.Symbol.leftCurlyBracket)
+			consumeWhitespaces()
+
+			val map = mutableMapOf<String, Any?>()
+
+			while (peekCharacter() != InputCharacter.Symbol.rightCurlyBracket) {
+				if (map.isNotEmpty()) {
+					consumeCharacter(InputCharacter.Symbol.comma) {
+						InputCharacter.toString(
+							InputCharacter.Symbol.comma,
+							InputCharacter.Symbol.rightCurlyBracket
+						)
+					}
+				}
+
+				val key = internalParseString()
+
+				consumeWhitespaces()
+				consumeCharacter(InputCharacter.Symbol.colon)
+
+				map[key] = internalParseValue()
+				consumeWhitespaces()
+			}
+
+			consumeCharacter()
+			return map
+		}
+
+
+		private fun internalParseNumber(): Number {
+			consumeWhitespaces()
+
+			val startIndex = inputIndex
+			var isNegative = false
+			var mustParseAsDouble = false
+
+			var character = consumeCharacter()
+
+			// consume optional minus sign
+			if (character == InputCharacter.Symbol.hyphenMinus) {
+				isNegative = true
+				character = consumeCharacter()
+			}
+
+			// consume integer value
+			when (character) {
+				InputCharacter.Digit.zero -> {
+					character = consumeCharacter(expected = { !InputCharacter.isDigit(it) }) {
+						InputCharacter.toString(
+							InputCharacter.Symbol.fullStop,
+							InputCharacter.Letter.e,
+							InputCharacter.Letter.E
+						) + " or end of number after a leading '0'"
+					}
+				}
+
+				InputCharacter.Digit.one,
+				InputCharacter.Digit.two,
+				InputCharacter.Digit.three,
+				InputCharacter.Digit.four,
+				InputCharacter.Digit.five,
+				InputCharacter.Digit.six,
+				InputCharacter.Digit.seven,
+				InputCharacter.Digit.eight,
+				InputCharacter.Digit.nine ->
+					do character = consumeCharacter()
+					while (InputCharacter.isDigit(character))
+
+				else ->
+					throw unexpectedCharacter(
+						character,
+						accepted = (if (isNegative) "'-' or a digit" else "a digit") + " in integer value of number",
+						index = inputIndex - 1
+					)
+			}
+
+			// consume optional decimal separator and value
+			if (character == InputCharacter.Symbol.fullStop) {
+				mustParseAsDouble = true
+
+				consumeCharacter(expected = InputCharacter::isDigit) { "a digit in decimal value of number" }
+
+				do character = consumeCharacter()
+				while (InputCharacter.isDigit(character))
+			}
+
+			// consume optional exponent separator and value
+			if (character == InputCharacter.Letter.e || character == InputCharacter.Letter.E) {
+				mustParseAsDouble = true
+
+				character = peekCharacter()
+				if (character == InputCharacter.Symbol.plusSign || character == InputCharacter.Symbol.hyphenMinus) {
+					consumeCharacter()
+				}
+
+				consumeCharacter(expected = InputCharacter::isDigit) { "a digit in exponent value of number" }
+
+				do character = consumeCharacter()
+				while (InputCharacter.isDigit(character))
+			}
+
+			seekBackOneCharacter()
+
+			val endIndex = inputIndex
 			val substring = inputString.substring(startIndex, endIndex)
 
-			if (!mustParseFloatingPoint) {
+			if (!mustParseAsDouble) {
 				val value = substring.toLongOrNull()
 				if (value != null) {
 					return if (value in Int.MIN_VALUE .. Int.MAX_VALUE) value.toInt() else value
@@ -255,60 +239,55 @@ class JSONParser {
 
 
 		private fun internalParseString(): String {
-			skipWhitespaces()
-			consumeCharacter('"')
+			consumeWhitespaces()
+			consumeCharacter(InputCharacter.Symbol.quotationMark)
 
-			val beginIndex = inputIndex
-			var escapedStringLength = 0
+			val startIndex = inputIndex
 			var containsEscapes = false
 
-			var character = 0.toChar()
-			var index = inputIndex
-			loop@ while (index < inputLength) {
-				character = inputString[index]
-				when (character) {
-					'"' -> break@loop
+			var inputCharacter = consumeCharacter()
+			loop@ while (inputCharacter != InputCharacter.Symbol.quotationMark) {
+				when (inputCharacter) {
+					InputCharacter.end ->
+						throw JSONPathBuildingException("unterminated string value")
 
-					'\\' -> {
+					InputCharacter.Symbol.reverseSolidus -> {
 						containsEscapes = true
-
-						++escapedStringLength
-						++index
+						consumeCharacter()
 					}
 
-					'\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006', '\u0007',
-					'\u000B', '\u000C', '\u000E', '\u000F', '\u0010', '\u0011', '\u0012', '\u0013',
-					'\u0014', '\u0015', '\u0016', '\u0017', '\u0018', '\u0019', '\u001A', '\u001B',
-					'\u001C', '\u001D', '\u001E', '\u001F', '\b', '\n', '\r', '\t' ->
-						throw JSONPathBuildingException("unescaped control character in string at index $index")
+					0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
+					0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F ->
+						throw JSONPathBuildingException("unescaped control character in string", index = inputIndex - 1)
 				}
 
-				++escapedStringLength
-				++index
+				inputCharacter = consumeCharacter()
 			}
 
-			if (character != '"') {
-				throw JSONPathBuildingException("unterminated string value")
-			}
-
-			val endIndex = index
-			inputIndex = index + 1
-
-			if (escapedStringLength == 0) {
+			val endIndex = inputIndex - 1
+			if (startIndex >= endIndex) {
 				return ""
 			}
 
-			if (!containsEscapes) {
-				return inputString.substring(beginIndex, endIndex)
+			return if (containsEscapes) {
+				internalParseString(startIndex, endIndex)
 			}
+			else {
+				inputString.substring(startIndex, endIndex)
+			}
+		}
+
+
+		private fun internalParseString(startIndex: Int, endIndex: Int): String {
+			val inputString = inputString
 
 			val builder = reusableBuilder
 			builder.setLength(0)
-			builder.ensureCapacity(escapedStringLength)
+			builder.ensureCapacity(endIndex - startIndex - 1)
 
-			index = beginIndex
+			var index = startIndex
 			while (index < endIndex) {
-				character = inputString[index]
+				var character = inputString[index]
 				when (character) {
 					'\\' -> {
 						index += 1
@@ -322,20 +301,20 @@ class JSONParser {
 							'r' -> builder.append('\r')
 							't' -> builder.append('\t')
 							'u' -> {
-								val sequenceBeginIndex = index + 1
-								val sequenceEndIndex = sequenceBeginIndex + 4
-								if (sequenceEndIndex > inputLength) {
-									throw JSONPathBuildingException("unexpected end of Unicode escape sequence at index $sequenceBeginIndex")
+								val sequenceStartIndex = index + 1
+								val sequenceEndIndex = sequenceStartIndex + 4
+								if (sequenceEndIndex > endIndex) {
+									throw JSONPathBuildingException("unexpected end of Unicode escape sequence", index = sequenceStartIndex)
 								}
 
-								val sequence = inputString.substring(sequenceBeginIndex, sequenceEndIndex)
+								val sequence = inputString.substring(sequenceStartIndex, sequenceEndIndex)
 								character = sequence.toIntOrNull(16)?.toChar()
-									?: throw JSONPathBuildingException("invalid unicode escape sequence '$sequence' at index $sequenceBeginIndex")
+									?: throw JSONPathBuildingException("invalid unicode escape sequence '$sequence'", index = sequenceStartIndex)
 
 								builder.append(character)
 								index += 4
 							}
-							else -> throw JSONPathBuildingException("unknown escape sequence character '$character' at index $index")
+							else -> throw JSONPathBuildingException("unknown escape sequence character '$character'", index = index)
 						}
 					}
 					else -> builder.append(character)
@@ -349,101 +328,165 @@ class JSONParser {
 
 
 		private fun internalParseValue(): Any? {
-			skipWhitespaces()
+			consumeWhitespaces()
 
 			val character = peekCharacter()
 			return when (character) {
-				'"' -> internalParseString()
+				InputCharacter.Symbol.quotationMark ->
+					internalParseString()
 
-				'+', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' -> internalParseNumber()
+				InputCharacter.Symbol.hyphenMinus,
+				InputCharacter.Digit.zero,
+				InputCharacter.Digit.one,
+				InputCharacter.Digit.two,
+				InputCharacter.Digit.three,
+				InputCharacter.Digit.four,
+				InputCharacter.Digit.five,
+				InputCharacter.Digit.six,
+				InputCharacter.Digit.seven,
+				InputCharacter.Digit.eight,
+				InputCharacter.Digit.nine ->
+					internalParseNumber()
 
-				'{' -> internalParseMap()
+				InputCharacter.Symbol.leftCurlyBracket ->
+					internalParseMap()
 
-				'[' -> internalParseList()
+				InputCharacter.Symbol.leftSquareBracket ->
+					internalParseList()
 
-				't' -> {
+				InputCharacter.Letter.t -> {
 					consumeCharacter()
-					consumeCharacter('r')
-					consumeCharacter('u')
-					consumeCharacter('e')
+					consumeCharacter(InputCharacter.Letter.r)
+					consumeCharacter(InputCharacter.Letter.u)
+					consumeCharacter(InputCharacter.Letter.e)
 
 					true
 				}
 
-				'f' -> {
+				InputCharacter.Letter.f -> {
 					consumeCharacter()
-					consumeCharacter('a')
-					consumeCharacter('l')
-					consumeCharacter('s')
-					consumeCharacter('e')
+					consumeCharacter(InputCharacter.Letter.a)
+					consumeCharacter(InputCharacter.Letter.l)
+					consumeCharacter(InputCharacter.Letter.s)
+					consumeCharacter(InputCharacter.Letter.e)
 
 					false
 				}
 
-				'n' -> {
+				InputCharacter.Letter.n -> {
 					consumeCharacter()
-					consumeCharacter('u')
-					consumeCharacter('l')
-					consumeCharacter('l')
+					consumeCharacter(InputCharacter.Letter.u)
+					consumeCharacter(InputCharacter.Letter.l)
+					consumeCharacter(InputCharacter.Letter.l)
 
 					null
 				}
 
 				else ->
-					throw JSONPathBuildingException("unexpected character '$character' at index $inputIndex")
+					throw unexpectedCharacter(
+						character,
+						accepted = "a value",
+						index = inputIndex
+					)
 			}
 		}
 
 
 		private fun parse(): Any? {
 			val root = internalParseValue()
-			skipWhitespaces()
+			consumeWhitespaces()
 
 			if (inputIndex < inputLength) {
-				throw JSONPathBuildingException("unexpected extra data at index $inputIndex")
+				throw JSONPathBuildingException("unexpected extra data", index = inputIndex)
 			}
 
 			return root
 		}
 
 
-		private fun peekCharacter(): Char {
-			val index = inputIndex
-			if (index >= inputLength) {
-				throw JSONPathBuildingException("unexpected end of input string")
-			}
+		private fun peekCharacter(): Int {
+			val inputIndex = inputIndex
+			val inputCharacter = consumeCharacter()
+			this.inputIndex = inputIndex
 
-			return inputString[index]
+			return inputCharacter
 		}
 
 
-		private fun skipWhitespaces() {
-			var index = inputIndex
-			loop@ while (index < inputLength) {
-				when (inputString[index]) {
-					' ', '\n', '\r', '\t' ->
-						Unit
-
-					else ->
-						break@loop
-				}
-				++index
-			}
-
-			inputIndex = index
+		private fun seekBackOneCharacter() {
+			assert(inputIndex >= 1)
+			inputIndex -= 1
 		}
 
 
-		private enum class NumberParserState {
-			start,
-			afterSign,
-			afterZeroInteger,
-			afterInteger,
-			afterDecimalSeparator,
-			afterFractional,
-			afterExponentSeparator,
-			afterExponentSign,
-			afterExponent
+		private companion object {
+
+			fun unexpectedCharacter(character: Int, accepted: String, index: Int): Exception =
+				JSONPathBuildingException("unexpected ${InputCharacter.toString(character)} expected $accepted", index = index)
+		}
+
+
+		private object InputCharacter {
+
+			object Digit {
+
+				const val one = '1'.toInt()
+				const val two = '2'.toInt()
+				const val three = '3'.toInt()
+				const val four = '4'.toInt()
+				const val five = '5'.toInt()
+				const val six = '6'.toInt()
+				const val seven = '7'.toInt()
+				const val eight = '8'.toInt()
+				const val nine = '9'.toInt()
+				const val zero = '0'.toInt()
+			}
+
+			object Letter {
+
+				const val a = 'a'.toInt()
+				const val e = 'e'.toInt()
+				const val E = 'E'.toInt()
+				const val f = 'f'.toInt()
+				const val l = 'l'.toInt()
+				const val n = 'n'.toInt()
+				const val r = 'r'.toInt()
+				const val s = 's'.toInt()
+				const val t = 't'.toInt()
+				const val u = 'u'.toInt()
+			}
+
+			object Symbol {
+
+				const val colon = ':'.toInt()
+				const val comma = ','.toInt()
+				const val fullStop = '.'.toInt()
+				const val hyphenMinus = '-'.toInt()
+				const val leftCurlyBracket = '{'.toInt()
+				const val leftSquareBracket = '['.toInt()
+				const val plusSign = '+'.toInt()
+				const val quotationMark = '"'.toInt()
+				const val reverseSolidus = '\\'.toInt()
+				const val rightCurlyBracket = '}'.toInt()
+				const val rightSquareBracket = ']'.toInt()
+			}
+
+			const val end = -1
+
+
+			fun isDigit(character: Int) =
+				character in Digit.zero .. Digit.nine
+
+
+			fun toString(character: Int) =
+				if (character == end)
+					"end of input"
+				else
+					"'" + Character.toString(character.toChar()) + "'"
+
+
+			fun toString(vararg characters: Int) =
+				characters.joinToString(" or ") { toString(it) }
 		}
 	}
 }

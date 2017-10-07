@@ -1,7 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
 
-internal class JSONPathBuildingException(message: String) : RuntimeException(message) {
+internal class JSONPathBuildingException(message: String, private val index: Int? = null) : RuntimeException(message) {
 
 	private val pathComponents = mutableListOf<Any>()
 
@@ -44,6 +44,12 @@ internal class JSONPathBuildingException(message: String) : RuntimeException(mes
 
 			if (isEmpty()) {
 				append("root")
+			}
+
+			index?.let {
+				append(" (UTF-16 offset ")
+				append(it)
+				append(")")
 			}
 
 			append(": ")
