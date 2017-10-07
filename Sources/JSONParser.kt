@@ -476,7 +476,6 @@ class JSONParser {
 
 
 		private fun seekBackOneCharacter() {
-			assert(inputIndex >= 1)
 			inputIndex -= 1
 		}
 
