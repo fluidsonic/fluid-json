@@ -18,10 +18,21 @@ internal class JSONPathBuildingException(message: String, private val index: Int
 
 	private fun build(): JSONException {
 		val exception = JSONException(buildString {
+			index?.let {
+				append("(UTF-16 offset #")
+				append(it)
+				append(")")
+			}
+
 			if (pathComponents.isNotEmpty()) {
+				if (isNotEmpty()) {
+					append(' ')
+				}
+
+				append("at ")
 				append('\'')
 
-				for ((index, component) in pathComponents.asReversed().withIndex()) {
+				for (component in pathComponents.asReversed()) {
 					when (component) {
 						is Int -> {
 							append('[')
@@ -30,10 +41,7 @@ internal class JSONPathBuildingException(message: String, private val index: Int
 						}
 
 						else -> {
-							if (index > 0) {
-								append('.')
-							}
-
+							append('.')
 							append(component.toString())
 						}
 					}
@@ -44,12 +52,6 @@ internal class JSONPathBuildingException(message: String, private val index: Int
 
 			if (isEmpty()) {
 				append("root")
-			}
-
-			index?.let {
-				append(" (UTF-16 offset ")
-				append(it)
-				append(")")
 			}
 
 			append(": ")

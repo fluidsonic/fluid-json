@@ -174,7 +174,10 @@ class JSONParser {
 					}
 				}
 
-				list += internalParseValue()
+				JSONPathBuildingException.track(list.size) {
+					list += internalParseValue()
+				}
+
 				consumeWhitespaces()
 			}
 
@@ -205,7 +208,10 @@ class JSONParser {
 				consumeWhitespaces()
 				consumeCharacter(Character.Symbol.colon)
 
-				map[key] = internalParseValue()
+				JSONPathBuildingException.track(key) {
+					map[key] = internalParseValue()
+				}
+
 				consumeWhitespaces()
 			}
 
@@ -483,7 +489,7 @@ class JSONParser {
 		private companion object {
 
 			fun unexpectedCharacter(character: Int, accepted: String, index: Int): Exception =
-				JSONPathBuildingException("unexpected ${Character.toString(character)} expected $accepted", index = index)
+				JSONPathBuildingException("unexpected ${Character.toString(character)}, expected $accepted", index = index)
 		}
 	}
 }
