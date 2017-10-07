@@ -28,6 +28,70 @@ class JSONParser {
 		}
 
 
+	private object Character {
+
+		object Digit {
+
+			const val one = '1'.toInt()
+			const val two = '2'.toInt()
+			const val three = '3'.toInt()
+			const val four = '4'.toInt()
+			const val five = '5'.toInt()
+			const val six = '6'.toInt()
+			const val seven = '7'.toInt()
+			const val eight = '8'.toInt()
+			const val nine = '9'.toInt()
+			const val zero = '0'.toInt()
+		}
+
+		object Letter {
+
+			const val a = 'a'.toInt()
+			const val e = 'e'.toInt()
+			const val E = 'E'.toInt()
+			const val f = 'f'.toInt()
+			const val l = 'l'.toInt()
+			const val n = 'n'.toInt()
+			const val r = 'r'.toInt()
+			const val s = 's'.toInt()
+			const val t = 't'.toInt()
+			const val u = 'u'.toInt()
+		}
+
+		object Symbol {
+
+			const val colon = ':'.toInt()
+			const val comma = ','.toInt()
+			const val fullStop = '.'.toInt()
+			const val hyphenMinus = '-'.toInt()
+			const val leftCurlyBracket = '{'.toInt()
+			const val leftSquareBracket = '['.toInt()
+			const val plusSign = '+'.toInt()
+			const val quotationMark = '"'.toInt()
+			const val reverseSolidus = '\\'.toInt()
+			const val rightCurlyBracket = '}'.toInt()
+			const val rightSquareBracket = ']'.toInt()
+		}
+
+		const val end = -1
+
+
+		fun isDigit(character: Int) =
+			character in Digit.zero .. Digit.nine
+
+
+		fun toString(character: Int) =
+			if (character == end)
+				"end of input"
+			else
+				"'" + java.lang.Character.toString(character.toChar()) + "'"
+
+
+		fun toString(vararg characters: Int) =
+			characters.joinToString(" or ") { toString(it) }
+	}
+
+
 	private class Run(
 		private val inputString: String
 	) {
@@ -44,7 +108,7 @@ class JSONParser {
 			this.inputIndex += 1
 
 			if (index >= inputLength) {
-				return InputCharacter.end
+				return Character.end
 			}
 
 			return inputString[index].toInt()
@@ -52,7 +116,7 @@ class JSONParser {
 
 
 		private fun consumeCharacter(expected: Int) =
-			consumeCharacter(expected) { InputCharacter.toString(expected) }
+			consumeCharacter(expected) { Character.toString(expected) }
 
 
 		private inline fun consumeCharacter(expected: Int, accepted: () -> String): Int =
@@ -95,17 +159,17 @@ class JSONParser {
 
 		private fun internalParseList(): List<*> {
 			consumeWhitespaces()
-			consumeCharacter(InputCharacter.Symbol.leftSquareBracket)
+			consumeCharacter(Character.Symbol.leftSquareBracket)
 			consumeWhitespaces()
 
 			val list = mutableListOf<Any?>()
 
-			while (peekCharacter() != InputCharacter.Symbol.rightSquareBracket) {
+			while (peekCharacter() != Character.Symbol.rightSquareBracket) {
 				if (list.isNotEmpty()) {
-					consumeCharacter(InputCharacter.Symbol.comma) {
-						InputCharacter.toString(
-							InputCharacter.Symbol.comma,
-							InputCharacter.Symbol.rightSquareBracket
+					consumeCharacter(Character.Symbol.comma) {
+						Character.toString(
+							Character.Symbol.comma,
+							Character.Symbol.rightSquareBracket
 						)
 					}
 				}
@@ -121,17 +185,17 @@ class JSONParser {
 
 		private fun internalParseMap(): Map<String, *> {
 			consumeWhitespaces()
-			consumeCharacter(InputCharacter.Symbol.leftCurlyBracket)
+			consumeCharacter(Character.Symbol.leftCurlyBracket)
 			consumeWhitespaces()
 
 			val map = mutableMapOf<String, Any?>()
 
-			while (peekCharacter() != InputCharacter.Symbol.rightCurlyBracket) {
+			while (peekCharacter() != Character.Symbol.rightCurlyBracket) {
 				if (map.isNotEmpty()) {
-					consumeCharacter(InputCharacter.Symbol.comma) {
-						InputCharacter.toString(
-							InputCharacter.Symbol.comma,
-							InputCharacter.Symbol.rightCurlyBracket
+					consumeCharacter(Character.Symbol.comma) {
+						Character.toString(
+							Character.Symbol.comma,
+							Character.Symbol.rightCurlyBracket
 						)
 					}
 				}
@@ -139,7 +203,7 @@ class JSONParser {
 				val key = internalParseString()
 
 				consumeWhitespaces()
-				consumeCharacter(InputCharacter.Symbol.colon)
+				consumeCharacter(Character.Symbol.colon)
 
 				map[key] = internalParseValue()
 				consumeWhitespaces()
@@ -154,72 +218,70 @@ class JSONParser {
 			consumeWhitespaces()
 
 			val startIndex = inputIndex
-			var isNegative = false
 			var mustParseAsDouble = false
 
 			var character = consumeCharacter()
 
 			// consume optional minus sign
-			if (character == InputCharacter.Symbol.hyphenMinus) {
-				isNegative = true
+			if (character == Character.Symbol.hyphenMinus) {
 				character = consumeCharacter()
 			}
 
 			// consume integer value
 			when (character) {
-				InputCharacter.Digit.zero -> {
-					character = consumeCharacter(expected = { !InputCharacter.isDigit(it) }) {
-						InputCharacter.toString(
-							InputCharacter.Symbol.fullStop,
-							InputCharacter.Letter.e,
-							InputCharacter.Letter.E
+				Character.Digit.zero -> {
+					character = consumeCharacter(expected = { !Character.isDigit(it) }) {
+						Character.toString(
+							Character.Symbol.fullStop,
+							Character.Letter.e,
+							Character.Letter.E
 						) + " or end of number after a leading '0'"
 					}
 				}
 
-				InputCharacter.Digit.one,
-				InputCharacter.Digit.two,
-				InputCharacter.Digit.three,
-				InputCharacter.Digit.four,
-				InputCharacter.Digit.five,
-				InputCharacter.Digit.six,
-				InputCharacter.Digit.seven,
-				InputCharacter.Digit.eight,
-				InputCharacter.Digit.nine ->
+				Character.Digit.one,
+				Character.Digit.two,
+				Character.Digit.three,
+				Character.Digit.four,
+				Character.Digit.five,
+				Character.Digit.six,
+				Character.Digit.seven,
+				Character.Digit.eight,
+				Character.Digit.nine ->
 					do character = consumeCharacter()
-					while (InputCharacter.isDigit(character))
+					while (Character.isDigit(character))
 
 				else ->
 					throw unexpectedCharacter(
 						character,
-						accepted = (if (isNegative) "'-' or a digit" else "a digit") + " in integer value of number",
+						accepted = "a digit in integer value of number",
 						index = inputIndex - 1
 					)
 			}
 
 			// consume optional decimal separator and value
-			if (character == InputCharacter.Symbol.fullStop) {
+			if (character == Character.Symbol.fullStop) {
 				mustParseAsDouble = true
 
-				consumeCharacter(expected = InputCharacter::isDigit) { "a digit in decimal value of number" }
+				consumeCharacter(expected = Character::isDigit) { "a digit in decimal value of number" }
 
 				do character = consumeCharacter()
-				while (InputCharacter.isDigit(character))
+				while (Character.isDigit(character))
 			}
 
 			// consume optional exponent separator and value
-			if (character == InputCharacter.Letter.e || character == InputCharacter.Letter.E) {
+			if (character == Character.Letter.e || character == Character.Letter.E) {
 				mustParseAsDouble = true
 
 				character = peekCharacter()
-				if (character == InputCharacter.Symbol.plusSign || character == InputCharacter.Symbol.hyphenMinus) {
+				if (character == Character.Symbol.plusSign || character == Character.Symbol.hyphenMinus) {
 					consumeCharacter()
 				}
 
-				consumeCharacter(expected = InputCharacter::isDigit) { "a digit in exponent value of number" }
+				consumeCharacter(expected = Character::isDigit) { "a digit in exponent value of number" }
 
 				do character = consumeCharacter()
-				while (InputCharacter.isDigit(character))
+				while (Character.isDigit(character))
 			}
 
 			seekBackOneCharacter()
@@ -240,18 +302,18 @@ class JSONParser {
 
 		private fun internalParseString(): String {
 			consumeWhitespaces()
-			consumeCharacter(InputCharacter.Symbol.quotationMark)
+			consumeCharacter(Character.Symbol.quotationMark)
 
 			val startIndex = inputIndex
 			var containsEscapes = false
 
 			var inputCharacter = consumeCharacter()
-			loop@ while (inputCharacter != InputCharacter.Symbol.quotationMark) {
+			loop@ while (inputCharacter != Character.Symbol.quotationMark) {
 				when (inputCharacter) {
-					InputCharacter.end ->
+					Character.end ->
 						throw JSONPathBuildingException("unterminated string value")
 
-					InputCharacter.Symbol.reverseSolidus -> {
+					Character.Symbol.reverseSolidus -> {
 						containsEscapes = true
 						consumeCharacter()
 					}
@@ -332,52 +394,52 @@ class JSONParser {
 
 			val character = peekCharacter()
 			return when (character) {
-				InputCharacter.Symbol.quotationMark ->
+				Character.Symbol.quotationMark ->
 					internalParseString()
 
-				InputCharacter.Symbol.hyphenMinus,
-				InputCharacter.Digit.zero,
-				InputCharacter.Digit.one,
-				InputCharacter.Digit.two,
-				InputCharacter.Digit.three,
-				InputCharacter.Digit.four,
-				InputCharacter.Digit.five,
-				InputCharacter.Digit.six,
-				InputCharacter.Digit.seven,
-				InputCharacter.Digit.eight,
-				InputCharacter.Digit.nine ->
+				Character.Symbol.hyphenMinus,
+				Character.Digit.zero,
+				Character.Digit.one,
+				Character.Digit.two,
+				Character.Digit.three,
+				Character.Digit.four,
+				Character.Digit.five,
+				Character.Digit.six,
+				Character.Digit.seven,
+				Character.Digit.eight,
+				Character.Digit.nine ->
 					internalParseNumber()
 
-				InputCharacter.Symbol.leftCurlyBracket ->
+				Character.Symbol.leftCurlyBracket ->
 					internalParseMap()
 
-				InputCharacter.Symbol.leftSquareBracket ->
+				Character.Symbol.leftSquareBracket ->
 					internalParseList()
 
-				InputCharacter.Letter.t -> {
+				Character.Letter.t -> {
 					consumeCharacter()
-					consumeCharacter(InputCharacter.Letter.r)
-					consumeCharacter(InputCharacter.Letter.u)
-					consumeCharacter(InputCharacter.Letter.e)
+					consumeCharacter(Character.Letter.r)
+					consumeCharacter(Character.Letter.u)
+					consumeCharacter(Character.Letter.e)
 
 					true
 				}
 
-				InputCharacter.Letter.f -> {
+				Character.Letter.f -> {
 					consumeCharacter()
-					consumeCharacter(InputCharacter.Letter.a)
-					consumeCharacter(InputCharacter.Letter.l)
-					consumeCharacter(InputCharacter.Letter.s)
-					consumeCharacter(InputCharacter.Letter.e)
+					consumeCharacter(Character.Letter.a)
+					consumeCharacter(Character.Letter.l)
+					consumeCharacter(Character.Letter.s)
+					consumeCharacter(Character.Letter.e)
 
 					false
 				}
 
-				InputCharacter.Letter.n -> {
+				Character.Letter.n -> {
 					consumeCharacter()
-					consumeCharacter(InputCharacter.Letter.u)
-					consumeCharacter(InputCharacter.Letter.l)
-					consumeCharacter(InputCharacter.Letter.l)
+					consumeCharacter(Character.Letter.u)
+					consumeCharacter(Character.Letter.l)
+					consumeCharacter(Character.Letter.l)
 
 					null
 				}
@@ -422,71 +484,7 @@ class JSONParser {
 		private companion object {
 
 			fun unexpectedCharacter(character: Int, accepted: String, index: Int): Exception =
-				JSONPathBuildingException("unexpected ${InputCharacter.toString(character)} expected $accepted", index = index)
-		}
-
-
-		private object InputCharacter {
-
-			object Digit {
-
-				const val one = '1'.toInt()
-				const val two = '2'.toInt()
-				const val three = '3'.toInt()
-				const val four = '4'.toInt()
-				const val five = '5'.toInt()
-				const val six = '6'.toInt()
-				const val seven = '7'.toInt()
-				const val eight = '8'.toInt()
-				const val nine = '9'.toInt()
-				const val zero = '0'.toInt()
-			}
-
-			object Letter {
-
-				const val a = 'a'.toInt()
-				const val e = 'e'.toInt()
-				const val E = 'E'.toInt()
-				const val f = 'f'.toInt()
-				const val l = 'l'.toInt()
-				const val n = 'n'.toInt()
-				const val r = 'r'.toInt()
-				const val s = 's'.toInt()
-				const val t = 't'.toInt()
-				const val u = 'u'.toInt()
-			}
-
-			object Symbol {
-
-				const val colon = ':'.toInt()
-				const val comma = ','.toInt()
-				const val fullStop = '.'.toInt()
-				const val hyphenMinus = '-'.toInt()
-				const val leftCurlyBracket = '{'.toInt()
-				const val leftSquareBracket = '['.toInt()
-				const val plusSign = '+'.toInt()
-				const val quotationMark = '"'.toInt()
-				const val reverseSolidus = '\\'.toInt()
-				const val rightCurlyBracket = '}'.toInt()
-				const val rightSquareBracket = ']'.toInt()
-			}
-
-			const val end = -1
-
-
-			fun isDigit(character: Int) =
-				character in Digit.zero .. Digit.nine
-
-
-			fun toString(character: Int) =
-				if (character == end)
-					"end of input"
-				else
-					"'" + Character.toString(character.toChar()) + "'"
-
-
-			fun toString(vararg characters: Int) =
-				characters.joinToString(" or ") { toString(it) }
+				JSONPathBuildingException("unexpected ${Character.toString(character)} expected $accepted", index = index)
 		}
 	}
 }
