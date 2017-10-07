@@ -74,9 +74,11 @@ class JSONParserRejectSpec : Spek({
 			failToParse("0.0\"")
 		}
 
-		it("unterminated escape sequence") {
+		it("unterminated string") {
 			failToParse("\"test")
 			failToParse("\"test\\uDD\"")
+			failToParse("{\"test")
+			failToParse("{\"key\":\"test")
 		}
 
 		it("unknown escape sequences") {
