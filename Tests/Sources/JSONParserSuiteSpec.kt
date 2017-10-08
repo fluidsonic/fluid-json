@@ -3,13 +3,14 @@ package tests
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONParser
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
 
 
 class JSONParserSuiteSpec : Spek({
 
-	it("JSONParser conforms to") {
+	describe("JSONParser conforms to") {
 
 		it("JSON Parsing Test Suite (https://github.com/nst/JSONTestSuite)") {
 
