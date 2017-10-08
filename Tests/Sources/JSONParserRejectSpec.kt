@@ -2,98 +2,104 @@ package tests
 
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONParser
-import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.subject.SubjectSpek
+import tests.JSONParserRejectSpec.failToParse
+import tests.JSONParserRejectSpec.failToParseList
+import tests.JSONParserRejectSpec.failToParseMap
 
 
-class JSONParserRejectSpec : Spek({
+object JSONParserRejectSpec : SubjectSpek<JSONParser>({
+
+	subject { JSONParser() }
+
 
 	describe("JSONParser rejects") {
 
 		it("unknown constants") {
-			failToParse("void")
+			subject.failToParse("void")
 		}
 
 		it("partial constants") {
-			failToParse("tru")
-			failToParse("fals")
-			failToParse("nul")
+			subject.failToParse("tru")
+			subject.failToParse("fals")
+			subject.failToParse("nul")
 		}
 
 		it("extra data after constants") {
-			failToParse("true2")
-			failToParse("false2")
-			failToParse("null2")
-			failToParse("null\"")
+			subject.failToParse("true2")
+			subject.failToParse("false2")
+			subject.failToParse("null2")
+			subject.failToParse("null\"")
 		}
 
 		it("multiple values") {
-			failToParse("1 2")
-			failToParse("1, 2")
-			failToParse("true false")
-			failToParse("null null")
+			subject.failToParse("1 2")
+			subject.failToParse("1, 2")
+			subject.failToParse("true false")
+			subject.failToParse("null null")
 		}
 
 		it("non-decimal number formats") {
-			failToParse("0b0")
-			failToParse("0o0")
-			failToParse("0x0")
+			subject.failToParse("0b0")
+			subject.failToParse("0o0")
+			subject.failToParse("0x0")
 		}
 
 		it("non-zero integrals with leading zero") {
-			failToParse("01")
-			failToParse("01.0")
+			subject.failToParse("01")
+			subject.failToParse("01.0")
 		}
 
 		it("positive number sign") {
-			failToParse("+0")
-			failToParse("+1")
-			failToParse("+-1")
+			subject.failToParse("+0")
+			subject.failToParse("+1")
+			subject.failToParse("+-1")
 		}
 
 		it("incomplete or weird numbers") {
-			failToParse("-true")
-			failToParse("-.")
-			failToParse("-e")
-			failToParse("0.")
-			failToParse("0e")
-			failToParse("1.")
-			failToParse("1.e")
-			failToParse("1e")
-			failToParse("1ee")
-			failToParse("1e.")
-			failToParse("1e+")
-			failToParse("1e+e")
-			failToParse("1e-")
-			failToParse("1e-e")
+			subject.failToParse("-true")
+			subject.failToParse("-.")
+			subject.failToParse("-e")
+			subject.failToParse("0.")
+			subject.failToParse("0e")
+			subject.failToParse("1.")
+			subject.failToParse("1.e")
+			subject.failToParse("1e")
+			subject.failToParse("1ee")
+			subject.failToParse("1e.")
+			subject.failToParse("1e+")
+			subject.failToParse("1e+e")
+			subject.failToParse("1e-")
+			subject.failToParse("1e-e")
 		}
 
 		it("extra data after number") {
-			failToParse("0.0z")
-			failToParse("0.0\"")
+			subject.failToParse("0.0z")
+			subject.failToParse("0.0\"")
 		}
 
 		it("unterminated string") {
-			failToParse("\"test")
-			failToParse("\"test\\uDD\"")
-			failToParse("{\"test")
-			failToParse("{\"key\":\"test")
+			subject.failToParse("\"test")
+			subject.failToParse("\"test\\uDD\"")
+			subject.failToParse("{\"test")
+			subject.failToParse("{\"key\":\"test")
 		}
 
 		it("unknown escape sequences") {
-			failToParse("\"\\a\"")
-			failToParse("\"\\0\"")
-			failToParse("\"\\,\"")
-			failToParse("\"\\:\"")
-			failToParse("\"\\[\"")
+			subject.failToParse("\"\\a\"")
+			subject.failToParse("\"\\0\"")
+			subject.failToParse("\"\\,\"")
+			subject.failToParse("\"\\:\"")
+			subject.failToParse("\"\\[\"")
 		}
 
 		it("invalid unicode escape sequences") {
-			failToParse("\"\\u000Z\"")
-			failToParse("\"\\u00ZZ\"")
-			failToParse("\"\\u0ZZZ\"")
-			failToParse("\"\\uZZZZ\"")
+			subject.failToParse("\"\\u000Z\"")
+			subject.failToParse("\"\\u00ZZ\"")
+			subject.failToParse("\"\\u0ZZZ\"")
+			subject.failToParse("\"\\uZZZZ\"")
 		}
 
 		it("unescaped control characters") {
@@ -103,107 +109,104 @@ class JSONParserRejectSpec : Spek({
 				'\u0014', '\u0015', '\u0016', '\u0017', '\u0018', '\u0019', '\u001A', '\u001B',
 				'\u001C', '\u001D', '\u001E', '\u001F', '\b', '\n', '\r', '\t'
 			)
-				.forEach { failToParse("\"$it\"") }
+				.forEach { subject.failToParse("\"$it\"") }
 		}
 
 		it("unterminated array") {
-			failToParse("[")
-			failToParse("[1")
-			failToParse("[1,")
+			subject.failToParse("[")
+			subject.failToParse("[1")
+			subject.failToParse("[1,")
 		}
 
 		it("extra data after array") {
-			failToParse("[1]b")
+			subject.failToParse("[1]b")
 		}
 
 		it("extra data after array element") {
-			failToParse("[1 1]")
+			subject.failToParse("[1 1]")
 		}
 
 		it("misplaced commas in arrays") {
-			failToParse("[,1,1]")
-			failToParse("[1,,1]")
-			failToParse("[1,1,]")
+			subject.failToParse("[,1,1]")
+			subject.failToParse("[1,,1]")
+			subject.failToParse("[1,1,]")
 		}
 
 		it("unterminated object") {
-			failToParse("{")
-			failToParse("{\"")
-			failToParse("{\"x")
-			failToParse("{\"x\"")
-			failToParse("{\"x\":")
-			failToParse("{\"x\":1")
-			failToParse("{\"x\":1,")
+			subject.failToParse("{")
+			subject.failToParse("{\"")
+			subject.failToParse("{\"x")
+			subject.failToParse("{\"x\"")
+			subject.failToParse("{\"x\":")
+			subject.failToParse("{\"x\":1")
+			subject.failToParse("{\"x\":1,")
 		}
 
 		it("extra data after object") {
-			failToParse("{\"key\": 1}b")
+			subject.failToParse("{\"key\": 1}b")
 		}
 
 		it("extra data before object key") {
-			failToParse("{true \"key\": 1}")
+			subject.failToParse("{true \"key\": 1}")
 		}
 
 		it("extra data after object key") {
-			failToParse("{\"key\" true: 1}")
+			subject.failToParse("{\"key\" true: 1}")
 		}
 
 		it("extra data before object value") {
-			failToParse("{\"key\"::1}")
+			subject.failToParse("{\"key\"::1}")
 		}
 
 		it("extra data after object value") {
-			failToParse("{\"key\":1:}")
-			failToParse("{\"key\":1 \"key\"}")
+			subject.failToParse("{\"key\":1:}")
+			subject.failToParse("{\"key\":1 \"key\"}")
 		}
 
 		it("misplaced commas in objects") {
-			failToParse("{,\"key0\":1,\"key1\":1}")
-			failToParse("{\"key0\":1,,\"key1\":1}")
-			failToParse("{\"key0\":1,\"key1\":1,}")
+			subject.failToParse("{,\"key0\":1,\"key1\":1}")
+			subject.failToParse("{\"key0\":1,,\"key1\":1}")
+			subject.failToParse("{\"key0\":1,\"key1\":1,}")
 		}
 
 		it("a anything not being a list of expected") {
-			failToParseList("null")
-			failToParseList("?")
-			failToParseList("1")
-			failToParseList("{}")
+			subject.failToParseList("null")
+			subject.failToParseList("?")
+			subject.failToParseList("1")
+			subject.failToParseList("{}")
 		}
 
 		it("a map as requested") {
-			failToParseMap("null")
-			failToParseMap("?")
-			failToParseMap("1")
-			failToParseMap("[]")
+			subject.failToParseMap("null")
+			subject.failToParseMap("?")
+			subject.failToParseMap("1")
+			subject.failToParseMap("[]")
 		}
 	}
 }) {
 
-	private companion object {
-
-		inline fun shouldFailWithJSONException(body: () -> Unit) {
-			try {
-				body()
-				throw AssertionError("should fail with a JSONException")
-			}
-			catch (e: JSONException) {
-				// good
-			}
+	private inline fun shouldFailWithJSONException(body: () -> Unit) {
+		try {
+			body()
+			throw AssertionError("should fail with a JSONException")
 		}
-
-
-		fun failToParse(string: String) {
-			shouldFailWithJSONException { JSONParser().parse(string) }
+		catch (e: JSONException) {
+			// good
 		}
+	}
 
 
-		fun failToParseList(string: String) {
-			shouldFailWithJSONException { JSONParser().parseList(string) }
-		}
+	private fun JSONParser.failToParse(string: String) {
+		shouldFailWithJSONException { parse(string) }
+	}
 
 
-		fun failToParseMap(string: String) {
-			shouldFailWithJSONException { JSONParser().parseMap(string) }
-		}
+	private fun JSONParser.failToParseList(string: String) {
+		shouldFailWithJSONException { parseList(string) }
+	}
+
+
+	private fun JSONParser.failToParseMap(string: String) {
+		shouldFailWithJSONException { parseMap(string) }
 	}
 }

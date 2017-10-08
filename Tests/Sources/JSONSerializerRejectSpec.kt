@@ -2,48 +2,49 @@ package tests
 
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONSerializer
-import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.subject.SubjectSpek
+import tests.JSONSerializerRejectSpec.failToSerialize
 
 
-class JSONSerializerRejectSpec : Spek({
+object JSONSerializerRejectSpec : SubjectSpek<JSONSerializer>({
+
+	subject { JSONSerializer() }
+
 
 	describe("JSONSerializer rejects serialization of") {
 
 		it("non-finite float") {
-			failToSerialize(Float.NEGATIVE_INFINITY)
-			failToSerialize(Float.POSITIVE_INFINITY)
-			failToSerialize(Float.NaN)
+			subject.failToSerialize(Float.NEGATIVE_INFINITY)
+			subject.failToSerialize(Float.POSITIVE_INFINITY)
+			subject.failToSerialize(Float.NaN)
 		}
 
 		it("non-finite double") {
-			failToSerialize(Double.NEGATIVE_INFINITY)
-			failToSerialize(Double.POSITIVE_INFINITY)
-			failToSerialize(Double.NaN)
+			subject.failToSerialize(Double.NEGATIVE_INFINITY)
+			subject.failToSerialize(Double.POSITIVE_INFINITY)
+			subject.failToSerialize(Double.NaN)
 		}
 
 		it("non-string map keys") {
-			failToSerialize(mapOf(null to null))
-			failToSerialize(mapOf(0 to 0))
+			subject.failToSerialize(mapOf(null to null))
+			subject.failToSerialize(mapOf(0 to 0))
 		}
 
 		it("unsupported classes") {
-			failToSerialize(object {})
+			subject.failToSerialize(object {})
 		}
 	}
 }) {
 
-	private companion object {
-
-		fun failToSerialize(value: Any?) {
-			try {
-				JSONSerializer().serialize(value)
-				throw AssertionError("should fail with a JSONException")
-			}
-			catch (e: JSONException) {
-				// good
-			}
+	private fun JSONSerializer.failToSerialize(value: Any?) {
+		try {
+			serialize(value)
+			throw AssertionError("should fail with a JSONException")
+		}
+		catch (e: JSONException) {
+			// good
 		}
 	}
 }

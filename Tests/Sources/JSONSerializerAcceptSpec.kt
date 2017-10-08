@@ -2,27 +2,30 @@ package tests
 
 import com.github.fluidsonic.fluid.json.JSONSerializer
 import com.winterbe.expekt.should
-import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.subject.SubjectSpek
 
 
-class JSONSerializerAcceptSpec : Spek({
+object JSONSerializerAcceptSpec : SubjectSpek<JSONSerializer>({
+
+	subject { JSONSerializer() }
+
 
 	describe("JSONSerializer serializes") {
 
 		describe("constants") {
 
 			it("null") {
-				serialize(null).should.equal("null")
+				subject.serialize(null).should.equal("null")
 			}
 
 			it("true") {
-				serialize(true).should.equal("true")
+				subject.serialize(true).should.equal("true")
 			}
 
 			it("false") {
-				serialize(false).should.equal("false")
+				subject.serialize(false).should.equal("false")
 			}
 		}
 
@@ -30,15 +33,15 @@ class JSONSerializerAcceptSpec : Spek({
 		describe("byte") {
 
 			it("zero") {
-				serialize(0.toByte()).should.equal("0")
+				subject.serialize(0.toByte()).should.equal("0")
 			}
 
 			it("positive") {
-				serialize(100.toByte()).should.equal("100")
+				subject.serialize(100.toByte()).should.equal("100")
 			}
 
 			it("negative") {
-				serialize((-100).toByte()).should.equal("-100")
+				subject.serialize((-100).toByte()).should.equal("-100")
 			}
 		}
 
@@ -46,15 +49,15 @@ class JSONSerializerAcceptSpec : Spek({
 		describe("short") {
 
 			it("zero") {
-				serialize(0.toShort()).should.equal("0")
+				subject.serialize(0.toShort()).should.equal("0")
 			}
 
 			it("positive") {
-				serialize(100.toShort()).should.equal("100")
+				subject.serialize(100.toShort()).should.equal("100")
 			}
 
 			it("negative") {
-				serialize((-100).toShort()).should.equal("-100")
+				subject.serialize((-100).toShort()).should.equal("-100")
 			}
 		}
 
@@ -62,15 +65,15 @@ class JSONSerializerAcceptSpec : Spek({
 		describe("integer") {
 
 			it("zero") {
-				serialize(0).should.equal("0")
+				subject.serialize(0).should.equal("0")
 			}
 
 			it("positive") {
-				serialize(100).should.equal("100")
+				subject.serialize(100).should.equal("100")
 			}
 
 			it("negative") {
-				serialize(-100).should.equal("-100")
+				subject.serialize(-100).should.equal("-100")
 			}
 		}
 
@@ -78,11 +81,11 @@ class JSONSerializerAcceptSpec : Spek({
 		describe("long") {
 
 			it("if too large positive number for integer") {
-				serialize(2147483648L).should.equal("2147483648")
+				subject.serialize(2147483648L).should.equal("2147483648")
 			}
 
 			it("if too large negative number for integer") {
-				serialize(-2147483649L).should.equal("-2147483649")
+				subject.serialize(-2147483649L).should.equal("-2147483649")
 			}
 		}
 
@@ -90,24 +93,24 @@ class JSONSerializerAcceptSpec : Spek({
 		describe("float") {
 
 			it("zero") {
-				serialize(0.0f).should.equal("0.0")
+				subject.serialize(0.0f).should.equal("0.0")
 			}
 
 			it("positive") {
-				serialize(100.001f).should.equal("100.001")
+				subject.serialize(100.001f).should.equal("100.001")
 			}
 
 			it("negative") {
-				serialize(-0.000f).should.equal("-0.0")
-				serialize(-100.001f).should.equal("-100.001")
+				subject.serialize(-0.000f).should.equal("-0.0")
+				subject.serialize(-100.001f).should.equal("-100.001")
 			}
 
 			it("with positive exponent sign") {
-				serialize(1e20f).should.equal("1.0E20")
+				subject.serialize(1e20f).should.equal("1.0E20")
 			}
 
 			it("with negative exponent sign") {
-				serialize(1e-20f).should.equal("1.0E-20")
+				subject.serialize(1e-20f).should.equal("1.0E-20")
 			}
 		}
 
@@ -115,24 +118,24 @@ class JSONSerializerAcceptSpec : Spek({
 		describe("double") {
 
 			it("zero") {
-				serialize(0.0).should.equal("0.0")
+				subject.serialize(0.0).should.equal("0.0")
 			}
 
 			it("positive") {
-				serialize(100.001).should.equal("100.001")
+				subject.serialize(100.001).should.equal("100.001")
 			}
 
 			it("negative") {
-				serialize(-0.000).should.equal("-0.0")
-				serialize(-100.001).should.equal("-100.001")
+				subject.serialize(-0.000).should.equal("-0.0")
+				subject.serialize(-100.001).should.equal("-100.001")
 			}
 
 			it("with positive exponent sign") {
-				serialize(1e200).should.equal("1.0E200")
+				subject.serialize(1e200).should.equal("1.0E200")
 			}
 
 			it("with negative exponent sign") {
-				serialize(1e-200).should.equal("1.0E-200")
+				subject.serialize(1e-200).should.equal("1.0E-200")
 			}
 		}
 
@@ -140,27 +143,27 @@ class JSONSerializerAcceptSpec : Spek({
 		describe("string") {
 
 			it("empty") {
-				serialize("").should.equal("\"\"")
+				subject.serialize("").should.equal("\"\"")
 			}
 
 			it("simple") {
-				serialize("simple").should.equal("\"simple\"")
+				subject.serialize("simple").should.equal("\"simple\"")
 			}
 
 			it("a bit longer") {
-				serialize(" a bit longer ").should.equal("\" a bit longer \"")
+				subject.serialize(" a bit longer ").should.equal("\" a bit longer \"")
 			}
 
 			it("with emojis") {
-				serialize("a dog: 🐶").should.equal("\"a dog: 🐶\"")
+				subject.serialize("a dog: 🐶").should.equal("\"a dog: 🐶\"")
 			}
 
 			it("with quotation mark and reverse solidus") {
-				serialize("\\ \"").should.equal("\"\\\\ \\\"\"")
+				subject.serialize("\\ \"").should.equal("\"\\\\ \\\"\"")
 			}
 
 			it("with control characters") {
-				serialize("\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u000B\u000E\u000F\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F\u0020").should.equal("\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\u000B\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D\\u001E\\u001F\u0020\"")
+				subject.serialize("\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u000B\u000E\u000F\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F\u0020").should.equal("\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\u000B\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D\\u001E\\u001F\u0020\"")
 			}
 		}
 
@@ -168,19 +171,19 @@ class JSONSerializerAcceptSpec : Spek({
 		describe("list") {
 
 			it("empty") {
-				serialize(emptyList<Any>()).should.equal("[]")
+				subject.serialize(emptyList<Any>()).should.equal("[]")
 			}
 
 			it("with single element") {
-				serialize(listOf(1)).should.equal("[1]")
+				subject.serialize(listOf(1)).should.equal("[1]")
 			}
 
 			it("with multiple elements") {
-				serialize(listOf(true, "hey", null)).should.equal("[true,\"hey\",null]")
+				subject.serialize(listOf(true, "hey", null)).should.equal("[true,\"hey\",null]")
 			}
 
 			it("with nested arrays") {
-				serialize(listOf(emptyList<Any>(), listOf(1))).should.equal("[[],[1]]")
+				subject.serialize(listOf(emptyList<Any>(), listOf(1))).should.equal("[[],[1]]")
 			}
 		}
 
@@ -191,19 +194,19 @@ class JSONSerializerAcceptSpec : Spek({
 
 
 			it("empty") {
-				serialize(TestIterable(emptyList<Any?>())).should.equal("[]")
+				subject.serialize(TestIterable(emptyList<Any?>())).should.equal("[]")
 			}
 
 			it("with single element") {
-				serialize(TestIterable(listOf(1))).should.equal("[1]")
+				subject.serialize(TestIterable(listOf(1))).should.equal("[1]")
 			}
 
 			it("with multiple elements") {
-				serialize(TestIterable(listOf(true, "hey", null))).should.equal("[true,\"hey\",null]")
+				subject.serialize(TestIterable(listOf(true, "hey", null))).should.equal("[true,\"hey\",null]")
 			}
 
 			it("with nested arrays") {
-				serialize(TestIterable(listOf(emptyList<Any>(), listOf(1)))).should.equal("[[],[1]]")
+				subject.serialize(TestIterable(listOf(emptyList<Any>(), listOf(1)))).should.equal("[[],[1]]")
 			}
 		}
 
@@ -211,15 +214,15 @@ class JSONSerializerAcceptSpec : Spek({
 		describe("map") {
 
 			it("empty") {
-				serialize(emptyMap<String, Any>()).should.equal("{}")
+				subject.serialize(emptyMap<String, Any>()).should.equal("{}")
 			}
 
 			it("with single element") {
-				serialize(mapOf("key" to 1)).should.equal("{\"key\":1}")
+				subject.serialize(mapOf("key" to 1)).should.equal("{\"key\":1}")
 			}
 
 			it("with multiple elements") {
-				serialize(mapOf(
+				subject.serialize(mapOf(
 					"key0" to true,
 					"key1" to "hey",
 					"key2" to null
@@ -227,20 +230,20 @@ class JSONSerializerAcceptSpec : Spek({
 			}
 
 			it("with nested objects") {
-				serialize(mapOf(
+				subject.serialize(mapOf(
 					"key0" to emptyMap<String, Any>(),
 					"key1" to mapOf("key" to 1)
 				)).should.equal("{\"key0\":{},\"key1\":{\"key\":1}}")
 			}
 
 			it("complex strings as key") {
-				serialize(mapOf(
+				subject.serialize(mapOf(
 					" \\ \" / \b \u000C \n \r \t 🐶 " to 1
 				)).should.equal("{\" \\\\ \\\" / \\b \\f \\n \\r \\t 🐶 \":1}")
 			}
 
 			it("maintaining element order") {
-				serialize(mapOf(
+				subject.serialize(mapOf(
 					"0" to 0,
 					"2" to 2,
 					"1" to 1,
@@ -252,7 +255,7 @@ class JSONSerializerAcceptSpec : Spek({
 
 
 		it("a complete example") {
-			serialize(mapOf(
+			subject.serialize(mapOf(
 				"true" to true,
 				"false" to false,
 				"null" to null,
@@ -305,6 +308,7 @@ class JSONSerializerAcceptSpec : Spek({
 			""".filterNot(Char::isWhitespace))
 		}
 
+
 		it("can reuse a builder") {
 			buildString {
 				append("hey")
@@ -312,23 +316,36 @@ class JSONSerializerAcceptSpec : Spek({
 			}.should.equal("hey{}")
 		}
 
+
 		describe("transforms invalid keys & values to string") {
 
+			subject { JSONSerializer(convertsInvalidValuesToString = true, convertsInvalidKeysToString = true) }
+
+
+			it("returns correct conversion settings") {
+				JSONSerializer().convertsInvalidKeysToString.should.be.`false`
+				JSONSerializer().convertsInvalidValuesToString.should.be.`false`
+				JSONSerializer(convertsInvalidKeysToString = false).convertsInvalidKeysToString.should.be.`false`
+				JSONSerializer(convertsInvalidValuesToString = false).convertsInvalidValuesToString.should.be.`false`
+				JSONSerializer(convertsInvalidKeysToString = true).convertsInvalidKeysToString.should.be.`true`
+				JSONSerializer(convertsInvalidValuesToString = true).convertsInvalidValuesToString.should.be.`true`
+			}
+
 			it("non-finite float") {
-				serializeIncludingInvalidValues(Float.NEGATIVE_INFINITY).should.equal("\"-Infinity\"")
-				serializeIncludingInvalidValues(Float.POSITIVE_INFINITY).should.equal("\"Infinity\"")
-				serializeIncludingInvalidValues(Float.NaN).should.equal("\"NaN\"")
+				subject.serialize(Float.NEGATIVE_INFINITY).should.equal("\"-Infinity\"")
+				subject.serialize(Float.POSITIVE_INFINITY).should.equal("\"Infinity\"")
+				subject.serialize(Float.NaN).should.equal("\"NaN\"")
 			}
 
 			it("non-finite double") {
-				serializeIncludingInvalidValues(Double.NEGATIVE_INFINITY).should.equal("\"-Infinity\"")
-				serializeIncludingInvalidValues(Double.POSITIVE_INFINITY).should.equal("\"Infinity\"")
-				serializeIncludingInvalidValues(Double.NaN).should.equal("\"NaN\"")
+				subject.serialize(Double.NEGATIVE_INFINITY).should.equal("\"-Infinity\"")
+				subject.serialize(Double.POSITIVE_INFINITY).should.equal("\"Infinity\"")
+				subject.serialize(Double.NaN).should.equal("\"NaN\"")
 			}
 
 			it("non-string map keys") {
-				serializeIncludingInvalidKeys(mapOf(null to null)).should.equal("{\"null\":null}")
-				serializeIncludingInvalidKeys(mapOf(0 to 0)).should.equal("{\"0\":0}")
+				subject.serialize(mapOf(null to null)).should.equal("{\"null\":null}")
+				subject.serialize(mapOf(0 to 0)).should.equal("{\"0\":0}")
 			}
 
 			it("unsupported classes") {
@@ -336,21 +353,8 @@ class JSONSerializerAcceptSpec : Spek({
 					override fun toString() = "object"
 				}
 
-				serializeIncludingInvalidValues(obj).should.equal("\"object\"")
+				subject.serialize(obj).should.equal("\"object\"")
 			}
 		}
 	}
-}) {
-
-	private companion object {
-
-		fun serialize(value: Any?) =
-			JSONSerializer().serialize(value)
-
-		fun serializeIncludingInvalidKeys(value: Any?) =
-			JSONSerializer(convertsInvalidKeysToString = true).serialize(value)
-
-		fun serializeIncludingInvalidValues(value: Any?) =
-			JSONSerializer(convertsInvalidValuesToString = true).serialize(value)
-	}
-}
+})
