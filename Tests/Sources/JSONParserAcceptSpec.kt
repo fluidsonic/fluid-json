@@ -298,4 +298,17 @@ object JSONParserAcceptSpec : SubjectSpek<JSONParser>({
 			subject.parseMap("{\"key\":1}").should.equal(mapOf("key" to 1))
 		}
 	}
+
+
+	// trigger initialization of JSONParser.Characters.* objects to make code coverage happy
+	JSONParser::class.nestedClasses.forEach {
+		it.nestedClasses.forEach {
+			try {
+				it.objectInstance
+			}
+			catch (e: IllegalAccessException) {
+				// ignore
+			}
+		}
+	}
 })
