@@ -6,7 +6,10 @@ import org.apiguardian.api.API
 @API(status = API.Status.EXPERIMENTAL)
 class JSONSerializer(
 	@API(status = API.Status.EXPERIMENTAL)
-	val convertsUnsupportedValuesToString: Boolean = false
+	val convertsInvalidKeysToString: Boolean = false,
+
+	@API(status = API.Status.EXPERIMENTAL)
+	val convertsInvalidValuesToString: Boolean = false
 ) {
 
 	@API(status = API.Status.EXPERIMENTAL)
@@ -35,7 +38,7 @@ class JSONSerializer(
 			is String -> serializeString(value, output = output)
 			is Map<*, *> -> serializeMap(value, output = output)
 			is Iterable<*> -> serializeIterable(value, output = output)
-			else -> serializeUnsupported(value, output = output)
+			else -> serializeInvalid(value, output = output)
 		}
 	}
 
@@ -55,12 +58,9 @@ class JSONSerializer(
 			output.append(value)
 		}
 		else {
-			if (convertsUnsupportedValuesToString) {
-				serializeString(value.toString(), output = output)
-			}
-			else {
-				throwException("value", value)
-			}
+			convertsInvalidValuesToString || throw invalidValue(value)
+
+			serializeString(value.toString(), output = output)
 		}
 	}
 
@@ -70,18 +70,22 @@ class JSONSerializer(
 			output.append(value)
 		}
 		else {
-			if (convertsUnsupportedValuesToString) {
-				serializeString(value.toString(), output = output)
-			}
-			else {
-				throwException("value", value)
-			}
+			convertsInvalidValuesToString || throw invalidValue(value)
+
+			serializeString(value.toString(), output = output)
 		}
 	}
 
 
 	private fun serializeInt(value: Int, output: StringBuilder) {
 		output.append(value)
+	}
+
+
+	private fun serializeInvalid(value: Any, output: StringBuilder) {
+		convertsInvalidValuesToString || throw invalidValue(value)
+
+		serializeString(value.toString(), output = output)
 	}
 
 
@@ -129,11 +133,11 @@ class JSONSerializer(
 	private fun serializeMapEntry(key: Any?, value: Any?, output: StringBuilder) {
 		val name = when (key) {
 			is String -> key
-			else ->
-				if (convertsUnsupportedValuesToString)
-					value.toString()
-				else
-					throwException("name", key)
+			else -> {
+				convertsInvalidKeysToString || throw invalidKey(key)
+
+				value.toString()
+			}
 		}
 
 		JSONPathBuildingException.track(name) {
@@ -154,7 +158,6 @@ class JSONSerializer(
 	}
 
 
-	// TODO this should be tested for all Unicode characters since the JVM uses UTF-16 codepoints
 	private fun serializeString(value: String, output: StringBuilder) {
 		val length = value.length
 
@@ -221,16 +224,6 @@ class JSONSerializer(
 	}
 
 
-	private fun serializeUnsupported(value: Any, output: StringBuilder) {
-		if (convertsUnsupportedValuesToString) {
-			serializeString(value.toString(), output = output)
-		}
-		else {
-			throwException("value", value)
-		}
-	}
-
-
 	private companion object {
 
 		val hexCharacters = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
@@ -243,10 +236,11 @@ class JSONSerializer(
 			}
 
 
-		fun throwException(type: String, value: Any?): Nothing {
-			val exception = JSONPathBuildingException("cannot serialize $type: ${value.debugString}")
-			exception.stackTrace = exception.stackTrace.drop(1).toTypedArray()
-			throw exception
-		}
+		fun invalidKey(value: Any?): Exception =
+			JSONPathBuildingException("cannot serialize key: ${value.debugString}")
+
+
+		fun invalidValue(value: Any?): Exception =
+			JSONPathBuildingException("cannot serialize value: ${value.debugString}")
 	}
 }
