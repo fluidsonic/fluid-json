@@ -5,9 +5,6 @@ import com.github.fluidsonic.fluid.json.JSONParser
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
-import tests.JSONParserRejectSpec.failToParse
-import tests.JSONParserRejectSpec.failToParseList
-import tests.JSONParserRejectSpec.failToParseMap
 
 
 object JSONParserRejectSpec : SubjectSpek<JSONParser>({
@@ -183,30 +180,33 @@ object JSONParserRejectSpec : SubjectSpek<JSONParser>({
 			subject.failToParseMap("[]")
 		}
 	}
-}) {
+})
 
-	private inline fun shouldFailWithJSONException(body: () -> Unit) {
-		try {
-			body()
-			throw AssertionError("should fail with a JSONException")
-		}
-		catch (e: JSONException) {
-			// good
-		}
+
+// TODO move the following methods inside the object above once KT-19796 is fixed
+// https://youtrack.jetbrains.com/issue/KT-19796
+
+private inline fun shouldFailWithJSONException(body: () -> Unit) {
+	try {
+		body()
+		throw AssertionError("should fail with a JSONException")
 	}
-
-
-	private fun JSONParser.failToParse(string: String) {
-		shouldFailWithJSONException { parse(string) }
+	catch (e: JSONException) {
+		// good
 	}
+}
 
 
-	private fun JSONParser.failToParseList(string: String) {
-		shouldFailWithJSONException { parseList(string) }
-	}
+private fun JSONParser.failToParse(string: String) {
+	shouldFailWithJSONException { parse(string) }
+}
 
 
-	private fun JSONParser.failToParseMap(string: String) {
-		shouldFailWithJSONException { parseMap(string) }
-	}
+private fun JSONParser.failToParseList(string: String) {
+	shouldFailWithJSONException { parseList(string) }
+}
+
+
+private fun JSONParser.failToParseMap(string: String) {
+	shouldFailWithJSONException { parseMap(string) }
 }

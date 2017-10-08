@@ -5,7 +5,6 @@ import com.github.fluidsonic.fluid.json.JSONSerializer
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
-import tests.JSONSerializerRejectSpec.failToSerialize
 
 
 object JSONSerializerRejectSpec : SubjectSpek<JSONSerializer>({
@@ -36,15 +35,18 @@ object JSONSerializerRejectSpec : SubjectSpek<JSONSerializer>({
 			subject.failToSerialize(object {})
 		}
 	}
-}) {
+})
 
-	private fun JSONSerializer.failToSerialize(value: Any?) {
-		try {
-			serialize(value)
-			throw AssertionError("should fail with a JSONException")
-		}
-		catch (e: JSONException) {
-			// good
-		}
+
+// TODO move the following method inside the object above once KT-19796 is fixed
+// https://youtrack.jetbrains.com/issue/KT-19796
+
+private fun JSONSerializer.failToSerialize(value: Any?) {
+	try {
+		serialize(value)
+		throw AssertionError("should fail with a JSONException")
+	}
+	catch (e: JSONException) {
+		// good
 	}
 }
