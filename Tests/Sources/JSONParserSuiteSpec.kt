@@ -8,7 +8,7 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.File
 
 
-object JSONParserSuiteSpec : Spek({
+internal object JSONParserSuiteSpec : Spek({
 
 	describe("JSONParser conforms to") {
 

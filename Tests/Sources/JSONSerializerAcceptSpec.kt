@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
 
 
-object JSONSerializerAcceptSpec : SubjectSpek<JSONSerializer>({
+internal object JSONSerializerAcceptSpec : SubjectSpek<JSONSerializer>({
 
 	subject { JSONSerializer() }
 

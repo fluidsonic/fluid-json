@@ -7,7 +7,7 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
 
 
-object JSONParserAcceptSpec : SubjectSpek<JSONParser>({
+internal object JSONParserAcceptSpec : SubjectSpek<JSONParser>({
 
 	subject { JSONParser() }
 
