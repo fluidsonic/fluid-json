@@ -1,4 +1,10 @@
+import com.jfrog.bintray.gradle.BintrayExtension
 import org.gradle.api.internal.HasConvention
+import org.gradle.api.plugins.ExtensionAware
+import org.gradle.api.tasks.JavaExec
+import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.junit.platform.gradle.plugin.EnginesExtension
@@ -13,6 +19,8 @@ plugins {
 	kotlin("jvm", "1.1.51")
 	jacoco
 	`java-library`
+	`maven-publish`
+	id("com.jfrog.bintray") version "1.7.3"
 	id("com.github.ben-manes.versions") version "0.15.0"
 	id("org.junit.platform.gradle.plugin") version "1.0.1"
 }
@@ -115,3 +123,48 @@ fun FiltersExtension.engines(setup: EnginesExtension.() -> Unit) {
 }
 
 val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin<KotlinSourceSet>().kotlin
+
+
+// publishing
+
+val sourcesJar = task<Jar>("sourcesJars") {
+	dependsOn += "classes"
+	classifier = "sources"
+
+	from(java.sourceSets.getByName("main").allSource)
+}
+
+configure<BintrayExtension> {
+	user = findProperty("bintrayUser") as String?
+	key = findProperty("bintrayApiKey") as String?
+
+	setPublications("default")
+
+	pkg.apply {
+		repo = "maven"
+		name = "fluid-json"
+		publicDownloadNumbers = false
+		publish = true
+		vcsUrl = "https://github.com/fluidsonic/fluid-json.git"
+		websiteUrl = "https://github.com/fluidsonic/fluid-json"
+
+		setLicenses("MIT")
+
+		version.apply {
+			name = project.version as String?
+			vcsTag = project.version as String?
+		}
+	}
+}
+
+configure<PublishingExtension> {
+	publications {
+		create<MavenPublication>("default") {
+			artifactId = "fluid-json"
+
+			from(components.getByName("java"))
+
+			artifact(sourcesJar)
+		}
+	}
+}

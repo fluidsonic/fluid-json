@@ -7,11 +7,12 @@ import org.apiguardian.api.API
 internal enum class JSONToken {
 
 	booleanValue,
-	arrayEnd,
-	arrayStart,
+	listEnd,
+	listStart,
 	nullValue,
+	mapEnd,
+	mapKey,
+	mapStart,
 	numberValue,
-	objectEnd,
-	objectStart,
 	stringValue
 }

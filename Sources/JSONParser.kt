@@ -326,7 +326,7 @@ class JSONParser {
 
 					0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
 					0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F ->
-						throw JSONPathBuildingException("unescaped control character in string", index = inputIndex - 1)
+						throw JSONPathBuildingException("unescaped control character in string", characterIndex = inputIndex - 1)
 				}
 
 				inputCharacter = consumeCharacter()
@@ -372,17 +372,17 @@ class JSONParser {
 								val sequenceStartIndex = index + 1
 								val sequenceEndIndex = sequenceStartIndex + 4
 								if (sequenceEndIndex > endIndex) {
-									throw JSONPathBuildingException("unexpected end of Unicode escape sequence", index = sequenceStartIndex)
+									throw JSONPathBuildingException("unexpected end of Unicode escape sequence", characterIndex = sequenceStartIndex)
 								}
 
 								val sequence = inputString.substring(sequenceStartIndex, sequenceEndIndex)
 								character = sequence.toIntOrNull(16)?.toChar()
-									?: throw JSONPathBuildingException("invalid unicode escape sequence '$sequence'", index = sequenceStartIndex)
+									?: throw JSONPathBuildingException("invalid unicode escape sequence '$sequence'", characterIndex = sequenceStartIndex)
 
 								builder.append(character)
 								index += 4
 							}
-							else -> throw JSONPathBuildingException("unknown escape sequence character '$character'", index = index)
+							else -> throw JSONPathBuildingException("unknown escape sequence character '$character'", characterIndex = index)
 						}
 					}
 					else -> builder.append(character)
@@ -465,7 +465,7 @@ class JSONParser {
 			consumeWhitespaces()
 
 			if (inputIndex < inputLength) {
-				throw JSONPathBuildingException("unexpected extra data", index = inputIndex)
+				throw JSONPathBuildingException("unexpected extra data", characterIndex = inputIndex)
 			}
 
 			return root
@@ -489,7 +489,7 @@ class JSONParser {
 		private companion object {
 
 			fun unexpectedCharacter(character: Int, accepted: String, index: Int): Exception =
-				JSONPathBuildingException("unexpected ${Character.toString(character)}, expected $accepted", index = index)
+				JSONPathBuildingException("unexpected ${Character.toString(character)}, expected $accepted", characterIndex = index)
 		}
 	}
 }
