@@ -2,7 +2,8 @@ package tests
 
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONReader
-import com.github.fluidsonic.fluid.json.JSONStreamReader
+import com.github.fluidsonic.fluid.json.TextInput
+import com.github.fluidsonic.fluid.json.TextInputReader
 import com.github.fluidsonic.fluid.json.readList
 import com.github.fluidsonic.fluid.json.readListByElement
 import com.github.fluidsonic.fluid.json.readListOrNull
@@ -15,11 +16,11 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.StringReader
 
 
-internal object JSONStreamReaderRejectSpec : Spek({
+internal object TextInputReaderRejectSpec : Spek({
 
-	describe("JSONStreamReader fails") {
+	describe("TextInputReader fails in") {
 
-		it("in .nextToken") {
+		it(".nextToken") {
 			readerShouldFail("a") { nextToken }
 			readerShouldFail("N") { nextToken }
 			readerShouldFail("F") { nextToken }
@@ -38,7 +39,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null,null") { skipValue(); nextToken }
 		}
 
-		it("in readBoolean()") {
+		it("readBoolean()") {
 			readerShouldFail("") { readBoolean() }
 			readerShouldFail("f") { readBoolean() }
 			readerShouldFail("t") { readBoolean() }
@@ -55,7 +56,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readBoolean() }
 		}
 
-		it("in readBooleanOrNull()") {
+		it("readBooleanOrNull()") {
 			readerShouldFail("") { readBooleanOrNull() }
 			readerShouldFail("f") { readBooleanOrNull() }
 			readerShouldFail("t") { readBooleanOrNull() }
@@ -71,7 +72,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("{}") { readBooleanOrNull() }
 		}
 
-		it("in readDouble()") {
+		it("readDouble()") {
 			readerShouldFail("") { readDouble() }
 			readerShouldFail("0b0") { readDouble() }
 			readerShouldFail("0o0") { readDouble() }
@@ -98,7 +99,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readDouble() }
 		}
 
-		it("in readDoubleOrNull()") {
+		it("readDoubleOrNull()") {
 			readerShouldFail("") { readDoubleOrNull() }
 			readerShouldFail("0b0") { readDoubleOrNull() }
 			readerShouldFail("0o0") { readDoubleOrNull() }
@@ -124,7 +125,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("1e-e") { readDoubleOrNull() }
 		}
 
-		it("in readFloat()") {
+		it("readFloat()") {
 			readerShouldFail("") { readFloat() }
 			readerShouldFail("0b0") { readFloat() }
 			readerShouldFail("0o0") { readFloat() }
@@ -151,7 +152,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readFloat() }
 		}
 
-		it("in readFloatOrNull()") {
+		it("readFloatOrNull()") {
 			readerShouldFail("") { readFloatOrNull() }
 			readerShouldFail("0b0") { readFloatOrNull() }
 			readerShouldFail("0o0") { readFloatOrNull() }
@@ -177,7 +178,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("1e-e") { readFloatOrNull() }
 		}
 
-		it("in readInt()") {
+		it("readInt()") {
 			readerShouldFail("") { readInt() }
 			readerShouldFail("0b0") { readInt() }
 			readerShouldFail("0o0") { readInt() }
@@ -204,7 +205,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readInt() }
 		}
 
-		it("in readIntOrNull()") {
+		it("readIntOrNull()") {
 			readerShouldFail("") { readIntOrNull() }
 			readerShouldFail("0b0") { readIntOrNull() }
 			readerShouldFail("0o0") { readIntOrNull() }
@@ -230,7 +231,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("1e-e") { readIntOrNull() }
 		}
 
-		it("in readList()") {
+		it("readList()") {
 			readerShouldFail("") { readList() }
 			readerShouldFail("[") { readList() }
 			readerShouldFail("[1") { readList() }
@@ -242,7 +243,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readList() }
 		}
 
-		it("in readList() inline") {
+		it("readList() inline") {
 			readerShouldFail("") { readList {} }
 			readerShouldFail("[") { readList {} }
 			readerShouldFail("[1") { readList {} }
@@ -254,7 +255,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readList {} }
 		}
 
-		it("in readListByElement()") {
+		it("readListByElement()") {
 			readerShouldFail("") { readListByElement { skipValue() } }
 			readerShouldFail("[") { readListByElement { skipValue() } }
 			readerShouldFail("[1") { readListByElement { skipValue() } }
@@ -266,7 +267,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readListByElement { skipValue() } }
 		}
 
-		it("in readListEnd()") {
+		it("readListEnd()") {
 			readerShouldFail("") { readListEnd() }
 			readerShouldFail("{") { readListEnd() }
 			readerShouldFail("[") { readListEnd() }
@@ -276,7 +277,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readListEnd() }
 		}
 
-		it("in readListOrNull()") {
+		it("readListOrNull()") {
 			readerShouldFail("") { readListOrNull() }
 			readerShouldFail("[") { readListOrNull() }
 			readerShouldFail("[1") { readListOrNull() }
@@ -287,7 +288,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("[[1]") { readListOrNull() }
 		}
 
-		it("in readListOrNull() inline") {
+		it("readListOrNull() inline") {
 			readerShouldFail("") { readListOrNull {} }
 			readerShouldFail("[") { readListOrNull {} }
 			readerShouldFail("[1") { readListOrNull {} }
@@ -298,14 +299,14 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("[[1]") { readListOrNull {} }
 		}
 
-		it("in readListStart()") {
+		it("readListStart()") {
 			readerShouldFail("") { readListStart() }
 			readerShouldFail("{") { readListStart() }
 			readerShouldFail("]") { readListStart() }
 			readerShouldFail("null") { readListStart() }
 		}
 
-		it("in readLong()") {
+		it("readLong()") {
 			readerShouldFail("") { readLong() }
 			readerShouldFail("0b0") { readLong() }
 			readerShouldFail("0o0") { readLong() }
@@ -332,7 +333,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readLong() }
 		}
 
-		it("in readLongOrNull()") {
+		it("readLongOrNull()") {
 			readerShouldFail("") { readLongOrNull() }
 			readerShouldFail("0b0") { readLongOrNull() }
 			readerShouldFail("0o0") { readLongOrNull() }
@@ -358,7 +359,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("1e-e") { readLongOrNull() }
 		}
 
-		it("in readMap()") {
+		it("readMap()") {
 			readerShouldFail("") { readMap() }
 			readerShouldFail("{") { readMap() }
 			readerShouldFail("{\"") { readMap() }
@@ -378,7 +379,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readMap() }
 		}
 
-		it("in readMap() inline") {
+		it("readMap() inline") {
 			readerShouldFail("") { readMap {} }
 			readerShouldFail("{") { readMap {} }
 			readerShouldFail("{\"") { readMap {} }
@@ -398,7 +399,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readMap {} }
 		}
 
-		it("in readMapByEntry()") {
+		it("readMapByEntry()") {
 			readerShouldFail("") { readMapByEntry { skipValue() } }
 			readerShouldFail("{") { readMapByEntry { skipValue() } }
 			readerShouldFail("{\"") { readMapByEntry { skipValue() } }
@@ -418,7 +419,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readMapByEntry { skipValue() } }
 		}
 
-		it("in readMapEnd()") {
+		it("readMapEnd()") {
 			readerShouldFail("") { readMapEnd() }
 			readerShouldFail("[") { readMapEnd() }
 			readerShouldFail("{") { readMapEnd() }
@@ -428,7 +429,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readMapEnd() }
 		}
 
-		it("in readMapKey()") {
+		it("readMapKey()") {
 			readerShouldFail("") { readMapKey() }
 			readerShouldFail("\"test") { readMapKey() }
 			readerShouldFail("\"\\a\"") { readMapKey() }
@@ -443,7 +444,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readMapKey() }
 		}
 
-		it("in readMapOrNull()") {
+		it("readMapOrNull()") {
 			readerShouldFail("") { readMapOrNull() }
 			readerShouldFail("{") { readMapOrNull() }
 			readerShouldFail("{\"") { readMapOrNull() }
@@ -462,7 +463,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("{\"key0\":0,,\"key1\":1}") { readMapOrNull() }
 		}
 
-		it("in readMapOrNull() inline") {
+		it("readMapOrNull() inline") {
 			readerShouldFail("") { readMapOrNull {} }
 			readerShouldFail("{") { readMapOrNull {} }
 			readerShouldFail("{\"") { readMapOrNull {} }
@@ -481,14 +482,14 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("{\"key0\":0,,\"key1\":1}") { readMapOrNull {} }
 		}
 
-		it("in readMapStart()") {
+		it("readMapStart()") {
 			readerShouldFail("") { readMapStart() }
 			readerShouldFail("[") { readMapStart() }
 			readerShouldFail("}") { readMapStart() }
 			readerShouldFail("null") { readMapStart() }
 		}
 
-		it("in readString()") {
+		it("readString()") {
 			readerShouldFail("") { readString() }
 			readerShouldFail("\"test") { readString() }
 			readerShouldFail("\"\\a\"") { readString() }
@@ -511,7 +512,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 				.forEach { readerShouldFail("\"$it\"") { readString() } }
 		}
 
-		it("in readStringOrNull()") {
+		it("readStringOrNull()") {
 			readerShouldFail("") { readStringOrNull() }
 			readerShouldFail("\"test") { readStringOrNull() }
 			readerShouldFail("\"\\a\"") { readStringOrNull() }
@@ -533,7 +534,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 				.forEach { readerShouldFail("\"$it\"") { readStringOrNull() } }
 		}
 
-		it("in readNull()") {
+		it("readNull()") {
 			readerShouldFail("") { readNull() }
 			readerShouldFail("true") { readNull() }
 			readerShouldFail("false") { readNull() }
@@ -543,7 +544,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("{}") { readNull() }
 		}
 
-		it("in readNumber()") {
+		it("readNumber()") {
 			readerShouldFail("") { readNumber() }
 			readerShouldFail("0b0") { readNumber() }
 			readerShouldFail("0o0") { readNumber() }
@@ -570,7 +571,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("null") { readNumber() }
 		}
 
-		it("in readNumberOrNull()") {
+		it("readNumberOrNull()") {
 			readerShouldFail("") { readNumberOrNull() }
 			readerShouldFail("0b0") { readNumberOrNull() }
 			readerShouldFail("0o0") { readNumberOrNull() }
@@ -596,7 +597,7 @@ internal object JSONStreamReaderRejectSpec : Spek({
 			readerShouldFail("1e-e") { readNumberOrNull() }
 		}
 
-		it("in skipValue()") {
+		it("skipValue()") {
 			readerShouldFail("") { skipValue() }
 			readerShouldFail("[") { skipValue() }
 			readerShouldFail("]") { skipValue() }
@@ -609,9 +610,9 @@ internal object JSONStreamReaderRejectSpec : Spek({
 // TODO move the following methods inside the object above once KT-19796 is fixed
 // https://youtrack.jetbrains.com/issue/KT-19796
 
-private fun readerShouldFail(string: String, body: JSONReader.() -> Unit) {
+private inline fun readerShouldFail(string: String, body: JSONReader.() -> Unit) {
 	try {
-		JSONStreamReader(StringReader(string)).body()
+		TextInputReader(TextInput(StringReader(string))).body()
 		throw AssertionError("should fail with a JSONException")
 	}
 	catch (e: JSONException) {

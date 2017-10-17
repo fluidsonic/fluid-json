@@ -1,8 +1,9 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.JSONReader
-import com.github.fluidsonic.fluid.json.JSONStreamReader
 import com.github.fluidsonic.fluid.json.JSONToken
+import com.github.fluidsonic.fluid.json.TextInput
+import com.github.fluidsonic.fluid.json.TextInputReader
 import com.github.fluidsonic.fluid.json.readList
 import com.github.fluidsonic.fluid.json.readListByElement
 import com.github.fluidsonic.fluid.json.readListOrNull
@@ -17,9 +18,9 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.StringReader
 
 
-internal object JSONStreamReaderAcceptSpec : Spek({
+internal object TextInputReaderAcceptSpec : Spek({
 
-	describe("JSONStreamReader") {
+	describe("TextInputReader succeeds for") {
 
 		describe(".nextToken") {
 
@@ -733,6 +734,7 @@ internal object JSONStreamReaderAcceptSpec : Spek({
 
 		it("readString()") {
 			reader("\"\"").readString().should.equal("")
+			reader("\"\\u0022\"").readString().should.equal("\"")
 			reader("\"simple\"").readString().should.equal("simple")
 			reader("\" a bit longer \"").readString().should.equal(" a bit longer ")
 			reader("\"a dog: 🐶\"").readString().should.equal("a dog: 🐶")
@@ -743,6 +745,7 @@ internal object JSONStreamReaderAcceptSpec : Spek({
 
 		it("readStringOrNull()") {
 			reader("\"\"").readStringOrNull().should.equal("")
+			reader("\"\\u0022\"").readStringOrNull().should.equal("\"")
 			reader("\"simple\"").readStringOrNull().should.equal("simple")
 			reader("\" a bit longer \"").readStringOrNull().should.equal(" a bit longer ")
 			reader("\"a dog: 🐶\"").readStringOrNull().should.equal("a dog: 🐶")
@@ -796,4 +799,4 @@ internal object JSONStreamReaderAcceptSpec : Spek({
 // https://youtrack.jetbrains.com/issue/KT-19796
 
 private fun reader(string: String): JSONReader =
-	JSONStreamReader(StringReader(string))
+	TextInputReader(TextInput(StringReader(string)))

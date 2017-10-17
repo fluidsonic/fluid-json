@@ -4,14 +4,14 @@ import java.io.Reader
 import java.util.Arrays
 
 
-internal class TextInput(private val reader: Reader) {
+internal class TextInput(private val source: Reader) {
 
 	private var buffer = CharArray(2 * windowSize)
 	private var bufferFill = 0
 	private var bufferIndex = 0
 	private var bufferLockCount = 0
 	private var clearedBufferFill = 0
-	private var readerIsComplete = false
+	private var sourceIsAtEnd = false
 
 
 	val index
@@ -104,7 +104,7 @@ internal class TextInput(private val reader: Reader) {
 			return preloadCount
 		}
 
-		if (readerIsComplete) {
+		if (sourceIsAtEnd) {
 			return 0
 		}
 
@@ -141,11 +141,11 @@ internal class TextInput(private val reader: Reader) {
 			}
 		}
 
-		val preloadedCount = reader.read(buffer, bufferFill, windowSize)
+		val preloadedCount = source.read(buffer, bufferFill, windowSize)
 		if (preloadedCount <= 0) {
 			check(preloadedCount != 0) { "Reader.read(…) must not return 0." }
 
-			readerIsComplete = true
+			sourceIsAtEnd = true
 			return 0
 		}
 

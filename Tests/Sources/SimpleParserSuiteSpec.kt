@@ -1,16 +1,17 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONParser
+import com.github.fluidsonic.fluid.json.SimpleParser
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.File
+import java.io.FileReader
 
 
-internal object JSONParserSuiteSpec : Spek({
+internal object SimpleParserSuiteSpec : Spek({
 
-	describe("JSONParser conforms to") {
+	describe("SimpleParser conforms to") {
 
 		it("JSON Parsing Test Suite (https://github.com/nst/JSONTestSuite)") {
 
@@ -27,17 +28,8 @@ internal object JSONParserSuiteSpec : Spek({
 
 					print("Testing ${file.name}")
 
-					when (file.name) {
-						"n_structure_100000_opening_arrays.json",
-						"n_structure_open_array_object.json" -> {
-							// this is a recursive parser by design
-							println(" - SKIPPED")
-							return@forEach
-						}
-					}
-
 					val result = try {
-						JSONParser().parse(file.readText())
+						SimpleParser.parse(FileReader(file))
 					}
 					catch (e: JSONException) {
 						e

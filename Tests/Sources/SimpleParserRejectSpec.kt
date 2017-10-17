@@ -2,17 +2,18 @@ package tests
 
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONParser
+import com.github.fluidsonic.fluid.json.SimpleParser
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
 
 
-internal object JSONParserRejectSpec : SubjectSpek<JSONParser>({
+internal object SimpleParserRejectSpec : SubjectSpek<JSONParser>({
 
-	subject { JSONParser() }
+	subject { SimpleParser }
 
 
-	describe("JSONParser rejects") {
+	describe("SimpleParser rejects") {
 
 		it("unknown constants") {
 			subject.failToParse("void")

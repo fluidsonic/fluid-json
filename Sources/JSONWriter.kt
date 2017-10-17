@@ -25,6 +25,10 @@ internal interface JSONWriter {
 	fun writeNull()
 	fun writeString(value: String)
 	fun writeStringOrNull(value: String?)
+
+	fun writeKey(value: String) {
+		writeString(value)
+	}
 }
 
 
@@ -100,6 +104,7 @@ internal fun JSONWriter.writeEntry(name: String, int: Int?, skipIfNull: Boolean 
 }
 
 
+// FIXME map entry?
 @API(status = API.Status.EXPERIMENTAL)
 internal fun JSONWriter.writeEntry(name: String, long: Long) {
 	writeString(name)
@@ -140,6 +145,14 @@ internal fun JSONWriter.writeEntry(name: String, string: String?, skipIfNull: Bo
 internal fun JSONWriter.writeNullEntry(name: String) {
 	writeString(name)
 	writeNull()
+}
+
+
+@API(status = API.Status.EXPERIMENTAL)
+internal inline fun <Writer : JSONWriter> Writer.writeList(write: Writer.() -> Unit) {
+	writeListStart()
+	write()
+	writeListEnd()
 }
 
 

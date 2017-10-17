@@ -1,16 +1,10 @@
 package com.github.fluidsonic.fluid.json
 
-import org.apiguardian.api.API
-import java.io.Reader
 
-
-// FIXME rename
 // FIXME max nesting, max string length, max number length
-@API(status = API.Status.EXPERIMENTAL)
-internal class JSONStreamReader(reader: Reader) : JSONReader {
+internal class TextInputReader(private val input: TextInput) : JSONReader {
 
 	private val buffer = StringBuilder()
-	private val input = TextInput(reader = reader)
 	private var peekedToken: JSONToken? = null
 	private var peekedTokenIndex = -1
 	private var state = State.initial
@@ -554,12 +548,12 @@ internal class JSONStreamReader(reader: Reader) : JSONReader {
 							val digit3 = input.readCharacter(required = Character::isHexDigit) { "0-9, a-f or A-F" }
 							val digit4 = input.readCharacter(required = Character::isHexDigit) { "0-9, a-f or A-F" }
 
-							character = (Character.parseHexDigit(digit1) shl 12) or
+							val decodedCharacter = (Character.parseHexDigit(digit1) shl 12) or
 								(Character.parseHexDigit(digit2) shl 8) or
 								(Character.parseHexDigit(digit3) shl 4) or
 								Character.parseHexDigit(digit4)
 
-							buffer.append(character.toChar())
+							buffer.append(decodedCharacter.toChar())
 						}
 						else -> throw unexpectedCharacter(character, "an escape sequence starting with '\\', '/', '\"', 'b', 'f', 'n', 'r', 't' or 'u'")
 					}
