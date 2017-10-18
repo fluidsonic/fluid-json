@@ -2,7 +2,7 @@ package com.github.fluidsonic.fluid.json
 
 
 // FIXME max nesting, max string length, max number length
-internal class TextInputReader(private val input: TextInput) : JSONReader {
+internal class TextInputReader(private val source: TextInput) : JSONReader {
 
 	private val buffer = StringBuilder()
 	private var peekedToken: JSONToken? = null
@@ -11,13 +11,13 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 	private val stateStack = mutableListOf<State>()
 
 
-	private fun expectEndOfValue() {
-		val nextCharacter = input.peekCharacter()
+	private fun finishValue() {
+		val nextCharacter = source.peekCharacter()
 		if (!Character.isValueBoundary(nextCharacter)) {
 			throw unexpectedCharacter(
 				nextCharacter,
 				expected = "end of value",
-				characterIndex = input.index
+				characterIndex = source.index
 			)
 		}
 	}
@@ -31,14 +31,14 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 
 			val peekedToken = peekToken()
 			this.peekedToken = peekedToken
-			this.peekedTokenIndex = input.index
+			this.peekedTokenIndex = source.index
 
 			return peekedToken
 		}
 
 
 	private fun peekToken(): JSONToken? {
-		val input = input
+		val input = source
 
 		while (true) {
 			input.skipWhitespaceCharacters()
@@ -150,7 +150,7 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 
 
 	private fun peekValueToken(expected: String): JSONToken? {
-		val character = input.peekCharacter()
+		val character = source.peekCharacter()
 		return when (character) {
 			Character.Symbol.quotationMark ->
 				JSONToken.stringValue
@@ -197,13 +197,13 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 	override fun readBoolean(): Boolean {
 		readToken(JSONToken.booleanValue)
 
-		val input = input
+		val input = source
 		if (input.peekCharacter() == Character.Letter.t) {
 			input.readCharacter(Character.Letter.t)
 			input.readCharacter(Character.Letter.r)
 			input.readCharacter(Character.Letter.u)
 			input.readCharacter(Character.Letter.e)
-			expectEndOfValue()
+			finishValue()
 
 			return true
 		}
@@ -213,7 +213,7 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 			input.readCharacter(Character.Letter.l)
 			input.readCharacter(Character.Letter.s)
 			input.readCharacter(Character.Letter.e)
-			expectEndOfValue()
+			finishValue()
 
 			return false
 		}
@@ -237,14 +237,14 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 	override fun readListEnd() {
 		readToken(JSONToken.listEnd)
 
-		input.readCharacter(Character.Symbol.rightSquareBracket)
+		source.readCharacter(Character.Symbol.rightSquareBracket)
 	}
 
 
 	override fun readListStart() {
 		readToken(JSONToken.listStart)
 
-		input.readCharacter(Character.Symbol.leftSquareBracket)
+		source.readCharacter(Character.Symbol.leftSquareBracket)
 	}
 
 
@@ -254,7 +254,7 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 		val isNegative: Boolean
 		val negativeLimit: Long
 
-		val input = input
+		val input = source
 		var character = input.readCharacter()
 		if (character == Character.Symbol.hyphenMinus) {
 			isNegative = true
@@ -371,34 +371,35 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 		}
 
 		input.seekBackOneCharacter()
-		expectEndOfValue()
+		finishValue()
 
 		return value
 	}
 
+
 	override fun readMapEnd() {
 		readToken(JSONToken.mapEnd)
 
-		input.readCharacter(Character.Symbol.rightCurlyBracket)
+		source.readCharacter(Character.Symbol.rightCurlyBracket)
 	}
 
 
 	override fun readMapStart() {
 		readToken(JSONToken.mapStart)
 
-		input.readCharacter(Character.Symbol.leftCurlyBracket)
+		source.readCharacter(Character.Symbol.leftCurlyBracket)
 	}
 
 
 	override fun readNull(): Nothing? {
 		readToken(JSONToken.nullValue)
 
-		val input = input
+		val input = source
 		input.readCharacter(Character.Letter.n)
 		input.readCharacter(Character.Letter.u)
 		input.readCharacter(Character.Letter.l)
 		input.readCharacter(Character.Letter.l)
-		expectEndOfValue()
+		finishValue()
 
 		return null
 	}
@@ -426,7 +427,7 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 		buffer.setLength(0)
 
 		var shouldParseAsFloatingPoint = false
-		val input = input
+		val input = source
 		var character = input.readCharacter()
 
 		// consume optional minus sign
@@ -507,7 +508,7 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 		}
 
 		input.seekBackOneCharacter()
-		expectEndOfValue()
+		finishValue()
 
 		return shouldParseAsFloatingPoint
 	}
@@ -519,7 +520,7 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 		val buffer = buffer
 		buffer.setLength(0)
 
-		val input = input
+		val input = source
 		input.readCharacter(Character.Symbol.quotationMark)
 
 		do {
@@ -619,7 +620,7 @@ internal class TextInputReader(private val input: TextInput) : JSONReader {
 	}
 
 
-	private fun unexpectedCharacter(character: Int, expected: String, characterIndex: Int = input.index) =
+	private fun unexpectedCharacter(character: Int, expected: String, characterIndex: Int = source.index) =
 		JSONException.unexpectedCharacter(character, expected = expected, characterIndex = characterIndex)
 
 

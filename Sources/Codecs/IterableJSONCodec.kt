@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 internal class IterableJSONCodec : JSONCodec<Iterable<*>, JSONCoderContext> {
 
-	override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Iterable<*> =
+	override fun decode(decoder: JSONDecoder<JSONCoderContext>): Iterable<*> =
 		arrayListOf<Any?>().also { list ->
 			decoder.readListByElement { list += readValue() }
 		}
@@ -16,4 +16,7 @@ internal class IterableJSONCodec : JSONCodec<Iterable<*>, JSONCoderContext> {
 			}
 		}
 	}
+
+
+	override val valueClass = Iterable::class.java
 }

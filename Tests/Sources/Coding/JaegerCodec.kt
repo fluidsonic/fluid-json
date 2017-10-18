@@ -4,18 +4,23 @@ import com.github.fluidsonic.fluid.json.JSONCodec
 import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
+import com.github.fluidsonic.fluid.json.readDecodable
 import com.github.fluidsonic.fluid.json.readMapByEntry
-import com.github.fluidsonic.fluid.json.writeEntry
 import com.github.fluidsonic.fluid.json.writeMap
+import com.github.fluidsonic.fluid.json.writeMapEntry
 import tests.Jaeger.Status
 import java.time.LocalDate
 
 
 internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 
+	override val codecs = listOf(this, StatusCodec)
+	override val valueClass = Jaeger::class.java
+
+
 	override fun decode(decoder: JSONDecoder<out TestCoderContext>): Jaeger {
 		var height: Double? = null
-		var lauchDate: LocalDate? = null
+		var launchDate: LocalDate? = null
 		var mark: Int? = null
 		var name: String? = null
 		var origin: String? = null
@@ -25,7 +30,7 @@ internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 		decoder.readMapByEntry { key ->
 			when (key) {
 				Keys.height -> height = readDouble()
-				Keys.lauchDate -> lauchDate = readDecodable()
+				Keys.launchDate -> launchDate = readDecodable()
 				Keys.mark -> mark = readInt()
 				Keys.name -> name = readString()
 				Keys.origin -> origin = readString()
@@ -37,7 +42,7 @@ internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 
 		return Jaeger(
 			height = height ?: throw JSONException("height missing"),
-			lauchDate = lauchDate ?: throw JSONException("lauchDate missing"),
+			launchDate = launchDate ?: throw JSONException("launchDate missing"),
 			mark = mark ?: throw JSONException("mark missing"),
 			name = name ?: throw JSONException("name missing"),
 			origin = origin ?: throw JSONException("origin missing"),
@@ -49,13 +54,13 @@ internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 
 	override fun encode(value: Jaeger, encoder: JSONEncoder<out TestCoderContext>) {
 		encoder.writeMap {
-			writeEntry(Keys.height, double = value.height)
-			writeEntry(Keys.lauchDate, encodable = value.lauchDate)
-			writeEntry(Keys.mark, int = value.mark)
-			writeEntry(Keys.name, string = value.name)
-			writeEntry(Keys.origin, string = value.origin)
-			writeEntry(Keys.status, encodable = value.status)
-			writeEntry(Keys.weight, double = value.weight)
+			writeMapEntry(Keys.height, double = value.height)
+			writeMapEntry(Keys.launchDate, encodable = value.launchDate)
+			writeMapEntry(Keys.mark, int = value.mark)
+			writeMapEntry(Keys.name, string = value.name)
+			writeMapEntry(Keys.origin, string = value.origin)
+			writeMapEntry(Keys.status, encodable = value.status)
+			writeMapEntry(Keys.weight, double = value.weight)
 		}
 	}
 
@@ -63,7 +68,7 @@ internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 	private object Keys {
 
 		const val height = "height"
-		const val lauchDate = "lauchDate"
+		const val launchDate = "launchDate"
 		const val mark = "mark"
 		const val name = "name"
 		const val origin = "origin"
@@ -88,5 +93,8 @@ internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 				Status.destroyed -> "destroyed"
 			})
 		}
+
+
+		override val valueClass = Status::class.java
 	}
 }

@@ -1,10 +1,19 @@
 package com.github.fluidsonic.fluid.json
 
-import org.apiguardian.api.API
+
+internal interface JSONDecoderCodec<out Value : Any, in Context : JSONCoderContext>
+	: JSONCodecProvider<Context> {
+
+	fun decode(decoder: JSONDecoder<Context>): Value
 
 
-@API(status = API.Status.EXPERIMENTAL)
-internal interface JSONDecoderCodec<out Value : Any, in Context : JSONCoderContext> {
+	override val decoderCodecs: List<JSONDecoderCodec<*, Context>>
+		get() = listOf(this)
 
-	fun decode(decoder: JSONDecoder<out Context>): Value
+
+	override val encoderCodecs: List<JSONEncoderCodec<*, Context>>
+		get() = emptyList()
+
+
+	val valueClass: Class<out Value>
 }

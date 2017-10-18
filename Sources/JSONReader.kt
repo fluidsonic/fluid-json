@@ -3,10 +3,11 @@ package com.github.fluidsonic.fluid.json
 import org.apiguardian.api.API
 
 
-@API(status = API.Status.EXPERIMENTAL)
+// FIXME closable?
 internal interface JSONReader {
 
 	val nextToken: JSONToken?
+	// FIXME allow peek whether next number is int/long/floating-point?
 
 	fun readBoolean(): Boolean
 	fun readDouble(): Double
@@ -19,17 +20,37 @@ internal interface JSONReader {
 	fun readNumber(): Number
 	fun readString(): String
 
+
+	// FIXME move these to extension
 	fun readBooleanOrNull() =
 		if (nextToken != JSONToken.nullValue) readBoolean() else readNull()
+
+
+	fun readByte(): Byte {
+		val value = readLong()
+		return when {
+			value >= Byte.MAX_VALUE -> Byte.MAX_VALUE
+			value <= Byte.MIN_VALUE -> Byte.MIN_VALUE
+			else -> value.toByte()
+		}
+	}
+
+
+	fun readByteOrNull() =
+		if (nextToken != JSONToken.nullValue) readByte() else readNull()
+
 
 	fun readDoubleOrNull() =
 		if (nextToken != JSONToken.nullValue) readDouble() else readNull()
 
+
 	fun readFloat() =
 		readDouble().toFloat()
 
+
 	fun readFloatOrNull() =
 		if (nextToken != JSONToken.nullValue) readFloat() else readNull()
+
 
 	fun readInt(): Int {
 		val value = readLong()
@@ -40,8 +61,10 @@ internal interface JSONReader {
 		}
 	}
 
+
 	fun readIntOrNull() =
 		if (nextToken != JSONToken.nullValue) readInt() else readNull()
+
 
 	fun readList(): List<Any?> {
 		val list = mutableListOf<Any?>()
@@ -49,11 +72,14 @@ internal interface JSONReader {
 		return list
 	}
 
+
 	fun readListOrNull() =
 		if (nextToken != JSONToken.nullValue) readList() else readNull()
 
+
 	fun readLongOrNull() =
 		if (nextToken != JSONToken.nullValue) readLong() else readNull()
+
 
 	fun readMap(): Map<String, Any?> {
 		val map = mutableMapOf<String, Any?>()
@@ -61,17 +87,36 @@ internal interface JSONReader {
 		return map
 	}
 
+
 	fun readMapKey() =
 		readString()
+
 
 	fun readMapOrNull() =
 		if (nextToken != JSONToken.nullValue) readMap() else readNull()
 
+
 	fun readNumberOrNull() =
 		if (nextToken != JSONToken.nullValue) readNumber() else readNull()
 
+
+	fun readShort(): Short {
+		val value = readLong()
+		return when {
+			value >= Short.MAX_VALUE -> Short.MAX_VALUE
+			value <= Short.MIN_VALUE -> Short.MIN_VALUE
+			else -> value.toShort()
+		}
+	}
+
+
+	fun readShortOrNull() =
+		if (nextToken != JSONToken.nullValue) readShort() else readNull()
+
+
 	fun readStringOrNull() =
 		if (nextToken != JSONToken.nullValue) readString() else readNull()
+
 
 	fun skipValue() {
 		val token = nextToken

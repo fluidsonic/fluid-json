@@ -16,4 +16,7 @@ internal object LocalDateCodec : JSONCodec<LocalDate, JSONCoderContext> {
 	override fun encode(value: LocalDate, encoder: JSONEncoder<out JSONCoderContext>) {
 		encoder.writeString(value.toString())
 	}
+
+
+	override val valueClass = LocalDate::class.java
 }

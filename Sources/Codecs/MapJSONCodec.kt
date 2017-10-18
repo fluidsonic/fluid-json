@@ -17,4 +17,7 @@ internal class MapJSONCodec : JSONCodec<Map<*, *>, JSONCoderContext> {
 			}
 		}
 	}
+
+
+	override val valueClass = Map::class.java
 }

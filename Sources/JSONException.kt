@@ -1,13 +1,10 @@
 package com.github.fluidsonic.fluid.json
 
-import org.apiguardian.api.API
 
-
-@API(status = API.Status.EXPERIMENTAL)
-class JSONException constructor(message: String, cause: Throwable? = null)
+class JSONException(message: String, cause: Throwable? = null)
 	: RuntimeException(message, cause) {
 
-	companion object {
+	companion object { // FIXME companions in every public type!
 
 		// FIXME add keypath
 		internal fun unexpectedCharacter(character: Int, expected: String, characterIndex: Int) =

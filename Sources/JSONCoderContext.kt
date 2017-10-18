@@ -1,7 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
-import org.apiguardian.api.API
 
+internal interface JSONCoderContext {
 
-@API(status = API.Status.EXPERIMENTAL)
-internal interface JSONCoderContext
+	object Empty : JSONCoderContext
+}
