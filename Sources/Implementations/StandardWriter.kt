@@ -1,12 +1,32 @@
 package com.github.fluidsonic.fluid.json
 
+import java.io.Closeable
+import java.io.Flushable
+import java.io.IOException
 import java.io.Writer
 
 
-internal class TextOutputWriter(private val destination: Writer) : JSONWriter {
+internal class StandardWriter(private val destination: Writer)
+	: JSONWriter, Closeable, Flushable by destination {
 
 	private var state = State.initial
 	private val stateStack = mutableListOf<State>()
+
+
+	override fun close() {
+		val stateBeforeClosing = state
+		if (stateBeforeClosing == State.closed) {
+			return
+		}
+
+		state = State.closed
+
+		destination.close()
+
+		if (stateBeforeClosing != State.end) {
+			throw JSONException("Cannot close writer before all values were fully written.")
+		}
+	}
 
 
 	private fun startValue(isString: Boolean) {
@@ -38,6 +58,9 @@ internal class TextOutputWriter(private val destination: Writer) : JSONWriter {
 				else {
 					throw JSONException("Expected a string as map key")
 				}
+
+			State.closed ->
+				throw IOException("Cannot operate on a closed writer")
 
 			State.end ->
 				throw JSONException("Cannot write more than one value a the JSON root")
@@ -101,6 +124,7 @@ internal class TextOutputWriter(private val destination: Writer) : JSONWriter {
 	override fun writeListEnd() {
 		when (state) {
 			State.afterListStart, State.afterListElement -> Unit
+			State.closed -> throw IOException("Cannot operate on a closed writer")
 			else -> throw JSONException("Cannot write end of list when not in a list")
 		}
 
@@ -123,6 +147,7 @@ internal class TextOutputWriter(private val destination: Writer) : JSONWriter {
 		when (state) {
 			State.afterMapStart, State.afterMapElement -> Unit
 			State.afterMapKey -> throw JSONException("Cannot write end of map right after a key, value expected instead")
+			State.closed -> throw IOException("Cannot operate on a closed writer")
 			else -> throw JSONException("Cannot write end of map when not in a map")
 		}
 
@@ -234,6 +259,7 @@ internal class TextOutputWriter(private val destination: Writer) : JSONWriter {
 		afterMapElement,
 		afterMapKey,
 		afterMapStart,
+		closed,
 		end,
 		initial
 	}

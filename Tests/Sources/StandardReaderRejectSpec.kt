@@ -2,23 +2,31 @@ package tests
 
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONReader
+import com.github.fluidsonic.fluid.json.StandardReader
 import com.github.fluidsonic.fluid.json.TextInput
-import com.github.fluidsonic.fluid.json.TextInputReader
+import com.github.fluidsonic.fluid.json.readBooleanOrNull
+import com.github.fluidsonic.fluid.json.readDoubleOrNull
+import com.github.fluidsonic.fluid.json.readElementsFromMap
+import com.github.fluidsonic.fluid.json.readFloatOrNull
+import com.github.fluidsonic.fluid.json.readFromList
+import com.github.fluidsonic.fluid.json.readIntOrNull
 import com.github.fluidsonic.fluid.json.readList
 import com.github.fluidsonic.fluid.json.readListByElement
 import com.github.fluidsonic.fluid.json.readListOrNull
+import com.github.fluidsonic.fluid.json.readLongOrNull
 import com.github.fluidsonic.fluid.json.readMap
-import com.github.fluidsonic.fluid.json.readMapByEntry
 import com.github.fluidsonic.fluid.json.readMapOrNull
+import com.github.fluidsonic.fluid.json.readNumberOrNull
+import com.github.fluidsonic.fluid.json.readStringOrNull
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.StringReader
 
 
-internal object TextInputReaderRejectSpec : Spek({
+internal object StandardReaderRejectSpec : Spek({
 
-	describe("TextInputReader fails in") {
+	describe("StandardReader fails in") {
 
 		it(".nextToken") {
 			readerShouldFail("a") { nextToken }
@@ -123,6 +131,26 @@ internal object TextInputReaderRejectSpec : Spek({
 			readerShouldFail("1e+e") { readDoubleOrNull() }
 			readerShouldFail("1e-") { readDoubleOrNull() }
 			readerShouldFail("1e-e") { readDoubleOrNull() }
+		}
+
+		it("readElementsFromMap()") {
+			readerShouldFail("") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"x") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"x\"") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"x\":") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"x\":1") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"x\":1,") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{true \"key\": 1}") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"key\" true: 1}") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"key\": 1 true}") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"key\"::1}") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"key\":1:}") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"key\":1,}") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{,\"key\":1}") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{\"key0\":0,,\"key1\":1}") { readElementsFromMap { skipValue() } }
+			readerShouldFail("null") { readElementsFromMap { skipValue() } }
 		}
 
 		it("readFloat()") {
@@ -244,15 +272,15 @@ internal object TextInputReaderRejectSpec : Spek({
 		}
 
 		it("readList() inline") {
-			readerShouldFail("") { readList {} }
-			readerShouldFail("[") { readList {} }
-			readerShouldFail("[1") { readList {} }
-			readerShouldFail("[1 1]") { readList {} }
-			readerShouldFail("[,1,1]") { readList {} }
-			readerShouldFail("[1,,1]") { readList {} }
-			readerShouldFail("[1,1,]") { readList {} }
-			readerShouldFail("[[1]") { readList {} }
-			readerShouldFail("null") { readList {} }
+			readerShouldFail("") { readFromList {} }
+			readerShouldFail("[") { readFromList {} }
+			readerShouldFail("[1") { readFromList {} }
+			readerShouldFail("[1 1]") { readFromList {} }
+			readerShouldFail("[,1,1]") { readFromList {} }
+			readerShouldFail("[1,,1]") { readFromList {} }
+			readerShouldFail("[1,1,]") { readFromList {} }
+			readerShouldFail("[[1]") { readFromList {} }
+			readerShouldFail("null") { readFromList {} }
 		}
 
 		it("readListByElement()") {
@@ -286,17 +314,6 @@ internal object TextInputReaderRejectSpec : Spek({
 			readerShouldFail("[1,,1]") { readListOrNull() }
 			readerShouldFail("[1,1,]") { readListOrNull() }
 			readerShouldFail("[[1]") { readListOrNull() }
-		}
-
-		it("readListOrNull() inline") {
-			readerShouldFail("") { readListOrNull {} }
-			readerShouldFail("[") { readListOrNull {} }
-			readerShouldFail("[1") { readListOrNull {} }
-			readerShouldFail("[1 1]") { readListOrNull {} }
-			readerShouldFail("[,1,1]") { readListOrNull {} }
-			readerShouldFail("[1,,1]") { readListOrNull {} }
-			readerShouldFail("[1,1,]") { readListOrNull {} }
-			readerShouldFail("[[1]") { readListOrNull {} }
 		}
 
 		it("readListStart()") {
@@ -379,46 +396,6 @@ internal object TextInputReaderRejectSpec : Spek({
 			readerShouldFail("null") { readMap() }
 		}
 
-		it("readMap() inline") {
-			readerShouldFail("") { readMap {} }
-			readerShouldFail("{") { readMap {} }
-			readerShouldFail("{\"") { readMap {} }
-			readerShouldFail("{\"x") { readMap {} }
-			readerShouldFail("{\"x\"") { readMap {} }
-			readerShouldFail("{\"x\":") { readMap {} }
-			readerShouldFail("{\"x\":1") { readMap {} }
-			readerShouldFail("{\"x\":1,") { readMap {} }
-			readerShouldFail("{true \"key\": 1}") { readMap {} }
-			readerShouldFail("{\"key\" true: 1}") { readMap {} }
-			readerShouldFail("{\"key\": 1 true}") { readMap {} }
-			readerShouldFail("{\"key\"::1}") { readMap {} }
-			readerShouldFail("{\"key\":1:}") { readMap {} }
-			readerShouldFail("{\"key\":1,}") { readMap {} }
-			readerShouldFail("{,\"key\":1}") { readMap {} }
-			readerShouldFail("{\"key0\":0,,\"key1\":1}") { readMap {} }
-			readerShouldFail("null") { readMap {} }
-		}
-
-		it("readMapByEntry()") {
-			readerShouldFail("") { readMapByEntry { skipValue() } }
-			readerShouldFail("{") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"x") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"x\"") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"x\":") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"x\":1") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"x\":1,") { readMapByEntry { skipValue() } }
-			readerShouldFail("{true \"key\": 1}") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"key\" true: 1}") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"key\": 1 true}") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"key\"::1}") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"key\":1:}") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"key\":1,}") { readMapByEntry { skipValue() } }
-			readerShouldFail("{,\"key\":1}") { readMapByEntry { skipValue() } }
-			readerShouldFail("{\"key0\":0,,\"key1\":1}") { readMapByEntry { skipValue() } }
-			readerShouldFail("null") { readMapByEntry { skipValue() } }
-		}
-
 		it("readMapEnd()") {
 			readerShouldFail("") { readMapEnd() }
 			readerShouldFail("[") { readMapEnd() }
@@ -461,25 +438,6 @@ internal object TextInputReaderRejectSpec : Spek({
 			readerShouldFail("{\"key\":1,}") { readMapOrNull() }
 			readerShouldFail("{,\"key\":1}") { readMapOrNull() }
 			readerShouldFail("{\"key0\":0,,\"key1\":1}") { readMapOrNull() }
-		}
-
-		it("readMapOrNull() inline") {
-			readerShouldFail("") { readMapOrNull {} }
-			readerShouldFail("{") { readMapOrNull {} }
-			readerShouldFail("{\"") { readMapOrNull {} }
-			readerShouldFail("{\"x") { readMapOrNull {} }
-			readerShouldFail("{\"x\"") { readMapOrNull {} }
-			readerShouldFail("{\"x\":") { readMapOrNull {} }
-			readerShouldFail("{\"x\":1") { readMapOrNull {} }
-			readerShouldFail("{\"x\":1,") { readMapOrNull {} }
-			readerShouldFail("{true \"key\": 1}") { readMapOrNull {} }
-			readerShouldFail("{\"key\" true: 1}") { readMapOrNull {} }
-			readerShouldFail("{\"key\": 1 true}") { readMapOrNull {} }
-			readerShouldFail("{\"key\"::1}") { readMapOrNull {} }
-			readerShouldFail("{\"key\":1:}") { readMapOrNull {} }
-			readerShouldFail("{\"key\":1,}") { readMapOrNull {} }
-			readerShouldFail("{,\"key\":1}") { readMapOrNull {} }
-			readerShouldFail("{\"key0\":0,,\"key1\":1}") { readMapOrNull {} }
 		}
 
 		it("readMapStart()") {
@@ -612,7 +570,7 @@ internal object TextInputReaderRejectSpec : Spek({
 
 private inline fun readerShouldFail(string: String, body: JSONReader.() -> Unit) {
 	try {
-		TextInputReader(TextInput(StringReader(string))).body()
+		StandardReader(TextInput(StringReader(string))).body()
 		throw AssertionError("should fail with a JSONException")
 	}
 	catch (e: JSONException) {

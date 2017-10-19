@@ -16,7 +16,7 @@ group = "com.github.fluidsonic"
 version = "0.0.1"
 
 plugins {
-	kotlin("jvm", "1.1.51")
+	kotlin("jvm") version "1.1.51"
 	jacoco
 	`java-library`
 	`maven-publish`
@@ -84,7 +84,6 @@ afterEvaluate {
 
 dependencies {
 	implementation(kotlin("stdlib", "1.1.51"))
-	implementation("org.apiguardian:apiguardian-api:1.0.0")
 
 	testImplementation("com.winterbe:expekt:0.5.0")
 	testImplementation("org.jetbrains.spek:spek-subject-extension:1.1.5")

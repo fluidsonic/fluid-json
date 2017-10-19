@@ -1,14 +1,34 @@
 package com.github.fluidsonic.fluid.json
 
+import java.io.IOException
+
 
 // FIXME max nesting, max string length, max number length
-internal class TextInputReader(private val source: TextInput) : JSONReader {
+internal class StandardReader(private val source: TextInput) : JSONReader {
 
 	private val buffer = StringBuilder()
 	private var peekedToken: JSONToken? = null
 	private var peekedTokenIndex = -1
 	private var state = State.initial
 	private val stateStack = mutableListOf<State>()
+
+
+	private fun assertNotClosed() {
+		if (state == State.closed) {
+			throw IOException("Cannot operate on a closed reader")
+		}
+	}
+
+
+	override fun close() {
+		if (state == State.closed) {
+			return
+		}
+
+		state = State.closed
+
+		source.close()
+	}
 
 
 	private fun finishValue() {
@@ -25,6 +45,8 @@ internal class TextInputReader(private val source: TextInput) : JSONReader {
 
 	override val nextToken: JSONToken?
 		get() {
+			assertNotClosed()
+
 			if (peekedTokenIndex >= 0) {
 				return peekedToken
 			}
@@ -44,6 +66,8 @@ internal class TextInputReader(private val source: TextInput) : JSONReader {
 			input.skipWhitespaceCharacters()
 
 			val character = input.peekCharacter()
+
+			@Suppress("NON_EXHAUSTIVE_WHEN")
 			when (state) {
 				State.afterListElement ->
 					when (character) {
@@ -660,6 +684,7 @@ internal class TextInputReader(private val source: TextInput) : JSONReader {
 		afterMapKey,
 		afterMapKeySeparator,
 		afterMapStart,
+		closed,
 		end,
 		initial,
 	}

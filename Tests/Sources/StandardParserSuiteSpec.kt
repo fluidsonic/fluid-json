@@ -1,7 +1,7 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.SimpleParser
+import com.github.fluidsonic.fluid.json.StandardParser
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -9,9 +9,9 @@ import java.io.File
 import java.io.FileReader
 
 
-internal object SimpleParserSuiteSpec : Spek({
+internal object StandardParserSuiteSpec : Spek({
 
-	describe("SimpleParser conforms to") {
+	describe("StandardParser conforms to") {
 
 		it("JSON Parsing Test Suite (https://github.com/nst/JSONTestSuite)") {
 
@@ -29,7 +29,7 @@ internal object SimpleParserSuiteSpec : Spek({
 					print("Testing ${file.name}")
 
 					val result = try {
-						SimpleParser.parse(FileReader(file))
+						StandardParser().parse(FileReader(file))
 					}
 					catch (e: JSONException) {
 						e

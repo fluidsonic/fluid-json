@@ -1,7 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
 
-internal class SimpleCodecResolver<in Context : JSONCoderContext>(
+internal class StandardCodecResolver<in Context : JSONCoderContext>(
 	decoderCodecs: List<JSONDecoderCodec<*, Context>>,
 	encoderCodecs: List<JSONEncoderCodec<*, Context>>
 ) : JSONCodecResolver<Context> {

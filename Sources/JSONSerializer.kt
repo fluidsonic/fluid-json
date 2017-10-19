@@ -4,13 +4,20 @@ import java.io.StringWriter
 import java.io.Writer
 
 
-internal interface JSONSerializer {
+interface JSONSerializer {
 
 	fun serialize(value: Any?) =
-		StringWriter().apply { serialize(value, this) }.toString()
+		StringWriter().apply { serialize(value, destination = this) }.toString()
 
 	fun serialize(value: Any?, destination: JSONWriter)
 
 	fun serialize(value: Any?, destination: Writer)
-		= serialize(value, JSON.writer(destination))
+		= serialize(value, destination = JSONWriter(destination))
+
+
+	companion object {
+
+		operator fun invoke(): JSONSerializer =
+			StandardSerializer.default
+	}
 }

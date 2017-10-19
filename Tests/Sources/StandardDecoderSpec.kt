@@ -1,8 +1,8 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSON
 import com.github.fluidsonic.fluid.json.JSONCodecResolver
-import com.github.fluidsonic.fluid.json.SimpleDecoder
+import com.github.fluidsonic.fluid.json.JSONReader
+import com.github.fluidsonic.fluid.json.StandardDecoder
 import com.github.fluidsonic.fluid.json.readDecodable
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -13,9 +13,9 @@ import java.time.LocalDate
 
 // test data from http://pacificrim.wikia.com
 
-internal object SimpleDecoderSpec : Spek({
+internal object StandardDecoderSpec : Spek({
 
-	describe("SimpleDecoder") {
+	describe("StandardDecoder") {
 
 		it("decodes complete example") {
 			val input = """
@@ -34,12 +34,12 @@ internal object SimpleDecoderSpec : Spek({
 					"kaijus": [
 						{
 							"breachDate": "2025-01-12",
-							"category":    5,
-							"height":      181.7,
-							"name":        "Slattern",
-							"origin":      "Anteverse",
-							"status":      "deceased",
-							"weight":      6750
+							"category":   5,
+							"height":     181.7,
+							"name":       "Slattern",
+							"origin":     "Anteverse",
+							"status":     "deceased",
+							"weight":     6750
 						}
 					]
 				}
@@ -71,7 +71,7 @@ internal object SimpleDecoderSpec : Spek({
 			)
 
 			val decoder =
-				SimpleDecoder(
+				StandardDecoder(
 					codecResolver = JSONCodecResolver.of(
 						JaegerCodec,
 						KaijuCodec,
@@ -79,7 +79,7 @@ internal object SimpleDecoderSpec : Spek({
 						UniverseCodec
 					),
 					context = TestCoderContext(),
-					source = JSON.reader(input)
+					source = JSONReader(input)
 				)
 
 			decoder.readDecodable<Universe>().should.equal(expectedOutput)

@@ -4,10 +4,10 @@ import com.github.fluidsonic.fluid.json.JSONCodec
 import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.readDecodables
-import com.github.fluidsonic.fluid.json.readMapByEntry
-import com.github.fluidsonic.fluid.json.writeMap
-import com.github.fluidsonic.fluid.json.writeMapEntry
+import com.github.fluidsonic.fluid.json.readElementsFromMap
+import com.github.fluidsonic.fluid.json.readListOfDecodableElements
+import com.github.fluidsonic.fluid.json.writeIntoMap
+import com.github.fluidsonic.fluid.json.writeMapElement
 
 
 internal object UniverseCodec : JSONCodec<Universe, TestCoderContext> {
@@ -16,10 +16,10 @@ internal object UniverseCodec : JSONCodec<Universe, TestCoderContext> {
 		var jaegers: List<Jaeger>? = null
 		var kaijus: List<Kaiju>? = null
 
-		decoder.readMapByEntry { key ->
+		decoder.readElementsFromMap { key ->
 			when (key) {
-				Keys.jaegers -> jaegers = readDecodables()
-				Keys.kaijus -> kaijus = readDecodables()
+				Keys.jaegers -> jaegers = readListOfDecodableElements()
+				Keys.kaijus -> kaijus = readListOfDecodableElements()
 				else -> skipValue()
 			}
 		}
@@ -31,10 +31,10 @@ internal object UniverseCodec : JSONCodec<Universe, TestCoderContext> {
 	}
 
 
-	override fun encode(value: Universe, encoder: JSONEncoder<out TestCoderContext>) {
-		encoder.writeMap {
-			writeMapEntry(Keys.jaegers, encodable = value.jaegers)
-			writeMapEntry(Keys.kaijus, encodable = value.kaijus)
+	override fun encode(value: Universe, encoder: JSONEncoder<TestCoderContext>) {
+		encoder.writeIntoMap {
+			writeMapElement(Keys.jaegers, encodable = value.jaegers)
+			writeMapElement(Keys.kaijus, encodable = value.kaijus)
 		}
 	}
 

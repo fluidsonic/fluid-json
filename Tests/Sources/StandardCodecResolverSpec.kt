@@ -5,7 +5,7 @@ import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONDecoderCodec
 import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONEncoderCodec
-import com.github.fluidsonic.fluid.json.SimpleCodecResolver
+import com.github.fluidsonic.fluid.json.StandardCodecResolver
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.TestBody
@@ -13,9 +13,9 @@ import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 
 
-internal object SimpleCodecResolverSpec : Spek({
+internal object StandardCodecResolverSpec : Spek({
 
-	describe("SimpleCodecResolver") {
+	describe("StandardCodecResolver") {
 
 		describe("for decoding") {
 
@@ -91,7 +91,7 @@ internal object SimpleCodecResolverSpec : Spek({
 
 	object ChildEncoderCodec : JSONEncoderCodec<Child, Context> {
 
-		override fun encode(value: Child, encoder: JSONEncoder<out Context>) = error("dummy")
+		override fun encode(value: Child, encoder: JSONEncoder<Context>) = error("dummy")
 
 		override val valueClass = Child::class.java
 	}
@@ -107,7 +107,7 @@ internal object SimpleCodecResolverSpec : Spek({
 
 	object ParentEncoderCodec : JSONEncoderCodec<Parent, Context> {
 
-		override fun encode(value: Parent, encoder: JSONEncoder<out Context>) {
+		override fun encode(value: Parent, encoder: JSONEncoder<Context>) {
 			value.should.be.instanceof(Parent::class.java)
 		}
 
@@ -125,7 +125,7 @@ internal object SimpleCodecResolverSpec : Spek({
 
 	object NothingEncoderCodec : JSONEncoderCodec<Nothing, Context> {
 
-		override fun encode(value: Nothing, encoder: JSONEncoder<out Context>) = error("dummy")
+		override fun encode(value: Nothing, encoder: JSONEncoder<Context>) = error("dummy")
 
 		override val valueClass = Nothing::class.java
 	}
@@ -136,10 +136,10 @@ internal object SimpleCodecResolverSpec : Spek({
 // https://youtrack.jetbrains.com/issue/KT-19796
 
 @Suppress("unused") // FIXME use TestBody. everywhere
-private fun TestBody.resolver(vararg codecs: JSONDecoderCodec<*, SimpleCodecResolverSpec.Context>) =
-	SimpleCodecResolver(decoderCodecs = codecs.toList(), encoderCodecs = emptyList())
+private fun TestBody.resolver(vararg codecs: JSONDecoderCodec<*, StandardCodecResolverSpec.Context>) =
+	StandardCodecResolver(decoderCodecs = codecs.toList(), encoderCodecs = emptyList())
 
 
 @Suppress("unused") // FIXME use TestBody. everywhere
-private fun TestBody.resolver(vararg codecs: JSONEncoderCodec<*, SimpleCodecResolverSpec.Context>) =
-	SimpleCodecResolver(decoderCodecs = emptyList(), encoderCodecs = codecs.toList())
+private fun TestBody.resolver(vararg codecs: JSONEncoderCodec<*, StandardCodecResolverSpec.Context>) =
+	StandardCodecResolver(decoderCodecs = emptyList(), encoderCodecs = codecs.toList())

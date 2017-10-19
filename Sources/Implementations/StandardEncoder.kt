@@ -1,7 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
 
-internal class SimpleEncoder<out Context : JSONCoderContext>(
+internal class StandardEncoder<out Context : JSONCoderContext>(
 	private val codecResolver: JSONCodecResolver<Context>,
 	override val context: Context,
 	destination: JSONWriter
@@ -12,4 +12,8 @@ internal class SimpleEncoder<out Context : JSONCoderContext>(
 			?.encode(value = value, encoder = this)
 			?: throw JSONException("no encoder codec registered for ${value::class.java}: $value")
 	}
+
+
+	override fun writeValue(value: Any?) =
+		super<JSONEncoder>.writeValue(value)
 }

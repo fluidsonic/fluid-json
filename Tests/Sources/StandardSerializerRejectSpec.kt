@@ -2,18 +2,18 @@ package tests
 
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONSerializer
-import com.github.fluidsonic.fluid.json.SimpleSerializer
+import com.github.fluidsonic.fluid.json.StandardSerializer
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
 
 
-internal object SimpleSerializerRejectSpec : SubjectSpek<JSONSerializer>({
+internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer>({
 
-	subject { SimpleSerializer() }
+	subject { StandardSerializer() }
 
 
-	describe("SimpleSerializer rejects serialization of") {
+	describe("StandardSerializer rejects serialization of") {
 
 		it("non-finite float") {
 			subject.failToSerialize(Float.NEGATIVE_INFINITY)

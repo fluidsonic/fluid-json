@@ -1,10 +1,11 @@
 package com.github.fluidsonic.fluid.json
 
+import java.io.Closeable
 import java.io.Reader
 import java.util.Arrays
 
 
-internal class TextInput(private val source: Reader) {
+internal class TextInput(private val source: Reader) : Closeable by source {
 
 	private var buffer = CharArray(2 * windowSize)
 	private var bufferFill = 0

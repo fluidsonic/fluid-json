@@ -1,13 +1,13 @@
 package com.github.fluidsonic.fluid.json
 
-import org.apiguardian.api.API
+import java.io.Closeable
+import java.io.Reader
+import java.io.StringReader
 
 
-// FIXME closable?
-internal interface JSONReader {
+interface JSONReader : Closeable {
 
 	val nextToken: JSONToken?
-	// FIXME allow peek whether next number is int/long/floating-point?
 
 	fun readBoolean(): Boolean
 	fun readDouble(): Double
@@ -21,11 +21,6 @@ internal interface JSONReader {
 	fun readString(): String
 
 
-	// FIXME move these to extension
-	fun readBooleanOrNull() =
-		if (nextToken != JSONToken.nullValue) readBoolean() else readNull()
-
-
 	fun readByte(): Byte {
 		val value = readLong()
 		return when {
@@ -36,20 +31,8 @@ internal interface JSONReader {
 	}
 
 
-	fun readByteOrNull() =
-		if (nextToken != JSONToken.nullValue) readByte() else readNull()
-
-
-	fun readDoubleOrNull() =
-		if (nextToken != JSONToken.nullValue) readDouble() else readNull()
-
-
 	fun readFloat() =
 		readDouble().toFloat()
-
-
-	fun readFloatOrNull() =
-		if (nextToken != JSONToken.nullValue) readFloat() else readNull()
 
 
 	fun readInt(): Int {
@@ -62,42 +45,8 @@ internal interface JSONReader {
 	}
 
 
-	fun readIntOrNull() =
-		if (nextToken != JSONToken.nullValue) readInt() else readNull()
-
-
-	fun readList(): List<Any?> {
-		val list = mutableListOf<Any?>()
-		readListByElement { list += readValue() }
-		return list
-	}
-
-
-	fun readListOrNull() =
-		if (nextToken != JSONToken.nullValue) readList() else readNull()
-
-
-	fun readLongOrNull() =
-		if (nextToken != JSONToken.nullValue) readLong() else readNull()
-
-
-	fun readMap(): Map<String, Any?> {
-		val map = mutableMapOf<String, Any?>()
-		readMapByEntry { key -> map[key] = readValue() }
-		return map
-	}
-
-
 	fun readMapKey() =
 		readString()
-
-
-	fun readMapOrNull() =
-		if (nextToken != JSONToken.nullValue) readMap() else readNull()
-
-
-	fun readNumberOrNull() =
-		if (nextToken != JSONToken.nullValue) readNumber() else readNull()
 
 
 	fun readShort(): Short {
@@ -110,82 +59,159 @@ internal interface JSONReader {
 	}
 
 
-	fun readShortOrNull() =
-		if (nextToken != JSONToken.nullValue) readShort() else readNull()
-
-
-	fun readStringOrNull() =
-		if (nextToken != JSONToken.nullValue) readString() else readNull()
-
-
 	fun skipValue() {
 		val token = nextToken
 		when (token) {
 			JSONToken.booleanValue -> readBoolean()
 			JSONToken.listStart -> readListByElement { skipValue() }
 			JSONToken.mapKey -> readMapKey()
-			JSONToken.mapStart -> readMapByEntry { skipValue() }
+			JSONToken.mapStart -> readMapByElementValue { skipValue() }
 			JSONToken.nullValue -> readNull()
 			JSONToken.numberValue -> readNumber()
 			JSONToken.stringValue -> readString()
 			else -> throw JSONException("Cannot skip value if next token is '$token'")
 		}
 	}
-}
 
 
-@API(status = API.Status.EXPERIMENTAL)
-internal inline fun <Reader : JSONReader, Value> Reader.readList(read: Reader.() -> Value): Value { // FIXME is api confusing?
-	readListStart()
-	val result = read()
-	readListEnd()
+	companion object {
 
-	return result
-}
+		operator fun invoke(source: Reader): JSONReader =
+			StandardReader(TextInput(source))
 
 
-@API(status = API.Status.EXPERIMENTAL)
-internal inline fun <Reader : JSONReader> Reader.readListByElement(readElement: Reader.() -> Unit) {// FIXME is api confusing?
-	readList {
-		while (nextToken != JSONToken.listEnd) {
-			readElement()
-		}
+		operator fun invoke(source: String) =
+			this(StringReader(source))
 	}
 }
 
 
-@API(status = API.Status.EXPERIMENTAL)
-internal inline fun <Reader : JSONReader, Value> Reader.readListOrNull(read: Reader.() -> Value) =
-	if (nextToken != JSONToken.nullValue) readList(read) else readNull()
+fun JSONReader.readBooleanOrNull() =
+	if (nextToken != JSONToken.nullValue) readBoolean() else readNull()
 
 
-@API(status = API.Status.EXPERIMENTAL)
-internal inline fun <Reader : JSONReader, Value> Reader.readMap(read: Reader.() -> Value): Value {// FIXME is api confusing?
+fun JSONReader.readByteOrNull() =
+	if (nextToken != JSONToken.nullValue) readByte() else readNull()
+
+
+fun JSONReader.readDoubleOrNull() =
+	if (nextToken != JSONToken.nullValue) readDouble() else readNull()
+
+
+inline fun <Reader : JSONReader> Reader.readElementsFromMap(readElement: Reader.(key: String) -> Unit) {
 	readMapStart()
-	val result = read()
+	while (nextToken != JSONToken.mapEnd)
+		readElement(readMapKey())
+	readMapEnd()
+}
+
+
+fun JSONReader.readFloatOrNull() =
+	if (nextToken != JSONToken.nullValue) readFloat() else readNull()
+
+
+fun JSONReader.readIntOrNull() =
+	if (nextToken != JSONToken.nullValue) readInt() else readNull()
+
+
+inline fun <Reader : JSONReader, Value> Reader.readFromList(readContent: Reader.() -> Value): Value {
+	readListStart()
+	val value = readContent()
+	readListEnd()
+
+	return value
+}
+
+
+inline fun <Reader : JSONReader, Value> Reader.readFromMap(readContent: Reader.() -> Value): Value {
+	readMapStart()
+	val result = readContent()
 	readMapEnd()
 
 	return result
 }
 
 
-@API(status = API.Status.EXPERIMENTAL)
-internal inline fun <Reader : JSONReader, Value> Reader.readMapOrNull(read: Reader.() -> Value) =
-	if (nextToken != JSONToken.nullValue) readMap(read) else readNull()
+fun JSONReader.readList(): List<Any?> =
+	readListByElement { readValue() }
 
 
-@API(status = API.Status.EXPERIMENTAL)
-internal inline fun <Reader : JSONReader> Reader.readMapByEntry(readEntry: Reader.(key: String) -> Unit) {// FIXME is api confusing?
-	readMap {
-		while (nextToken != JSONToken.mapEnd) {
-			readEntry(readMapKey())
+inline fun <Reader : JSONReader, Value> Reader.readListByElement(readElement: Reader.() -> Value): List<Value> =
+	mutableListOf<Value>().also { list ->
+		readFromList {
+			while (nextToken != JSONToken.listEnd)
+				list += readElement()
 		}
 	}
-}
 
 
-@API(status = API.Status.EXPERIMENTAL)
-internal fun JSONReader.readValue(): Any? {
+fun JSONReader.readListOrNull() =
+	if (nextToken != JSONToken.nullValue) readList() else readNull()
+
+
+inline fun <Reader : JSONReader, Value> Reader.readListOrNullByElement(readElement: Reader.() -> Value): List<Value>? =
+	if (nextToken != JSONToken.nullValue) readListByElement(readElement) else readNull()
+
+
+fun JSONReader.readLongOrNull() =
+	if (nextToken != JSONToken.nullValue) readLong() else readNull()
+
+
+fun JSONReader.readMap() =
+	readMapByElementValue { readValue() }
+
+
+inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapByElement(
+	readElement: Reader.() -> Pair<ElementKey, ElementValue>
+): Map<ElementKey, ElementValue> =
+	mutableMapOf<ElementKey, ElementValue>().also { map ->
+		readFromMap {
+			while (nextToken != JSONToken.mapEnd)
+				map += readElement()
+		}
+	}
+
+
+inline fun <Reader : JSONReader, ElementValue> Reader.readMapByElementValue(
+	readElementValue: Reader.() -> ElementValue
+): Map<String, ElementValue> =
+	mutableMapOf<String, ElementValue>().also { map ->
+		readFromMap {
+			while (nextToken != JSONToken.mapEnd)
+				map[readMapKey()] = readElementValue()
+		}
+	}
+
+
+fun JSONReader.readMapOrNull() =
+	if (nextToken != JSONToken.nullValue) readMap() else readNull()
+
+
+inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapOrNullByElement(
+	readElement: Reader.() -> Pair<ElementKey, ElementValue>
+): Map<ElementKey, ElementValue>? =
+	if (nextToken != JSONToken.nullValue) readMapByElement(readElement) else readNull()
+
+
+inline fun <Reader : JSONReader, ElementValue> Reader.readMapOrNullByElementValue(
+	readElementValue: Reader.() -> ElementValue
+): Map<String, ElementValue>? =
+	if (nextToken != JSONToken.nullValue) readMapByElementValue(readElementValue) else readNull()
+
+
+fun JSONReader.readNumberOrNull() =
+	if (nextToken != JSONToken.nullValue) readNumber() else readNull()
+
+
+fun JSONReader.readShortOrNull() =
+	if (nextToken != JSONToken.nullValue) readShort() else readNull()
+
+
+fun JSONReader.readStringOrNull() =
+	if (nextToken != JSONToken.nullValue) readString() else readNull()
+
+
+fun JSONReader.readValue(): Any? {
 	val token = nextToken
 	return when (token) {
 		JSONToken.booleanValue -> readBoolean()

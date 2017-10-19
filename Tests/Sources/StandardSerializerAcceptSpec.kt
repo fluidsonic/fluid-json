@@ -1,19 +1,19 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.JSONSerializer
-import com.github.fluidsonic.fluid.json.SimpleSerializer
+import com.github.fluidsonic.fluid.json.StandardSerializer
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
 
 
-internal object SimpleSerializerAcceptSpec : SubjectSpek<JSONSerializer>({
+internal object StandardSerializerAcceptSpec : SubjectSpek<JSONSerializer>({
 
-	subject { SimpleSerializer() }
+	subject { StandardSerializer() }
 
 
-	describe("SimpleSerializer serializes") {
+	describe("StandardSerializer serializes") {
 
 		describe("constants") {
 
@@ -312,16 +312,16 @@ internal object SimpleSerializerAcceptSpec : SubjectSpek<JSONSerializer>({
 
 		describe("transforms invalid keys & values to string") {
 
-			subject { SimpleSerializer(convertsInvalidValuesToString = true, convertsInvalidKeysToString = true) }
+			subject { StandardSerializer(convertsInvalidValuesToString = true, convertsInvalidKeysToString = true) }
 
 
 			it("returns correct conversion settings") {
-				SimpleSerializer().convertsInvalidKeysToString.should.be.`false`
-				SimpleSerializer().convertsInvalidValuesToString.should.be.`false`
-				SimpleSerializer(convertsInvalidKeysToString = false).convertsInvalidKeysToString.should.be.`false`
-				SimpleSerializer(convertsInvalidValuesToString = false).convertsInvalidValuesToString.should.be.`false`
-				SimpleSerializer(convertsInvalidKeysToString = true).convertsInvalidKeysToString.should.be.`true`
-				SimpleSerializer(convertsInvalidValuesToString = true).convertsInvalidValuesToString.should.be.`true`
+				StandardSerializer().convertsInvalidKeysToString.should.be.`false`
+				StandardSerializer().convertsInvalidValuesToString.should.be.`false`
+				StandardSerializer(convertsInvalidKeysToString = false).convertsInvalidKeysToString.should.be.`false`
+				StandardSerializer(convertsInvalidValuesToString = false).convertsInvalidValuesToString.should.be.`false`
+				StandardSerializer(convertsInvalidKeysToString = true).convertsInvalidKeysToString.should.be.`true`
+				StandardSerializer(convertsInvalidValuesToString = true).convertsInvalidValuesToString.should.be.`true`
 			}
 
 			it("non-finite float") {

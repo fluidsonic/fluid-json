@@ -2,14 +2,18 @@ package com.github.fluidsonic.fluid.json
 
 
 // FIXME find extendable solution for options
-internal class SimpleSerializer(
+internal class StandardSerializer(
 	val convertsInvalidKeysToString: Boolean = false,
 	val convertsInvalidValuesToString: Boolean = false
 ) : JSONSerializer {
 
-	override fun serialize(value: Any?, destination: JSONWriter) {
+	override fun serialize(value: Any?, destination: JSONWriter) =
+		destination.use { _serialize(rootValue = value, destination = destination) }
+
+
+	private fun _serialize(rootValue: Any?, destination: JSONWriter) {
 		var currentIterator: Iterator<*>? = null
-		var currentValue = value
+		var currentValue = rootValue
 		var isInMap = false
 		val iteratorStack = mutableListOf<Iterator<*>>()
 		val isInMapStack = mutableListOf<Boolean>()
@@ -49,20 +53,18 @@ internal class SimpleSerializer(
 					destination.writeBoolean(currentValue)
 
 				is Double ->
-					if (currentValue.isFinite())
-						destination.writeDouble(currentValue)
-					else if (convertsInvalidValuesToString)
-						destination.writeString(currentValue.toString())
-					else
-						throw JSONException("Cannot serialize double value '$currentValue'")
+					when {
+						currentValue.isFinite() -> destination.writeDouble(currentValue)
+						convertsInvalidValuesToString -> destination.writeString(currentValue.toString())
+						else -> throw JSONException("Cannot serialize double value '$currentValue'")
+					}
 
 				is Float ->
-					if (currentValue.isFinite())
-						destination.writeFloat(currentValue)
-					else if (convertsInvalidValuesToString)
-						destination.writeString(currentValue.toString())
-					else
-						throw JSONException("Cannot serialize float value '$currentValue'")
+					when {
+						currentValue.isFinite() -> destination.writeFloat(currentValue)
+						convertsInvalidValuesToString -> destination.writeString(currentValue.toString())
+						else -> throw JSONException("Cannot serialize float value '$currentValue'")
+					}
 
 				is Number ->
 					destination.writeNumber(currentValue)
@@ -98,8 +100,8 @@ internal class SimpleSerializer(
 					if (isInMap && !isInMapElementValue) {
 						val (elementKey, elementValue) = currentValue
 						when {
-							elementKey is String -> destination.writeKey(elementKey)
-							convertsInvalidKeysToString -> destination.writeKey(elementKey.toString())
+							elementKey is String -> destination.writeMapKey(elementKey)
+							convertsInvalidKeysToString -> destination.writeMapKey(elementKey.toString())
 							else -> throw JSONException("Cannot serialize non-String key of ${currentValue::class.java}: $currentValue")
 						}
 
@@ -127,6 +129,6 @@ internal class SimpleSerializer(
 
 	companion object {
 
-		val strict = SimpleSerializer()
+		val default = StandardSerializer()
 	}
 }

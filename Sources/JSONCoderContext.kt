@@ -1,7 +1,10 @@
 package com.github.fluidsonic.fluid.json
 
 
-internal interface JSONCoderContext {
+interface JSONCoderContext {
 
-	object Empty : JSONCoderContext
+	companion object {
+
+		val empty = object : JSONCoderContext {}
+	}
 }

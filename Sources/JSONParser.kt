@@ -3,21 +3,21 @@ package com.github.fluidsonic.fluid.json
 import java.io.Reader
 
 
-internal interface JSONParser {
+interface JSONParser {
 
-	fun parse(reader: JSONReader): Any?
-
-
-	fun parse(reader: Reader) =
-		parse(JSON.reader(reader))
+	fun parse(source: JSONReader): Any?
 
 
-	fun parse(string: String) =
-		parse(JSON.reader(string))
+	fun parse(source: Reader) =
+		parse(JSONReader(source))
 
 
-	fun parseList(reader: JSONReader): List<*> {
-		val list = parse(reader)
+	fun parse(source: String) =
+		parse(JSONReader(source))
+
+
+	fun parseList(source: JSONReader): List<*> {
+		val list = parse(source)
 		if (list !is List<*>) {
 			throw JSONException("expected a list, got ${list?.javaClass}")
 		}
@@ -26,16 +26,16 @@ internal interface JSONParser {
 	}
 
 
-	fun parseList(reader: Reader) =
-		parseList(JSON.reader(reader))
+	fun parseList(source: Reader) =
+		parseList(JSONReader(source))
 
 
-	fun parseList(string: String) =
-		parseList(JSON.reader(string))
+	fun parseList(source: String) =
+		parseList(JSONReader(source))
 
 
-	fun parseMap(reader: JSONReader): Map<String, *> {
-		val map = parse(reader)
+	fun parseMap(source: JSONReader): Map<String, *> {
+		val map = parse(source)
 		if (map !is Map<*, *>) {
 			throw JSONException("expected a map, got ${map?.javaClass}")
 		}
@@ -45,10 +45,17 @@ internal interface JSONParser {
 	}
 
 
-	fun parseMap(reader: Reader) =
-		parseMap(JSON.reader(reader))
+	fun parseMap(source: Reader) =
+		parseMap(JSONReader(source))
 
 
-	fun parseMap(string: String) =
-		parseMap(JSON.reader(string))
+	fun parseMap(source: String) =
+		parseMap(JSONReader(source))
+
+
+	companion object {
+
+		operator fun invoke(): JSONParser =
+			StandardParser.default
+	}
 }

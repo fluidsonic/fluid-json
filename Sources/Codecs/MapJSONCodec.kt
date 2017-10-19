@@ -1,22 +1,14 @@
 package com.github.fluidsonic.fluid.json
 
 
-internal class MapJSONCodec : JSONCodec<Map<*, *>, JSONCoderContext> {
+object MapJSONCodec : JSONCodec<Map<*, *>, JSONCoderContext> {
 
-	override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Map<*, *> =
-		mutableMapOf<String, Any?>().also { map ->
-			decoder.readMapByEntry { map[it] = readValue() }
-		}
+	override fun decode(decoder: JSONDecoder<JSONCoderContext>): Map<*, *> =
+		decoder.readMap()
 
 
-	override fun encode(value: Map<*, *>, encoder: JSONEncoder<out JSONCoderContext>) {
-		encoder.writeMap {
-			for ((elementKey, elementValue) in value) {
-				writeKey(elementKey as String) // FIXME EncodableKey?
-				writeEncodableOrNull(elementValue)
-			}
-		}
-	}
+	override fun encode(value: Map<*, *>, encoder: JSONEncoder<JSONCoderContext>) =
+		encoder.writeMap(value)
 
 
 	override val valueClass = Map::class.java

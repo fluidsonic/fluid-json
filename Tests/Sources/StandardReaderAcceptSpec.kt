@@ -2,14 +2,23 @@ package tests
 
 import com.github.fluidsonic.fluid.json.JSONReader
 import com.github.fluidsonic.fluid.json.JSONToken
+import com.github.fluidsonic.fluid.json.StandardReader
 import com.github.fluidsonic.fluid.json.TextInput
-import com.github.fluidsonic.fluid.json.TextInputReader
+import com.github.fluidsonic.fluid.json.readBooleanOrNull
+import com.github.fluidsonic.fluid.json.readDoubleOrNull
+import com.github.fluidsonic.fluid.json.readElementsFromMap
+import com.github.fluidsonic.fluid.json.readFloatOrNull
+import com.github.fluidsonic.fluid.json.readFromList
+import com.github.fluidsonic.fluid.json.readFromMap
+import com.github.fluidsonic.fluid.json.readIntOrNull
 import com.github.fluidsonic.fluid.json.readList
 import com.github.fluidsonic.fluid.json.readListByElement
 import com.github.fluidsonic.fluid.json.readListOrNull
+import com.github.fluidsonic.fluid.json.readLongOrNull
 import com.github.fluidsonic.fluid.json.readMap
-import com.github.fluidsonic.fluid.json.readMapByEntry
 import com.github.fluidsonic.fluid.json.readMapOrNull
+import com.github.fluidsonic.fluid.json.readNumberOrNull
+import com.github.fluidsonic.fluid.json.readStringOrNull
 import com.github.fluidsonic.fluid.json.readValue
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
@@ -18,9 +27,9 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.StringReader
 
 
-internal object TextInputReaderAcceptSpec : Spek({
+internal object StandardReaderAcceptSpec : Spek({
 
-	describe("TextInputReader succeeds for") {
+	describe("StandardReader succeeds for") {
 
 		describe(".nextToken") {
 
@@ -144,6 +153,21 @@ internal object TextInputReaderAcceptSpec : Spek({
 		}
 
 
+		it("readElementsFromMap()") {
+			val map = mutableMapOf<String, Any?>()
+
+			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").readElementsFromMap { key ->
+				map[key] = readValue()
+			}
+
+			map.should.equal(mapOf(
+				"key0" to true,
+				"key1" to "hey",
+				"key2" to null
+			))
+		}
+
+
 		it("readFloat()") {
 			reader("0").readFloat().should.equal(0.0f)
 			reader("-0").readFloat().should.equal(-0.0f)
@@ -198,6 +222,69 @@ internal object TextInputReaderAcceptSpec : Spek({
 			reader("1e20000").readFloatOrNull().should.equal(Float.POSITIVE_INFINITY)
 			reader("-1e20000").readFloatOrNull().should.equal(Float.NEGATIVE_INFINITY)
 			reader("null").readFloatOrNull().should.be.`null`
+		}
+
+
+		it("readFromMap() inline") {
+			reader("{}").apply {
+				readFromMap { Dummy1 }.should.equal(Dummy1)
+			}
+			reader("{ \t\n\r}").apply {
+				readFromMap { Dummy1 }.should.equal(Dummy1)
+			}
+			reader("{\"key\":1}").apply {
+				readFromMap {
+					readString().should.equal("key")
+					readInt().should.equal(1)
+					Dummy1
+				}.should.equal(Dummy1)
+			}
+			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").apply {
+				readFromMap {
+					readString().should.equal("key0")
+					readBoolean().should.equal(true)
+					readString().should.equal("key1")
+					readString().should.equal("hey")
+					readString().should.equal("key2")
+					readNull()
+					Dummy1
+				}.should.equal(Dummy1)
+			}
+			reader("{ \"key0\": {}, \"key1\": { \"key\": 1 } }").apply {
+				readFromMap {
+					readString().should.equal("key0")
+					readFromMap { Dummy2 }.should.equal(Dummy2)
+					readString().should.equal("key1")
+					readFromMap {
+						readString().should.equal("key")
+						readInt().should.equal(1)
+						Dummy3
+					}.should.equal(Dummy3)
+					Dummy1
+				}.should.equal(Dummy1)
+			}
+			reader("{ \" \\\\ \\\" \\/ \\b \\f \\n \\r \\t \\uD83D\\udc36 \": 1 }").apply {
+				readFromMap {
+					readString().should.equal(" \\ \" / \b \u000C \n \r \t 🐶 ")
+					readInt().should.equal(1)
+					Dummy1
+				}.should.equal(Dummy1)
+			}
+			reader("{ \"0\": 0, \"2\": 2, \"1\": 1, \"3\": 3, \"-1\": -1 }").apply {
+				readFromMap {
+					readString().should.equal("0")
+					readInt().should.equal(0)
+					readString().should.equal("2")
+					readInt().should.equal(2)
+					readString().should.equal("1")
+					readInt().should.equal(1)
+					readString().should.equal("3")
+					readInt().should.equal(3)
+					readString().should.equal("-1")
+					readInt().should.equal(-1)
+					Dummy1
+				}.should.equal(Dummy1)
+			}
 		}
 
 
@@ -257,22 +344,22 @@ internal object TextInputReaderAcceptSpec : Spek({
 
 		it("readList() inline") {
 			reader("[]").apply {
-				readList { Dummy1 }.should.equal(Dummy1)
+				readFromList { Dummy1 }.should.equal(Dummy1)
 			}
 
 			reader("[ \t\n\r]").apply {
-				readList { Dummy1 }.should.equal(Dummy1)
+				readFromList { Dummy1 }.should.equal(Dummy1)
 			}
 
 			reader("[1]").apply {
-				readList {
+				readFromList {
 					skipValue()
 					Dummy1
 				}.should.equal(Dummy1)
 			}
 
 			reader("[ true, \"hey\", null ]").apply {
-				readList {
+				readFromList {
 					skipValue()
 					skipValue()
 					skipValue()
@@ -281,9 +368,9 @@ internal object TextInputReaderAcceptSpec : Spek({
 			}
 
 			reader("[ [], [ 1 ] ]").apply {
-				readList {
-					readList { Dummy2 }.should.equal(Dummy2)
-					readList {
+				readFromList {
+					readFromList { Dummy2 }.should.equal(Dummy2)
+					readFromList {
 						skipValue()
 						Dummy3
 					}.should.equal(Dummy3)
@@ -321,46 +408,6 @@ internal object TextInputReaderAcceptSpec : Spek({
 			reader("[ true, \"hey\", null ]").readListOrNull().should.equal(listOf(true, "hey", null))
 			reader("[ [], [ 1 ] ]").readListOrNull().should.equal(listOf(emptyList<Any?>(), listOf(1)))
 			reader("null").readListOrNull().should.be.`null`
-		}
-
-
-		it("readListOrNull() inline") {
-			reader("[]").apply {
-				readListOrNull { Dummy1 }.should.equal(Dummy1)
-			}
-
-			reader("[ \t\n\r]").apply {
-				readListOrNull { Dummy1 }.should.equal(Dummy1)
-			}
-
-			reader("[1]").apply {
-				readListOrNull {
-					skipValue()
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-
-			reader("[ true, \"hey\", null ]").apply {
-				readListOrNull {
-					skipValue()
-					skipValue()
-					skipValue()
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-
-			reader("[ [], [ 1 ] ]").apply {
-				readListOrNull {
-					readListOrNull { Dummy2 }.should.equal(Dummy2)
-					readListOrNull {
-						skipValue()
-						Dummy3
-					}.should.equal(Dummy3)
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-
-			reader("null").readListOrNull { Dummy1 }.should.be.`null`
 		}
 
 
@@ -444,84 +491,6 @@ internal object TextInputReaderAcceptSpec : Spek({
 		}
 
 
-		it("readMap() inline") {
-			reader("{}").apply {
-				readMap { Dummy1 }.should.equal(Dummy1)
-			}
-			reader("{ \t\n\r}").apply {
-				readMap { Dummy1 }.should.equal(Dummy1)
-			}
-			reader("{\"key\":1}").apply {
-				readMap {
-					readString().should.equal("key")
-					readInt().should.equal(1)
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").apply {
-				readMap {
-					readString().should.equal("key0")
-					readBoolean().should.equal(true)
-					readString().should.equal("key1")
-					readString().should.equal("hey")
-					readString().should.equal("key2")
-					readNull()
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-			reader("{ \"key0\": {}, \"key1\": { \"key\": 1 } }").apply {
-				readMap {
-					readString().should.equal("key0")
-					readMap { Dummy2 }.should.equal(Dummy2)
-					readString().should.equal("key1")
-					readMap {
-						readString().should.equal("key")
-						readInt().should.equal(1)
-						Dummy3
-					}.should.equal(Dummy3)
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-			reader("{ \" \\\\ \\\" \\/ \\b \\f \\n \\r \\t \\uD83D\\udc36 \": 1 }").apply {
-				readMap {
-					readString().should.equal(" \\ \" / \b \u000C \n \r \t 🐶 ")
-					readInt().should.equal(1)
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-			reader("{ \"0\": 0, \"2\": 2, \"1\": 1, \"3\": 3, \"-1\": -1 }").apply {
-				readMap {
-					readString().should.equal("0")
-					readInt().should.equal(0)
-					readString().should.equal("2")
-					readInt().should.equal(2)
-					readString().should.equal("1")
-					readInt().should.equal(1)
-					readString().should.equal("3")
-					readInt().should.equal(3)
-					readString().should.equal("-1")
-					readInt().should.equal(-1)
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-		}
-
-
-		it("readMapByEntry()") {
-			val map = mutableMapOf<String, Any?>()
-
-			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").readMapByEntry { key ->
-				map[key] = readValue()
-			}
-
-			map.should.equal(mapOf(
-				"key0" to true,
-				"key1" to "hey",
-				"key2" to null
-			))
-		}
-
-
 		it("readMapEnd()") {
 			reader("{}").apply {
 				readMapStart()
@@ -580,72 +549,6 @@ internal object TextInputReaderAcceptSpec : Spek({
 				"-1" to -1
 			))
 			reader("null").readMapOrNull().should.be.`null`
-		}
-
-
-		it("readMapOrNull() inline") {
-			reader("{}").apply {
-				readMapOrNull { Dummy1 }.should.equal(Dummy1)
-			}
-			reader("{ \t\n\r}").apply {
-				readMapOrNull { Dummy1 }.should.equal(Dummy1)
-			}
-			reader("{\"key\":1}").apply {
-				readMapOrNull {
-					readString().should.equal("key")
-					readInt().should.equal(1)
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").apply {
-				readMapOrNull {
-					readString().should.equal("key0")
-					readBoolean().should.equal(true)
-					readString().should.equal("key1")
-					readString().should.equal("hey")
-					readString().should.equal("key2")
-					readNull()
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-			reader("{ \"key0\": {}, \"key1\": { \"key\": 1 } }").apply {
-				readMapOrNull {
-					readString().should.equal("key0")
-					readMapOrNull { Dummy2 }.should.equal(Dummy2)
-					readString().should.equal("key1")
-					readMapOrNull {
-						readString().should.equal("key")
-						readInt().should.equal(1)
-						Dummy3
-					}.should.equal(Dummy3)
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-			reader("{ \" \\\\ \\\" \\/ \\b \\f \\n \\r \\t \\uD83D\\udc36 \": 1 }").apply {
-				readMapOrNull {
-					readString().should.equal(" \\ \" / \b \u000C \n \r \t 🐶 ")
-					readInt().should.equal(1)
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-			reader("{ \"0\": 0, \"2\": 2, \"1\": 1, \"3\": 3, \"-1\": -1 }").apply {
-				readMapOrNull {
-					readString().should.equal("0")
-					readInt().should.equal(0)
-					readString().should.equal("2")
-					readInt().should.equal(2)
-					readString().should.equal("1")
-					readInt().should.equal(1)
-					readString().should.equal("3")
-					readInt().should.equal(3)
-					readString().should.equal("-1")
-					readInt().should.equal(-1)
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-			reader("null").apply {
-				readMapOrNull { Dummy1 }.should.be.`null`
-			}
 		}
 
 
@@ -756,7 +659,7 @@ internal object TextInputReaderAcceptSpec : Spek({
 
 		it("readValue()") {
 			reader("[null, true, 0, [], {}, \"\"]").apply {
-				readList {
+				readFromList {
 					readValue().should.be.`null`
 					readValue().should.equal(true)
 					readValue().should.equal(0)
@@ -770,7 +673,7 @@ internal object TextInputReaderAcceptSpec : Spek({
 
 		it("skipValue()") {
 			reader("[null, true, 0, [], {}, \"\"]").apply {
-				readList {
+				readFromList {
 					nextToken.should.equal(JSONToken.nullValue)
 					skipValue()
 					nextToken.should.equal(JSONToken.booleanValue)
@@ -799,4 +702,4 @@ internal object TextInputReaderAcceptSpec : Spek({
 // https://youtrack.jetbrains.com/issue/KT-19796
 
 private fun reader(string: String): JSONReader =
-	TextInputReader(TextInput(StringReader(string)))
+	StandardReader(TextInput(StringReader(string)))

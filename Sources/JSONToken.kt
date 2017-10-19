@@ -1,10 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
-import org.apiguardian.api.API
 
-
-@API(status = API.Status.EXPERIMENTAL)
-internal enum class JSONToken {
+enum class JSONToken {
 
 	booleanValue,
 	listEnd,
@@ -14,5 +11,8 @@ internal enum class JSONToken {
 	mapKey,
 	mapStart,
 	numberValue,
-	stringValue
+	stringValue;
+
+
+	companion object
 }

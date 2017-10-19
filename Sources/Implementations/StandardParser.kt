@@ -2,21 +2,21 @@ package com.github.fluidsonic.fluid.json
 
 
 @Suppress("UNCHECKED_CAST")
-internal object SimpleParser : JSONParser {
+internal class StandardParser : JSONParser {
 
-	override fun parse(reader: JSONReader) =
-		parse(reader, expectedType = null)
+	override fun parse(source: JSONReader) =
+		source.use { parse(source = source, expectedType = null) }
 
 
-	private fun parse(reader: JSONReader, expectedType: ExpectedType?): Any? {
+	private fun parse(source: JSONReader, expectedType: ExpectedType?): Any? {
 		when (expectedType) {
 			ExpectedType.list ->
-				if (reader.nextToken != JSONToken.listStart)
-					throw JSONException("expected a list, got ${reader.nextToken}")
+				if (source.nextToken != JSONToken.listStart)
+					throw JSONException("expected a list, got ${source.nextToken}")
 
 			ExpectedType.map ->
-				if (reader.nextToken != JSONToken.mapStart)
-					throw JSONException("expected a map, got ${reader.nextToken}")
+				if (source.nextToken != JSONToken.mapStart)
+					throw JSONException("expected a map, got ${source.nextToken}")
 		}
 
 		var currentList: MutableList<Any?>? = null
@@ -27,12 +27,12 @@ internal object SimpleParser : JSONParser {
 		var value: Any? = null
 
 		loop@ while (true) {
-			value = when (reader.nextToken) {
+			value = when (source.nextToken) {
 				JSONToken.booleanValue ->
-					reader.readBoolean()
+					source.readBoolean()
 
 				JSONToken.listEnd -> {
-					reader.readListEnd()
+					source.readListEnd()
 
 					val list = currentList
 
@@ -56,7 +56,7 @@ internal object SimpleParser : JSONParser {
 				}
 
 				JSONToken.listStart -> {
-					reader.readListStart()
+					source.readListStart()
 
 					val list = mutableListOf<Any?>()
 					if (currentList != null) {
@@ -72,10 +72,10 @@ internal object SimpleParser : JSONParser {
 				}
 
 				JSONToken.nullValue
-				-> reader.readNull()
+				-> source.readNull()
 
 				JSONToken.mapEnd -> {
-					reader.readMapEnd()
+					source.readMapEnd()
 
 					val map = currentMap
 
@@ -104,12 +104,12 @@ internal object SimpleParser : JSONParser {
 				}
 
 				JSONToken.mapKey -> {
-					currentKey = reader.readMapKey()
+					currentKey = source.readMapKey()
 					continue@loop
 				}
 
 				JSONToken.mapStart -> {
-					reader.readMapStart()
+					source.readMapStart()
 
 					val map = mutableMapOf<Any?, Any?>()
 					if (currentMap != null) {
@@ -130,10 +130,10 @@ internal object SimpleParser : JSONParser {
 				}
 
 				JSONToken.numberValue ->
-					reader.readNumber()
+					source.readNumber()
 
 				JSONToken.stringValue ->
-					reader.readString()
+					source.readString()
 
 				else ->
 					return value
@@ -148,16 +148,22 @@ internal object SimpleParser : JSONParser {
 	}
 
 
-	override fun parseList(reader: JSONReader) =
-		parse(reader, expectedType = ExpectedType.list) as List<Any?>
+	override fun parseList(source: JSONReader) =
+		parse(source, expectedType = ExpectedType.list) as List<Any?>
 
 
-	override fun parseMap(reader: JSONReader) =
-		parse(reader, expectedType = ExpectedType.map) as Map<String, *>
+	override fun parseMap(source: JSONReader) =
+		parse(source, expectedType = ExpectedType.map) as Map<String, *>
 
 
 	private enum class ExpectedType {
 		map,
 		list
+	}
+
+
+	companion object {
+
+		val default = StandardParser()
 	}
 }

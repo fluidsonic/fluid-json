@@ -1,19 +1,19 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.JSONParser
-import com.github.fluidsonic.fluid.json.SimpleParser
+import com.github.fluidsonic.fluid.json.StandardParser
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
 
 
-internal object SimpleParserAcceptSpec : SubjectSpek<JSONParser>({
+internal object StandardParserAcceptSpec : SubjectSpek<JSONParser>({
 
-	subject { SimpleParser }
+	subject { StandardParser() }
 
 
-	describe("SimpleParser accepts") {
+	describe("StandardParser accepts") {
 
 		describe("constants") {
 
@@ -299,20 +299,4 @@ internal object SimpleParserAcceptSpec : SubjectSpek<JSONParser>({
 			subject.parseMap("{\"key\":1}").should.equal(mapOf("key" to 1))
 		}
 	}
-
-
-	// FIXME
-	/*
-	// trigger initialization of JSONParser.Characters.* objects to make code coverage happy
-	JSONParser::class.nestedClasses.forEach {
-		it.nestedClasses.forEach {
-			try {
-				it.objectInstance
-			}
-			catch (e: IllegalAccessException) {
-				// ignore
-			}
-		}
-	}
-	*/
 })

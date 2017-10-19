@@ -5,9 +5,9 @@ import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.readDecodable
-import com.github.fluidsonic.fluid.json.readMapByEntry
-import com.github.fluidsonic.fluid.json.writeMap
-import com.github.fluidsonic.fluid.json.writeMapEntry
+import com.github.fluidsonic.fluid.json.readElementsFromMap
+import com.github.fluidsonic.fluid.json.writeIntoMap
+import com.github.fluidsonic.fluid.json.writeMapElement
 import tests.Kaiju.Status
 import java.time.LocalDate
 
@@ -27,7 +27,7 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 		var status: Status? = null
 		var weight: Double? = null
 
-		decoder.readMapByEntry { key ->
+		decoder.readElementsFromMap { key ->
 			when (key) {
 				Keys.breachDate -> breachDate = readDecodable()
 				Keys.category -> category = readInt()
@@ -52,15 +52,15 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 	}
 
 
-	override fun encode(value: Kaiju, encoder: JSONEncoder<out TestCoderContext>) {
-		encoder.writeMap {
-			writeMapEntry(Keys.breachDate, encodable = value.breachDate)
-			writeMapEntry(Keys.category, int = value.category)
-			writeMapEntry(Keys.height, double = value.height)
-			writeMapEntry(Keys.name, string = value.name)
-			writeMapEntry(Keys.origin, string = value.origin)
-			writeMapEntry(Keys.status, encodable = value.status)
-			writeMapEntry(Keys.weight, double = value.weight)
+	override fun encode(value: Kaiju, encoder: JSONEncoder<TestCoderContext>) {
+		encoder.writeIntoMap {
+			writeMapElement(Keys.breachDate, encodable = value.breachDate)
+			writeMapElement(Keys.category, int = value.category)
+			writeMapElement(Keys.height, double = value.height)
+			writeMapElement(Keys.name, string = value.name)
+			writeMapElement(Keys.origin, string = value.origin)
+			writeMapElement(Keys.status, encodable = value.status)
+			writeMapElement(Keys.weight, double = value.weight)
 		}
 	}
 
@@ -88,7 +88,7 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 		}
 
 
-		override fun encode(value: Status, encoder: JSONEncoder<out TestCoderContext>) {
+		override fun encode(value: Status, encoder: JSONEncoder<TestCoderContext>) {
 			encoder.writeString(when (value) {
 				Status.deceased -> "deceased"
 			})
