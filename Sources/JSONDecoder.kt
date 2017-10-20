@@ -1,6 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
 import java.io.Reader
+import java.io.StringReader
 
 
 interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
@@ -12,44 +13,44 @@ interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
 
 	companion object {
 
-		operator fun invoke(
+		fun with(
 			source: String,
 			codecResolver: JSONCodecResolver<JSONCoderContext>
-		): JSONDecoder<JSONCoderContext> =
-			StandardDecoder(codecResolver = codecResolver, context = JSONCoderContext.empty, source = JSONReader(source))
+		) =
+			with(source = source, context = JSONCoderContext.empty, codecResolver = codecResolver)
 
 
-		operator fun invoke(
+		fun with(
 			source: Reader,
 			codecResolver: JSONCodecResolver<JSONCoderContext>
-		): JSONDecoder<JSONCoderContext> =
-			StandardDecoder(codecResolver = codecResolver, context = JSONCoderContext.empty, source = JSONReader(source))
+		) =
+			with(source = source, context = JSONCoderContext.empty, codecResolver = codecResolver)
 
 
-		operator fun invoke(
+		fun with(
 			source: JSONReader,
 			codecResolver: JSONCodecResolver<JSONCoderContext>
-		): JSONDecoder<JSONCoderContext> =
-			StandardDecoder(codecResolver = codecResolver, context = JSONCoderContext.empty, source = source)
+		) =
+			with(source = source, context = JSONCoderContext.empty, codecResolver = codecResolver)
 
 
-		operator fun <Context : JSONCoderContext> invoke(
+		fun <Context : JSONCoderContext> with(
 			source: String,
 			context: Context,
 			codecResolver: JSONCodecResolver<Context>
-		): JSONDecoder<Context> =
-			StandardDecoder(codecResolver = codecResolver, context = context, source = JSONReader(source))
+		) =
+			with(source = StringReader(source), context = context, codecResolver = codecResolver)
 
 
-		operator fun <Context : JSONCoderContext> invoke(
+		fun <Context : JSONCoderContext> with(
 			source: Reader,
 			context: Context,
 			codecResolver: JSONCodecResolver<Context>
-		): JSONDecoder<Context> =
-			StandardDecoder(codecResolver = codecResolver, context = context, source = JSONReader(source))
+		) =
+			with(source = JSONReader.with(source), context = context, codecResolver = codecResolver)
 
 
-		operator fun <Context : JSONCoderContext> invoke(
+		fun <Context : JSONCoderContext> with(
 			source: JSONReader,
 			context: Context,
 			codecResolver: JSONCodecResolver<Context>

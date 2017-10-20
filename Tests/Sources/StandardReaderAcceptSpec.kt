@@ -22,6 +22,7 @@ import com.github.fluidsonic.fluid.json.readStringOrNull
 import com.github.fluidsonic.fluid.json.readValue
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.TestBody
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.StringReader
@@ -701,5 +702,6 @@ internal object StandardReaderAcceptSpec : Spek({
 // TODO move the following methods inside the object above once KT-19796 is fixed
 // https://youtrack.jetbrains.com/issue/KT-19796
 
-private fun reader(string: String): JSONReader =
+@Suppress("unused")
+private fun TestBody.reader(string: String): JSONReader =
 	StandardReader(TextInput(StringReader(string)))

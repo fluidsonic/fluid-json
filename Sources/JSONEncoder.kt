@@ -9,35 +9,40 @@ interface JSONEncoder<out Context : JSONCoderContext> : JSONWriter {
 
 	fun writeEncodable(value: Any)
 
+
 	override fun writeValue(value: Any?) =
 		if (value != null) writeEncodable(value) else writeNull()
 
 
+	override fun writeValueAsMapKey(value: Any?) =
+		if (value != null) writeEncodable(value) else throw JSONException("Cannot write null as JSON map key")
+
+
 	companion object {
 
-		operator fun invoke(
+		fun with(
 			destination: Writer,
 			codecResolver: JSONCodecResolver<JSONCoderContext>
-		): JSONEncoder<JSONCoderContext> =
-			StandardEncoder(codecResolver = codecResolver, context = JSONCoderContext.empty, destination = JSONWriter(destination))
+		) =
+			with(destination = destination, context = JSONCoderContext.empty, codecResolver = codecResolver)
 
 
-		operator fun invoke(
+		fun with(
 			destination: JSONWriter,
 			codecResolver: JSONCodecResolver<JSONCoderContext>
-		): JSONEncoder<JSONCoderContext> =
-			StandardEncoder(codecResolver = codecResolver, context = JSONCoderContext.empty, destination = destination)
+		) =
+			with(destination = destination, context = JSONCoderContext.empty, codecResolver = codecResolver)
 
 
-		operator fun <Context : JSONCoderContext> invoke(
+		fun <Context : JSONCoderContext> with(
 			destination: Writer,
 			context: Context,
 			codecResolver: JSONCodecResolver<Context>
-		): JSONEncoder<Context> =
-			StandardEncoder(codecResolver = codecResolver, context = context, destination = JSONWriter(destination))
+		) =
+			with(destination = JSONWriter.with(destination), context = context, codecResolver = codecResolver)
 
 
-		operator fun <Context : JSONCoderContext> invoke(
+		fun <Context : JSONCoderContext> with(
 			destination: JSONWriter,
 			context: Context,
 			codecResolver: JSONCodecResolver<Context>
@@ -45,8 +50,6 @@ interface JSONEncoder<out Context : JSONCoderContext> : JSONWriter {
 			StandardEncoder(codecResolver = codecResolver, context = context, destination = destination)
 	}
 }
-
-// FIXME what about writeMap keys? auto-encode too?
 
 
 fun JSONEncoder<*>.writeEncodableOrNull(value: Any?) =

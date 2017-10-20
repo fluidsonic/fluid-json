@@ -56,6 +56,7 @@ interface JSONWriter : Closeable, Flushable {
 			is BooleanArray -> writeList(value)
 			is Byte -> writeByte(value)
 			is ByteArray -> writeList(value)
+			is DoubleArray -> writeList(value)
 			is Float -> writeFloat(value)
 			is FloatArray -> writeList(value)
 			is Int -> writeInt(value)
@@ -75,9 +76,18 @@ interface JSONWriter : Closeable, Flushable {
 	}
 
 
+	fun writeValueAsMapKey(value: Any?) {
+		when (value) {
+			is String -> writeMapKey(value)
+			null -> throw JSONException("Cannot write null JSON map key")
+			else -> throw JSONException("Cannot write JSON map key of ${value::class.java}: $value")
+		}
+	}
+
+
 	companion object {
 
-		operator fun invoke(destination: Writer): JSONWriter =
+		fun with(destination: Writer): JSONWriter =
 			StandardWriter(destination)
 	}
 }
@@ -390,7 +400,7 @@ inline fun <Writer : JSONWriter, ElementValue> Writer.writeMapByElementValue(
 	writeElementValue: Writer.(value: ElementValue) -> Unit
 ) =
 	writeMapByElement(value) { elementKey, elementValue ->
-		writeMapKey(elementKey as? String ?: throw JSONException("Cannot write JSON key of ${value::class.java}: $value"))
+		writeValueAsMapKey(elementKey)
 		writeElementValue(elementValue)
 	}
 

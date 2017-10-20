@@ -55,7 +55,7 @@ internal object StandardEncoderSpec : Spek({
 						UniverseCodec
 					),
 					context = TestCoderContext(),
-					destination = JSONWriter(writer)
+					destination = JSONWriter.with(writer)
 				)
 
 			encoder.writeEncodable(input)

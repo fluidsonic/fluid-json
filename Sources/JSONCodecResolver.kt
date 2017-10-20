@@ -11,20 +11,32 @@ interface JSONCodecResolver<in Context : JSONCoderContext> : JSONCodecProvider<C
 
 		val default by lazy {
 			JSONCodecResolver.of(
-				// FIXME add missing codecs
 				ArrayJSONCodec,
 				BooleanArrayJSONCodec,
+				BooleanJSONCodec,
 				ByteArrayJSONCodec,
+				ByteJSONCodec,
 				DoubleArrayJSONCodec,
+				DoubleJSONCodec,
 				FloatArrayJSONCodec,
+				FloatJSONCodec,
 				IntArrayJSONCodec,
+				IntJSONCodec,
 				LongArrayJSONCodec,
+				LongJSONCodec,
 				MapJSONCodec,
 				SequenceJSONCodec,
 				ShortArrayJSONCodec,
-				IterableJSONCodec, // after subclasses (Map)
+				ShortJSONCodec,
+				StringJSONCodec,
+				IterableJSONCodec, // after subclasses
+				NumberJSONCodec, // after subclasses
 				appendDefaultCodecs = false
 			)
+		}
+
+		val plain by lazy {
+			JSONCodecResolver.of(PlainJSONCodec(), appendDefaultCodecs = false)
 		}
 
 

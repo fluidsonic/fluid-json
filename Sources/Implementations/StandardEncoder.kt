@@ -4,7 +4,7 @@ package com.github.fluidsonic.fluid.json
 internal class StandardEncoder<out Context : JSONCoderContext>(
 	private val codecResolver: JSONCodecResolver<Context>,
 	override val context: Context,
-	destination: JSONWriter
+	private val destination: JSONWriter
 ) : JSONEncoder<Context>, JSONWriter by destination {
 
 	override fun writeEncodable(value: Any) {
@@ -16,4 +16,8 @@ internal class StandardEncoder<out Context : JSONCoderContext>(
 
 	override fun writeValue(value: Any?) =
 		super<JSONEncoder>.writeValue(value)
+
+
+	override fun writeValueAsMapKey(value: Any?) =
+		super<JSONEncoder>.writeValueAsMapKey(value)
 }

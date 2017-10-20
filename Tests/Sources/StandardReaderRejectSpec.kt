@@ -19,6 +19,7 @@ import com.github.fluidsonic.fluid.json.readMapOrNull
 import com.github.fluidsonic.fluid.json.readNumberOrNull
 import com.github.fluidsonic.fluid.json.readStringOrNull
 import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.TestBody
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.StringReader
@@ -568,7 +569,8 @@ internal object StandardReaderRejectSpec : Spek({
 // TODO move the following methods inside the object above once KT-19796 is fixed
 // https://youtrack.jetbrains.com/issue/KT-19796
 
-private inline fun readerShouldFail(string: String, body: JSONReader.() -> Unit) {
+@Suppress("unused")
+private inline fun TestBody.readerShouldFail(string: String, body: JSONReader.() -> Unit) {
 	try {
 		StandardReader(TextInput(StringReader(string))).body()
 		throw AssertionError("should fail with a JSONException")

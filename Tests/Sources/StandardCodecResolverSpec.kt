@@ -1,5 +1,6 @@
 package tests
 
+import com.github.fluidsonic.fluid.json.ArrayJSONCodec
 import com.github.fluidsonic.fluid.json.JSONCoderContext
 import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONDecoderCodec
@@ -19,13 +20,13 @@ internal object StandardCodecResolverSpec : Spek({
 
 		describe("for decoding") {
 
-			it("finds a codec by exact type (interface)") {
+			it("finds a codec by exact interface type") {
 				resolver(NothingDecoderCodec, ParentDecoderCodec, ChildDecoderCodec)
 					.decoderCodecForClass(Parent::class.java)
 					.should.equal(ParentDecoderCodec)
 			}
 
-			it("finds a codec by exact type (class)") {
+			it("finds a codec by exact class type") {
 				resolver(NothingDecoderCodec, ChildDecoderCodec, ParentDecoderCodec)
 					.decoderCodecForClass(Child::class.java)
 					.should.equal(ChildDecoderCodec)
@@ -47,22 +48,31 @@ internal object StandardCodecResolverSpec : Spek({
 
 		describe("for encoding") {
 
-			it("finds a codec by exact type (interface)") {
+			it("finds a codec by exact interface type") {
 				resolver(NothingEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
 					.encoderCodecForClass(Parent::class.java)
 					.should.equal(ParentEncoderCodec)
 			}
 
-			it("finds a codec by exact type (class)") {
+			it("finds a codec by exact class type") {
 				resolver(NothingEncoderCodec, ChildEncoderCodec, ParentEncoderCodec)
 					.encoderCodecForClass(Child::class.java)
 					.should.equal(ChildEncoderCodec)
+			}
+
+			it("finds a codec for array type") {
+				resolver(ArrayJSONCodec).encoderCodecForClass(Array<Any?>::class.java).should.equal(ArrayJSONCodec)
+				resolver(ArrayJSONCodec).encoderCodecForClass(Array<String>::class.java).should.equal(ArrayJSONCodec)
 			}
 
 			it("finds a codec for superclasses / interface") {
 				resolver(NothingEncoderCodec, ParentEncoderCodec)
 					.encoderCodecForClass(Child::class.java)
 					.should.equal(ParentEncoderCodec)
+			}
+
+			it("finds no object array codec for primitive array type") {
+				resolver(ArrayJSONCodec).encoderCodecForClass(IntArray::class.java as Class<*>).should.be.`null`
 			}
 
 			it("obeys order of codecs") {
@@ -135,11 +145,11 @@ internal object StandardCodecResolverSpec : Spek({
 // TODO move the following method inside the object above once KT-19796 is fixed
 // https://youtrack.jetbrains.com/issue/KT-19796
 
-@Suppress("unused") // FIXME use TestBody. everywhere
+@Suppress("unused")
 private fun TestBody.resolver(vararg codecs: JSONDecoderCodec<*, StandardCodecResolverSpec.Context>) =
 	StandardCodecResolver(decoderCodecs = codecs.toList(), encoderCodecs = emptyList())
 
 
-@Suppress("unused") // FIXME use TestBody. everywhere
+@Suppress("unused")
 private fun TestBody.resolver(vararg codecs: JSONEncoderCodec<*, StandardCodecResolverSpec.Context>) =
 	StandardCodecResolver(decoderCodecs = emptyList(), encoderCodecs = codecs.toList())

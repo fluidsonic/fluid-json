@@ -1,12 +1,11 @@
 package com.github.fluidsonic.fluid.json
 
 
-// FIXME arrays are a different beast - test & fix implementation in codec resolver!
-object ArrayJSONCodec : JSONEncoderCodec<Array<Any?>, JSONCoderContext> {
+object ArrayJSONCodec : JSONEncoderCodec<Array<out Any?>, JSONCoderContext> {
 
-	override fun encode(value: Array<Any?>, encoder: JSONEncoder<JSONCoderContext>) =
+	override fun encode(value: Array<out Any?>, encoder: JSONEncoder<JSONCoderContext>) =
 		encoder.writeList(value)
 
 
-	override val valueClass = Array<Any?>::class.java
+	override val valueClass = Array<out Any?>::class.java
 }

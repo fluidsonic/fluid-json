@@ -1,16 +1,24 @@
 package tests
 
+import com.github.fluidsonic.fluid.json.JSONCodecResolver
+import com.github.fluidsonic.fluid.json.JSONCoderContext
+import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONSerializer
 import com.github.fluidsonic.fluid.json.StandardSerializer
+import com.github.fluidsonic.fluid.json.serialize
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
 
 
-internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer>({
+internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer<JSONCoderContext>>({
 
-	subject { StandardSerializer() }
+	subject {
+		StandardSerializer { destination, context ->
+			JSONEncoder.with(destination = destination, context = context, codecResolver = JSONCodecResolver.plain)
+		}
+	}
 
 
 	describe("StandardSerializer rejects serialization of") {
@@ -42,7 +50,7 @@ internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer>({
 // TODO move the following method inside the object above once KT-19796 is fixed
 // https://youtrack.jetbrains.com/issue/KT-19796
 
-private fun JSONSerializer.failToSerialize(value: Any?) {
+private fun JSONSerializer<JSONCoderContext>.failToSerialize(value: Any?) {
 	try {
 		serialize(value)
 		throw AssertionError("should fail with a JSONException")

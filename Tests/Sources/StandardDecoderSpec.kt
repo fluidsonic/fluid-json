@@ -79,7 +79,7 @@ internal object StandardDecoderSpec : Spek({
 						UniverseCodec
 					),
 					context = TestCoderContext(),
-					source = JSONReader(input)
+					source = JSONReader.with(input)
 				)
 
 			decoder.readDecodable<Universe>().should.equal(expectedOutput)

@@ -3,7 +3,6 @@ package com.github.fluidsonic.fluid.json
 import java.io.IOException
 
 
-// FIXME max nesting, max string length, max number length
 internal class StandardReader(private val source: TextInput) : JSONReader {
 
 	private val buffer = StringBuilder()
@@ -37,7 +36,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 			throw unexpectedCharacter(
 				nextCharacter,
 				expected = "end of value",
-				characterIndex = source.index
+				characterIndex = source.sourceIndex
 			)
 		}
 	}
@@ -53,19 +52,19 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 
 			val peekedToken = peekToken()
 			this.peekedToken = peekedToken
-			this.peekedTokenIndex = source.index
+			this.peekedTokenIndex = source.sourceIndex
 
 			return peekedToken
 		}
 
 
 	private fun peekToken(): JSONToken? {
-		val input = source
+		val source = source
 
 		while (true) {
-			input.skipWhitespaceCharacters()
+			source.skipWhitespaceCharacters()
 
-			val character = input.peekCharacter()
+			val character = source.peekCharacter()
 
 			@Suppress("NON_EXHAUSTIVE_WHEN")
 			when (state) {
@@ -73,7 +72,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 					when (character) {
 						Character.Symbol.comma -> {
 							state = State.afterListElementSeparator
-							input.readCharacter()
+							source.readCharacter()
 						}
 
 						Character.Symbol.rightSquareBracket -> {
@@ -105,7 +104,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 					when (character) {
 						Character.Symbol.comma -> {
 							state = State.afterMapElementSeparator
-							input.readCharacter()
+							source.readCharacter()
 						}
 
 						Character.Symbol.rightCurlyBracket -> {
@@ -130,7 +129,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 					when (character) {
 						Character.Symbol.colon -> {
 							state = State.afterMapKeySeparator
-							input.readCharacter()
+							source.readCharacter()
 						}
 
 						else -> throw unexpectedCharacter(character, expected = "':'")
@@ -221,22 +220,22 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 	override fun readBoolean(): Boolean {
 		readToken(JSONToken.booleanValue)
 
-		val input = source
-		if (input.peekCharacter() == Character.Letter.t) {
-			input.readCharacter(Character.Letter.t)
-			input.readCharacter(Character.Letter.r)
-			input.readCharacter(Character.Letter.u)
-			input.readCharacter(Character.Letter.e)
+		val source = source
+		if (source.peekCharacter() == Character.Letter.t) {
+			source.readCharacter(Character.Letter.t)
+			source.readCharacter(Character.Letter.r)
+			source.readCharacter(Character.Letter.u)
+			source.readCharacter(Character.Letter.e)
 			finishValue()
 
 			return true
 		}
 		else {
-			input.readCharacter(Character.Letter.f)
-			input.readCharacter(Character.Letter.a)
-			input.readCharacter(Character.Letter.l)
-			input.readCharacter(Character.Letter.s)
-			input.readCharacter(Character.Letter.e)
+			source.readCharacter(Character.Letter.f)
+			source.readCharacter(Character.Letter.a)
+			source.readCharacter(Character.Letter.l)
+			source.readCharacter(Character.Letter.s)
+			source.readCharacter(Character.Letter.e)
 			finishValue()
 
 			return false
@@ -278,11 +277,11 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 		val isNegative: Boolean
 		val negativeLimit: Long
 
-		val input = source
-		var character = input.readCharacter()
+		val source = source
+		var character = source.readCharacter()
 		if (character == Character.Symbol.hyphenMinus) {
 			isNegative = true
-			character = input.readCharacter(required = Character::isDigit) { "a digit" }
+			character = source.readCharacter(required = Character::isDigit) { "a digit" }
 			negativeLimit = Long.MIN_VALUE
 		}
 		else {
@@ -294,7 +293,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 		var value = 0L
 
 		if (character == Character.Digit.zero) {
-			character = input.readCharacter(required = { !Character.isDigit(it) }) {
+			character = source.readCharacter(required = { !Character.isDigit(it) }) {
 				Character.toString(
 					Character.Symbol.fullStop,
 					Character.Letter.e,
@@ -308,7 +307,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 				if (value < minimumBeforeMultiplication) {
 					value = negativeLimit
 
-					do character = input.readCharacter()
+					do character = source.readCharacter()
 					while (Character.isDigit(character))
 					break
 				}
@@ -318,13 +317,13 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 				if (value < negativeLimit + digit) {
 					value = negativeLimit
 
-					do character = input.readCharacter()
+					do character = source.readCharacter()
 					while (Character.isDigit(character))
 					break
 				}
 
 				value -= digit
-				character = input.readCharacter()
+				character = source.readCharacter()
 			}
 			while (Character.isDigit(character))
 
@@ -334,31 +333,31 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 		}
 
 		if (character == Character.Symbol.fullStop) { // truncate decimal value
-			input.readCharacter(required = Character::isDigit) { "a digit in decimal value of number" }
+			source.readCharacter(required = Character::isDigit) { "a digit in decimal value of number" }
 
-			do character = input.readCharacter()
+			do character = source.readCharacter()
 			while (Character.isDigit(character))
 		}
 
 		if (character == Character.Letter.e || character == Character.Letter.E) { // apply exponent
 			val exponentIsNegative: Boolean
 
-			when (input.peekCharacter()) {
+			when (source.peekCharacter()) {
 				Character.Symbol.plusSign -> {
 					exponentIsNegative = false
-					input.readCharacter()
+					source.readCharacter()
 				}
 
 				Character.Symbol.hyphenMinus -> {
 					exponentIsNegative = true
-					input.readCharacter()
+					source.readCharacter()
 				}
 
 				else ->
 					exponentIsNegative = false
 			}
 
-			character = input.readCharacter(required = Character::isDigit) { "a digit in exponent value of number" }
+			character = source.readCharacter(required = Character::isDigit) { "a digit in exponent value of number" }
 
 			var exponent = 0
 			do {
@@ -366,12 +365,12 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 				exponent = (exponent * 10) + digit
 
 				if (exponent >= 19) {
-					do character = input.readCharacter()
+					do character = source.readCharacter()
 					while (Character.isDigit(character))
 					break
 				}
 
-				character = input.readCharacter()
+				character = source.readCharacter()
 			}
 			while (Character.isDigit(character))
 
@@ -394,7 +393,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 			}
 		}
 
-		input.seekBackOneCharacter()
+		source.seekBackOneCharacter()
 		finishValue()
 
 		return value
@@ -418,11 +417,11 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 	override fun readNull(): Nothing? {
 		readToken(JSONToken.nullValue)
 
-		val input = source
-		input.readCharacter(Character.Letter.n)
-		input.readCharacter(Character.Letter.u)
-		input.readCharacter(Character.Letter.l)
-		input.readCharacter(Character.Letter.l)
+		val source = source
+		source.readCharacter(Character.Letter.n)
+		source.readCharacter(Character.Letter.u)
+		source.readCharacter(Character.Letter.l)
+		source.readCharacter(Character.Letter.l)
 		finishValue()
 
 		return null
@@ -451,20 +450,20 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 		buffer.setLength(0)
 
 		var shouldParseAsFloatingPoint = false
-		val input = source
-		var character = input.readCharacter()
+		val source = source
+		var character = source.readCharacter()
 
 		// consume optional minus sign
 		if (character == Character.Symbol.hyphenMinus) {
 			buffer.append('-')
-			character = input.readCharacter()
+			character = source.readCharacter()
 		}
 
 		// consume integer value
 		when (character) {
 			Character.Digit.zero -> {
 				buffer.append('0')
-				character = input.readCharacter(required = { !Character.isDigit(it) }) {
+				character = source.readCharacter(required = { !Character.isDigit(it) }) {
 					Character.toString(
 						Character.Symbol.fullStop,
 						Character.Letter.e,
@@ -484,7 +483,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 			Character.Digit.nine ->
 				do {
 					buffer.append(character.toChar())
-					character = input.readCharacter()
+					character = source.readCharacter()
 				}
 				while (Character.isDigit(character))
 
@@ -492,7 +491,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 				throw unexpectedCharacter(
 					character,
 					expected = "a digit in integer value of number",
-					characterIndex = input.index - 1
+					characterIndex = source.sourceIndex - 1
 				)
 		}
 
@@ -501,11 +500,11 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 			shouldParseAsFloatingPoint = true
 
 			buffer.append('.')
-			character = input.readCharacter(required = Character::isDigit) { "a digit in decimal value of number" }
+			character = source.readCharacter(required = Character::isDigit) { "a digit in decimal value of number" }
 
 			do {
 				buffer.append(character.toChar())
-				character = input.readCharacter()
+				character = source.readCharacter()
 			}
 			while (Character.isDigit(character))
 		}
@@ -516,22 +515,22 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 
 			buffer.append(character.toChar())
 
-			character = input.peekCharacter()
+			character = source.peekCharacter()
 			if (character == Character.Symbol.plusSign || character == Character.Symbol.hyphenMinus) {
 				buffer.append(character.toChar())
-				input.readCharacter()
+				source.readCharacter()
 			}
 
-			character = input.readCharacter(required = Character::isDigit) { "a digit in exponent value of number" }
+			character = source.readCharacter(required = Character::isDigit) { "a digit in exponent value of number" }
 
 			do {
 				buffer.append(character.toChar())
-				character = input.readCharacter()
+				character = source.readCharacter()
 			}
 			while (Character.isDigit(character))
 		}
 
-		input.seekBackOneCharacter()
+		source.seekBackOneCharacter()
 		finishValue()
 
 		return shouldParseAsFloatingPoint
@@ -541,17 +540,29 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 	override fun readString(): String {
 		readToken(JSONToken.stringValue, JSONToken.mapKey)
 
+		return source.locked { readStringLocked() }
+	}
+
+
+	private fun readStringLocked(): String {
+		val source = source
+		source.readCharacter(Character.Symbol.quotationMark)
+
 		val buffer = buffer
 		buffer.setLength(0)
 
-		val input = source
-		input.readCharacter(Character.Symbol.quotationMark)
+		var startIndex = source.index
 
 		do {
-			var character = input.readCharacter()
+			var character = source.readCharacter()
 			when (character) {
 				Character.Symbol.reverseSolidus -> {
-					character = input.readCharacter()
+					val endIndex = source.index - 1
+					if (endIndex > startIndex) {
+						buffer.append(source.buffer, startIndex, endIndex - startIndex)
+					}
+
+					character = source.readCharacter()
 					when (character) {
 						Character.Symbol.reverseSolidus,
 						Character.Symbol.solidus ->
@@ -568,10 +579,10 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 						Character.Letter.r -> buffer.append('\r')
 						Character.Letter.t -> buffer.append('\t')
 						Character.Letter.u -> {
-							val digit1 = input.readCharacter(required = Character::isHexDigit) { "0-9, a-f or A-F" }
-							val digit2 = input.readCharacter(required = Character::isHexDigit) { "0-9, a-f or A-F" }
-							val digit3 = input.readCharacter(required = Character::isHexDigit) { "0-9, a-f or A-F" }
-							val digit4 = input.readCharacter(required = Character::isHexDigit) { "0-9, a-f or A-F" }
+							val digit1 = source.readCharacter(required = Character::isHexDigit) { "0-9, a-f or A-F" }
+							val digit2 = source.readCharacter(required = Character::isHexDigit) { "0-9, a-f or A-F" }
+							val digit3 = source.readCharacter(required = Character::isHexDigit) { "0-9, a-f or A-F" }
+							val digit4 = source.readCharacter(required = Character::isHexDigit) { "0-9, a-f or A-F" }
 
 							val decodedCharacter = (Character.parseHexDigit(digit1) shl 12) or
 								(Character.parseHexDigit(digit2) shl 8) or
@@ -582,6 +593,8 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 						}
 						else -> throw unexpectedCharacter(character, "an escape sequence starting with '\\', '/', '\"', 'b', 'f', 'n', 'r', 't' or 'u'")
 					}
+
+					startIndex = source.index
 				}
 
 				0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
@@ -593,12 +606,14 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 
 				Character.end ->
 					throw JSONException("unterminated string value")
-
-				else ->
-					buffer.append(character.toChar())
 			}
 		}
 		while (character != Character.Symbol.quotationMark)
+
+		val endIndex = source.index - 1
+		if (endIndex > startIndex) {
+			buffer.append(source.buffer, startIndex, endIndex - startIndex)
+		}
 
 		return buffer.toString()
 	}
@@ -644,7 +659,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 	}
 
 
-	private fun unexpectedCharacter(character: Int, expected: String, characterIndex: Int = source.index) =
+	private fun unexpectedCharacter(character: Int, expected: String, characterIndex: Int = source.sourceIndex) =
 		JSONException.unexpectedCharacter(character, expected = expected, characterIndex = characterIndex)
 
 

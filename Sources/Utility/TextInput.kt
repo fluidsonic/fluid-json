@@ -7,38 +7,89 @@ import java.util.Arrays
 
 internal class TextInput(private val source: Reader) : Closeable by source {
 
-	private var buffer = CharArray(2 * windowSize)
-	private var bufferFill = 0
-	private var bufferIndex = 0
-	private var bufferLockCount = 0
-	private var clearedBufferFill = 0
+	private var bufferEndIndex = 0
+	private var bufferIsLocked = false
+	private var bufferStartIndex = 0
+	private var readCharacterCountNotInBufferAnymore = 0
 	private var sourceIsAtEnd = false
 
 
+	private fun alignBufferStartIfNeeded(): Boolean {
+		// note that we keep a character before the read position in order to allow for seeking back one character
+
+		if (bufferIsLocked) {
+			return false
+		}
+
+		val bufferStartIndex = bufferStartIndex
+		if (bufferStartIndex <= 1) {
+			return true
+		}
+
+		val unreadCharacterCount = bufferEndIndex - bufferStartIndex
+		if (unreadCharacterCount <= 0) {
+			this.buffer[0] = this.buffer[bufferStartIndex - 1]
+			this.bufferEndIndex = 1
+			this.bufferStartIndex = 1
+			this.readCharacterCountNotInBufferAnymore += bufferStartIndex - 1
+
+			return true
+		}
+
+		if (bufferStartIndex >= windowSize + 1) {
+			System.arraycopy(buffer, bufferStartIndex - 1, buffer, 0, unreadCharacterCount)
+
+			this.bufferEndIndex = 1 + unreadCharacterCount
+			this.bufferStartIndex = 1
+			this.readCharacterCountNotInBufferAnymore += bufferStartIndex + 1
+
+			return true
+		}
+
+		return false
+	}
+
+
+	var buffer = CharArray((2 * windowSize) + 1)
+		private set
+
+
 	val index
-		get() = clearedBufferFill + bufferIndex
+		get() = bufferStartIndex
+
+
+	fun <ReturnValue> locked(body: () -> ReturnValue): ReturnValue {
+		lockBuffer()
+
+		try {
+			return body()
+		}
+		finally {
+			unlockBuffer()
+		}
+	}
 
 
 	fun lockBuffer() {
-		check(bufferLockCount == 0) //FIXME
-		bufferLockCount += 1
+		check(!bufferIsLocked) { "Input is already locked." }
+		bufferIsLocked = true
 	}
 
 
 	fun peekCharacter() =
 		if (tryPreloadCharacters(1) > 0)
-			buffer[bufferIndex].toInt()
+			buffer[bufferStartIndex].toInt()
 		else
 			Character.end
 
 
 	fun readCharacter(): Int {
 		val character = if (tryPreloadCharacters(1) > 0)
-			buffer[bufferIndex].toInt()
+			buffer[bufferStartIndex].toInt()
 		else
 			Character.end
 
-		bufferIndex += 1
+		bufferStartIndex += 1
 
 		return character
 	}
@@ -58,7 +109,7 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 			throw JSONException.unexpectedCharacter(
 				character,
 				expected = expected(),
-				characterIndex = bufferIndex - 1
+				characterIndex = bufferStartIndex - 1
 			)
 		}
 
@@ -67,41 +118,49 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 
 
 	fun seekBackOneCharacter() {
-		assert(bufferIndex > 0)
+		assert(bufferStartIndex > 0)
 
-		bufferIndex -= 1
+		bufferStartIndex -= 1
 	}
 
 
 	fun skipWhitespaceCharacters() {
-		var bufferIndex = bufferIndex
-		var bufferFill = bufferFill
+		var bufferStartIndex = bufferStartIndex
+		var bufferEndIndex = bufferEndIndex
 
 		do {
-			if (bufferIndex >= bufferFill) {
+			if (bufferStartIndex >= bufferEndIndex) {
+				this.bufferStartIndex = bufferStartIndex
+
 				if (tryPreloadCharacters() == 0) {
-					this.bufferIndex = bufferFill
+					this.bufferStartIndex = bufferEndIndex
 					return
 				}
 
-				bufferIndex = this.bufferIndex
-				bufferFill = this.bufferFill
+				bufferStartIndex = this.bufferStartIndex
+				bufferEndIndex = this.bufferEndIndex
 			}
 
-			val character = buffer[bufferIndex++].toInt()
+			val character = buffer[bufferStartIndex].toInt()
+			bufferStartIndex += 1
 		}
 		while (Character.isWhitespace(character))
 
-		this.bufferIndex = bufferIndex - 1
+		this.bufferStartIndex = bufferStartIndex - 1
 	}
+
+
+	val sourceIndex
+		get() = readCharacterCountNotInBufferAnymore + bufferStartIndex
 
 
 	private fun tryPreloadCharacters(preloadCount: Int = windowSize): Int {
 		assert(preloadCount in 0 .. windowSize)
 
-		var bufferFill = bufferFill
-		val remainingCount = bufferFill - bufferIndex
-		if (remainingCount >= preloadCount) {
+		var bufferEndIndex = bufferEndIndex
+
+		val unreadCharacterCount = bufferEndIndex - bufferStartIndex
+		if (unreadCharacterCount >= preloadCount) {
 			return preloadCount
 		}
 
@@ -112,27 +171,9 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 		var buffer = buffer
 		var bufferSize = buffer.size
 
-		if (bufferSize - bufferFill < windowSize) {
-			var bufferIndex = bufferIndex
-			if (bufferLockCount > 0 && bufferIndex >= windowSize) { // FIXME what if locked buffer is empty?
-				bufferFill -= bufferIndex
-
-				System.arraycopy(buffer, bufferIndex, buffer, 0, bufferFill)
-
-				this.clearedBufferFill += bufferIndex
-				this.bufferFill = bufferFill
-
-				bufferIndex = 0
-				this.bufferIndex = bufferIndex
-			}
-			else if (bufferLockCount == 0 && bufferIndex == bufferFill) {
-				this.clearedBufferFill += bufferIndex
-
-				bufferIndex = 0
-				bufferFill = 0
-
-				this.bufferIndex = bufferIndex
-				this.bufferFill = bufferFill
+		if (bufferSize - bufferEndIndex < windowSize) {
+			if (alignBufferStartIfNeeded()) {
+				bufferEndIndex = this.bufferEndIndex
 			}
 			else {
 				bufferSize += windowSize
@@ -142,7 +183,7 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 			}
 		}
 
-		val preloadedCount = source.read(buffer, bufferFill, windowSize)
+		val preloadedCount = source.read(buffer, bufferEndIndex, windowSize)
 		if (preloadedCount <= 0) {
 			check(preloadedCount != 0) { "Reader.read(…) must not return 0." }
 
@@ -150,32 +191,23 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 			return 0
 		}
 
-		bufferFill += preloadedCount
-		this.bufferFill = bufferFill
+		bufferEndIndex += preloadedCount
+		this.bufferEndIndex = bufferEndIndex
 
 		return preloadedCount
 	}
 
 
 	fun unlockBuffer() {
-		check(bufferLockCount > 0)
+		check(bufferIsLocked) { "Input is not locked." }
+		bufferIsLocked = false
 
-		if (bufferIndex > usedBufferClearThreshold) {
-			val bufferIndex = bufferIndex
-			val bufferFill = bufferFill - bufferIndex
-
-			this.bufferFill = bufferFill
-			this.bufferIndex = 0
-			this.clearedBufferFill += bufferIndex
-
-			System.arraycopy(buffer, bufferIndex, buffer, 0, bufferFill)
-		}
+		alignBufferStartIfNeeded()
 	}
 
 
 	private companion object {
 
-		const val usedBufferClearThreshold = 512
-		const val windowSize = 4096
+		const val windowSize = 2048
 	}
 }
