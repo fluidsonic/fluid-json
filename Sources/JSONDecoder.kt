@@ -7,7 +7,7 @@ interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
 
 	val context: Context
 
-	fun <Value : Any> readDecodableOfClass(valueClass: Class<out Value>): Value
+	fun <Value : Any> readDecodableOfClass(valueClass: Class<in Value>): Value
 
 
 	companion object {
