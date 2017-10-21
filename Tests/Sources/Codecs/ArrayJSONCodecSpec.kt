@@ -1,22 +1,13 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.ArrayJSONCodec
-import com.winterbe.expekt.should
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.subject.SubjectSpek
+import com.github.fluidsonic.fluid.json.JSONCoderContext
+import com.github.fluidsonic.fluid.json.JSONEncoderCodec
+import com.github.fluidsonic.fluid.json.StringJSONCodec
 
 
-internal object ArrayJSONCodecSpec : SubjectSpek<ArrayJSONCodec>({
+internal object ArrayJSONTestCodec : JSONEncoderCodec<Array<*>, JSONCoderContext> by ArrayJSONCodec {
 
-	subject { ArrayJSONCodec }
-
-
-	describe("ArrayJSONCodec") {
-
-		it("encodes arrays") {
-			subject.serialize(arrayOf("test", emptyList<Any?>()))
-				.should.equal("""["test",[]]""")
-		}
-	}
-})
+	override val encoderCodecs
+		get() = ArrayJSONCodec.encoderCodecs + StringJSONCodec
+}

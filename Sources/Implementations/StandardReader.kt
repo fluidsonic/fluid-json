@@ -379,7 +379,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 					return 0L
 				}
 				else {
-					return Long.MAX_VALUE
+					return if (isNegative) Long.MIN_VALUE else Long.MAX_VALUE
 				}
 			}
 

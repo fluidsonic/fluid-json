@@ -1,6 +1,7 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.JSONCodecResolver
+import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONReader
 import com.github.fluidsonic.fluid.json.StandardDecoder
 import com.github.fluidsonic.fluid.json.readDecodable
@@ -83,6 +84,26 @@ internal object StandardDecoderSpec : Spek({
 				)
 
 			decoder.readDecodable<Universe>().should.equal(expectedOutput)
+		}
+
+
+		it("fails when a codec was no found") {
+			val input = "{}"
+
+			val decoder =
+				StandardDecoder(
+					codecResolver = JSONCodecResolver.of(),
+					context = TestCoderContext(),
+					source = JSONReader.with(input)
+				)
+
+			try {
+				decoder.readDecodableOfClass(object {}::class.java)
+				throw AssertionError("an exception was expected")
+			}
+			catch (e: JSONException) {
+				// good
+			}
 		}
 	}
 })

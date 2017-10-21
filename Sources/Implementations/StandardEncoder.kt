@@ -7,8 +7,9 @@ internal class StandardEncoder<out Context : JSONCoderContext>(
 	private val destination: JSONWriter
 ) : JSONEncoder<Context>, JSONWriter by destination {
 
+	@Suppress("UNCHECKED_CAST")
 	override fun writeEncodable(value: Any) {
-		codecResolver.encoderCodecForClass(value::class.java)
+		codecResolver.encoderCodecForClass(value::class.java as Class<in Any>)
 			?.encode(value = value, encoder = this)
 			?: throw JSONException("no encoder codec registered for ${value::class.java}: $value")
 	}

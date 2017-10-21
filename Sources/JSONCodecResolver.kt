@@ -3,8 +3,8 @@ package com.github.fluidsonic.fluid.json
 
 interface JSONCodecResolver<in Context : JSONCoderContext> : JSONCodecProvider<Context> {
 
-	fun <Value : Any> decoderCodecForClass(`class`: Class<in Value>): JSONDecoderCodec<Value, Context>?
-	fun <Value : Any> encoderCodecForClass(`class`: Class<out Value>): JSONEncoderCodec<Value, Context>?
+	fun <Value : Any> decoderCodecForClass(`class`: Class<out Value>): JSONDecoderCodec<Value, Context>?
+	fun <Value : Any> encoderCodecForClass(`class`: Class<in Value>): JSONEncoderCodec<Value, Context>?
 
 
 	companion object {

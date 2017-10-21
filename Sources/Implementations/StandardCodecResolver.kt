@@ -14,12 +14,12 @@ internal class StandardCodecResolver<in Context : JSONCoderContext>(
 
 
 	@Suppress("UNCHECKED_CAST")
-	override fun <Value : Any> decoderCodecForClass(`class`: Class<in Value>): JSONDecoderCodec<Value, Context>? {
+	override fun <Value : Any> decoderCodecForClass(`class`: Class<out Value>): JSONDecoderCodec<Value, Context>? {
 		val codecs = resolvedDecoderCodecs
 
 		var decoder = synchronized(codecs) { codecs[`class`] }
 		if (decoder == null) {
-			decoder = decoderCodecs.firstOrNull { `class`.isAssignableFrom(it.valueClass) }
+			decoder = decoderCodecs.firstOrNull { it.valueClass.isAssignableOrBoxableTo(`class`) }
 			if (decoder != null) {
 				synchronized(codecs) {
 					codecs[`class`] = decoder
@@ -32,12 +32,12 @@ internal class StandardCodecResolver<in Context : JSONCoderContext>(
 
 
 	@Suppress("UNCHECKED_CAST")
-	override fun <Value : Any> encoderCodecForClass(`class`: Class<out Value>): JSONEncoderCodec<Value, Context>? {
+	override fun <Value : Any> encoderCodecForClass(`class`: Class<in Value>): JSONEncoderCodec<Value, Context>? {
 		val codecs = resolvedEncoderCodecs
 
 		var encoder = synchronized(codecs) { codecs[`class`] }
 		if (encoder == null) {
-			encoder = encoderCodecs.firstOrNull { it.valueClass.isAssignableFrom(`class`) }
+			encoder = encoderCodecs.firstOrNull { it.valueClass.isAssignableOrBoxableFrom(`class`) }
 			if (encoder != null) {
 				synchronized(codecs) {
 					codecs[`class`] = encoder

@@ -8,7 +8,7 @@ interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
 
 	val context: Context
 
-	fun <Value : Any> readDecodableOfClass(valueClass: Class<in Value>): Value
+	fun <Value : Any> readDecodableOfClass(valueClass: Class<out Value>): Value
 
 
 	companion object {
@@ -62,6 +62,10 @@ interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
 
 inline fun <reified Value : Any> JSONDecoder<*>.readDecodable() =
 	readDecodableOfClass(Value::class.java)
+
+
+fun <Value : Any> JSONDecoder<*>.readDecodableOfClassOrNull(valueClass: Class<out Value>) =
+	if (nextToken != JSONToken.nullValue) readDecodableOfClass(valueClass) else readNull()
 
 
 inline fun <reified Value : Any> JSONDecoder<*>.readDecodableOrNull() =

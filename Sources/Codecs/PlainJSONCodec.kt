@@ -174,6 +174,7 @@ class PlainJSONCodec(
 			currentValue = when (currentValue) {
 				is Map<*, *> -> currentValue
 				is Iterable<*> -> currentValue.iterator()
+				is Sequence<*> -> currentValue.iterator()
 				is Array<*> -> currentValue.iterator()
 				is BooleanArray -> currentValue.iterator()
 				is ByteArray -> currentValue.iterator()

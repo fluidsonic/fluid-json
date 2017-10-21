@@ -7,7 +7,7 @@ class StandardDecoder<out Context : JSONCoderContext>(
 	source: JSONReader
 ) : JSONDecoder<Context>, JSONReader by source {
 
-	override fun <Value : Any> readDecodableOfClass(valueClass: Class<in Value>) =
+	override fun <Value : Any> readDecodableOfClass(valueClass: Class<out Value>) =
 		codecResolver.decoderCodecForClass(valueClass)
 			?.decode(decoder = this)
 			?: throw JSONException("no decoder codec registered for $valueClass")

@@ -1,14 +1,16 @@
 package com.github.fluidsonic.fluid.json
 
+import java.io.Reader
+
 
 internal class StandardParser<in Context : JSONCoderContext>(
-	private val decoderFactory: (source: JSONReader, context: Context) -> JSONDecoder<Context>
+	private val decoderFactory: (source: Reader, context: Context) -> JSONDecoder<Context>
 ) : JSONParser<Context> {
 
-	override fun parse(source: JSONReader, context: Context): Any? {
+	override fun <Value : Any> parse(source: Reader, valueClass: Class<out Value>, context: Context): Value? {
 		val decoder = decoderFactory(source, context)
 		decoder.use {
-			val value = decoder.readDecodableOrNull<Any>()
+			val value = decoder.readDecodableOfClassOrNull(valueClass)
 			if (decoder.nextToken != null) {
 				throw JSONException("decoder is messed up")
 			}

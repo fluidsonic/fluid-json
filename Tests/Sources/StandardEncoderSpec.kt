@@ -1,6 +1,7 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.JSONCodecResolver
+import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONWriter
 import com.github.fluidsonic.fluid.json.StandardEncoder
 import com.winterbe.expekt.should
@@ -61,6 +62,26 @@ internal object StandardEncoderSpec : Spek({
 			encoder.writeEncodable(input)
 
 			writer.toString().should.equal(expectedOutput)
+		}
+
+		
+		it("fails when a codec was no found") {
+
+			val writer = StringWriter()
+			val encoder =
+				StandardEncoder(
+					codecResolver = JSONCodecResolver.of(),
+					context = TestCoderContext(),
+					destination = JSONWriter.with(writer)
+				)
+
+			try {
+				encoder.writeEncodable(object {})
+				throw AssertionError("an exception was expected")
+			}
+			catch (e: JSONException) {
+				// good
+			}
 		}
 	}
 })
