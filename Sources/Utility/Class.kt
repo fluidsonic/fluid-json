@@ -25,4 +25,4 @@ internal fun Class<*>.isAssignableOrBoxableTo(otherClass: Class<*>) =
 
 
 internal fun Class<*>.isAssignableOrBoxableFrom(otherClass: Class<*>) =
-	boxed.isAssignableFrom(otherClass.boxed)
+	boxed.isAssignableFrom(otherClass.kotlin.javaObjectType)

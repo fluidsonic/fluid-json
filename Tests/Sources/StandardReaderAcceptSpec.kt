@@ -5,8 +5,10 @@ import com.github.fluidsonic.fluid.json.JSONToken
 import com.github.fluidsonic.fluid.json.StandardReader
 import com.github.fluidsonic.fluid.json.TextInput
 import com.github.fluidsonic.fluid.json.readBooleanOrNull
+import com.github.fluidsonic.fluid.json.readByteOrNull
 import com.github.fluidsonic.fluid.json.readDoubleOrNull
 import com.github.fluidsonic.fluid.json.readElementsFromMap
+import com.github.fluidsonic.fluid.json.readEndOfInput
 import com.github.fluidsonic.fluid.json.readFloatOrNull
 import com.github.fluidsonic.fluid.json.readFromList
 import com.github.fluidsonic.fluid.json.readFromMap
@@ -14,10 +16,16 @@ import com.github.fluidsonic.fluid.json.readIntOrNull
 import com.github.fluidsonic.fluid.json.readList
 import com.github.fluidsonic.fluid.json.readListByElement
 import com.github.fluidsonic.fluid.json.readListOrNull
+import com.github.fluidsonic.fluid.json.readListOrNullByElement
 import com.github.fluidsonic.fluid.json.readLongOrNull
 import com.github.fluidsonic.fluid.json.readMap
+import com.github.fluidsonic.fluid.json.readMapByElement
+import com.github.fluidsonic.fluid.json.readMapByElementValue
 import com.github.fluidsonic.fluid.json.readMapOrNull
+import com.github.fluidsonic.fluid.json.readMapOrNullByElement
+import com.github.fluidsonic.fluid.json.readMapOrNullByElementValue
 import com.github.fluidsonic.fluid.json.readNumberOrNull
+import com.github.fluidsonic.fluid.json.readShortOrNull
 import com.github.fluidsonic.fluid.json.readStringOrNull
 import com.github.fluidsonic.fluid.json.readValue
 import com.winterbe.expekt.should
@@ -92,12 +100,10 @@ internal object StandardReaderAcceptSpec : Spek({
 			}
 		}
 
-
 		it("readBoolean()") {
 			reader("true").readBoolean().should.be.`true`
 			reader("false").readBoolean().should.be.`false`
 		}
-
 
 		it("readBooleanOrNull()") {
 			reader("true").readBooleanOrNull().should.be.`true`
@@ -105,6 +111,48 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("null").readBooleanOrNull().should.be.`null`
 		}
 
+		it("readByte()") {
+			reader("0").readByte().should.equal(0.toByte())
+			reader("-0").readByte().should.equal(0.toByte())
+			reader("100").readByte().should.equal(100.toByte())
+			reader("-100").readByte().should.equal((-100).toByte())
+			reader("0.000").readByte().should.equal(0.toByte())
+			reader("-0.000").readByte().should.equal(0.toByte())
+			reader("100.001").readByte().should.equal(100.toByte())
+			reader("-100.001").readByte().should.equal((-100).toByte())
+			reader("100.999").readByte().should.equal(100.toByte())
+			reader("-100.999").readByte().should.equal((-100).toByte())
+			reader("1e2").readByte().should.equal(100.toByte())
+			reader("-1e2").readByte().should.equal((-100).toByte())
+			reader("1.0e2").readByte().should.equal(100.toByte())
+			reader("-1.0e2").readByte().should.equal((-100).toByte())
+			reader("1.0e+2").readByte().should.equal(100.toByte())
+			reader("-1.0e+2").readByte().should.equal((-100).toByte())
+			reader("1.0e-2").readByte().should.equal(0.toByte())
+			reader("-1.0e-2").readByte().should.equal(0.toByte())
+		}
+
+		it("readByteOrNull()") {
+			reader("0").readByteOrNull().should.equal(0.toByte())
+			reader("-0").readByteOrNull().should.equal(0.toByte())
+			reader("100").readByteOrNull().should.equal(100.toByte())
+			reader("-100").readByteOrNull().should.equal((-100).toByte())
+			reader("0.000").readByteOrNull().should.equal(0.toByte())
+			reader("-0.000").readByteOrNull().should.equal(0.toByte())
+			reader("100.001").readByteOrNull().should.equal(100.toByte())
+			reader("-100.001").readByteOrNull().should.equal((-100).toByte())
+			reader("100.999").readByteOrNull().should.equal(100.toByte())
+			reader("-100.999").readByteOrNull().should.equal((-100).toByte())
+			reader("1e2").readByteOrNull().should.equal(100.toByte())
+			reader("-1e2").readByteOrNull().should.equal((-100).toByte())
+			reader("1.0e2").readByteOrNull().should.equal(100.toByte())
+			reader("-1.0e2").readByteOrNull().should.equal((-100).toByte())
+			reader("1.0e+2").readByteOrNull().should.equal(100.toByte())
+			reader("-1.0e+2").readByteOrNull().should.equal((-100).toByte())
+			reader("1.0e-2").readByteOrNull().should.equal(0.toByte())
+			reader("-1.0e-2").readByteOrNull().should.equal(0.toByte())
+			reader("null").readByteOrNull().should.be.`null`
+		}
 
 		it("readDouble()") {
 			reader("0").readDouble().should.equal(0.0)
@@ -132,7 +180,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("1e20000").readDouble().should.equal(Double.POSITIVE_INFINITY)
 			reader("-1e20000").readDouble().should.equal(Double.NEGATIVE_INFINITY)
 		}
-
 
 		it("readDoubleOrNull()") {
 			reader("0").readDoubleOrNull().should.equal(0.0)
@@ -162,7 +209,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("null").readDoubleOrNull().should.be.`null`
 		}
 
-
 		it("readElementsFromMap()") {
 			val map = mutableMapOf<String, Any?>()
 
@@ -177,6 +223,12 @@ internal object StandardReaderAcceptSpec : Spek({
 			))
 		}
 
+		it("readEndOfInput()") {
+			reader("null").apply {
+				readNull()
+				readEndOfInput()
+			}
+		}
 
 		it("readFloat()") {
 			reader("0").readFloat().should.equal(0.0f)
@@ -204,7 +256,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("1e20000").readFloat().should.equal(Float.POSITIVE_INFINITY)
 			reader("-1e20000").readFloat().should.equal(Float.NEGATIVE_INFINITY)
 		}
-
 
 		it("readFloatOrNull()") {
 			reader("0").readFloatOrNull().should.equal(0.0f)
@@ -234,6 +285,42 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("null").readFloatOrNull().should.be.`null`
 		}
 
+		it("readFromList()") {
+			reader("[]").apply {
+				readFromList { Dummy1 }.should.equal(Dummy1)
+			}
+
+			reader("[ \t\n\r]").apply {
+				readFromList { Dummy1 }.should.equal(Dummy1)
+			}
+
+			reader("[1]").apply {
+				readFromList {
+					skipValue()
+					Dummy1
+				}.should.equal(Dummy1)
+			}
+
+			reader("[ true, \"hey\", null ]").apply {
+				readFromList {
+					skipValue()
+					skipValue()
+					skipValue()
+					Dummy1
+				}.should.equal(Dummy1)
+			}
+
+			reader("[ [], [ 1 ] ]").apply {
+				readFromList {
+					readFromList { Dummy2 }.should.equal(Dummy2)
+					readFromList {
+						skipValue()
+						Dummy3
+					}.should.equal(Dummy3)
+					Dummy1
+				}.should.equal(Dummy1)
+			}
+		}
 
 		it("readFromMap() inline") {
 			reader("{}").apply {
@@ -297,7 +384,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			}
 		}
 
-
 		it("readInt()") {
 			reader("0").readInt().should.equal(0)
 			reader("-0").readInt().should.equal(0)
@@ -318,7 +404,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("1.0e-2").readInt().should.equal(0)
 			reader("-1.0e-2").readInt().should.equal(0)
 		}
-
 
 		it("readIntOrNull()") {
 			reader("0").readIntOrNull().should.equal(0)
@@ -342,7 +427,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("null").readIntOrNull().should.be.`null`
 		}
 
-
 		it("readList()") {
 			reader("[]").readList().should.equal(emptyList())
 			reader("[ \t\n\r]").readList().should.equal(emptyList())
@@ -351,55 +435,10 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("[ [], [ 1 ] ]").readList().should.equal(listOf(emptyList<Any?>(), listOf(1)))
 		}
 
-
-		it("readList() inline") {
-			reader("[]").apply {
-				readFromList { Dummy1 }.should.equal(Dummy1)
-			}
-
-			reader("[ \t\n\r]").apply {
-				readFromList { Dummy1 }.should.equal(Dummy1)
-			}
-
-			reader("[1]").apply {
-				readFromList {
-					skipValue()
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-
-			reader("[ true, \"hey\", null ]").apply {
-				readFromList {
-					skipValue()
-					skipValue()
-					skipValue()
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-
-			reader("[ [], [ 1 ] ]").apply {
-				readFromList {
-					readFromList { Dummy2 }.should.equal(Dummy2)
-					readFromList {
-						skipValue()
-						Dummy3
-					}.should.equal(Dummy3)
-					Dummy1
-				}.should.equal(Dummy1)
-			}
-		}
-
-
 		it("readListByElement()") {
-			val list = mutableListOf<Any?>()
-
-			reader("[ true, \"hey\", null ]").readListByElement {
-				list += readValue()
-			}
-
-			list.should.equal(listOf(true, "hey", null))
+			reader("[ true, \"hey\", null ]").readListByElement { readValue() }
+				.should.equal(listOf(true, "hey", null))
 		}
-
 
 		it("readListEnd()") {
 			reader("[]").apply {
@@ -410,7 +449,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			}
 		}
 
-
 		it("readListOrNull()") {
 			reader("[]").readListOrNull().should.equal(emptyList())
 			reader("[ \t\n\r]").readListOrNull().should.equal(emptyList())
@@ -420,6 +458,13 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("null").readListOrNull().should.be.`null`
 		}
 
+		it("readListOrNullByElement()") {
+			reader("[ true, \"hey\", null ]").readListOrNullByElement { readValue() }
+				.should.equal(listOf(true, "hey", null))
+
+			reader("null").readListOrNullByElement { readValue() }
+				.should.equal(null)
+		}
 
 		it("readListStart()") {
 			reader("[]").apply {
@@ -428,7 +473,6 @@ internal object StandardReaderAcceptSpec : Spek({
 				nextToken.should.equal(JSONToken.listEnd)
 			}
 		}
-
 
 		it("readLong()") {
 			reader("0").readLong().should.equal(0L)
@@ -451,7 +495,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("-1.0e-2").readLong().should.equal(0L)
 		}
 
-
 		it("readLongOrNull()") {
 			reader("0").readLongOrNull().should.equal(0L)
 			reader("-0").readLongOrNull().should.equal(0L)
@@ -473,7 +516,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("-1.0e-2").readLongOrNull().should.equal(0L)
 			reader("null").readLongOrNull().should.be.`null`
 		}
-
 
 		it("readMap()") {
 			reader("{}").readMap().should.equal(emptyMap<String, Any>())
@@ -500,6 +542,27 @@ internal object StandardReaderAcceptSpec : Spek({
 			))
 		}
 
+		it("readMapByElement()") {
+			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }")
+				.readMapByElement { readMapKey() to readValue() }
+				.should
+				.equal(mapOf(
+					"key0" to true,
+					"key1" to "hey",
+					"key2" to null
+				))
+		}
+
+		it("readMapByElementValue()") {
+			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }")
+				.readMapByElementValue { readValue() }
+				.should
+				.equal(mapOf(
+					"key0" to true,
+					"key1" to "hey",
+					"key2" to null
+				))
+		}
 
 		it("readMapEnd()") {
 			reader("{}").apply {
@@ -509,7 +572,6 @@ internal object StandardReaderAcceptSpec : Spek({
 				nextToken.should.be.`null`
 			}
 		}
-
 
 		it("readMapKey()") {
 			reader("{\"\"").apply {
@@ -533,7 +595,6 @@ internal object StandardReaderAcceptSpec : Spek({
 				readMapKey().should.equal(" \\ \" / \b \u000C \n \r \t 🐶 ")
 			}
 		}
-
 
 		it("readMapOrNull()") {
 			reader("{}").readMapOrNull().should.equal(emptyMap<String, Any>())
@@ -561,6 +622,35 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("null").readMapOrNull().should.be.`null`
 		}
 
+		it("readMapOrNullByElement()") {
+			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }")
+				.readMapOrNullByElement { readMapKey() to readValue() }
+				.should
+				.equal(mapOf(
+					"key0" to true,
+					"key1" to "hey",
+					"key2" to null
+				))
+
+			reader("null")
+				.readMapOrNullByElement { readMapKey() to readValue() }
+				.should.be.`null`
+		}
+
+		it("readMapOrNullByElementValue()") {
+			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }")
+				.readMapOrNullByElementValue { readValue() }
+				.should
+				.equal(mapOf(
+					"key0" to true,
+					"key1" to "hey",
+					"key2" to null
+				))
+
+			reader("null")
+				.readMapOrNullByElementValue { readValue() }
+				.should.be.`null`
+		}
 
 		it("readMapStart()") {
 			reader("{}").apply {
@@ -570,11 +660,9 @@ internal object StandardReaderAcceptSpec : Spek({
 			}
 		}
 
-
 		it("readNull()") {
 			(reader("null").readNull() as Any?).should.be.`null`
 		}
-
 
 		it("readNumber()") {
 			reader("0").readNumber().should.equal(0)
@@ -608,7 +696,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("1e20000").readNumber().should.equal(Double.POSITIVE_INFINITY)
 			reader("-1e20000").readNumber().should.equal(Double.NEGATIVE_INFINITY)
 		}
-
 
 		it("readNumberOrNull()") {
 			reader("0").readNumberOrNull().should.equal(0)
@@ -644,6 +731,48 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("null").readNumberOrNull().should.be.`null`
 		}
 
+		it("readShort()") {
+			reader("0").readShort().should.equal(0.toShort())
+			reader("-0").readShort().should.equal(0.toShort())
+			reader("100").readShort().should.equal(100.toShort())
+			reader("-100").readShort().should.equal((-100).toShort())
+			reader("0.000").readShort().should.equal(0.toShort())
+			reader("-0.000").readShort().should.equal(0.toShort())
+			reader("100.001").readShort().should.equal(100.toShort())
+			reader("-100.001").readShort().should.equal((-100).toShort())
+			reader("100.999").readShort().should.equal(100.toShort())
+			reader("-100.999").readShort().should.equal((-100).toShort())
+			reader("1e2").readShort().should.equal(100.toShort())
+			reader("-1e2").readShort().should.equal((-100).toShort())
+			reader("1.0e2").readShort().should.equal(100.toShort())
+			reader("-1.0e2").readShort().should.equal((-100).toShort())
+			reader("1.0e+2").readShort().should.equal(100.toShort())
+			reader("-1.0e+2").readShort().should.equal((-100).toShort())
+			reader("1.0e-2").readShort().should.equal(0.toShort())
+			reader("-1.0e-2").readShort().should.equal(0.toShort())
+		}
+
+		it("readShortOrNull()") {
+			reader("0").readShortOrNull().should.equal(0.toShort())
+			reader("-0").readShortOrNull().should.equal(0.toShort())
+			reader("100").readShortOrNull().should.equal(100.toShort())
+			reader("-100").readShortOrNull().should.equal((-100).toShort())
+			reader("0.000").readShortOrNull().should.equal(0.toShort())
+			reader("-0.000").readShortOrNull().should.equal(0.toShort())
+			reader("100.001").readShortOrNull().should.equal(100.toShort())
+			reader("-100.001").readShortOrNull().should.equal((-100).toShort())
+			reader("100.999").readShortOrNull().should.equal(100.toShort())
+			reader("-100.999").readShortOrNull().should.equal((-100).toShort())
+			reader("1e2").readShortOrNull().should.equal(100.toShort())
+			reader("-1e2").readShortOrNull().should.equal((-100).toShort())
+			reader("1.0e2").readShortOrNull().should.equal(100.toShort())
+			reader("-1.0e2").readShortOrNull().should.equal((-100).toShort())
+			reader("1.0e+2").readShortOrNull().should.equal(100.toShort())
+			reader("-1.0e+2").readShortOrNull().should.equal((-100).toShort())
+			reader("1.0e-2").readShortOrNull().should.equal(0.toShort())
+			reader("-1.0e-2").readShortOrNull().should.equal(0.toShort())
+			reader("null").readShortOrNull().should.be.`null`
+		}
 
 		it("readString()") {
 			reader("\"\"").readString().should.equal("")
@@ -655,7 +784,6 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("{\"key\"").apply { readMapStart(); readString().should.equal("key") }
 		}
 
-
 		it("readStringOrNull()") {
 			reader("\"\"").readStringOrNull().should.equal("")
 			reader("\"\\u0022\"").readStringOrNull().should.equal("\"")
@@ -666,9 +794,8 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("null").readStringOrNull().should.be.`null`
 		}
 
-
 		it("readValue()") {
-			reader("[null, true, 0, [], {}, \"\"]").apply {
+			reader("[null, true, 0, [], {}, \"\", {\"\":true}]").apply {
 				readFromList {
 					readValue().should.be.`null`
 					readValue().should.equal(true)
@@ -676,17 +803,18 @@ internal object StandardReaderAcceptSpec : Spek({
 					readValue().should.equal(emptyList<Any?>())
 					readValue().should.equal(emptyMap<String, Any?>())
 					readValue().should.equal("")
+					readFromMap {
+						readValue().should.equal("")
+						readValue().should.equal(true)
+					}
 				}
 			}
 		}
 
-
 		it("skipValue()") {
-			reader("[null, true, 0, [], {}, \"\"]").apply {
+			reader("[null, 0, [], {}, \"\", {\"\":true}]").apply {
 				readFromList {
 					nextToken.should.equal(JSONToken.nullValue)
-					skipValue()
-					nextToken.should.equal(JSONToken.booleanValue)
 					skipValue()
 					nextToken.should.equal(JSONToken.numberValue)
 					skipValue()
@@ -696,6 +824,14 @@ internal object StandardReaderAcceptSpec : Spek({
 					skipValue()
 					nextToken.should.equal(JSONToken.stringValue)
 					skipValue()
+					nextToken.should.equal(JSONToken.mapStart)
+					readFromMap {
+						nextToken.should.equal(JSONToken.mapKey)
+						skipValue()
+						nextToken.should.equal(JSONToken.booleanValue)
+						skipValue()
+						nextToken.should.equal(JSONToken.mapEnd)
+					}
 				}
 			}
 		}

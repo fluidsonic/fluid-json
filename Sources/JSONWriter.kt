@@ -578,7 +578,7 @@ fun JSONWriter.writeMapElement(key: String, string: String?, skipIfNull: Boolean
 
 
 fun JSONWriter.writeMapNullElement(key: String) {
-	writeString(key)
+	writeMapKey(key)
 	writeNull()
 }
 

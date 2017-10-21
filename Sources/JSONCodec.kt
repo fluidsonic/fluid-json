@@ -14,4 +14,7 @@ interface JSONCodec<Value : Any, in Context : JSONCoderContext>
 		get() = codecs
 
 	override val valueClass: Class<Value>
+
+
+	companion object
 }

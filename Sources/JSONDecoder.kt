@@ -38,7 +38,7 @@ interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
 			source: String,
 			context: Context,
 			codecResolver: JSONCodecResolver<Context>
-		) =
+		): JSONDecoder<Context> =
 			with(source = StringReader(source), context = context, codecResolver = codecResolver)
 
 
@@ -46,7 +46,7 @@ interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
 			source: Reader,
 			context: Context,
 			codecResolver: JSONCodecResolver<Context>
-		) =
+		): JSONDecoder<Context> =
 			with(source = JSONReader.with(source), context = context, codecResolver = codecResolver)
 
 
@@ -76,20 +76,20 @@ inline fun <reified Element : Any> JSONDecoder<*>.readListOfDecodableElements() 
 	readListByElement { readDecodableOfClass(Element::class.java) }
 
 
+inline fun <reified Element : Any> JSONDecoder<*>.readListOrNullOfDecodableElements() =
+	if (nextToken != JSONToken.nullValue) readListOfDecodableElements<Element>() else readNull()
+
+
 inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableElements() =
 	readMapByElement { readDecodableOfClass(ElementKey::class.java) to readDecodableOfClass(ElementValue::class.java) }
-
-
-inline fun <reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableValues() =
-	readMapByElement { readMapKey() to readDecodableOfClass(ElementValue::class.java) }
 
 
 inline fun <reified ElementKey : Any> JSONDecoder<*>.readMapOfDecodableKeys() =
 	readMapByElement { readDecodableOfClass(ElementKey::class.java) to readValue() }
 
 
-inline fun <reified Element : Any> JSONDecoder<*>.readListOrNullOfDecodableElements() =
-	if (nextToken != JSONToken.nullValue) readListOfDecodableElements<Element>() else readNull()
+inline fun <reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableValues() =
+	readMapByElement { readMapKey() to readDecodableOfClass(ElementValue::class.java) }
 
 
 inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOrNullOfDecodableElements() =

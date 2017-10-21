@@ -9,11 +9,11 @@ internal class StandardParser<in Context : JSONCoderContext>(
 
 	override fun <Value : Any> parse(source: Reader, valueClass: Class<out Value>, context: Context): Value? {
 		val decoder = decoderFactory(source, context)
-		decoder.use {
+		return decoder.use {
 			val value = decoder.readDecodableOfClassOrNull(valueClass)
 			decoder.readEndOfInput()
 
-			return value
+			value
 		}
 	}
 }

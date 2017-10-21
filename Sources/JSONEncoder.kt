@@ -21,25 +21,17 @@ interface JSONEncoder<out Context : JSONCoderContext> : JSONWriter {
 	companion object {
 
 		fun with(
-			destination: Writer,
-			codecResolver: JSONCodecResolver<JSONCoderContext>
-		) =
-			with(destination = destination, context = JSONCoderContext.empty, codecResolver = codecResolver)
-
-
-		fun with(
 			destination: JSONWriter,
 			codecResolver: JSONCodecResolver<JSONCoderContext>
 		) =
 			with(destination = destination, context = JSONCoderContext.empty, codecResolver = codecResolver)
 
 
-		fun <Context : JSONCoderContext> with(
+		fun with(
 			destination: Writer,
-			context: Context,
-			codecResolver: JSONCodecResolver<Context>
+			codecResolver: JSONCodecResolver<JSONCoderContext>
 		) =
-			with(destination = JSONWriter.with(destination), context = context, codecResolver = codecResolver)
+			with(destination = destination, context = JSONCoderContext.empty, codecResolver = codecResolver)
 
 
 		fun <Context : JSONCoderContext> with(
@@ -48,6 +40,14 @@ interface JSONEncoder<out Context : JSONCoderContext> : JSONWriter {
 			codecResolver: JSONCodecResolver<Context>
 		): JSONEncoder<Context> =
 			StandardEncoder(codecResolver = codecResolver, context = context, destination = destination)
+
+
+		fun <Context : JSONCoderContext> with(
+			destination: Writer,
+			context: Context,
+			codecResolver: JSONCodecResolver<Context>
+		) =
+			with(destination = JSONWriter.with(destination), context = context, codecResolver = codecResolver)
 	}
 }
 

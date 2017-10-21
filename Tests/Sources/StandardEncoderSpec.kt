@@ -61,7 +61,6 @@ internal object StandardEncoderSpec : Spek({
 			output.should.equal(expectedOutput)
 		}
 
-
 		it("fails when a codec was no found") {
 			encode {
 				try {
@@ -73,7 +72,6 @@ internal object StandardEncoderSpec : Spek({
 				}
 			}
 		}
-
 
 		it("provides codecs with the context") {
 			val context = TestCoderContext()

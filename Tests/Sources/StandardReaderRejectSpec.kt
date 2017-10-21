@@ -5,8 +5,10 @@ import com.github.fluidsonic.fluid.json.JSONReader
 import com.github.fluidsonic.fluid.json.StandardReader
 import com.github.fluidsonic.fluid.json.TextInput
 import com.github.fluidsonic.fluid.json.readBooleanOrNull
+import com.github.fluidsonic.fluid.json.readByteOrNull
 import com.github.fluidsonic.fluid.json.readDoubleOrNull
 import com.github.fluidsonic.fluid.json.readElementsFromMap
+import com.github.fluidsonic.fluid.json.readEndOfInput
 import com.github.fluidsonic.fluid.json.readFloatOrNull
 import com.github.fluidsonic.fluid.json.readFromList
 import com.github.fluidsonic.fluid.json.readIntOrNull
@@ -17,7 +19,9 @@ import com.github.fluidsonic.fluid.json.readLongOrNull
 import com.github.fluidsonic.fluid.json.readMap
 import com.github.fluidsonic.fluid.json.readMapOrNull
 import com.github.fluidsonic.fluid.json.readNumberOrNull
+import com.github.fluidsonic.fluid.json.readShortOrNull
 import com.github.fluidsonic.fluid.json.readStringOrNull
+import com.github.fluidsonic.fluid.json.readValue
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.TestBody
 import org.jetbrains.spek.api.dsl.describe
@@ -65,6 +69,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("[]") { readBoolean() }
 			readerShouldFail("{}") { readBoolean() }
 			readerShouldFail("null") { readBoolean() }
+			readerShouldFail("true") { readBoolean(); readBoolean() }
 			readerShouldFail("true") { close(); readBoolean() }
 		}
 
@@ -82,7 +87,65 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("\"\"") { readBooleanOrNull() }
 			readerShouldFail("[]") { readBooleanOrNull() }
 			readerShouldFail("{}") { readBooleanOrNull() }
+			readerShouldFail("true") { readBooleanOrNull(); readBooleanOrNull() }
 			readerShouldFail("true") { close(); readBooleanOrNull() }
+		}
+
+		it("readByte()") {
+			readerShouldFail("") { readByte() }
+			readerShouldFail("0b0") { readByte() }
+			readerShouldFail("0o0") { readByte() }
+			readerShouldFail("0x0") { readByte() }
+			readerShouldFail("01") { readByte() }
+			readerShouldFail("01.0") { readByte() }
+			readerShouldFail("+0") { readByte() }
+			readerShouldFail("+1") { readByte() }
+			readerShouldFail("-+1") { readByte() }
+			readerShouldFail("-true") { readByte() }
+			readerShouldFail("-.") { readByte() }
+			readerShouldFail("-e") { readByte() }
+			readerShouldFail("0.") { readByte() }
+			readerShouldFail("0e") { readByte() }
+			readerShouldFail("1.") { readByte() }
+			readerShouldFail("1.e") { readByte() }
+			readerShouldFail("1e") { readByte() }
+			readerShouldFail("1ee") { readByte() }
+			readerShouldFail("1e.") { readByte() }
+			readerShouldFail("1e+") { readByte() }
+			readerShouldFail("1e+e") { readByte() }
+			readerShouldFail("1e-") { readByte() }
+			readerShouldFail("1e-e") { readByte() }
+			readerShouldFail("null") { readByte() }
+			readerShouldFail("0") { readByte(); readByte() }
+			readerShouldFail("0") { close(); readByte() }
+		}
+
+		it("readByteOrNull()") {
+			readerShouldFail("") { readByteOrNull() }
+			readerShouldFail("0b0") { readByteOrNull() }
+			readerShouldFail("0o0") { readByteOrNull() }
+			readerShouldFail("0x0") { readByteOrNull() }
+			readerShouldFail("01") { readByteOrNull() }
+			readerShouldFail("01.0") { readByteOrNull() }
+			readerShouldFail("+0") { readByteOrNull() }
+			readerShouldFail("+1") { readByteOrNull() }
+			readerShouldFail("-+1") { readByteOrNull() }
+			readerShouldFail("-true") { readByteOrNull() }
+			readerShouldFail("-.") { readByteOrNull() }
+			readerShouldFail("-e") { readByteOrNull() }
+			readerShouldFail("0.") { readByteOrNull() }
+			readerShouldFail("0e") { readByteOrNull() }
+			readerShouldFail("1.") { readByteOrNull() }
+			readerShouldFail("1.e") { readByteOrNull() }
+			readerShouldFail("1e") { readByteOrNull() }
+			readerShouldFail("1ee") { readByteOrNull() }
+			readerShouldFail("1e.") { readByteOrNull() }
+			readerShouldFail("1e+") { readByteOrNull() }
+			readerShouldFail("1e+e") { readByteOrNull() }
+			readerShouldFail("1e-") { readByteOrNull() }
+			readerShouldFail("1e-e") { readByteOrNull() }
+			readerShouldFail("0") { readByteOrNull(); readByteOrNull() }
+			readerShouldFail("0") { close(); readByteOrNull() }
 		}
 
 		it("readDouble()") {
@@ -110,6 +173,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("1e-") { readDouble() }
 			readerShouldFail("1e-e") { readDouble() }
 			readerShouldFail("null") { readDouble() }
+			readerShouldFail("0") { readDouble(); readDouble() }
 			readerShouldFail("0") { close(); readDouble() }
 		}
 
@@ -137,6 +201,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("1e+e") { readDoubleOrNull() }
 			readerShouldFail("1e-") { readDoubleOrNull() }
 			readerShouldFail("1e-e") { readDoubleOrNull() }
+			readerShouldFail("0") { readDoubleOrNull(); readDoubleOrNull() }
 			readerShouldFail("0") { close(); readDoubleOrNull() }
 		}
 
@@ -158,7 +223,12 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("{,\"key\":1}") { readElementsFromMap { skipValue() } }
 			readerShouldFail("{\"key0\":0,,\"key1\":1}") { readElementsFromMap { skipValue() } }
 			readerShouldFail("null") { readElementsFromMap { skipValue() } }
+			readerShouldFail("{}") { readElementsFromMap { skipValue() }; readElementsFromMap { skipValue() } }
 			readerShouldFail("{}") { close(); readElementsFromMap { skipValue() } }
+		}
+
+		it("readEndOfInput()") {
+			readerShouldFail("null") { readEndOfInput() }
 		}
 
 		it("readFloat()") {
@@ -186,6 +256,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("1e-") { readFloat() }
 			readerShouldFail("1e-e") { readFloat() }
 			readerShouldFail("null") { readFloat() }
+			readerShouldFail("0") { readFloat(); readFloat() }
 			readerShouldFail("0") { close(); readFloat() }
 		}
 
@@ -213,6 +284,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("1e+e") { readFloatOrNull() }
 			readerShouldFail("1e-") { readFloatOrNull() }
 			readerShouldFail("1e-e") { readFloatOrNull() }
+			readerShouldFail("0") { readFloatOrNull(); readFloatOrNull() }
 			readerShouldFail("0") { close(); readFloatOrNull() }
 		}
 
@@ -226,6 +298,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("[1,1,]") { readFromList {} }
 			readerShouldFail("[[1]") { readFromList {} }
 			readerShouldFail("null") { readFromList {} }
+			readerShouldFail("[]") { readFromList {}; readFromList {} }
 			readerShouldFail("[]") { close(); readFromList {} }
 		}
 
@@ -254,6 +327,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("1e-") { readInt() }
 			readerShouldFail("1e-e") { readInt() }
 			readerShouldFail("null") { readInt() }
+			readerShouldFail("0") { readInt(); readInt() }
 			readerShouldFail("0") { close(); readInt() }
 		}
 
@@ -281,6 +355,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("1e+e") { readIntOrNull() }
 			readerShouldFail("1e-") { readIntOrNull() }
 			readerShouldFail("1e-e") { readIntOrNull() }
+			readerShouldFail("0") { readIntOrNull(); readIntOrNull() }
 			readerShouldFail("0") { close(); readIntOrNull() }
 		}
 
@@ -294,6 +369,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("[1,1,]") { readList() }
 			readerShouldFail("[[1]") { readList() }
 			readerShouldFail("null") { readList() }
+			readerShouldFail("[]") { readList(); readList() }
 			readerShouldFail("[]") { close(); readList() }
 		}
 
@@ -307,6 +383,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("[1,1,]") { readListByElement { skipValue() } }
 			readerShouldFail("[[1]") { readListByElement { skipValue() } }
 			readerShouldFail("null") { readListByElement { skipValue() } }
+			readerShouldFail("[]") { readListByElement { skipValue() }; readListByElement { skipValue() } }
 			readerShouldFail("[]") { close(); readListByElement { skipValue() } }
 		}
 
@@ -318,6 +395,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("}") { readListEnd() }
 			readerShouldFail("[}") { readListStart(); readListEnd() }
 			readerShouldFail("null") { readListEnd() }
+			readerShouldFail("[]") { readListStart(); readListEnd(); readListEnd() }
 			readerShouldFail("[]") { readListStart(); close(); readListEnd() }
 		}
 
@@ -330,6 +408,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("[1,,1]") { readListOrNull() }
 			readerShouldFail("[1,1,]") { readListOrNull() }
 			readerShouldFail("[[1]") { readListOrNull() }
+			readerShouldFail("[]") { readListOrNull(); readListOrNull() }
 			readerShouldFail("[]") { close(); readListOrNull() }
 		}
 
@@ -338,6 +417,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("{") { readListStart() }
 			readerShouldFail("]") { readListStart() }
 			readerShouldFail("null") { readListStart() }
+			readerShouldFail("[") { readListStart(); readListStart() }
 			readerShouldFail("[") { close(); readListStart() }
 		}
 
@@ -366,6 +446,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("1e-") { readLong() }
 			readerShouldFail("1e-e") { readLong() }
 			readerShouldFail("null") { readLong() }
+			readerShouldFail("0") { readLong(); readLong() }
 			readerShouldFail("0") { close(); readLong() }
 		}
 
@@ -393,6 +474,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("1e+e") { readLongOrNull() }
 			readerShouldFail("1e-") { readLongOrNull() }
 			readerShouldFail("1e-e") { readLongOrNull() }
+			readerShouldFail("0") { readLongOrNull(); readLongOrNull() }
 			readerShouldFail("0") { close(); readLongOrNull() }
 		}
 
@@ -414,6 +496,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("{,\"key\":1}") { readMap() }
 			readerShouldFail("{\"key0\":0,,\"key1\":1}") { readMap() }
 			readerShouldFail("null") { readMap() }
+			readerShouldFail("{}") { readMap(); readMap() }
 			readerShouldFail("{}") { close(); readMap() }
 		}
 
@@ -425,6 +508,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("]") { readMapEnd() }
 			readerShouldFail("{]") { readMapStart(); readMapEnd() }
 			readerShouldFail("null") { readMapEnd() }
+			readerShouldFail("{}") { readMapStart(); readMapEnd(); readMapEnd() }
 			readerShouldFail("{}") { readMapStart(); close(); readMapEnd() }
 		}
 
@@ -441,6 +525,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("\"\\u0ZZZ\"") { readMapKey() }
 			readerShouldFail("\"\\uZZZZ\"") { readMapKey() }
 			readerShouldFail("null") { readMapKey() }
+			readerShouldFail("\"\"") { readMapKey(); readMapKey() }
 			readerShouldFail("\"\"") { close(); readMapKey() }
 		}
 
@@ -461,6 +546,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("{\"key\":1,}") { readMapOrNull() }
 			readerShouldFail("{,\"key\":1}") { readMapOrNull() }
 			readerShouldFail("{\"key0\":0,,\"key1\":1}") { readMapOrNull() }
+			readerShouldFail("{}") { readMapOrNull(); readMapOrNull() }
 			readerShouldFail("{}") { close(); readMapOrNull() }
 		}
 
@@ -469,6 +555,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("[") { readMapStart() }
 			readerShouldFail("}") { readMapStart() }
 			readerShouldFail("null") { readMapStart() }
+			readerShouldFail("{") { readMapStart(); readMapStart() }
 			readerShouldFail("{") { close(); readMapStart() }
 		}
 
@@ -485,6 +572,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("\"\\u0ZZZ\"") { readString() }
 			readerShouldFail("\"\\uZZZZ\"") { readString() }
 			readerShouldFail("null") { readString() }
+			readerShouldFail("\"\"") { readString(); readString() }
 			readerShouldFail("\"\"") { close(); readString() }
 
 			listOf(
@@ -508,6 +596,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("\"\\u00ZZ\"") { readStringOrNull() }
 			readerShouldFail("\"\\u0ZZZ\"") { readStringOrNull() }
 			readerShouldFail("\"\\uZZZZ\"") { readStringOrNull() }
+			readerShouldFail("\"\"") { readStringOrNull(); readStringOrNull() }
 			readerShouldFail("\"\"") { close(); readStringOrNull() }
 
 			listOf(
@@ -527,6 +616,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("\"\"") { readNull() }
 			readerShouldFail("[]") { readNull() }
 			readerShouldFail("{}") { readNull() }
+			readerShouldFail("null") { readNull(); readNull() }
 			readerShouldFail("null") { close(); readNull() }
 		}
 
@@ -555,6 +645,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("1e-") { readNumber() }
 			readerShouldFail("1e-e") { readNumber() }
 			readerShouldFail("null") { readNumber() }
+			readerShouldFail("0") { readNumber(); readNumber() }
 			readerShouldFail("0") { close(); readNumber() }
 		}
 
@@ -582,7 +673,76 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("1e+e") { readNumberOrNull() }
 			readerShouldFail("1e-") { readNumberOrNull() }
 			readerShouldFail("1e-e") { readNumberOrNull() }
+			readerShouldFail("0") { readNumberOrNull(); readNumberOrNull() }
 			readerShouldFail("0") { close(); readNumberOrNull() }
+		}
+
+		it("readShort()") {
+			readerShouldFail("") { readShort() }
+			readerShouldFail("0b0") { readShort() }
+			readerShouldFail("0o0") { readShort() }
+			readerShouldFail("0x0") { readShort() }
+			readerShouldFail("01") { readShort() }
+			readerShouldFail("01.0") { readShort() }
+			readerShouldFail("+0") { readShort() }
+			readerShouldFail("+1") { readShort() }
+			readerShouldFail("-+1") { readShort() }
+			readerShouldFail("-true") { readShort() }
+			readerShouldFail("-.") { readShort() }
+			readerShouldFail("-e") { readShort() }
+			readerShouldFail("0.") { readShort() }
+			readerShouldFail("0e") { readShort() }
+			readerShouldFail("1.") { readShort() }
+			readerShouldFail("1.e") { readShort() }
+			readerShouldFail("1e") { readShort() }
+			readerShouldFail("1ee") { readShort() }
+			readerShouldFail("1e.") { readShort() }
+			readerShouldFail("1e+") { readShort() }
+			readerShouldFail("1e+e") { readShort() }
+			readerShouldFail("1e-") { readShort() }
+			readerShouldFail("1e-e") { readShort() }
+			readerShouldFail("null") { readShort() }
+			readerShouldFail("0") { readShort(); readShort() }
+			readerShouldFail("0") { close(); readShort() }
+		}
+
+		it("readShortOrNull()") {
+			readerShouldFail("") { readShortOrNull() }
+			readerShouldFail("0b0") { readShortOrNull() }
+			readerShouldFail("0o0") { readShortOrNull() }
+			readerShouldFail("0x0") { readShortOrNull() }
+			readerShouldFail("01") { readShortOrNull() }
+			readerShouldFail("01.0") { readShortOrNull() }
+			readerShouldFail("+0") { readShortOrNull() }
+			readerShouldFail("+1") { readShortOrNull() }
+			readerShouldFail("-+1") { readShortOrNull() }
+			readerShouldFail("-true") { readShortOrNull() }
+			readerShouldFail("-.") { readShortOrNull() }
+			readerShouldFail("-e") { readShortOrNull() }
+			readerShouldFail("0.") { readShortOrNull() }
+			readerShouldFail("0e") { readShortOrNull() }
+			readerShouldFail("1.") { readShortOrNull() }
+			readerShouldFail("1.e") { readShortOrNull() }
+			readerShouldFail("1e") { readShortOrNull() }
+			readerShouldFail("1ee") { readShortOrNull() }
+			readerShouldFail("1e.") { readShortOrNull() }
+			readerShouldFail("1e+") { readShortOrNull() }
+			readerShouldFail("1e+e") { readShortOrNull() }
+			readerShouldFail("1e-") { readShortOrNull() }
+			readerShouldFail("1e-e") { readShortOrNull() }
+			readerShouldFail("0") { readShortOrNull(); readShortOrNull() }
+			readerShouldFail("0") { close(); readShortOrNull() }
+		}
+
+		it("readValue()") {
+			readerShouldFail("") { readValue() }
+			readerShouldFail("true") { skipValue(); readValue() }
+			readerShouldFail("{") { readValue() }
+			readerShouldFail("[") { readValue() }
+			readerShouldFail("{}") { readMapStart(); readValue() }
+			readerShouldFail("[]") { readListStart();readValue() }
+			readerShouldFail("0") { readValue(); readValue() }
+			readerShouldFail("0") { close(); readValue() }
 		}
 
 		it("skipValue()") {
@@ -590,6 +750,7 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("[") { skipValue() }
 			readerShouldFail("]") { skipValue() }
 			readerShouldFail("null") { skipValue(); skipValue() }
+			readerShouldFail("0") { skipValue(); skipValue() }
 			readerShouldFail("0") { close(); skipValue() }
 		}
 	}
