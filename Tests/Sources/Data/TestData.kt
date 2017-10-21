@@ -1,12 +1,14 @@
 package tests
 
+import com.github.fluidsonic.fluid.json.JSONException
 import com.winterbe.expekt.should
 
 
 internal class TestData<out Value : Any>(
 	val symmetric: Map<out Value, String> = emptyMap(),
 	val decodableOnly: Map<String, Value> = emptyMap(),
-	val encodableOnly: Map<out Value, String> = emptyMap()
+	val encodableOnly: Map<out Value, String> = emptyMap(),
+	val nonEncodable: Set<Value> = emptySet()
 ) {
 
 	fun testDecoding(decode: (input: String) -> Any?) {
@@ -35,6 +37,15 @@ internal class TestData<out Value : Any>(
 					stackTrace = e.stackTrace
 				}
 			}
+
+		for (input in nonEncodable)
+			try {
+				encode(input)
+				throw AssertionError("Encoding succeeded but should have failed when encoding ${input::class.java}: $input")
+			}
+			catch (e: JSONException) {
+				// good
+			}
 	}
 
 
@@ -55,29 +66,38 @@ internal class TestData<out Value : Any>(
 			val symmetric = mutableMapOf<Value, String>()
 			val decodableOnly = mutableMapOf<String, Value>()
 			val encodableOnly = mutableMapOf<Value, String>()
+			val nonEncodable = mutableSetOf<Value>()
 
 			for (element in elements) {
 				symmetric += element.symmetric
 				decodableOnly += element.decodableOnly
 				encodableOnly += element.encodableOnly
+				nonEncodable += element.nonEncodable
 			}
 
 			return TestData(
 				symmetric = symmetric,
 				decodableOnly = decodableOnly,
-				encodableOnly = encodableOnly
+				encodableOnly = encodableOnly,
+				nonEncodable = nonEncodable
 			)
 		}
 
 
 		fun <Value : Any> ofEncodable(vararg elements: TestData<Value>): TestData<Value> {
 			val encodableOnly = mutableMapOf<Value, String>()
+			val nonEncodable = mutableSetOf<Value>()
+
 			for (element in elements) {
 				encodableOnly += element.symmetric
 				encodableOnly += element.encodableOnly
+				nonEncodable += element.nonEncodable
 			}
 
-			return TestData(encodableOnly = encodableOnly)
+			return TestData(
+				encodableOnly = encodableOnly,
+				nonEncodable = nonEncodable
+			)
 		}
 	}
 }

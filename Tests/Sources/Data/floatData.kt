@@ -43,5 +43,10 @@ internal val floatData: TestData<Float> = TestData(
 		"9223372036854775808" to 9223372036854775808.0f, // just too large for Long
 		"1000000000000000000000000000000" to 1000000000000000000000000000000.0f,
 		"1e20000" to Float.POSITIVE_INFINITY
+	),
+	nonEncodable = setOf(
+		Float.NaN,
+		Float.NEGATIVE_INFINITY,
+		Float.POSITIVE_INFINITY
 	)
 )

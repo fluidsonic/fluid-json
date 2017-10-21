@@ -23,5 +23,10 @@ internal val plainData = TestData.of(
 		longData,
 		sequenceData,
 		shortArrayData
+	),
+	TestData(
+		nonEncodable = setOf(
+			mapOf("a" to "b").entries.first()
+		)
 	)
 )

@@ -1,10 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
 
-class PlainJSONCodec(
-	val encodesUnsupportedKeysAsString: Boolean = false,
-	val encodesUnsupportedValuesAsString: Boolean = false
-) : JSONCodec<Any, JSONCoderContext> {
+class PlainJSONCodec : JSONCodec<Any, JSONCoderContext> {
 
 	@Suppress("UNCHECKED_CAST")
 	override fun decode(decoder: JSONDecoder<JSONCoderContext>): Any {
@@ -198,14 +195,12 @@ class PlainJSONCodec(
 				is Double ->
 					when {
 						currentValue.isFinite() -> encoder.writeDouble(currentValue)
-						encodesUnsupportedValuesAsString -> encoder.writeString(currentValue.toString())
 						else -> throw JSONException("Cannot serialize double value '$currentValue'")
 					}
 
 				is Float ->
 					when {
 						currentValue.isFinite() -> encoder.writeFloat(currentValue)
-						encodesUnsupportedValuesAsString -> encoder.writeString(currentValue.toString())
 						else -> throw JSONException("Cannot serialize float value '$currentValue'")
 					}
 
@@ -248,9 +243,8 @@ class PlainJSONCodec(
 				is Map.Entry<*, *> ->
 					if (isInMap && !isInMapElementValue) {
 						val (elementKey, elementValue) = currentValue
-						when {
-							elementKey is String -> encoder.writeMapKey(elementKey)
-							encodesUnsupportedKeysAsString -> encoder.writeMapKey(elementKey.toString())
+						when (elementKey) {
+							is String -> encoder.writeMapKey(elementKey)
 							else -> throw JSONException("Cannot serialize non-String key of ${currentValue::class.java}: $currentValue")
 						}
 
@@ -258,8 +252,6 @@ class PlainJSONCodec(
 						isInMapElementValue = true
 						continue@loop
 					}
-					else if (encodesUnsupportedValuesAsString)
-						encoder.writeString(currentValue.toString())
 					else
 						throw JSONException("Cannot serialize value of ${currentValue::class.java}: $currentValue")
 
@@ -267,10 +259,7 @@ class PlainJSONCodec(
 					encoder.writeNumber(currentValue)
 
 				else ->
-					if (encodesUnsupportedValuesAsString)
-						encoder.writeString(currentValue.toString())
-					else
-						throw JSONException("Cannot serialize value of ${currentValue::class.java}: $currentValue")
+					throw JSONException("Cannot serialize value of ${currentValue::class.java}: $currentValue")
 			}
 
 			isInMapElementValue = false

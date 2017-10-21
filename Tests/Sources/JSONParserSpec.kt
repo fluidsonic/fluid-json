@@ -17,12 +17,11 @@ internal object JSONParserSpec : Spek({
 	describe("JSONParser") {
 
 		it(".default() returns a default parser") {
-			val defaultParser = JSONParser.default()
-			plainData.testDecoding(defaultParser::parse)
+			plainData.testDecoding(JSONParser.default()::parse)
 		}
 
 		it(".parse() shortcuts pass correct values") {
-			var expectedContext: TestCoderContext? = null
+			var expectedContext = JSONCoderContext.empty
 			var expectedValueClass: Class<*>? = null
 
 			val parser = object : JSONParser<JSONCoderContext> {
@@ -31,11 +30,10 @@ internal object JSONParserSpec : Spek({
 					source as StringReader
 					source.readText().should.equal("okay")
 
+					context.should.equal(expectedContext)
+
 					if (expectedValueClass != null) {
 						(valueClass as Class<*>).should.equal(expectedValueClass)
-					}
-					if (expectedContext != null) {
-						context.should.equal(expectedContext)
 					}
 
 					return null
@@ -50,7 +48,7 @@ internal object JSONParserSpec : Spek({
 			parser.parse(StringReader("okay"), expectedContext)
 
 			expectedValueClass = String::class.java
-			expectedContext = null
+			expectedContext = JSONCoderContext.empty
 			parser.parse("okay", valueClass = expectedValueClass)
 			parser.parse(StringReader("okay"), valueClass = String::class.java)
 			parser.parseOfType<String>("okay")

@@ -16,21 +16,6 @@ internal class StandardWriter(private val destination: Writer)
 		private set
 
 
-	private inline fun <ReturnValue> checkingForErrors(body: () -> ReturnValue): ReturnValue {
-		if (isErrored) {
-			throw IOException("Cannot operate on an errored writer")
-		}
-
-		return try {
-			body()
-		}
-		catch (e: Throwable) {
-			isErrored = true
-			throw e
-		}
-	}
-
-
 	override fun close() {
 		val stateBeforeClosing = state
 		if (stateBeforeClosing == State.closed) {
@@ -95,7 +80,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeBoolean(value: Boolean) {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = false)
 
 			destination.write(if (value) "true" else "false")
@@ -104,7 +89,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeByte(value: Byte) {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = false)
 
 			destination.write(value.toString())
@@ -113,7 +98,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeDouble(value: Double) {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = false)
 
 			if (!value.isFinite()) {
@@ -126,7 +111,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeFloat(value: Float) {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = false)
 
 			if (!value.isFinite()) {
@@ -139,7 +124,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeInt(value: Int) {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = false)
 
 			destination.write(value.toString())
@@ -148,7 +133,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeLong(value: Long) {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = false)
 
 			destination.write(value.toString())
@@ -157,7 +142,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeListEnd() {
-		checkingForErrors {
+		withErrorChecking {
 			when (state) {
 				State.afterListStart, State.afterListElement -> Unit
 				State.closed -> throw IOException("Cannot operate on a closed writer")
@@ -171,7 +156,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeListStart() {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = false)
 
 			destination.write(Character.Symbol.leftSquareBracket)
@@ -183,7 +168,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeMapEnd() {
-		checkingForErrors {
+		withErrorChecking {
 			when (state) {
 				State.afterMapStart, State.afterMapElement -> Unit
 				State.afterMapKey -> throw JSONException("Cannot write end of map right after a key, value expected instead")
@@ -198,7 +183,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeMapStart() {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = false)
 
 			destination.write(Character.Symbol.leftCurlyBracket)
@@ -210,7 +195,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeNull() {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = false)
 
 			destination.write("null")
@@ -219,7 +204,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeShort(value: Short) {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = false)
 
 			destination.write(value.toString())
@@ -228,7 +213,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeString(value: String) {
-		checkingForErrors {
+		withErrorChecking {
 			startValue(isString = true)
 
 			// TODO optimize

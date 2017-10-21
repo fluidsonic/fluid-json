@@ -47,5 +47,10 @@ internal val doubleData: TestData<Double> = TestData(
 		"9223372036854775808" to 9223372036854775808.0, // just too large for Long
 		"1000000000000000000000000000000" to 1000000000000000000000000000000.0,
 		"1e20000" to Double.POSITIVE_INFINITY
+	),
+	nonEncodable = setOf(
+		Double.NaN,
+		Double.NEGATIVE_INFINITY,
+		Double.POSITIVE_INFINITY
 	)
 )
