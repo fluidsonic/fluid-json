@@ -118,7 +118,7 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 
 
 	fun seekBackOneCharacter() {
-		assert(bufferStartIndex > 0)
+		check(bufferStartIndex > 0)
 
 		bufferStartIndex -= 1
 	}
@@ -163,7 +163,7 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 
 
 	private fun tryPreloadCharacters(preloadCount: Int = windowSize): Int {
-		assert(preloadCount in 0 .. windowSize)
+		require(preloadCount in 0 .. windowSize)
 
 		var bufferEndIndex = bufferEndIndex
 

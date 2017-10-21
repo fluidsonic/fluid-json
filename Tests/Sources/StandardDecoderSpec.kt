@@ -1,6 +1,7 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.JSONCodecResolver
+import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONReader
 import com.github.fluidsonic.fluid.json.StandardDecoder
@@ -71,39 +72,63 @@ internal object StandardDecoderSpec : Spek({
 				)
 			)
 
-			val decoder =
-				StandardDecoder(
-					codecResolver = JSONCodecResolver.of(
-						JaegerCodec,
-						KaijuCodec,
-						LocalDateCodec,
-						UniverseCodec
-					),
-					context = TestCoderContext(),
-					source = JSONReader.with(input)
+			val output = decode(
+				input = input,
+				codecResolver = JSONCodecResolver.of(
+					JaegerCodec,
+					KaijuCodec,
+					LocalDateCodec,
+					UniverseCodec
 				)
+			) { readDecodable<Universe>() }
 
-			decoder.readDecodable<Universe>().should.equal(expectedOutput)
+			output.should.equal(expectedOutput)
 		}
 
 
 		it("fails when a codec was no found") {
-			val input = "{}"
-
-			val decoder =
-				StandardDecoder(
-					codecResolver = JSONCodecResolver.of(),
-					context = TestCoderContext(),
-					source = JSONReader.with(input)
-				)
-
-			try {
-				decoder.readDecodableOfClass(object {}::class.java)
-				throw AssertionError("an exception was expected")
+			decode("{}") {
+				try {
+					readDecodableOfClass(object {}::class.java)
+					throw AssertionError("an exception was expected")
+				}
+				catch (e: JSONException) {
+					// good
+				}
 			}
-			catch (e: JSONException) {
-				// good
-			}
+		}
+
+
+		it("provides codecs with the context") {
+			val context = TestCoderContext()
+
+			decode(
+				input = "\"test\"",
+				codecResolver = JSONCodecResolver.of(ContextCheckingTestCodec(context)),
+				context = context
+			) { readDecodable<String>() }
+
+			decode(
+				input = "\"test\"",
+				codecResolver = JSONCodecResolver.of(ContextCheckingTestDecoderCodec(context)),
+				context = context
+			) { readDecodable<String>() }
 		}
 	}
 })
+
+
+// TODO move the following methods inside the object above once KT-19796 is fixed
+// https://youtrack.jetbrains.com/issue/KT-19796
+
+private inline fun <ReturnValue> decode(
+	input: String,
+	codecResolver: JSONCodecResolver<TestCoderContext> = JSONCodecResolver.of(),
+	context: TestCoderContext = TestCoderContext(),
+	body: JSONDecoder<TestCoderContext>.() -> ReturnValue
+) =
+	StandardDecoder(
+		codecResolver = codecResolver,
+		context = context,
+		source = JSONReader.with(input)
+	).let { it.use { it.body() } }

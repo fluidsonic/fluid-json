@@ -11,9 +11,7 @@ internal class StandardParser<in Context : JSONCoderContext>(
 		val decoder = decoderFactory(source, context)
 		decoder.use {
 			val value = decoder.readDecodableOfClassOrNull(valueClass)
-			if (decoder.nextToken != null) {
-				throw JSONException("decoder is messed up")
-			}
+			decoder.readEndOfInput()
 
 			return value
 		}

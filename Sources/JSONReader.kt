@@ -106,6 +106,14 @@ inline fun <Reader : JSONReader> Reader.readElementsFromMap(readElement: Reader.
 }
 
 
+fun JSONReader.readEndOfInput() {
+	val nextToken = nextToken
+	if (nextToken != null) {
+		throw JSONException("Expected end of input but found token $nextToken")
+	}
+}
+
+
 fun JSONReader.readFloatOrNull() =
 	if (nextToken != JSONToken.nullValue) readFloat() else readNull()
 

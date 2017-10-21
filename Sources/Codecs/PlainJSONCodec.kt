@@ -131,7 +131,6 @@ class PlainJSONCodec(
 			when {
 				currentList != null -> currentList.add(value)
 				currentMap != null -> currentMap[currentKey] = value
-				else -> assert(false)
 			}
 		}
 	}
