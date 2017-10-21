@@ -12,6 +12,24 @@ internal class StandardWriter(private val destination: Writer)
 	private var state = State.initial
 	private val stateStack = mutableListOf<State>()
 
+	override var isErrored = false
+		private set
+
+
+	private inline fun <ReturnValue> checkingForErrors(body: () -> ReturnValue): ReturnValue {
+		if (isErrored) {
+			throw IOException("Cannot operate on an errored writer")
+		}
+
+		return try {
+			body()
+		}
+		catch (e: Throwable) {
+			isErrored = true
+			throw e
+		}
+	}
+
 
 	override fun close() {
 		val stateBeforeClosing = state
@@ -23,9 +41,14 @@ internal class StandardWriter(private val destination: Writer)
 
 		destination.close()
 
-		if (stateBeforeClosing != State.end) {
-			throw JSONException("Cannot close writer before all values were fully written.")
+		if (!isErrored && stateBeforeClosing != State.end) {
+			throw JSONException("Must not close writer before all values were fully written.")
 		}
+	}
+
+
+	override fun markAsErrored() {
+		isErrored = true
 	}
 
 
@@ -72,177 +95,203 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun writeBoolean(value: Boolean) {
-		startValue(isString = false)
+		checkingForErrors {
+			startValue(isString = false)
 
-		destination.write(if (value) "true" else "false")
+			destination.write(if (value) "true" else "false")
+		}
 	}
 
 
 	override fun writeByte(value: Byte) {
-		startValue(isString = false)
+		checkingForErrors {
+			startValue(isString = false)
 
-		destination.write(value.toString())
+			destination.write(value.toString())
+		}
 	}
 
 
 	override fun writeDouble(value: Double) {
-		startValue(isString = false)
+		checkingForErrors {
+			startValue(isString = false)
 
-		if (!value.isFinite()) {
-			throw JSONException("Cannot write double value '$value'")
+			if (!value.isFinite()) {
+				throw JSONException("Cannot write double value '$value'")
+			}
+
+			destination.write(value.toString())
 		}
-
-		destination.write(value.toString())
 	}
 
 
 	override fun writeFloat(value: Float) {
-		startValue(isString = false)
+		checkingForErrors {
+			startValue(isString = false)
 
-		if (!value.isFinite()) {
-			throw JSONException("Cannot write float value '$value'")
+			if (!value.isFinite()) {
+				throw JSONException("Cannot write float value '$value'")
+			}
+
+			destination.write(value.toString())
 		}
-
-		destination.write(value.toString())
 	}
 
 
 	override fun writeInt(value: Int) {
-		startValue(isString = false)
+		checkingForErrors {
+			startValue(isString = false)
 
-		destination.write(value.toString())
+			destination.write(value.toString())
+		}
 	}
 
 
 	override fun writeLong(value: Long) {
-		startValue(isString = false)
+		checkingForErrors {
+			startValue(isString = false)
 
-		destination.write(value.toString())
+			destination.write(value.toString())
+		}
 	}
 
 
 	override fun writeListEnd() {
-		when (state) {
-			State.afterListStart, State.afterListElement -> Unit
-			State.closed -> throw IOException("Cannot operate on a closed writer")
-			else -> throw JSONException("Cannot write end of list when not in a list")
-		}
+		checkingForErrors {
+			when (state) {
+				State.afterListStart, State.afterListElement -> Unit
+				State.closed -> throw IOException("Cannot operate on a closed writer")
+				else -> throw JSONException("Cannot write end of list when not in a list")
+			}
 
-		destination.write(Character.Symbol.rightSquareBracket)
-		state = stateStack.removeAt(stateStack.size - 1)
+			destination.write(Character.Symbol.rightSquareBracket)
+			state = stateStack.removeAt(stateStack.size - 1)
+		}
 	}
 
 
 	override fun writeListStart() {
-		startValue(isString = false)
+		checkingForErrors {
+			startValue(isString = false)
 
-		destination.write(Character.Symbol.leftSquareBracket)
+			destination.write(Character.Symbol.leftSquareBracket)
 
-		stateStack += state
-		state = State.afterListStart
+			stateStack += state
+			state = State.afterListStart
+		}
 	}
 
 
 	override fun writeMapEnd() {
-		when (state) {
-			State.afterMapStart, State.afterMapElement -> Unit
-			State.afterMapKey -> throw JSONException("Cannot write end of map right after a key, value expected instead")
-			State.closed -> throw IOException("Cannot operate on a closed writer")
-			else -> throw JSONException("Cannot write end of map when not in a map")
-		}
+		checkingForErrors {
+			when (state) {
+				State.afterMapStart, State.afterMapElement -> Unit
+				State.afterMapKey -> throw JSONException("Cannot write end of map right after a key, value expected instead")
+				State.closed -> throw IOException("Cannot operate on a closed writer")
+				else -> throw JSONException("Cannot write end of map when not in a map")
+			}
 
-		destination.write(Character.Symbol.rightCurlyBracket)
-		state = stateStack.removeAt(stateStack.size - 1)
+			destination.write(Character.Symbol.rightCurlyBracket)
+			state = stateStack.removeAt(stateStack.size - 1)
+		}
 	}
 
 
 	override fun writeMapStart() {
-		startValue(isString = false)
+		checkingForErrors {
+			startValue(isString = false)
 
-		destination.write(Character.Symbol.leftCurlyBracket)
+			destination.write(Character.Symbol.leftCurlyBracket)
 
-		stateStack += state
-		state = State.afterMapStart
+			stateStack += state
+			state = State.afterMapStart
+		}
 	}
 
 
 	override fun writeNull() {
-		startValue(isString = false)
+		checkingForErrors {
+			startValue(isString = false)
 
-		destination.write("null")
+			destination.write("null")
+		}
 	}
 
 
 	override fun writeShort(value: Short) {
-		startValue(isString = false)
+		checkingForErrors {
+			startValue(isString = false)
 
-		destination.write(value.toString())
+			destination.write(value.toString())
+		}
 	}
 
 
 	override fun writeString(value: String) {
-		startValue(isString = true)
+		checkingForErrors {
+			startValue(isString = true)
 
-		// TODO optimize
-		destination.write(Character.Symbol.quotationMark)
+			// TODO optimize
+			destination.write(Character.Symbol.quotationMark)
 
-		for (character in value) {
-			when (character) {
-				'"', '\\' -> {
-					destination.write(Character.Symbol.reverseSolidus)
-					destination.write(character.toInt())
-				}
-
-				'\b' -> {
-					destination.write(Character.Symbol.reverseSolidus)
-					destination.write(Character.Letter.b)
-				}
-
-				'\u000C' -> {
-					destination.write(Character.Symbol.reverseSolidus)
-					destination.write(Character.Letter.f)
-				}
-
-				'\n' -> {
-					destination.write(Character.Symbol.reverseSolidus)
-					destination.write(Character.Letter.n)
-				}
-
-				'\r' -> {
-					destination.write(Character.Symbol.reverseSolidus)
-					destination.write(Character.Letter.r)
-				}
-
-				'\t' -> {
-					destination.write(Character.Symbol.reverseSolidus)
-					destination.write(Character.Letter.t)
-				}
-
-				'\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006', '\u0007',
-				'\u000B', '\u000E', '\u000F', '\u0010', '\u0011', '\u0012', '\u0013', '\u0014',
-				'\u0015', '\u0016', '\u0017', '\u0018', '\u0019', '\u001A', '\u001B', '\u001C',
-				'\u001D', '\u001E', '\u001F' -> {
-					destination.write(Character.Symbol.reverseSolidus)
-					destination.write(Character.Letter.u)
-					destination.write(Character.Digit.zero)
-					destination.write(Character.Digit.zero)
-
-					if (character.toInt() >= 0x10) {
-						destination.write(Character.Digit.one)
+			for (character in value) {
+				when (character) {
+					'"', '\\' -> {
+						destination.write(Character.Symbol.reverseSolidus)
+						destination.write(character.toInt())
 					}
-					else {
+
+					'\b' -> {
+						destination.write(Character.Symbol.reverseSolidus)
+						destination.write(Character.Letter.b)
+					}
+
+					'\u000C' -> {
+						destination.write(Character.Symbol.reverseSolidus)
+						destination.write(Character.Letter.f)
+					}
+
+					'\n' -> {
+						destination.write(Character.Symbol.reverseSolidus)
+						destination.write(Character.Letter.n)
+					}
+
+					'\r' -> {
+						destination.write(Character.Symbol.reverseSolidus)
+						destination.write(Character.Letter.r)
+					}
+
+					'\t' -> {
+						destination.write(Character.Symbol.reverseSolidus)
+						destination.write(Character.Letter.t)
+					}
+
+					'\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006', '\u0007',
+					'\u000B', '\u000E', '\u000F', '\u0010', '\u0011', '\u0012', '\u0013', '\u0014',
+					'\u0015', '\u0016', '\u0017', '\u0018', '\u0019', '\u001A', '\u001B', '\u001C',
+					'\u001D', '\u001E', '\u001F' -> {
+						destination.write(Character.Symbol.reverseSolidus)
+						destination.write(Character.Letter.u)
 						destination.write(Character.Digit.zero)
+						destination.write(Character.Digit.zero)
+
+						if (character.toInt() >= 0x10) {
+							destination.write(Character.Digit.one)
+						}
+						else {
+							destination.write(Character.Digit.zero)
+						}
+
+						destination.write(hexCharacters[character.toInt() and 0xF].toInt())
 					}
 
-					destination.write(hexCharacters[character.toInt() and 0xF].toInt())
+					else ->
+						destination.write(character.toInt())
 				}
-
-				else ->
-					destination.write(character.toInt())
 			}
-		}
 
-		destination.write(Character.Symbol.quotationMark)
+			destination.write(Character.Symbol.quotationMark)
+		}
 	}
 
 

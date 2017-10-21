@@ -84,6 +84,15 @@ internal object StandardReaderAcceptSpec : Spek({
 		}
 
 
+		it("close()") {
+			reader("null").close()
+			reader("null").apply {
+				close()
+				close()
+			}
+		}
+
+
 		it("readBoolean()") {
 			reader("true").readBoolean().should.be.`true`
 			reader("false").readBoolean().should.be.`false`

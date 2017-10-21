@@ -2,11 +2,15 @@ package com.github.fluidsonic.fluid.json
 
 import java.io.Closeable
 import java.io.Flushable
+import java.io.IOException
 import java.io.Writer
 
 
 interface JSONWriter : Closeable, Flushable {
 
+	val isErrored: Boolean
+
+	fun markAsErrored()
 	fun writeBoolean(value: Boolean)
 	fun writeDouble(value: Double)
 	fun writeListEnd()
@@ -89,6 +93,21 @@ interface JSONWriter : Closeable, Flushable {
 
 		fun with(destination: Writer): JSONWriter =
 			StandardWriter(destination)
+	}
+}
+
+
+inline fun <Writer : JSONWriter, ReturnValue> Writer.withErrorChecking(body: Writer.() -> ReturnValue): ReturnValue {
+	if (isErrored) {
+		throw IOException("Cannot operate on an errored writer")
+	}
+
+	return try {
+		body()
+	}
+	catch (e: Throwable) {
+		markAsErrored()
+		throw e
 	}
 }
 

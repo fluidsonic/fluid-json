@@ -274,6 +274,15 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 	override fun readLong(): Long {
 		readToken(JSONToken.numberValue)
 
+		return source.locked {
+			readLongLocked()
+		}
+	}
+
+
+	private fun readLongLocked(): Long {
+		val startIndex = source.index
+
 		val isNegative: Boolean
 		val negativeLimit: Long
 
@@ -339,58 +348,11 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 			while (Character.isDigit(character))
 		}
 
-		if (character == Character.Letter.e || character == Character.Letter.E) { // apply exponent
-			val exponentIsNegative: Boolean
+		if (character == Character.Letter.e || character == Character.Letter.E) { // oh no, an exponent!
+			source.seekTo(startIndex)
+			unreadToken(JSONToken.numberValue)
 
-			when (source.peekCharacter()) {
-				Character.Symbol.plusSign -> {
-					exponentIsNegative = false
-					source.readCharacter()
-				}
-
-				Character.Symbol.hyphenMinus -> {
-					exponentIsNegative = true
-					source.readCharacter()
-				}
-
-				else ->
-					exponentIsNegative = false
-			}
-
-			character = source.readCharacter(required = Character::isDigit) { "a digit in exponent value of number" }
-
-			var exponent = 0
-			do {
-				val digit = character - Character.Digit.zero
-				exponent = (exponent * 10) + digit
-
-				if (exponent >= 19) {
-					do character = source.readCharacter()
-					while (Character.isDigit(character))
-					break
-				}
-
-				character = source.readCharacter()
-			}
-			while (Character.isDigit(character))
-
-			if (exponent >= 19) {
-				if (exponentIsNegative) {
-					return 0L
-				}
-				else {
-					return if (isNegative) Long.MIN_VALUE else Long.MAX_VALUE
-				}
-			}
-
-			val multiplier = exponentMultipliers[exponent]
-
-			value = when {
-				exponentIsNegative -> value / multiplier
-				Long.canMultiplyWithoutOverflow(value, multiplier) -> value * multiplier
-				isNegative -> Long.MIN_VALUE
-				else -> Long.MAX_VALUE
-			}
+			return readDouble().toLong()
 		}
 
 		source.seekBackOneCharacter()
@@ -663,32 +625,12 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 		JSONException.unexpectedCharacter(character, expected = expected, characterIndex = characterIndex)
 
 
-	private companion object {
-
-		private val exponentMultipliers = longArrayOf(
-			1L,
-			10L,
-			100L,
-			1000L,
-			10000L,
-			100000L,
-			1000000L,
-			10000000L,
-			100000000L,
-			1000000000L,
-			10000000000L,
-			100000000000L,
-			1000000000000L,
-			10000000000000L,
-			100000000000000L,
-			1000000000000000L,
-			10000000000000000L,
-			100000000000000000L,
-			1000000000000000000L
-		)
+	private fun unreadToken(token: JSONToken) {
+		peekedToken = token
+		peekedTokenIndex = source.sourceIndex
 	}
 
-
+	
 	private enum class State {
 
 		afterListElementSeparator,

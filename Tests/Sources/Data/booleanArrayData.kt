@@ -1,7 +1,7 @@
 package tests
 
 
-internal val booleanArrayData = TestData(
+internal val booleanArrayData: TestData<BooleanArray> = TestData(
 	encodableOnly = mapOf(
 		booleanArrayOf() to "[]",
 		booleanArrayOf(true) to "[true]",

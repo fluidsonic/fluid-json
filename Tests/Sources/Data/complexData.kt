@@ -1,7 +1,7 @@
 package tests
 
 
-internal val complexData = TestData(
+internal val complexData: TestData<Map<String, Any?>> = TestData(
 	decodableOnly = mapOf(
 		"""
 			{

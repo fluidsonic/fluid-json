@@ -1,7 +1,7 @@
 package tests
 
 
-internal val intData = TestData(
+internal val intData: TestData<Int> = TestData(
 	symmetric = mapOf(
 		Int.MIN_VALUE to "-2147483648",
 		-1 to "-1",
@@ -17,6 +17,7 @@ internal val intData = TestData(
 		"-1e+2" to -100,
 		"-1e2" to -100,
 		"-100" to -100,
+		"-1000000000000000000000000000000e-30" to -1,
 		"-1.9" to -1,
 		"-1.1" to -1,
 		"-1E0" to -1,
@@ -33,6 +34,7 @@ internal val intData = TestData(
 		"1E0" to 1,
 		"1.1" to 1,
 		"1.9" to 1,
+		"1000000000000000000000000000000e-30" to 1,
 		"100" to 100,
 		"1e2" to 100,
 		"1e+2" to 100,

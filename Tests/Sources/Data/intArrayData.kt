@@ -1,7 +1,7 @@
 package tests
 
 
-internal val intArrayData = TestData(
+internal val intArrayData: TestData<IntArray> = TestData(
 	encodableOnly = mapOf(
 		intArrayOf() to "[]",
 		intArrayOf(0) to "[0]",

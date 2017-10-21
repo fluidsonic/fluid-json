@@ -9,9 +9,11 @@ internal class StandardEncoder<out Context : JSONCoderContext>(
 
 	@Suppress("UNCHECKED_CAST")
 	override fun writeEncodable(value: Any) {
-		codecResolver.encoderCodecForClass(value::class.java as Class<in Any>)
-			?.encode(value = value, encoder = this)
-			?: throw JSONException("no encoder codec registered for ${value::class.java}: $value")
+		withErrorChecking {
+			codecResolver.encoderCodecForClass(value::class.java as Class<in Any>)
+				?.encode(value = value, encoder = this)
+				?: throw JSONException("no encoder codec registered for ${value::class.java}: $value")
+		}
 	}
 
 

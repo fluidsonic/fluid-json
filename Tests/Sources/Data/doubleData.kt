@@ -1,7 +1,7 @@
 package tests
 
 
-internal val doubleData = TestData(
+internal val doubleData: TestData<Double> = TestData(
 	symmetric = mapOf(
 		-1E200 to "-1.0E200",
 		-100.999 to "-100.999",

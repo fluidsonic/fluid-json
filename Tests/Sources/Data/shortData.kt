@@ -1,7 +1,7 @@
 package tests
 
 
-internal val shortData = TestData(
+internal val shortData: TestData<Short> = TestData(
 	symmetric = mapOf(
 		Short.MIN_VALUE to "-32768",
 		(-1).toShort() to "-1",
@@ -17,6 +17,7 @@ internal val shortData = TestData(
 		"-1e+2" to (-100).toShort(),
 		"-1e2" to (-100).toShort(),
 		"-100" to (-100).toShort(),
+		"-1000000000000000000000000000000e-30" to (-1).toShort(),
 		"-1.9" to (-1).toShort(),
 		"-1.1" to (-1).toShort(),
 		"-1E0" to (-1).toShort(),
@@ -33,6 +34,7 @@ internal val shortData = TestData(
 		"1E0" to 1.toShort(),
 		"1.1" to 1.toShort(),
 		"1.9" to 1.toShort(),
+		"1000000000000000000000000000000e-30" to 1.toShort(),
 		"100" to 100.toShort(),
 		"1e2" to 100.toShort(),
 		"1e+2" to 100.toShort(),

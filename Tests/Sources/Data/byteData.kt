@@ -1,7 +1,7 @@
 package tests
 
 
-internal val byteData = TestData(
+internal val byteData: TestData<Byte> = TestData(
 	symmetric = mapOf(
 		Byte.MIN_VALUE to "-128",
 		(-1).toByte() to "-1",
@@ -17,6 +17,7 @@ internal val byteData = TestData(
 		"-1e+2" to (-100).toByte(),
 		"-1e2" to (-100).toByte(),
 		"-100" to (-100).toByte(),
+		"-1000000000000000000000000000000e-30" to (-1).toByte(),
 		"-1.9" to (-1).toByte(),
 		"-1.1" to (-1).toByte(),
 		"-1E0" to (-1).toByte(),
@@ -33,6 +34,7 @@ internal val byteData = TestData(
 		"1E0" to 1.toByte(),
 		"1.1" to 1.toByte(),
 		"1.9" to 1.toByte(),
+		"1000000000000000000000000000000e-30" to 1.toByte(),
 		"100" to 100.toByte(),
 		"1e2" to 100.toByte(),
 		"1e+2" to 100.toByte(),

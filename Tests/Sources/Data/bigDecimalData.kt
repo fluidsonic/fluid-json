@@ -1,7 +1,9 @@
 package tests
 
+import java.math.BigDecimal
 
-internal val bigDecimalData = TestData(
+
+internal val bigDecimalData: TestData<BigDecimal> = TestData(
 	encodableOnly = mapOf(
 		(-1E200).toBigDecimal() to "-1.0E200",
 		(-100.999).toBigDecimal() to "-100.999",

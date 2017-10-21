@@ -1,7 +1,7 @@
 package tests
 
 
-internal val longData = TestData(
+internal val longData: TestData<Long> = TestData(
 	symmetric = mapOf(
 		Long.MIN_VALUE to "-9223372036854775808",
 		-1L to "-1",
@@ -11,12 +11,15 @@ internal val longData = TestData(
 	),
 	decodableOnly = mapOf(
 		"-1e20000" to Long.MIN_VALUE,
+		"-92233720368547758090" to Long.MIN_VALUE,
+		"-9223372036854775809" to Long.MIN_VALUE,
 		"-1000000000000000000000000000000" to Long.MIN_VALUE,
 		"-1.0e+2" to -100L,
 		"-1.0e2" to -100L,
 		"-1e+2" to -100L,
 		"-1e2" to -100L,
 		"-100" to -100L,
+		"-1000000000000000000000000000000e-30" to -1L,
 		"-1.9" to -1L,
 		"-1.1" to -1L,
 		"-1E0" to -1L,
@@ -33,11 +36,14 @@ internal val longData = TestData(
 		"1E0" to 1L,
 		"1.1" to 1L,
 		"1.9" to 1L,
+		"1000000000000000000000000000000e-30" to 1L,
 		"100" to 100L,
 		"1e2" to 100L,
 		"1e+2" to 100L,
 		"1.0e2" to 100L,
 		"1.0e+2" to 100L,
+		"9223372036854775808" to Long.MAX_VALUE,
+		"92233720368547758080" to Long.MAX_VALUE,
 		"1000000000000000000000000000000" to Long.MAX_VALUE,
 		"1e20000" to Long.MAX_VALUE
 	)

@@ -1,6 +1,7 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.JSONCodecResolver
+import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONWriter
 import com.github.fluidsonic.fluid.json.StandardEncoder
@@ -46,42 +47,70 @@ internal object StandardEncoderSpec : Spek({
 
 			val expectedOutput = """{"jaegers":[{"height":76.2,"launchDate":"2019-11-02","mark":5,"name":"Striker Eureka","origin":"Australia","status":"destroyed","weight":1850.0}],"kaijus":[{"breachDate":"2025-01-12","category":5,"height":181.7,"name":"Slattern","origin":"Anteverse","status":"deceased","weight":6750.0}]}"""
 
-			val writer = StringWriter()
-			val encoder =
-				StandardEncoder(
-					codecResolver = JSONCodecResolver.of(
-						JaegerCodec,
-						KaijuCodec,
-						LocalDateCodec,
-						UniverseCodec
-					),
-					context = TestCoderContext(),
-					destination = JSONWriter.with(writer)
+			val output = encode(
+				codecResolver = JSONCodecResolver.of(
+					JaegerCodec,
+					KaijuCodec,
+					LocalDateCodec,
+					UniverseCodec
 				)
+			) {
+				writeEncodable(input)
+			}
 
-			encoder.writeEncodable(input)
-
-			writer.toString().should.equal(expectedOutput)
+			output.should.equal(expectedOutput)
 		}
 
-		
+
 		it("fails when a codec was no found") {
-
-			val writer = StringWriter()
-			val encoder =
-				StandardEncoder(
-					codecResolver = JSONCodecResolver.of(),
-					context = TestCoderContext(),
-					destination = JSONWriter.with(writer)
-				)
-
-			try {
-				encoder.writeEncodable(object {})
-				throw AssertionError("an exception was expected")
+			encode {
+				try {
+					writeEncodable(object {})
+					throw AssertionError("an exception was expected")
+				}
+				catch (e: JSONException) {
+					// good
+				}
 			}
-			catch (e: JSONException) {
-				// good
-			}
+		}
+
+
+		it("provides codecs with the context") {
+			val context = TestCoderContext()
+
+			encode(
+				codecResolver = JSONCodecResolver.of(ContextCheckingTestCodec(context)),
+				context = context
+			) { writeEncodable("test") }
+
+			encode(
+				codecResolver = JSONCodecResolver.of(ContextCheckingTestEncoderCodec(context)),
+				context = context
+			) { writeEncodable("test") }
 		}
 	}
 })
+
+
+// TODO move the following methods inside the object above once KT-19796 is fixed
+// https://youtrack.jetbrains.com/issue/KT-19796
+
+private inline fun encode(
+	codecResolver: JSONCodecResolver<TestCoderContext> = JSONCodecResolver.of(),
+	context: TestCoderContext = TestCoderContext(),
+	body: JSONEncoder<TestCoderContext>.() -> Unit
+): String {
+	val writer = StringWriter()
+	val encoder =
+		StandardEncoder(
+			codecResolver = codecResolver,
+			context = context,
+			destination = JSONWriter.with(writer)
+		)
+
+	encoder.use {
+		encoder.body()
+	}
+
+	return writer.toString()
+}

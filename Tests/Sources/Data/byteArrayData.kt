@@ -1,7 +1,7 @@
 package tests
 
 
-internal val byteArrayData = TestData(
+internal val byteArrayData: TestData<ByteArray> = TestData(
 	encodableOnly = mapOf(
 		byteArrayOf() to "[]",
 		byteArrayOf(0) to "[0]",
