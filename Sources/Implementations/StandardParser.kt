@@ -24,8 +24,7 @@ internal class StandardParser<Context : JSONCoderContext>(
 
 	override fun <Value : Any> doParseListWithClass(
 		source: Reader,
-		valueClass: Class<out Value>,
-		nullability: JSONNullability.None
+		valueClass: Class<out Value>
 	): List<Value>? {
 		val decoder = decoderFactory(source, context)
 		return decoder.use {
@@ -55,8 +54,7 @@ internal class StandardParser<Context : JSONCoderContext>(
 	override fun <Key : Any, Value : Any> doParseMapWithClasses(
 		source: Reader,
 		keyClass: Class<out Key>,
-		valueClass: Class<out Value>,
-		nullability: JSONNullability.None
+		valueClass: Class<out Value>
 	): Map<Key, Value>? {
 		val decoder = decoderFactory(source, context)
 		return decoder.use {
