@@ -103,7 +103,7 @@ private inline fun encode(
 		StandardEncoder(
 			codecResolver = codecResolver,
 			context = context,
-			destination = JSONWriter.with(writer)
+			destination = JSONWriter.build(writer)
 		)
 
 	encoder.use {

@@ -76,12 +76,12 @@ interface JSONReader : Closeable {
 
 	companion object {
 
-		fun with(source: Reader): JSONReader =
+		fun build(source: Reader): JSONReader =
 			StandardReader(TextInput(source))
 
 
-		fun with(source: String) =
-			with(StringReader(source))
+		fun build(source: String) =
+			build(StringReader(source))
 	}
 }
 

@@ -12,7 +12,7 @@ import com.github.fluidsonic.fluid.json.writeMapElement
 
 internal object UniverseCodec : JSONCodec<Universe, TestCoderContext> {
 
-	override fun decode(decoder: JSONDecoder<TestCoderContext>): Universe {
+	override fun decode(decoder: JSONDecoder<out TestCoderContext>): Universe {
 		var jaegers: List<Jaeger>? = null
 		var kaijus: List<Kaiju>? = null
 
@@ -31,7 +31,7 @@ internal object UniverseCodec : JSONCodec<Universe, TestCoderContext> {
 	}
 
 
-	override fun encode(value: Universe, encoder: JSONEncoder<TestCoderContext>) {
+	override fun encode(value: Universe, encoder: JSONEncoder<out TestCoderContext>) {
 		encoder.writeIntoMap {
 			writeMapElement(Keys.jaegers, encodable = value.jaegers)
 			writeMapElement(Keys.kaijus, encodable = value.kaijus)
@@ -39,7 +39,7 @@ internal object UniverseCodec : JSONCodec<Universe, TestCoderContext> {
 	}
 
 
-	override val valueClass = Universe::class.java
+	override val decodableClass = Universe::class.java
 
 
 	private object Keys {

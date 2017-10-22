@@ -4,52 +4,93 @@ import java.io.StringWriter
 import java.io.Writer
 
 
-interface JSONSerializer<in Context : JSONCoderContext> {
+interface JSONSerializer<Context : JSONCoderContext> {
+
+	val context: Context
+
 
 	fun serialize(value: Any?, destination: Writer)
 
-	fun withContext(context: Context): JSONSerializer<Context>
+	fun <NewContext : Context> withContext(context: NewContext): JSONSerializer<NewContext>
 
 
 	companion object {
 
-		private val default = with(codecResolver = JSONCodecResolver.plain)
+		private val default = builder()
+			.encoder(AnyJSONCodec)
+			.build()
+
+
+		fun builder(): BuilderForEncoder<JSONCoderContext> =
+			BuilderForDecoderImpl(context = JSONCoderContext.empty)
+
+
+		fun <Context : JSONCoderContext> builder(context: Context): BuilderForEncoder<Context> =
+			BuilderForDecoderImpl(context = context)
 
 
 		fun default() =
-			default
+			JSONSerializer.default
 
 
-		fun with(
-			codecResolver: JSONCodecResolver<JSONCoderContext>
-		): JSONSerializer<JSONCoderContext> =
-			with(context = JSONCoderContext.empty, codecResolver = codecResolver)
+		interface BuilderForEncoder<Context : JSONCoderContext> {
+
+			fun encoder(factory: (destination: Writer, context: Context) -> JSONEncoder<Context>): Builder<Context>
 
 
-		fun <Context : JSONCoderContext> with(
-			context: Context,
-			codecResolver: JSONCodecResolver<Context>
-		): JSONSerializer<Context> =
-			with(context) { destination, overridingContext ->
-				JSONEncoder.with(
-					context = overridingContext,
-					codecResolver = codecResolver,
-					destination = destination
+			fun encoder(resolver: JSONCodecResolver<Context>) =
+				encoder { destination, context ->
+					JSONEncoder.builder(context)
+						.codecs(resolver)
+						.destination(destination)
+						.build()
+				}
+
+
+			fun encoder(
+				vararg providers: JSONCodecProvider<Context>,
+				appendDefaultCodecs: Boolean = true
+			) =
+				encoder(JSONCodecResolver.of(providers = *providers, appendDefaultCodecs = appendDefaultCodecs))
+
+
+			fun encoder(
+				providers: Iterable<JSONCodecProvider<Context>>,
+				appendDefaultCodecs: Boolean = true
+			) =
+				encoder(JSONCodecResolver.of(providers = providers, appendDefaultCodecs = appendDefaultCodecs))
+		}
+
+
+		private class BuilderForDecoderImpl<Context : JSONCoderContext>(
+			private val context: Context
+		) : BuilderForEncoder<Context> {
+
+			override fun encoder(factory: (source: Writer, context: Context) -> JSONEncoder<Context>) =
+				BuilderImpl(
+					context = context,
+					encoderFactory = factory
 				)
-			}
+		}
 
 
-		fun with(
-			encoderFactory: (destination: Writer, context: JSONCoderContext) -> JSONEncoder<JSONCoderContext>
-		): JSONSerializer<JSONCoderContext> =
-			with(context = JSONCoderContext.empty, encoderFactory = encoderFactory)
+		interface Builder<Context : JSONCoderContext> {
+
+			fun build(): JSONSerializer<Context>
+		}
 
 
-		fun <Context : JSONCoderContext> with(
-			context: Context,
-			encoderFactory: (destination: Writer, context: Context) -> JSONEncoder<Context>
-		): JSONSerializer<Context> =
-			StandardSerializer(context = context, encoderFactory = encoderFactory)
+		private class BuilderImpl<Context : JSONCoderContext>(
+			private val context: Context,
+			private val encoderFactory: (source: Writer, context: Context) -> JSONEncoder<Context>
+		) : Builder<Context> {
+
+			override fun build() =
+				StandardSerializer(
+					context = context,
+					encoderFactory = encoderFactory
+				)
+		}
 	}
 }
 

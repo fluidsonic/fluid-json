@@ -1,8 +1,10 @@
 package tests
 
+import com.github.fluidsonic.fluid.json.BooleanJSONCodec
 import com.github.fluidsonic.fluid.json.JSONCodecResolver
 import com.github.fluidsonic.fluid.json.JSONCoderContext
 import com.github.fluidsonic.fluid.json.JSONDecoder
+import com.github.fluidsonic.fluid.json.JSONReader
 import com.github.fluidsonic.fluid.json.JSONToken
 import com.github.fluidsonic.fluid.json.readDecodable
 import com.github.fluidsonic.fluid.json.readDecodableOrNull
@@ -26,26 +28,62 @@ internal object JSONDecoderSpec : Spek({
 
 	describe("JSONDecoder") {
 
-		it(".with() shortcuts pass correct values") {
-			JSONDecoder.with(source = "", codecResolver = JSONCodecResolver.default)
-				.context.should.equal(JSONCoderContext.empty)
+		it(".builder()") {
+			JSONDecoder.builder()
+				.codecs(JSONCodecResolver.default)
+				.source(JSONReader.build(StringReader("true")))
+				.build()
+				.apply {
+					context.should.equal(JSONCoderContext.empty)
+					readBoolean().should.be.`true`
+				}
 
-			JSONDecoder.with(source = StringReader(""), codecResolver = JSONCodecResolver.default)
-				.context.should.equal(JSONCoderContext.empty)
+			JSONDecoder.builder()
+				.codecs(JSONCodecResolver.default)
+				.source(StringReader("true"))
+				.build()
+				.apply {
+					context.should.equal(JSONCoderContext.empty)
+					readBoolean().should.be.`true`
+				}
 
-			JSONDecoder.with(source = DummyJSONReader(), codecResolver = JSONCodecResolver.default)
-				.context.should.equal(JSONCoderContext.empty)
+			JSONDecoder.builder()
+				.codecs(JSONCodecResolver.default)
+				.source("true")
+				.build()
+				.apply {
+					context.should.equal(JSONCoderContext.empty)
+					readBoolean().should.be.`true`
+				}
+
+			JSONDecoder.builder()
+				.codecs(BooleanJSONCodec)
+				.source("true")
+				.build()
+				.apply {
+					context.should.equal(JSONCoderContext.empty)
+					readBoolean().should.be.`true`
+				}
+
+			JSONDecoder.builder()
+				.codecs(listOf(BooleanJSONCodec))
+				.source("true")
+				.build()
+				.apply {
+					context.should.equal(JSONCoderContext.empty)
+					readBoolean().should.be.`true`
+				}
 
 			val testContext = TestCoderContext()
 
-			JSONDecoder.with(source = "", codecResolver = JSONCodecResolver.default, context = testContext)
-				.context.should.equal(testContext)
-
-			JSONDecoder.with(source = StringReader(""), codecResolver = JSONCodecResolver.default, context = testContext)
-				.context.should.equal(testContext)
-
-			JSONDecoder.with(source = DummyJSONReader(), codecResolver = JSONCodecResolver.default, context = testContext)
-				.context.should.equal(testContext)
+			JSONDecoder.builder(testContext)
+				.codecs(JSONCodecResolver.default)
+				.source(JSONReader.build(StringReader("true")))
+				.build()
+				.apply {
+					context.should.equal(testContext)
+					readBoolean().should.be.`true`
+				}
 		}
 
 		it(".read() shortcuts pass correct values") {

@@ -93,51 +93,51 @@ internal object StandardCodecResolverSpec : Spek({
 
 	object ChildDecoderCodec : JSONDecoderCodec<Child, Context> {
 
-		override fun decode(decoder: JSONDecoder<Context>) = error("dummy")
+		override fun decode(decoder: JSONDecoder<out Context>) = error("dummy")
 
-		override val valueClass = Child::class.java
+		override val decodableClass = Child::class.java
 	}
 
 
 	object ChildEncoderCodec : JSONEncoderCodec<Child, Context> {
 
-		override fun encode(value: Child, encoder: JSONEncoder<Context>) = error("dummy")
+		override fun encode(value: Child, encoder: JSONEncoder<out Context>) = error("dummy")
 
-		override val valueClass = Child::class.java
+		override val encodableClasses = setOf(Child::class.java)
 	}
 
 
 	object ParentDecoderCodec : JSONDecoderCodec<Parent, Context> {
 
-		override fun decode(decoder: JSONDecoder<Context>) = error("dummy")
+		override fun decode(decoder: JSONDecoder<out Context>) = error("dummy")
 
-		override val valueClass = Parent::class.java
+		override val decodableClass = Parent::class.java
 	}
 
 
 	object ParentEncoderCodec : JSONEncoderCodec<Parent, Context> {
 
-		override fun encode(value: Parent, encoder: JSONEncoder<Context>) {
+		override fun encode(value: Parent, encoder: JSONEncoder<out Context>) {
 			value.should.be.instanceof(Parent::class.java)
 		}
 
-		override val valueClass = Parent::class.java
+		override val encodableClasses = setOf(Parent::class.java)
 	}
 
 
 	object NothingDecoderCodec : JSONDecoderCodec<Nothing, Context> {
 
-		override fun decode(decoder: JSONDecoder<Context>) = error("dummy")
+		override fun decode(decoder: JSONDecoder<out Context>) = error("dummy")
 
-		override val valueClass = Nothing::class.java
+		override val decodableClass = Nothing::class.java
 	}
 
 
 	object NothingEncoderCodec : JSONEncoderCodec<Nothing, Context> {
 
-		override fun encode(value: Nothing, encoder: JSONEncoder<Context>) = error("dummy")
+		override fun encode(value: Nothing, encoder: JSONEncoder<out Context>) = error("dummy")
 
-		override val valueClass = Nothing::class.java
+		override val encodableClasses = setOf(Nothing::class.java)
 	}
 }
 
@@ -147,9 +147,9 @@ internal object StandardCodecResolverSpec : Spek({
 
 @Suppress("unused")
 private fun TestBody.resolver(vararg codecs: JSONDecoderCodec<*, StandardCodecResolverSpec.Context>) =
-	StandardCodecResolver(decoderCodecs = codecs.toList(), encoderCodecs = emptyList())
+	StandardCodecResolver.of(codecs.toList())
 
 
 @Suppress("unused")
 private fun TestBody.resolver(vararg codecs: JSONEncoderCodec<*, StandardCodecResolverSpec.Context>) =
-	StandardCodecResolver(decoderCodecs = emptyList(), encoderCodecs = codecs.toList())
+	StandardCodecResolver.of(codecs.toList())

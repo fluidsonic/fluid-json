@@ -9,10 +9,10 @@ interface JSONDecoderCodec<out Value : Any, in Context : JSONCoderContext> : JSO
 	override val encoderCodecs: List<JSONEncoderCodec<*, Context>>
 		get() = emptyList()
 
-	val valueClass: Class<out Value>
+	val decodableClass: Class<out Value>
 
 
-	fun decode(decoder: JSONDecoder<Context>): Value
+	fun decode(decoder: JSONDecoder<out Context>): Value
 
 
 	companion object

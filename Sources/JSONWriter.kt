@@ -91,7 +91,7 @@ interface JSONWriter : Closeable, Flushable {
 
 	companion object {
 
-		fun with(destination: Writer): JSONWriter =
+		fun build(destination: Writer): JSONWriter =
 			StandardWriter(destination)
 	}
 }

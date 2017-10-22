@@ -3,9 +3,9 @@ package com.github.fluidsonic.fluid.json
 import java.io.Writer
 
 
-internal class StandardSerializer<in Context : JSONCoderContext>(
-	private val context: Context,
-	private val encoderFactory: (destination: Writer, context: Context) -> JSONEncoder<Context>
+internal class StandardSerializer<Context : JSONCoderContext>(
+	override val context: Context,
+	private val encoderFactory: (destination: Writer, context: Context) -> JSONEncoder<in Context>
 ) : JSONSerializer<Context> {
 
 	override fun serialize(value: Any?, destination: Writer) {
@@ -16,6 +16,6 @@ internal class StandardSerializer<in Context : JSONCoderContext>(
 	}
 
 
-	override fun withContext(context: Context): JSONSerializer<Context> =
+	override fun <NewContext : Context> withContext(context: NewContext) =
 		StandardSerializer(context = context, encoderFactory = encoderFactory)
 }

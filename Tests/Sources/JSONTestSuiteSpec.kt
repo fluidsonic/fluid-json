@@ -1,11 +1,8 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONCodecResolver
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.StandardParser
-import com.github.fluidsonic.fluid.json.parse
+import com.github.fluidsonic.fluid.json.JSONParser
+import com.github.fluidsonic.fluid.json.parseValue
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -16,9 +13,7 @@ import java.io.FileReader
 internal object JSONTestSuiteSpec : Spek({
 
 	describe("JSON Test Suite (https://github.com/nst/JSONTestSuite)") {
-		val parser = StandardParser(JSONCoderContext.empty) { source, context ->
-			JSONDecoder.with(source, context = context, codecResolver = JSONCodecResolver.plain)
-		}
+		val parser = JSONParser.default()
 
 		File("Tests/Libraries/JSONTestSuite/test_parsing")
 			.listFiles()
@@ -33,7 +28,7 @@ internal object JSONTestSuiteSpec : Spek({
 
 				it(file.name) {
 					val result = try {
-						parser.parse(FileReader(file))
+						parser.parseValue(FileReader(file))
 					}
 					catch (e: JSONException) {
 						e

@@ -1,7 +1,11 @@
 package tests
 
+import com.github.fluidsonic.fluid.json.BooleanJSONCodec
+import com.github.fluidsonic.fluid.json.JSONCodecResolver
+import com.github.fluidsonic.fluid.json.JSONCoderContext
 import com.github.fluidsonic.fluid.json.JSONSerializer
 import com.github.fluidsonic.fluid.json.serialize
+import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
@@ -11,27 +15,52 @@ internal object JSONSerializerSpec : Spek({
 
 	describe("JSONSerializer") {
 
-		it(".default() returns a default serializer") {
-			plainData.testEncoding(JSONSerializer.default()::serialize)
+		it(".builder()") {
+			JSONSerializer.builder()
+				.encoder(JSONCodecResolver.default)
+				.build()
+				.apply {
+					context.should.equal(JSONCoderContext.empty)
+					serialize(true).should.equal("true")
+				}
+
+			JSONSerializer.builder()
+				.encoder(BooleanJSONCodec)
+				.build()
+				.apply {
+					context.should.equal(JSONCoderContext.empty)
+					serialize(true).should.equal("true")
+				}
+
+			JSONSerializer.builder()
+				.encoder(listOf(BooleanJSONCodec))
+				.build()
+				.apply {
+					context.should.equal(JSONCoderContext.empty)
+					serialize(true).should.equal("true")
+				}
+
+			val testContext = TestCoderContext()
+
+			JSONSerializer.builder(testContext)
+				.encoder(JSONCodecResolver.default)
+				.build()
+				.apply {
+					context.should.equal(testContext)
+					serialize(true).should.equal("true")
+				}
 		}
 
-		it(".serialize() shortcuts pass correct values") {
-			// FIXME
-			/*
-			var expectedContext = JSONCoderContext.empty
+		it(".default()") {
+			anyData.testEncoding(JSONSerializer.default()::serialize)
+		}
 
-			val parser = object : JSONSerializer<JSONCoderContext> {
-				override fun serialize(value: Any?, destination: Writer, context: JSONCoderContext) {
-					context.should.equal(expectedContext)
-				}
-			}
+		it(".withContext()") {
+			val testContext = TestCoderContext()
 
-			parser.serialize("")
-			parser.serialize("", destination = StringWriter())
-
-			expectedContext = TestCoderContext()
-			parser.serialize("", context = expectedContext)
-			*/
+			JSONSerializer.default()
+				.withContext(testContext)
+				.context.should.equal(testContext)
 		}
 	}
 })

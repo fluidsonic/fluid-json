@@ -3,9 +3,11 @@ package com.github.fluidsonic.fluid.json
 import java.io.Writer
 
 
-interface JSONEncoder<out Context : JSONCoderContext> : JSONWriter {
+@Suppress("AddVarianceModifier")
+interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
 
 	val context: Context
+
 
 	fun writeEncodable(value: Any)
 
@@ -20,34 +22,89 @@ interface JSONEncoder<out Context : JSONCoderContext> : JSONWriter {
 
 	companion object {
 
-		fun with(
-			destination: JSONWriter,
-			codecResolver: JSONCodecResolver<JSONCoderContext>
-		) =
-			with(destination = destination, context = JSONCoderContext.empty, codecResolver = codecResolver)
+		fun builder(): BuilderForCodecs<JSONCoderContext> =
+			BuilderForCodecsImpl(context = JSONCoderContext.empty)
 
 
-		fun with(
-			destination: Writer,
-			codecResolver: JSONCodecResolver<JSONCoderContext>
-		) =
-			with(destination = destination, context = JSONCoderContext.empty, codecResolver = codecResolver)
+		fun <Context : JSONCoderContext> builder(context: Context): BuilderForCodecs<Context> =
+			BuilderForCodecsImpl(context = context)
 
 
-		fun <Context : JSONCoderContext> with(
-			destination: JSONWriter,
-			context: Context,
-			codecResolver: JSONCodecResolver<Context>
-		): JSONEncoder<Context> =
-			StandardEncoder(codecResolver = codecResolver, context = context, destination = destination)
+		interface BuilderForCodecs<Context : JSONCoderContext> {
+
+			fun codecs(resolver: JSONCodecResolver<Context>): BuilderForDestination<Context>
 
 
-		fun <Context : JSONCoderContext> with(
-			destination: Writer,
-			context: Context,
-			codecResolver: JSONCodecResolver<Context>
-		) =
-			with(destination = JSONWriter.with(destination), context = context, codecResolver = codecResolver)
+			fun codecs(
+				vararg providers: JSONCodecProvider<Context>,
+				appendDefaultCodecs: Boolean = true
+			) =
+				codecs(JSONCodecResolver.of(providers = *providers, appendDefaultCodecs = appendDefaultCodecs))
+
+
+			fun codecs(
+				providers: Iterable<JSONCodecProvider<Context>>,
+				appendDefaultCodecs: Boolean = true
+			) =
+				codecs(JSONCodecResolver.of(providers = providers, appendDefaultCodecs = appendDefaultCodecs))
+		}
+
+
+		private class BuilderForCodecsImpl<Context : JSONCoderContext>(
+			private val context: Context
+		) : BuilderForCodecs<Context> {
+
+			override fun codecs(resolver: JSONCodecResolver<Context>) =
+				BuilderForDestinationImpl(
+					context = context,
+					codecResolver = resolver
+				)
+		}
+
+
+		interface BuilderForDestination<Context : JSONCoderContext> {
+
+			fun destination(destination: JSONWriter): Builder<Context>
+
+
+			fun destination(destination: Writer) =
+				destination(JSONWriter.build(destination))
+		}
+
+
+		private class BuilderForDestinationImpl<Context : JSONCoderContext>(
+			private val context: Context,
+			private val codecResolver: JSONCodecResolver<Context>
+		) : BuilderForDestination<Context> {
+
+			override fun destination(destination: JSONWriter) =
+				BuilderImpl(
+					context = context,
+					codecResolver = codecResolver,
+					destination = destination
+				)
+		}
+
+
+		interface Builder<Context : JSONCoderContext> {
+
+			fun build(): JSONEncoder<Context>
+		}
+
+
+		private class BuilderImpl<Context : JSONCoderContext>(
+			private val context: Context,
+			private val codecResolver: JSONCodecResolver<Context>,
+			private val destination: JSONWriter
+		) : Builder<Context> {
+
+			override fun build() =
+				StandardEncoder(
+					context = context,
+					codecResolver = codecResolver,
+					destination = destination
+				)
+		}
 	}
 }
 

@@ -6,7 +6,7 @@ import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONParser
 import com.github.fluidsonic.fluid.json.StandardParser
-import com.github.fluidsonic.fluid.json.parse
+import com.github.fluidsonic.fluid.json.parseValue
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
@@ -16,7 +16,10 @@ internal object StandardParserRejectSpec : SubjectSpek<JSONParser<JSONCoderConte
 
 	subject {
 		StandardParser(JSONCoderContext.empty) { source, context ->
-			JSONDecoder.with(source, context = context, codecResolver = JSONCodecResolver.plain)
+			JSONDecoder.builder(context)
+				.codecs(JSONCodecResolver.default)
+				.source(source)
+				.build()
 		}
 	}
 
@@ -174,22 +177,6 @@ internal object StandardParserRejectSpec : SubjectSpek<JSONParser<JSONCoderConte
 			subject.failToParse("{\"key0\":1,,\"key1\":1}")
 			subject.failToParse("{\"key0\":1,\"key1\":1,}")
 		}
-
-		/*
-		it("a anything not being a list of expected") {
-			subject.failToParseList("null")
-			subject.failToParseList("?")
-			subject.failToParseList("1")
-			subject.failToParseList("{}")
-		}
-
-		it("a map as requested") {
-			subject.failToParseMap("null")
-			subject.failToParseMap("?")
-			subject.failToParseMap("1")
-			subject.failToParseMap("[]")
-		}
-		*/
 	}
 })
 
@@ -209,17 +196,5 @@ private inline fun shouldFailWithJSONException(body: () -> Unit) {
 
 
 private fun JSONParser<JSONCoderContext>.failToParse(string: String) {
-	shouldFailWithJSONException { parse(string) }
+	shouldFailWithJSONException { parseValue(string) }
 }
-
-// FIXME
-/*
-private fun JSONParser<JSONCoderContext>.failToParseList(string: String) {
-	shouldFailWithJSONException { parseList(string) }
-}
-
-
-private fun JSONParser<JSONCoderContext>.failToParseMap(string: String) {
-	shouldFailWithJSONException { parseMap(string) }
-}
-*/

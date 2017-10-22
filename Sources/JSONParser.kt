@@ -6,6 +6,9 @@ import java.io.StringReader
 
 interface JSONParser<Context : JSONCoderContext> {
 
+	val context: Context
+
+
 	fun <Value : Any> doParseWithClass(
 		source: Reader,
 		valueClass: Class<out Value>
@@ -58,51 +61,86 @@ interface JSONParser<Context : JSONCoderContext> {
 	): Map<Key, Value?>?
 
 
-	fun withContext(context: Context): JSONParser<Context>
+	fun <NewContext : Context> withContext(context: NewContext): JSONParser<NewContext>
 
 
 	companion object {
 
-		private val default = with(
-			context = JSONCoderContext.empty,
-			codecResolver = JSONCodecResolver.plain
-		)
+		private val default = builder()
+			.decoder(AnyJSONCodec)
+			.build()
+
+
+		fun builder(): BuilderForDecoder<JSONCoderContext> =
+			BuilderForDecoderImpl(context = JSONCoderContext.empty)
+
+
+		fun <Context : JSONCoderContext> builder(context: Context): BuilderForDecoder<Context> =
+			BuilderForDecoderImpl(context = context)
 
 
 		fun default() =
 			default
 
 
-		fun with(
-			codecResolver: JSONCodecResolver<JSONCoderContext>
-		): JSONParser<JSONCoderContext> =
-			with(context = JSONCoderContext.empty, codecResolver = codecResolver)
+		interface BuilderForDecoder<Context : JSONCoderContext> {
+
+			fun decoder(factory: (source: Reader, context: Context) -> JSONDecoder<Context>): Builder<Context>
 
 
-		fun <Context : JSONCoderContext> with(
-			context: Context,
-			codecResolver: JSONCodecResolver<Context>
-		): JSONParser<Context> =
-			with(context) { source, overridingContext ->
-				JSONDecoder.with(
-					context = overridingContext,
-					codecResolver = codecResolver,
-					source = source
+			fun decoder(resolver: JSONCodecResolver<Context>) =
+				decoder { source, context ->
+					JSONDecoder.builder(context)
+						.codecs(resolver)
+						.source(source)
+						.build()
+				}
+
+
+			fun decoder(
+				vararg providers: JSONCodecProvider<Context>,
+				appendDefaultCodecs: Boolean = true
+			) =
+				decoder(JSONCodecResolver.of(providers = *providers, appendDefaultCodecs = appendDefaultCodecs))
+
+
+			fun decoder(
+				providers: Iterable<JSONCodecProvider<Context>>,
+				appendDefaultCodecs: Boolean = true
+			) =
+				decoder(JSONCodecResolver.of(providers = providers, appendDefaultCodecs = appendDefaultCodecs))
+		}
+
+
+		private class BuilderForDecoderImpl<Context : JSONCoderContext>(
+			private val context: Context
+		) : BuilderForDecoder<Context> {
+
+			override fun decoder(factory: (source: Reader, context: Context) -> JSONDecoder<Context>) =
+				BuilderImpl(
+					context = context,
+					decoderFactory = factory
 				)
-			}
+		}
 
 
-		fun with(
-			decoderFactory: (source: Reader, context: JSONCoderContext) -> JSONDecoder<JSONCoderContext>
-		): JSONParser<JSONCoderContext> =
-			with(context = JSONCoderContext.empty, decoderFactory = decoderFactory)
+		interface Builder<Context : JSONCoderContext> {
+
+			fun build(): JSONParser<Context>
+		}
 
 
-		fun <Context : JSONCoderContext> with(
-			context: Context,
-			decoderFactory: (source: Reader, context: Context) -> JSONDecoder<Context>
-		): JSONParser<Context> =
-			StandardParser(context = context, decoderFactory = decoderFactory)
+		private class BuilderImpl<Context : JSONCoderContext>(
+			private val context: Context,
+			private val decoderFactory: (source: Reader, context: Context) -> JSONDecoder<Context>
+		) : Builder<Context> {
+
+			override fun build() =
+				StandardParser(
+					context = context,
+					decoderFactory = decoderFactory
+				)
+		}
 	}
 }
 
@@ -166,193 +204,193 @@ fun <Key : Any, Value : Any> JSONParser<*>.doParseMapWithClasses(
 	doParseMapWithClasses(StringReader(source), keyClass = keyClass, valueClass = valueClass, nullability = nullability)
 
 
-fun JSONParser<*>.parse(
+fun JSONParser<*>.parseList(
+	source: Reader,
+	nullability: JSONNullability.None = JSONNullability.None
+) =
+	parseListOfType<Any>(source, nullability = nullability)
+
+
+fun JSONParser<*>.parseList(
+	source: Reader,
+	nullability: JSONNullability.Value
+) =
+	parseListOfType<Any>(source, nullability = nullability)
+
+
+fun JSONParser<*>.parseList(
+	source: String,
+	nullability: JSONNullability.None = JSONNullability.None
+) =
+	parseListOfType<Any>(source, nullability = nullability)
+
+
+fun JSONParser<*>.parseList(
+	source: String,
+	nullability: JSONNullability.Value
+) =
+	parseListOfType<Any>(source, nullability = nullability)
+
+
+inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
+	source: Reader,
+	nullability: JSONNullability.None = JSONNullability.None
+): List<Value>? =
+	doParseListWithClass(source, valueClass = Value::class.java, nullability = nullability)
+
+
+inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
+	source: Reader,
+	nullability: JSONNullability.Value
+): List<Value?>? =
+	doParseListWithClass(source, valueClass = Value::class.java, nullability = nullability)
+
+
+inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
+	source: String,
+	nullability: JSONNullability.None = JSONNullability.None
+): List<Value>? =
+	doParseListWithClass(source, valueClass = Value::class.java, nullability = nullability)
+
+
+inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
+	source: String,
+	nullability: JSONNullability.Value
+): List<Value?>? =
+	doParseListWithClass(source, valueClass = Value::class.java, nullability = nullability)
+
+
+fun JSONParser<*>.parseMap(
+	source: Reader,
+	nullability: JSONNullability.None = JSONNullability.None
+) =
+	parseMapOfType<String, Any>(source, nullability = nullability)
+
+
+fun JSONParser<*>.parseMap(
+	source: Reader,
+	nullability: JSONNullability.Key
+) =
+	parseMapOfType<String, Any>(source, nullability = nullability)
+
+
+fun JSONParser<*>.parseMap(
+	source: Reader,
+	nullability: JSONNullability.KeyAndValue
+) =
+	parseMapOfType<String, Any>(source, nullability = nullability)
+
+
+fun JSONParser<*>.parseMap(
+	source: Reader,
+	nullability: JSONNullability.Value
+) =
+	parseMapOfType<String, Any>(source, nullability = nullability)
+
+
+fun JSONParser<*>.parseMap(
+	source: String,
+	nullability: JSONNullability.None = JSONNullability.None
+) =
+	parseMapOfType<String, Any>(source, nullability = nullability)
+
+
+fun JSONParser<*>.parseMap(
+	source: String,
+	nullability: JSONNullability.Key
+) =
+	parseMapOfType<String, Any>(source, nullability = nullability)
+
+
+fun JSONParser<*>.parseMap(
+	source: String,
+	nullability: JSONNullability.KeyAndValue
+) =
+	parseMapOfType<String, Any>(source, nullability = nullability)
+
+
+fun JSONParser<*>.parseMap(
+	source: String,
+	nullability: JSONNullability.Value
+) =
+	parseMapOfType<String, Any>(source, nullability = nullability)
+
+
+inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
+	source: Reader,
+	nullability: JSONNullability.None = JSONNullability.None
+): Map<Key, Value>? =
+	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+
+
+inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
+	source: Reader,
+	nullability: JSONNullability.Key
+): Map<Key?, Value>? =
+	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+
+
+inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
+	source: Reader,
+	nullability: JSONNullability.KeyAndValue
+): Map<Key?, Value?>? =
+	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+
+
+inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
+	source: Reader,
+	nullability: JSONNullability.Value
+): Map<Key, Value?>? =
+	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+
+
+inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
+	source: String,
+	nullability: JSONNullability.None = JSONNullability.None
+): Map<Key, Value>? =
+	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+
+
+inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
+	source: String,
+	nullability: JSONNullability.Key
+): Map<Key?, Value>? =
+	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+
+
+inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
+	source: String,
+	nullability: JSONNullability.KeyAndValue
+): Map<Key?, Value?>? =
+	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+
+
+inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
+	source: String,
+	nullability: JSONNullability.Value
+): Map<Key, Value?>? =
+	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+
+
+fun JSONParser<*>.parseValue(
 	source: Reader
 ) =
-	parseOfType<Any>(source)
+	parseValueOfType<Any>(source)
 
 
-fun JSONParser<*>.parse(
+fun JSONParser<*>.parseValue(
 	source: String
 ) =
-	parseOfType<Any>(source)
+	parseValueOfType<Any>(source)
 
 
-fun JSONParser<*>.parseList(
-	source: Reader,
-	nullability: JSONNullability.None = JSONNullability.None
-) =
-	parseListOfType<Any>(source, nullability = nullability)
-
-
-fun JSONParser<*>.parseList(
-	source: Reader,
-	nullability: JSONNullability.Value
-) =
-	parseListOfType<Any>(source, nullability = nullability)
-
-
-fun JSONParser<*>.parseList(
-	source: String,
-	nullability: JSONNullability.None = JSONNullability.None
-) =
-	parseListOfType<Any>(source, nullability = nullability)
-
-
-fun JSONParser<*>.parseList(
-	source: String,
-	nullability: JSONNullability.Value
-) =
-	parseListOfType<Any>(source, nullability = nullability)
-
-
-inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
-	source: Reader,
-	nullability: JSONNullability.None = JSONNullability.None
-): List<Value>? =
-	doParseListWithClass(source, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
-	source: Reader,
-	nullability: JSONNullability.Value
-): List<Value?>? =
-	doParseListWithClass(source, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
-	source: String,
-	nullability: JSONNullability.None = JSONNullability.None
-): List<Value>? =
-	doParseListWithClass(source, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
-	source: String,
-	nullability: JSONNullability.Value
-): List<Value?>? =
-	doParseListWithClass(source, valueClass = Value::class.java, nullability = nullability)
-
-
-fun JSONParser<*>.parseMap(
-	source: Reader,
-	nullability: JSONNullability.None = JSONNullability.None
-) =
-	parseMapOfType<String, Any>(source, nullability = nullability)
-
-
-fun JSONParser<*>.parseMap(
-	source: Reader,
-	nullability: JSONNullability.Key
-) =
-	parseMapOfType<String, Any>(source, nullability = nullability)
-
-
-fun JSONParser<*>.parseMap(
-	source: Reader,
-	nullability: JSONNullability.KeyAndValue
-) =
-	parseMapOfType<String, Any>(source, nullability = nullability)
-
-
-fun JSONParser<*>.parseMap(
-	source: Reader,
-	nullability: JSONNullability.Value
-) =
-	parseMapOfType<String, Any>(source, nullability = nullability)
-
-
-fun JSONParser<*>.parseMap(
-	source: String,
-	nullability: JSONNullability.None = JSONNullability.None
-) =
-	parseMapOfType<String, Any>(source, nullability = nullability)
-
-
-fun JSONParser<*>.parseMap(
-	source: String,
-	nullability: JSONNullability.Key
-) =
-	parseMapOfType<String, Any>(source, nullability = nullability)
-
-
-fun JSONParser<*>.parseMap(
-	source: String,
-	nullability: JSONNullability.KeyAndValue
-) =
-	parseMapOfType<String, Any>(source, nullability = nullability)
-
-
-fun JSONParser<*>.parseMap(
-	source: String,
-	nullability: JSONNullability.Value
-) =
-	parseMapOfType<String, Any>(source, nullability = nullability)
-
-
-inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
-	source: Reader,
-	nullability: JSONNullability.None = JSONNullability.None
-): Map<Key, Value>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
-	source: Reader,
-	nullability: JSONNullability.Key
-): Map<Key?, Value>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
-	source: Reader,
-	nullability: JSONNullability.KeyAndValue
-): Map<Key?, Value?>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
-	source: Reader,
-	nullability: JSONNullability.Value
-): Map<Key, Value?>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
-	source: String,
-	nullability: JSONNullability.None = JSONNullability.None
-): Map<Key, Value>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
-	source: String,
-	nullability: JSONNullability.Key
-): Map<Key?, Value>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
-	source: String,
-	nullability: JSONNullability.KeyAndValue
-): Map<Key?, Value?>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
-	source: String,
-	nullability: JSONNullability.Value
-): Map<Key, Value?>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
-
-
-inline fun <reified Value : Any> JSONParser<*>.parseOfType(
+inline fun <reified Value : Any> JSONParser<*>.parseValueOfType(
 	source: Reader
 ): Value? =
 	doParseWithClass(source, valueClass = Value::class.java)
 
 
-inline fun <reified Value : Any> JSONParser<*>.parseOfType(
+inline fun <reified Value : Any> JSONParser<*>.parseValueOfType(
 	source: String
 ): Value? =
 	doParseWithClass(source, valueClass = Value::class.java)

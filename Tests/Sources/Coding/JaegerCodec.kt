@@ -15,10 +15,10 @@ import java.time.LocalDate
 internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 
 	override val codecs = listOf(this, StatusCodec)
-	override val valueClass = Jaeger::class.java
+	override val decodableClass = Jaeger::class.java
 
 
-	override fun decode(decoder: JSONDecoder<TestCoderContext>): Jaeger {
+	override fun decode(decoder: JSONDecoder<out TestCoderContext>): Jaeger {
 		var height: Double? = null
 		var launchDate: LocalDate? = null
 		var mark: Int? = null
@@ -52,7 +52,7 @@ internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 	}
 
 
-	override fun encode(value: Jaeger, encoder: JSONEncoder<TestCoderContext>) {
+	override fun encode(value: Jaeger, encoder: JSONEncoder<out TestCoderContext>) {
 		encoder.writeIntoMap {
 			writeMapElement(Keys.height, double = value.height)
 			writeMapElement(Keys.launchDate, encodable = value.launchDate)
@@ -79,7 +79,10 @@ internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 
 	object StatusCodec : JSONCodec<Status, TestCoderContext> {
 
-		override fun decode(decoder: JSONDecoder<TestCoderContext>): Status {
+		override val decodableClass = Status::class.java
+
+
+		override fun decode(decoder: JSONDecoder<out TestCoderContext>): Status {
 			val id = decoder.readString()
 			return when (id) {
 				"destroyed" -> Status.destroyed
@@ -88,13 +91,10 @@ internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 		}
 
 
-		override fun encode(value: Status, encoder: JSONEncoder<TestCoderContext>) {
+		override fun encode(value: Status, encoder: JSONEncoder<out TestCoderContext>) {
 			encoder.writeString(when (value) {
 				Status.destroyed -> "destroyed"
 			})
 		}
-
-
-		override val valueClass = Status::class.java
 	}
 }

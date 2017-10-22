@@ -15,10 +15,10 @@ import java.time.LocalDate
 internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 
 	override val codecs = listOf(this, StatusCodec)
-	override val valueClass = Kaiju::class.java
+	override val decodableClass = Kaiju::class.java
 
 
-	override fun decode(decoder: JSONDecoder<TestCoderContext>): Kaiju {
+	override fun decode(decoder: JSONDecoder<out TestCoderContext>): Kaiju {
 		var breachDate: LocalDate? = null
 		var category: Int? = null
 		var height: Double? = null
@@ -52,7 +52,7 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 	}
 
 
-	override fun encode(value: Kaiju, encoder: JSONEncoder<TestCoderContext>) {
+	override fun encode(value: Kaiju, encoder: JSONEncoder<out TestCoderContext>) {
 		encoder.writeIntoMap {
 			writeMapElement(Keys.breachDate, encodable = value.breachDate)
 			writeMapElement(Keys.category, int = value.category)
@@ -79,7 +79,10 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 
 	object StatusCodec : JSONCodec<Status, TestCoderContext> {
 
-		override fun decode(decoder: JSONDecoder<TestCoderContext>): Status {
+		override val decodableClass = Status::class.java
+
+
+		override fun decode(decoder: JSONDecoder<out TestCoderContext>): Status {
 			val id = decoder.readString()
 			return when (id) {
 				"deceased" -> Status.deceased
@@ -88,13 +91,10 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 		}
 
 
-		override fun encode(value: Status, encoder: JSONEncoder<TestCoderContext>) {
+		override fun encode(value: Status, encoder: JSONEncoder<out TestCoderContext>) {
 			encoder.writeString(when (value) {
 				Status.deceased -> "deceased"
 			})
 		}
-
-
-		override val valueClass = Status::class.java
 	}
 }

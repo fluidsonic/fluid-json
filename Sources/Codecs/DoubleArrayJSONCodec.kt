@@ -3,9 +3,9 @@ package com.github.fluidsonic.fluid.json
 
 object DoubleArrayJSONCodec : JSONEncoderCodec<DoubleArray, JSONCoderContext> {
 
-	override fun encode(value: DoubleArray, encoder: JSONEncoder<JSONCoderContext>) =
+	override fun encode(value: DoubleArray, encoder: JSONEncoder<out JSONCoderContext>) =
 		encoder.writeList(value)
 
 
-	override val valueClass = DoubleArray::class.java
+	override val encodableClasses = setOf(DoubleArray::class.java)
 }

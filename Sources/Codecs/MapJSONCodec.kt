@@ -3,13 +3,13 @@ package com.github.fluidsonic.fluid.json
 
 object MapJSONCodec : JSONCodec<Map<*, *>, JSONCoderContext> {
 
-	override fun decode(decoder: JSONDecoder<JSONCoderContext>): Map<*, *> =
+	override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Map<*, *> =
 		decoder.readMap()
 
 
-	override fun encode(value: Map<*, *>, encoder: JSONEncoder<JSONCoderContext>) =
+	override fun encode(value: Map<*, *>, encoder: JSONEncoder<out JSONCoderContext>) =
 		encoder.writeMap(value)
 
 
-	override val valueClass = Map::class.java
+	override val decodableClass = Map::class.java
 }

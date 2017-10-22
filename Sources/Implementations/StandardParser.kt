@@ -4,8 +4,8 @@ import java.io.Reader
 
 
 internal class StandardParser<Context : JSONCoderContext>(
-	private val context: Context,
-	private val decoderFactory: (source: Reader, context: Context) -> JSONDecoder<Context>
+	override val context: Context,
+	private val decoderFactory: (source: Reader, context: Context) -> JSONDecoder<in Context>
 ) : JSONParser<Context> {
 
 	override fun <Value : Any> doParseWithClass(
@@ -116,6 +116,6 @@ internal class StandardParser<Context : JSONCoderContext>(
 	}
 
 
-	override fun withContext(context: Context) =
+	override fun <NewContext : Context> withContext(context: NewContext) =
 		StandardParser(context = context, decoderFactory = decoderFactory)
 }

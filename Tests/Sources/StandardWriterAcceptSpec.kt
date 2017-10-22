@@ -10,7 +10,7 @@ import java.io.StringWriter
 
 internal object StandardWriterAcceptSpec : SubjectSpek<JSONWriter>({
 
-	subject { JSONWriter.with(StringWriter()) }
+	subject { JSONWriter.build(StringWriter()) }
 
 
 	describe("StandardWriter succeeds for") {
@@ -28,4 +28,4 @@ internal object StandardWriterAcceptSpec : SubjectSpek<JSONWriter>({
 
 @Suppress("unused")
 private fun TestBody.write(body: JSONWriter.() -> Unit): String =
-	StringWriter().also { JSONWriter.with(it).body() }.toString()
+	StringWriter().also { JSONWriter.build(it).body() }.toString()

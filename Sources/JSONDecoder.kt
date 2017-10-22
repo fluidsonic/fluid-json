@@ -4,58 +4,104 @@ import java.io.Reader
 import java.io.StringReader
 
 
-interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
+@Suppress("AddVarianceModifier")
+interface JSONDecoder<Context : JSONCoderContext> : JSONReader {
 
 	val context: Context
+
 
 	fun <Value : Any> readDecodableOfClass(valueClass: Class<out Value>): Value
 
 
 	companion object {
 
-		fun with(
-			source: String,
-			codecResolver: JSONCodecResolver<JSONCoderContext>
-		) =
-			with(source = source, context = JSONCoderContext.empty, codecResolver = codecResolver)
+		fun builder(): BuilderForCodecs<JSONCoderContext> =
+			BuilderForCodecsImpl(context = JSONCoderContext.empty)
 
 
-		fun with(
-			source: Reader,
-			codecResolver: JSONCodecResolver<JSONCoderContext>
-		) =
-			with(source = source, context = JSONCoderContext.empty, codecResolver = codecResolver)
+		fun <Context : JSONCoderContext> builder(context: Context): BuilderForCodecs<Context> =
+			BuilderForCodecsImpl(context = context)
 
 
-		fun with(
-			source: JSONReader,
-			codecResolver: JSONCodecResolver<JSONCoderContext>
-		) =
-			with(source = source, context = JSONCoderContext.empty, codecResolver = codecResolver)
+		interface BuilderForCodecs<Context : JSONCoderContext> {
+
+			fun codecs(resolver: JSONCodecResolver<Context>): BuilderForSource<Context>
 
 
-		fun <Context : JSONCoderContext> with(
-			source: String,
-			context: Context,
-			codecResolver: JSONCodecResolver<Context>
-		): JSONDecoder<Context> =
-			with(source = StringReader(source), context = context, codecResolver = codecResolver)
+			fun codecs(
+				vararg providers: JSONCodecProvider<Context>,
+				appendDefaultCodecs: Boolean = true
+			) =
+				codecs(JSONCodecResolver.of(providers = *providers, appendDefaultCodecs = appendDefaultCodecs))
 
 
-		fun <Context : JSONCoderContext> with(
-			source: Reader,
-			context: Context,
-			codecResolver: JSONCodecResolver<Context>
-		): JSONDecoder<Context> =
-			with(source = JSONReader.with(source), context = context, codecResolver = codecResolver)
+			fun codecs(
+				providers: Iterable<JSONCodecProvider<Context>>,
+				appendDefaultCodecs: Boolean = true
+			) =
+				codecs(JSONCodecResolver.of(providers = providers, appendDefaultCodecs = appendDefaultCodecs))
+		}
 
 
-		fun <Context : JSONCoderContext> with(
-			source: JSONReader,
-			context: Context,
-			codecResolver: JSONCodecResolver<Context>
-		): JSONDecoder<Context> =
-			StandardDecoder(codecResolver = codecResolver, context = context, source = source)
+		private class BuilderForCodecsImpl<Context : JSONCoderContext>(
+			private val context: Context
+		) : BuilderForCodecs<Context> {
+
+			override fun codecs(resolver: JSONCodecResolver<Context>) =
+				BuilderForSourceImpl(
+					context = context,
+					codecResolver = resolver
+				)
+		}
+
+
+		interface BuilderForSource<Context : JSONCoderContext> {
+
+			fun source(source: JSONReader): Builder<Context>
+
+
+			fun source(source: Reader) =
+				source(JSONReader.build(source))
+
+
+			fun source(source: String) =
+				source(StringReader(source))
+		}
+
+
+		private class BuilderForSourceImpl<Context : JSONCoderContext>(
+			private val context: Context,
+			private val codecResolver: JSONCodecResolver<Context>
+		) : BuilderForSource<Context> {
+
+			override fun source(source: JSONReader) =
+				BuilderImpl(
+					context = context,
+					codecResolver = codecResolver,
+					source = source
+				)
+		}
+
+
+		interface Builder<Context : JSONCoderContext> {
+
+			fun build(): JSONDecoder<Context>
+		}
+
+
+		private class BuilderImpl<Context : JSONCoderContext>(
+			private val context: Context,
+			private val codecResolver: JSONCodecResolver<Context>,
+			private val source: JSONReader
+		) : Builder<Context> {
+
+			override fun build() =
+				StandardDecoder(
+					context = context,
+					codecResolver = codecResolver,
+					source = source
+				)
+		}
 	}
 }
 

@@ -1,7 +1,7 @@
 package tests
 
 
-internal val plainData = TestData.of(
+internal val anyData = TestData.of(
 	complexData,
 	iterableData,
 	mapData,

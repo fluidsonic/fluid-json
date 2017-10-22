@@ -1,19 +1,18 @@
 package com.github.fluidsonic.fluid.json
 
 
-class PlainJSONCodec : JSONCodec<Any, JSONCoderContext> {
+object AnyJSONCodec : JSONCodec<Any, JSONCoderContext> {
 
 	@Suppress("UNCHECKED_CAST")
-	override fun decode(decoder: JSONDecoder<JSONCoderContext>): Any {
+	override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Any {
 		var currentList: MutableList<Any?>? = null
 		var currentKey: String? = null
 		var currentMap: MutableMap<Any?, Any?>? = null
 		val parents = mutableListOf<Any>()
 		val parentKeys = mutableListOf<String>()
-		var value: Any? = null
 
 		loop@ while (true) {
-			value = when (decoder.nextToken) {
+			val value: Any? = when (decoder.nextToken) {
 				JSONToken.booleanValue ->
 					decoder.readBoolean()
 
@@ -122,18 +121,19 @@ class PlainJSONCodec : JSONCodec<Any, JSONCoderContext> {
 					decoder.readString()
 
 				else ->
-					return value ?: IllegalStateException("decoder is messed up")
+					throw IllegalStateException("decoder is messed up")
 			}
 
 			when {
 				currentList != null -> currentList.add(value)
 				currentMap != null -> currentMap[currentKey] = value
+				else -> return value ?: throw IllegalStateException("decoder is messed up")
 			}
 		}
 	}
 
 
-	override fun encode(value: Any, encoder: JSONEncoder<JSONCoderContext>) {
+	override fun encode(value: Any, encoder: JSONEncoder<out JSONCoderContext>) {
 		var currentIterator: Iterator<*>? = null
 		var currentValue: Any? = value
 		var isInMap = false
@@ -268,5 +268,29 @@ class PlainJSONCodec : JSONCodec<Any, JSONCoderContext> {
 	}
 
 
-	override val valueClass = Any::class.java
+	override val encodableClasses = setOf(
+		Array<Any?>::class.java,
+		Boolean::class.java,
+		BooleanArray::class.java,
+		Byte::class.java,
+		ByteArray::class.java,
+		Double::class.java,
+		DoubleArray::class.java,
+		Float::class.java,
+		FloatArray::class.java,
+		Int::class.java,
+		IntArray::class.java,
+		Iterable::class.java,
+		Long::class.java,
+		LongArray::class.java,
+		Map::class.java,
+		Number::class.java,
+		Sequence::class.java,
+		Short::class.java,
+		ShortArray::class.java,
+		String::class.java
+	)
+
+
+	override val decodableClass = Any::class.java
 }

@@ -1,5 +1,6 @@
 package tests
 
+import com.github.fluidsonic.fluid.json.AnyJSONCodec
 import com.github.fluidsonic.fluid.json.BooleanArrayJSONCodec
 import com.github.fluidsonic.fluid.json.BooleanJSONCodec
 import com.github.fluidsonic.fluid.json.ByteArrayJSONCodec
@@ -16,7 +17,6 @@ import com.github.fluidsonic.fluid.json.JSONEncoderCodec
 import com.github.fluidsonic.fluid.json.LongArrayJSONCodec
 import com.github.fluidsonic.fluid.json.LongJSONCodec
 import com.github.fluidsonic.fluid.json.NumberJSONCodec
-import com.github.fluidsonic.fluid.json.PlainJSONCodec
 import com.github.fluidsonic.fluid.json.ShortArrayJSONCodec
 import com.github.fluidsonic.fluid.json.ShortJSONCodec
 import com.github.fluidsonic.fluid.json.StringJSONCodec
@@ -29,6 +29,7 @@ import org.jetbrains.spek.api.dsl.it
 internal object StandardCodecsSpec : Spek({
 
 	mapOf(
+		AnyJSONCodec to anyData,
 		ArrayJSONTestCodec to arrayData,
 		BooleanArrayJSONCodec to booleanArrayData,
 		BooleanJSONCodec to booleanData,
@@ -45,7 +46,6 @@ internal object StandardCodecsSpec : Spek({
 		LongJSONCodec to longData,
 		MapJSONTestCodec to mapData,
 		NumberJSONCodec to numberData,
-		PlainJSONCodec() to plainData,
 		SequenceJSONTestCodec to sequenceData,
 		ShortArrayJSONCodec to shortArrayData,
 		ShortJSONCodec to shortData,

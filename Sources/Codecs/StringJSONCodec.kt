@@ -3,13 +3,13 @@ package com.github.fluidsonic.fluid.json
 
 object StringJSONCodec : JSONCodec<String, JSONCoderContext> {
 
-	override fun decode(decoder: JSONDecoder<JSONCoderContext>) =
+	override fun decode(decoder: JSONDecoder<out JSONCoderContext>) =
 		decoder.readString()
 
 
-	override fun encode(value: String, encoder: JSONEncoder<JSONCoderContext>) =
+	override fun encode(value: String, encoder: JSONEncoder<out JSONCoderContext>) =
 		encoder.writeString(value)
 
 
-	override val valueClass = String::class.java
+	override val decodableClass = String::class.java
 }

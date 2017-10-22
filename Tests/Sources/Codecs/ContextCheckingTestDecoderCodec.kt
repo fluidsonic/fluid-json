@@ -11,12 +11,12 @@ internal class ContextCheckingTestDecoderCodec<in Context : JSONCoderContext>(
 	private val expectedContext: Context
 ) : JSONDecoderCodec<String, Context> {
 
-	override fun decode(decoder: JSONDecoder<Context>): String {
+	override fun decode(decoder: JSONDecoder<out Context>): String {
 		decoder.context.should.equal(expectedContext)
 
 		return StringJSONCodec.decode(decoder)
 	}
 
 
-	override val valueClass = String::class.java
+	override val decodableClass = String::class.java
 }

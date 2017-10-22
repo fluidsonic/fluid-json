@@ -1,9 +1,11 @@
 package tests
 
+import com.github.fluidsonic.fluid.json.BooleanJSONCodec
 import com.github.fluidsonic.fluid.json.JSONCodecResolver
 import com.github.fluidsonic.fluid.json.JSONCoderContext
 import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
+import com.github.fluidsonic.fluid.json.JSONWriter
 import com.github.fluidsonic.fluid.json.writeEncodableOrNull
 import com.github.fluidsonic.fluid.json.writeMapElement
 import com.winterbe.expekt.should
@@ -17,20 +19,80 @@ internal object JSONEncoderSpec : Spek({
 
 	describe("JSONEncoder") {
 
-		it(".with() shortcuts pass correct values") {
-			JSONEncoder.with(destination = DummyJSONWriter(), codecResolver = JSONCodecResolver.default)
-				.context.should.equal(JSONCoderContext.empty)
+		it(".builder()") {
+			StringWriter().let { writer ->
+				JSONEncoder.builder()
+					.codecs(JSONCodecResolver.default)
+					.destination(JSONWriter.build(writer))
+					.build()
+					.apply {
+						context.should.equal(JSONCoderContext.empty)
+						writeBoolean(true)
+						writer.toString().should.equal("true")
+					}
+			}
 
-			JSONEncoder.with(destination = StringWriter(), codecResolver = JSONCodecResolver.default)
-				.context.should.equal(JSONCoderContext.empty)
+			StringWriter().let { writer ->
+				JSONEncoder.builder()
+					.codecs(JSONCodecResolver.default)
+					.destination(writer)
+					.build()
+					.apply {
+						context.should.equal(JSONCoderContext.empty)
+						writeBoolean(true)
+						writer.toString().should.equal("true")
+					}
+			}
+
+			StringWriter().let { writer ->
+				JSONEncoder.builder()
+					.codecs(BooleanJSONCodec)
+					.destination(writer)
+					.build()
+					.apply {
+						context.should.equal(JSONCoderContext.empty)
+						writeBoolean(true)
+						writer.toString().should.equal("true")
+					}
+			}
+
+			StringWriter().let { writer ->
+				JSONEncoder.builder()
+					.codecs(listOf(BooleanJSONCodec))
+					.destination(writer)
+					.build()
+					.apply {
+						context.should.equal(JSONCoderContext.empty)
+						writeBoolean(true)
+						writer.toString().should.equal("true")
+					}
+			}
 
 			val testContext = TestCoderContext()
 
-			JSONEncoder.with(destination = DummyJSONWriter(), codecResolver = JSONCodecResolver.default, context = testContext)
-				.context.should.equal(testContext)
+			StringWriter().let { writer ->
+				JSONEncoder.builder(testContext)
+					.codecs(JSONCodecResolver.default)
+					.destination(JSONWriter.build(writer))
+					.build()
+					.apply {
+						context.should.equal(testContext)
+						writeBoolean(true)
+						writer.toString().should.equal("true")
+					}
+			}
 
-			JSONEncoder.with(destination = StringWriter(), codecResolver = JSONCodecResolver.default, context = testContext)
-				.context.should.equal(testContext)
+			StringWriter().let { writer ->
+				JSONEncoder.builder(testContext)
+					.codecs(JSONCodecResolver.default)
+					.destination(writer)
+					.build()
+					.apply {
+						context.should.equal(testContext)
+						writeBoolean(true)
+						writer.toString().should.equal("true")
+					}
+			}
 		}
 
 		it(".writeEncodableOrNull()") {

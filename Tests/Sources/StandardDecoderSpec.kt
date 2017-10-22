@@ -130,5 +130,5 @@ private inline fun <ReturnValue> decode(
 	StandardDecoder(
 		codecResolver = codecResolver,
 		context = context,
-		source = JSONReader.with(input)
+		source = JSONReader.build(input)
 	).let { it.use { it.body() } }

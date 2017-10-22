@@ -66,7 +66,7 @@ internal object CharacterUtilitySpec : Spek({
 			for (character in 0 .. 0xFF) {
 				val expectValue = expectValues[character.toChar()]
 				if (expectValue != null) {
-					Character.parseHexDigit(character).should.equals(expectValue)
+					Character.parseHexDigit(character).should.equal(expectValue)
 				}
 				else {
 					try {
