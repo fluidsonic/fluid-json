@@ -16,7 +16,7 @@ This library is [available in Maven Central](https://search.maven.org/#search%7C
 `build.gradle.kts`:
 ```kotlin
 dependencies {
-	implementation("com.github.fluidsonic:fluid-json:0.0.2")
+    implementation("com.github.fluidsonic:fluid-json:0.0.2")
 }
 ```
 
@@ -24,8 +24,8 @@ dependencies {
 Examples
 --------
 
-In the [Examples](https://github.com/fluidsonic/fluid-json/tree/master/Examples) directory. If you've checked out this
-project locally you can run them directly from within IntelliJ.
+Check out the [Examples](https://github.com/fluidsonic/fluid-json/tree/master/Examples) directory. If you've checked out
+this project locally then you can run them directly from within IntelliJ.
 
 
 
@@ -35,10 +35,7 @@ Usage
 ### Simple Parsing
 
 ```kotlin
-JSONParser.default().parseValue("""{ 
-	"hello": "world",
-	"test":  123
-}""")
+… = JSONParser.default().parseValue("""{ "hello": "world", "test": 123 }""")
 
 // returns a value like this:
 mapOf(
@@ -51,8 +48,8 @@ mapOf(
 
 ```kotlin
 JSONSerializer.default().serializeValue(mapOf(
-	"hello" to "world",
-	"test" to 123
+    "hello" to "world",
+    "test" to 123
 ))
 
 // returns a string:
@@ -65,7 +62,7 @@ While the examples above parse and return JSON as `String` you can also use `Rea
 
 ```kotlin
 val reader: Reader = …
-JSONParser.default().parseValue(source = reader)
+… = JSONParser.default().parseValue(source = reader)
 
 val writer: Writer = …
 JSONSerializer.default().serializeValue(…, destination = writer)
@@ -91,11 +88,6 @@ parser.parseMap(…, JSONNullability.Value)                      // returns Map<
 parser.parseMapOfType<String,String>(…, JSONNullability.Value) // returns Map<String,String?>?
 ```
 
-### Errors
-
-Errors occuring during I/O operations in the underlying `Reader` or `Writer` throw an `IOException`.  
-Errors occuring due to unsupported or mismatching types, malformed JSON or misused API throw a `JSONException`.
-
 
 ### Streaming Parser
 
@@ -104,13 +96,13 @@ Errors occuring due to unsupported or mismatching types, malformed JSON or misus
 ```kotlin
 val input = StringReader("""{ "data": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] }""")
 JSONReader.build(input).use { reader ->
-	reader.readFromMapByElementValue { key ->
-		println(key)
-
-		readFromListByElement {
-			println(readInt())
-		}
-	}
+    reader.readFromMapByElementValue { key ->
+        println(key)
+        
+        readFromListByElement {
+            println(readInt())
+        }
+    }
 }
 ```
 
@@ -122,17 +114,30 @@ JSONReader.build(input).use { reader ->
 ```kotlin
 val output = StringWriter()
 JSONWriter.build(output).use { writer ->
-	writer.writeIntoMap {
-		writeMapElement("data") {
-			writeIntoList {
-				for (value in 0 .. 10) {
-					json.writeInt(value)
-				}
-			}
-		}
-	}
+    writer.writeIntoMap {
+        writeMapElement("data") {
+            writeIntoList {
+                for (value in 0 .. 10) {
+                    json.writeInt(value)
+                }
+            }
+        }
+    }
 }
 ```
+
+### Errors
+
+Errors occuring during I/O operations in the underlying `Reader` or `Writer` throw an `IOException`.  
+Errors occuring due to unsupported or mismatching types, malformed JSON or misused API throw a `JSONException`.
+
+
+TO-DO
+-----
+
+- JSON coding
+- thread-safety
+- architecture
 
 
 
