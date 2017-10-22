@@ -4,6 +4,7 @@ import com.github.fluidsonic.fluid.json.BooleanJSONCodec
 import com.github.fluidsonic.fluid.json.JSONCodecResolver
 import com.github.fluidsonic.fluid.json.JSONCoderContext
 import com.github.fluidsonic.fluid.json.JSONDecoder
+import com.github.fluidsonic.fluid.json.JSONNullability
 import com.github.fluidsonic.fluid.json.JSONReader
 import com.github.fluidsonic.fluid.json.JSONToken
 import com.github.fluidsonic.fluid.json.readDecodable
@@ -182,74 +183,121 @@ internal object JSONDecoderSpec : Spek({
 				decoder.readDecodableOrNullOfClass(String::class.java).should.equal(inputValue)
 			}
 
-			decoder.with(JSONToken.nullValue, JSONToken.nullValue) {
+			decoder.with(
+				JSONToken.nullValue,
+				JSONToken.nullValue
+			) {
 				inputValue = null
 				decoder.readDecodableOrNull<String>().should.equal(null)
 				decoder.readDecodableOrNullOfClass(String::class.java).should.equal(null)
 			}
 
-			decoder.with(JSONToken.listStart, JSONToken.stringValue, JSONToken.listEnd) {
+			decoder.with(
+				JSONToken.listStart, JSONToken.stringValue, JSONToken.listEnd,
+				JSONToken.listStart, JSONToken.stringValue, JSONToken.listEnd
+			) {
 				inputValue = "okay"
 				decoder.readListOfDecodableElements<String>().should.equal(listOf("okay"))
+				decoder.readListOfDecodableElements<String>(JSONNullability.Value).should.equal(listOf("okay"))
 			}
 
 			decoder.with(
 				JSONToken.listStart, JSONToken.stringValue, JSONToken.listEnd,
+				JSONToken.listStart, JSONToken.stringValue, JSONToken.listEnd,
+				JSONToken.nullValue,
 				JSONToken.nullValue
 			) {
 				inputValue = "okay"
 				decoder.readListOrNullOfDecodableElements<String>().should.equal(listOf("okay"))
+				decoder.readListOrNullOfDecodableElements<String>(JSONNullability.Value).should.equal(listOf("okay"))
 
 				inputValue = null
 				decoder.readListOrNullOfDecodableElements<String>().should.equal(null)
-			}
-
-			decoder.with(JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd) {
-				inputValue = "okay"
-				decoder.readMapOfDecodableElements<String, String>().should.equal(mapOf("key" to "okay"))
-			}
-
-			decoder.with(JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd) {
-				inputValue = "okay"
-				decoder.readMapOfDecodableKeys<String>().should.equal(mapOf("key" to "okay"))
-			}
-
-			decoder.with(JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd) {
-				inputValue = "okay"
-				decoder.readMapOfDecodableValues<String>().should.equal(mapOf("key" to "okay"))
+				decoder.readListOrNullOfDecodableElements<String>(JSONNullability.Value).should.equal(null)
 			}
 
 			decoder.with(
 				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd
+			) {
+				inputValue = "okay"
+				decoder.readMapOfDecodableElements<String, String>().should.equal(mapOf("key" to "okay"))
+				decoder.readMapOfDecodableElements<String, String>(JSONNullability.Key).should.equal(mapOf("key" to "okay"))
+				decoder.readMapOfDecodableElements<String, String>(JSONNullability.KeyAndValue).should.equal(mapOf("key" to "okay"))
+				decoder.readMapOfDecodableElements<String, String>(JSONNullability.Value).should.equal(mapOf("key" to "okay"))
+			}
+
+			decoder.with(
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd
+			) {
+				inputValue = "okay"
+				decoder.readMapOfDecodableKeys<String>().should.equal(mapOf("key" to "okay"))
+				decoder.readMapOfDecodableKeys<String>(JSONNullability.Key).should.equal(mapOf("key" to "okay"))
+			}
+
+			decoder.with(
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd
+			) {
+				inputValue = "okay"
+				decoder.readMapOfDecodableValues<String>().should.equal(mapOf("key" to "okay"))
+				decoder.readMapOfDecodableValues<String>(JSONNullability.Value).should.equal(mapOf("key" to "okay"))
+			}
+
+			decoder.with(
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.nullValue,
+				JSONToken.nullValue,
+				JSONToken.nullValue,
 				JSONToken.nullValue
 			) {
 				inputValue = "okay"
 				decoder.readMapOrNullOfDecodableElements<String, String>().should.equal(mapOf("key" to "okay"))
+				decoder.readMapOrNullOfDecodableElements<String, String>(JSONNullability.Key).should.equal(mapOf("key" to "okay"))
+				decoder.readMapOrNullOfDecodableElements<String, String>(JSONNullability.KeyAndValue).should.equal(mapOf("key" to "okay"))
+				decoder.readMapOrNullOfDecodableElements<String, String>(JSONNullability.Value).should.equal(mapOf("key" to "okay"))
 
 				inputValue = null
 				decoder.readMapOrNullOfDecodableElements<String, String>().should.equal(null)
+				decoder.readMapOrNullOfDecodableElements<String, String>(JSONNullability.Key).should.equal(null)
+				decoder.readMapOrNullOfDecodableElements<String, String>(JSONNullability.KeyAndValue).should.equal(null)
+				decoder.readMapOrNullOfDecodableElements<String, String>(JSONNullability.Value).should.equal(null)
 			}
 
 			decoder.with(
 				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.nullValue,
 				JSONToken.nullValue
 			) {
 				inputValue = "okay"
 				decoder.readMapOrNullOfDecodableKeys<String>().should.equal(mapOf("key" to "okay"))
+				decoder.readMapOrNullOfDecodableKeys<String>(JSONNullability.Key).should.equal(mapOf("key" to "okay"))
 
 				inputValue = null
 				decoder.readMapOrNullOfDecodableKeys<String>().should.equal(null)
+				decoder.readMapOrNullOfDecodableKeys<String>(JSONNullability.Key).should.equal(null)
 			}
 
 			decoder.with(
 				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.mapStart, JSONToken.mapKey, JSONToken.stringValue, JSONToken.mapEnd,
+				JSONToken.nullValue,
 				JSONToken.nullValue
 			) {
 				inputValue = "okay"
 				decoder.readMapOrNullOfDecodableValues<String>().should.equal(mapOf("key" to "okay"))
+				decoder.readMapOrNullOfDecodableValues<String>(JSONNullability.Value).should.equal(mapOf("key" to "okay"))
 
 				inputValue = null
 				decoder.readMapOrNullOfDecodableValues<String>().should.equal(null)
+				decoder.readMapOrNullOfDecodableValues<String>(JSONNullability.Value).should.equal(null)
 			}
 		}
 	}

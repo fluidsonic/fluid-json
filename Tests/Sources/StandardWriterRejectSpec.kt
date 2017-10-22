@@ -61,6 +61,18 @@ internal object StandardWriterRejectSpec : Spek({
 		it(".writeMapEnd() when closed") {
 			writerShouldFail { writeNull(); close(); writeMapEnd() }
 		}
+
+		it(".writeValue() for unsupported types") {
+			writerShouldFail { writeValue(object {}) }
+		}
+
+		it(".writeValueAsMapKey() for null") {
+			writerShouldFail { writeValueAsMapKey(null) }
+		}
+
+		it(".writeValueAsMapKey() for unsupported types") {
+			writerShouldFail { writeValueAsMapKey(object {}) }
+		}
 	}
 })
 

@@ -118,33 +118,121 @@ fun <Value : Any> JSONDecoder<*>.readDecodableOrNullOfClass(valueClass: Class<ou
 	if (nextToken != JSONToken.nullValue) readDecodableOfClass(valueClass) else readNull()
 
 
-inline fun <reified Element : Any> JSONDecoder<*>.readListOfDecodableElements() =
+inline fun <reified Element : Any> JSONDecoder<*>.readListOfDecodableElements(
+	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.None = JSONNullability.None
+) =
 	readListByElement { readDecodableOfClass(Element::class.java) }
 
 
-inline fun <reified Element : Any> JSONDecoder<*>.readListOrNullOfDecodableElements() =
-	if (nextToken != JSONToken.nullValue) readListOfDecodableElements<Element>() else readNull()
+inline fun <reified Element : Any> JSONDecoder<*>.readListOfDecodableElements(
+	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value
+) =
+	readListByElement { readDecodableOrNullOfClass(Element::class.java) }
 
 
-inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableElements() =
+inline fun <reified Element : Any> JSONDecoder<*>.readListOrNullOfDecodableElements(
+	nullability: JSONNullability.None = JSONNullability.None
+) =
+	if (nextToken != JSONToken.nullValue) readListOfDecodableElements<Element>(nullability) else readNull()
+
+
+inline fun <reified Element : Any> JSONDecoder<*>.readListOrNullOfDecodableElements(
+	nullability: JSONNullability.Value
+) =
+	if (nextToken != JSONToken.nullValue) readListOfDecodableElements<Element>(nullability) else readNull()
+
+
+inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableElements(
+	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.None = JSONNullability.None
+) =
 	readMapByElement { readDecodableOfClass(ElementKey::class.java) to readDecodableOfClass(ElementValue::class.java) }
 
 
-inline fun <reified ElementKey : Any> JSONDecoder<*>.readMapOfDecodableKeys() =
+inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableElements(
+	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Key
+) =
+	readMapByElement { readDecodableOrNullOfClass(ElementKey::class.java) to readDecodableOfClass(ElementValue::class.java) }
+
+
+inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableElements(
+	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.KeyAndValue
+) =
+	readMapByElement { readDecodableOrNullOfClass(ElementKey::class.java) to readDecodableOrNullOfClass(ElementValue::class.java) }
+
+
+inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableElements(
+	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value
+) =
+	readMapByElement { readDecodableOfClass(ElementKey::class.java) to readDecodableOrNullOfClass(ElementValue::class.java) }
+
+
+inline fun <reified ElementKey : Any> JSONDecoder<*>.readMapOfDecodableKeys(
+	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.None = JSONNullability.None
+) =
 	readMapByElement { readDecodableOfClass(ElementKey::class.java) to readValue() }
 
 
-inline fun <reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableValues() =
+inline fun <reified ElementKey : Any> JSONDecoder<*>.readMapOfDecodableKeys(
+	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Key
+) =
+	readMapByElement { readDecodableOrNullOfClass(ElementKey::class.java) to readValue() }
+
+
+inline fun <reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableValues(
+	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.None = JSONNullability.None
+) =
 	readMapByElement { readMapKey() to readDecodableOfClass(ElementValue::class.java) }
 
 
-inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOrNullOfDecodableElements() =
-	if (nextToken != JSONToken.nullValue) readMapOfDecodableElements<ElementKey, ElementValue>() else readNull()
+inline fun <reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableValues(
+	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value
+) =
+	readMapByElement { readMapKey() to readDecodableOrNullOfClass(ElementValue::class.java) }
 
 
-inline fun <reified ElementKey : Any> JSONDecoder<*>.readMapOrNullOfDecodableKeys() =
-	if (nextToken != JSONToken.nullValue) readMapOfDecodableKeys<ElementKey>() else readNull()
+inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOrNullOfDecodableElements(
+	nullability: JSONNullability.None = JSONNullability.None
+) =
+	if (nextToken != JSONToken.nullValue) readMapOfDecodableElements<ElementKey, ElementValue>(nullability) else readNull()
 
 
-inline fun <reified ElementValue : Any> JSONDecoder<*>.readMapOrNullOfDecodableValues() =
-	if (nextToken != JSONToken.nullValue) readMapOfDecodableValues<ElementValue>() else readNull()
+inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOrNullOfDecodableElements(
+	nullability: JSONNullability.Key
+) =
+	if (nextToken != JSONToken.nullValue) readMapOfDecodableElements<ElementKey, ElementValue>(nullability) else readNull()
+
+
+inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOrNullOfDecodableElements(
+	nullability: JSONNullability.KeyAndValue
+) =
+	if (nextToken != JSONToken.nullValue) readMapOfDecodableElements<ElementKey, ElementValue>(nullability) else readNull()
+
+
+inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOrNullOfDecodableElements(
+	nullability: JSONNullability.Value
+) =
+	if (nextToken != JSONToken.nullValue) readMapOfDecodableElements<ElementKey, ElementValue>(nullability) else readNull()
+
+
+inline fun <reified ElementKey : Any> JSONDecoder<*>.readMapOrNullOfDecodableKeys(
+	nullability: JSONNullability.None = JSONNullability.None
+) =
+	if (nextToken != JSONToken.nullValue) readMapOfDecodableKeys<ElementKey>(nullability) else readNull()
+
+
+inline fun <reified ElementKey : Any> JSONDecoder<*>.readMapOrNullOfDecodableKeys(
+	nullability: JSONNullability.Key
+) =
+	if (nextToken != JSONToken.nullValue) readMapOfDecodableKeys<ElementKey>(nullability) else readNull()
+
+
+inline fun <reified ElementValue : Any> JSONDecoder<*>.readMapOrNullOfDecodableValues(
+	nullability: JSONNullability.None = JSONNullability.None
+) =
+	if (nextToken != JSONToken.nullValue) readMapOfDecodableValues<ElementValue>(nullability) else readNull()
+
+
+inline fun <reified ElementValue : Any> JSONDecoder<*>.readMapOrNullOfDecodableValues(
+	nullability: JSONNullability.Value
+) =
+	if (nextToken != JSONToken.nullValue) readMapOfDecodableValues<ElementValue>(nullability) else readNull()

@@ -10,7 +10,7 @@ internal object JSONReaderSpec : Spek({
 
 	describe("JSONReader") {
 
-		it(".readFloat() delegates to .readDouble() by default") {
+		it(".read*() default implementations") {
 			val reader = object : DummyJSONReader() {
 				override fun readDouble() = 10.0
 			}
