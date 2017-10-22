@@ -1,6 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONCodecResolver
+import com.github.fluidsonic.fluid.json.AnyJSONCodec
 import com.github.fluidsonic.fluid.json.JSONCoderContext
 import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
@@ -17,7 +17,7 @@ internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer<JSONCo
 	subject {
 		StandardSerializer(JSONCoderContext.empty) { destination, context ->
 			JSONEncoder.builder(context)
-				.codecs(JSONCodecResolver.default)
+				.codecs(AnyJSONCodec)
 				.destination(destination)
 				.build()
 		}
