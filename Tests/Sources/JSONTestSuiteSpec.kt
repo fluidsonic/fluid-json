@@ -16,7 +16,7 @@ import java.io.FileReader
 internal object JSONTestSuiteSpec : Spek({
 
 	describe("JSON Test Suite (https://github.com/nst/JSONTestSuite)") {
-		val parser = StandardParser<JSONCoderContext> { source, context ->
+		val parser = StandardParser(JSONCoderContext.empty) { source, context ->
 			JSONDecoder.with(source, context = context, codecResolver = JSONCodecResolver.plain)
 		}
 

@@ -10,6 +10,7 @@ import com.github.fluidsonic.fluid.json.JSONDecoderCodec
 import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONEncoderCodec
 import com.github.fluidsonic.fluid.json.JSONException
+import com.github.fluidsonic.fluid.json.JSONNullability
 import com.github.fluidsonic.fluid.json.JSONParser
 import com.github.fluidsonic.fluid.json.JSONReader
 import com.github.fluidsonic.fluid.json.JSONSerializer
@@ -31,6 +32,7 @@ internal object CompanionLoaderSpec : Spek({
 		JSONEncoder.Companion,
 		JSONEncoderCodec.Companion,
 		JSONException.Companion,
+		JSONNullability.Companion,
 		JSONParser.Companion,
 		JSONReader.Companion,
 		JSONSerializer.Companion,

@@ -64,12 +64,12 @@ inline fun <reified Value : Any> JSONDecoder<*>.readDecodable() =
 	readDecodableOfClass(Value::class.java)
 
 
-fun <Value : Any> JSONDecoder<*>.readDecodableOfClassOrNull(valueClass: Class<out Value>) =
-	if (nextToken != JSONToken.nullValue) readDecodableOfClass(valueClass) else readNull()
-
-
 inline fun <reified Value : Any> JSONDecoder<*>.readDecodableOrNull() =
 	if (nextToken != JSONToken.nullValue) readDecodable<Value>() else readNull()
+
+
+fun <Value : Any> JSONDecoder<*>.readDecodableOrNullOfClass(valueClass: Class<out Value>) =
+	if (nextToken != JSONToken.nullValue) readDecodableOfClass(valueClass) else readNull()
 
 
 inline fun <reified Element : Any> JSONDecoder<*>.readListOfDecodableElements() =

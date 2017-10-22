@@ -50,7 +50,7 @@ internal class TestData<out Value : Any>(
 
 
 	private fun testEquals(actual: Any, expected: Any) {
-		val isEqual = if (expected is EquatableSequence<*>) expected == actual else actual == expected
+		val isEqual = expected == actual
 		if (!isEqual) {
 			val printableActual = (actual as? Sequence<*>)?.toList() ?: actual
 			val printableExpected = (expected as? Sequence<*>)?.toList() ?: expected

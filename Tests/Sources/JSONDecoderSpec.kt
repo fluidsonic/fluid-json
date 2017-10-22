@@ -5,8 +5,8 @@ import com.github.fluidsonic.fluid.json.JSONCoderContext
 import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONToken
 import com.github.fluidsonic.fluid.json.readDecodable
-import com.github.fluidsonic.fluid.json.readDecodableOfClassOrNull
 import com.github.fluidsonic.fluid.json.readDecodableOrNull
+import com.github.fluidsonic.fluid.json.readDecodableOrNullOfClass
 import com.github.fluidsonic.fluid.json.readListOfDecodableElements
 import com.github.fluidsonic.fluid.json.readListOrNullOfDecodableElements
 import com.github.fluidsonic.fluid.json.readMapOfDecodableElements
@@ -136,18 +136,18 @@ internal object JSONDecoderSpec : Spek({
 
 			decoder.with(JSONToken.stringValue) {
 				inputValue = "okay"
-				decoder.readDecodableOfClassOrNull(String::class.java).should.equal(inputValue)
+				decoder.readDecodableOrNull<String>().should.equal(inputValue)
 			}
 
 			decoder.with(JSONToken.stringValue) {
 				inputValue = "okay"
-				decoder.readDecodableOrNull<String>().should.equal(inputValue)
+				decoder.readDecodableOrNullOfClass(String::class.java).should.equal(inputValue)
 			}
 
 			decoder.with(JSONToken.nullValue, JSONToken.nullValue) {
 				inputValue = null
-				decoder.readDecodableOfClassOrNull(String::class.java).should.equal(null)
 				decoder.readDecodableOrNull<String>().should.equal(null)
+				decoder.readDecodableOrNullOfClass(String::class.java).should.equal(null)
 			}
 
 			decoder.with(JSONToken.listStart, JSONToken.stringValue, JSONToken.listEnd) {

@@ -6,7 +6,9 @@ import java.io.Writer
 
 interface JSONSerializer<in Context : JSONCoderContext> {
 
-	fun serialize(value: Any?, destination: Writer, context: Context)
+	fun serialize(value: Any?, destination: Writer)
+
+	fun withContext(context: Context): JSONSerializer<Context>
 
 
 	companion object {
@@ -18,33 +20,39 @@ interface JSONSerializer<in Context : JSONCoderContext> {
 			default
 
 
+		fun with(
+			codecResolver: JSONCodecResolver<JSONCoderContext>
+		): JSONSerializer<JSONCoderContext> =
+			with(context = JSONCoderContext.empty, codecResolver = codecResolver)
+
+
 		fun <Context : JSONCoderContext> with(
+			context: Context,
 			codecResolver: JSONCodecResolver<Context>
 		): JSONSerializer<Context> =
-			with { destination, context ->
+			with(context) { destination, overridingContext ->
 				JSONEncoder.with(
-					context = context,
+					context = overridingContext,
 					codecResolver = codecResolver,
 					destination = destination
 				)
 			}
 
 
+		fun with(
+			encoderFactory: (destination: Writer, context: JSONCoderContext) -> JSONEncoder<JSONCoderContext>
+		): JSONSerializer<JSONCoderContext> =
+			with(context = JSONCoderContext.empty, encoderFactory = encoderFactory)
+
+
 		fun <Context : JSONCoderContext> with(
+			context: Context,
 			encoderFactory: (destination: Writer, context: Context) -> JSONEncoder<Context>
 		): JSONSerializer<Context> =
-			StandardSerializer(encoderFactory = encoderFactory)
+			StandardSerializer(context = context, encoderFactory = encoderFactory)
 	}
 }
 
 
-fun JSONSerializer<JSONCoderContext>.serialize(value: Any?) =
-	StringWriter().apply { serialize(value, destination = this, context = JSONCoderContext.empty) }.toString()
-
-
-fun <Context : JSONCoderContext> JSONSerializer<Context>.serialize(value: Any?, context: Context) =
-	StringWriter().apply { serialize(value, destination = this, context = context) }.toString()
-
-
-fun JSONSerializer<JSONCoderContext>.serialize(value: Any?, destination: Writer) =
-	serialize(value, destination = destination, context = JSONCoderContext.empty)
+fun JSONSerializer<*>.serialize(value: Any?) =
+	StringWriter().apply { serialize(value, destination = this) }.toString()

@@ -15,7 +15,7 @@ import org.jetbrains.spek.subject.SubjectSpek
 internal object StandardParserRejectSpec : SubjectSpek<JSONParser<JSONCoderContext>>({
 
 	subject {
-		StandardParser { source, context ->
+		StandardParser(JSONCoderContext.empty) { source, context ->
 			JSONDecoder.with(source, context = context, codecResolver = JSONCodecResolver.plain)
 		}
 	}

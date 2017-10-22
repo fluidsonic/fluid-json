@@ -15,7 +15,7 @@ import org.jetbrains.spek.subject.SubjectSpek
 internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer<JSONCoderContext>>({
 
 	subject {
-		StandardSerializer { destination, context ->
+		StandardSerializer(JSONCoderContext.empty) { destination, context ->
 			JSONEncoder.with(destination = destination, context = context, codecResolver = JSONCodecResolver.plain)
 		}
 	}
