@@ -9,7 +9,7 @@ interface JSONSerializer<Context : JSONCoderContext> {
 	val context: Context
 
 
-	fun serialize(value: Any?, destination: Writer)
+	fun serializeValue(value: Any?, destination: Writer)
 
 	fun <NewContext : Context> withContext(context: NewContext): JSONSerializer<NewContext>
 
@@ -95,5 +95,5 @@ interface JSONSerializer<Context : JSONCoderContext> {
 }
 
 
-fun JSONSerializer<*>.serialize(value: Any?) =
-	StringWriter().apply { serialize(value, destination = this) }.toString()
+fun JSONSerializer<*>.serializeValue(value: Any?) =
+	StringWriter().apply { serializeValue(value, destination = this) }.toString()

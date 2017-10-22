@@ -577,6 +577,12 @@ fun JSONWriter.writeMapElement(key: String, string: String?, skipIfNull: Boolean
 		Unit
 
 
+inline fun <Writer : JSONWriter> Writer.writeMapElement(key: String, writeValue: Writer.() -> Unit) {
+	writeMapKey(key)
+	writeValue()
+}
+
+
 fun JSONWriter.writeMapNullElement(key: String) {
 	writeMapKey(key)
 	writeNull()

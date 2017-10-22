@@ -6,7 +6,7 @@ import com.github.fluidsonic.fluid.json.JSONEncoderCodec
 import com.github.fluidsonic.fluid.json.JSONParser
 import com.github.fluidsonic.fluid.json.JSONSerializer
 import com.github.fluidsonic.fluid.json.doParseWithClass
-import com.github.fluidsonic.fluid.json.serialize
+import com.github.fluidsonic.fluid.json.serializeValue
 
 
 internal inline fun <reified Value : Any> JSONDecoderCodec<Value, JSONCoderContext>.parse(source: String): Value? =
@@ -20,4 +20,4 @@ internal fun <Value : Any> JSONEncoderCodec<Value, JSONCoderContext>.serialize(v
 	JSONSerializer.builder()
 		.encoder(this, appendDefaultCodecs = false)
 		.build()
-		.serialize(value)
+		.serializeValue(value)

@@ -140,21 +140,55 @@ inline fun <Reader : JSONReader, Value> Reader.readFromMap(readContent: Reader.(
 }
 
 
-fun JSONReader.readList(): List<Any?> =
+inline fun <Reader : JSONReader> Reader.readFromListByElement(
+	readElement: Reader.() -> Unit
+) =
+	readFromList {
+		while (nextToken != JSONToken.listEnd)
+			readElement()
+	}
+
+
+inline fun <Reader : JSONReader> Reader.readFromMapByElement(
+	readElement: Reader.() -> Unit
+) =
+	readFromMap {
+		while (nextToken != JSONToken.mapEnd)
+			readElement()
+	}
+
+
+inline fun <Reader : JSONReader> Reader.readFromMapByElementValue(
+	readElementValue: Reader.(key: String) -> Unit
+) =
+	readFromMap {
+		while (nextToken != JSONToken.mapEnd)
+			readElementValue(readMapKey())
+	}
+
+
+fun JSONReader.readList(): List<Any> =
+	readListByElement { readValue() ?: throw JSONException("unexpected null value in list") }
+
+
+fun JSONReader.readList(@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value): List<Any?> =
 	readListByElement { readValue() }
 
 
 inline fun <Reader : JSONReader, Value> Reader.readListByElement(readElement: Reader.() -> Value): List<Value> =
 	mutableListOf<Value>().also { list ->
-		readFromList {
-			while (nextToken != JSONToken.listEnd)
-				list += readElement()
+		readFromListByElement {
+			list += readElement()
 		}
 	}
 
 
 fun JSONReader.readListOrNull() =
 	if (nextToken != JSONToken.nullValue) readList() else readNull()
+
+
+fun JSONReader.readListOrNull(nullability: JSONNullability.Value) =
+	if (nextToken != JSONToken.nullValue) readList(nullability) else readNull()
 
 
 inline fun <Reader : JSONReader, Value> Reader.readListOrNullByElement(readElement: Reader.() -> Value): List<Value>? =
@@ -166,6 +200,10 @@ fun JSONReader.readLongOrNull() =
 
 
 fun JSONReader.readMap() =
+	readMapByElementValue { readValue() ?: throw JSONException("unexpected null value in list") }
+
+
+fun JSONReader.readMap(@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value) =
 	readMapByElementValue { readValue() }
 
 
@@ -173,26 +211,28 @@ inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapByEleme
 	readElement: Reader.() -> Pair<ElementKey, ElementValue>
 ): Map<ElementKey, ElementValue> =
 	mutableMapOf<ElementKey, ElementValue>().also { map ->
-		readFromMap {
-			while (nextToken != JSONToken.mapEnd)
-				map += readElement()
+		readFromMapByElement {
+			map += readElement()
 		}
 	}
 
 
 inline fun <Reader : JSONReader, ElementValue> Reader.readMapByElementValue(
-	readElementValue: Reader.() -> ElementValue
+	readElementValue: Reader.(key: String) -> ElementValue
 ): Map<String, ElementValue> =
 	mutableMapOf<String, ElementValue>().also { map ->
-		readFromMap {
-			while (nextToken != JSONToken.mapEnd)
-				map[readMapKey()] = readElementValue()
+		readFromMapByElementValue { key ->
+			map[key] = readElementValue(key)
 		}
 	}
 
 
 fun JSONReader.readMapOrNull() =
 	if (nextToken != JSONToken.nullValue) readMap() else readNull()
+
+
+fun JSONReader.readMapOrNull(@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value) =
+	if (nextToken != JSONToken.nullValue) readMap(nullability) else readNull()
 
 
 inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapOrNullByElement(
@@ -202,7 +242,7 @@ inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapOrNullB
 
 
 inline fun <Reader : JSONReader, ElementValue> Reader.readMapOrNullByElementValue(
-	readElementValue: Reader.() -> ElementValue
+	readElementValue: Reader.(key: String) -> ElementValue
 ): Map<String, ElementValue>? =
 	if (nextToken != JSONToken.nullValue) readMapByElementValue(readElementValue) else readNull()
 

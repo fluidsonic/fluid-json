@@ -6,7 +6,7 @@ import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.JSONSerializer
 import com.github.fluidsonic.fluid.json.StandardSerializer
-import com.github.fluidsonic.fluid.json.serialize
+import com.github.fluidsonic.fluid.json.serializeValue
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
@@ -55,7 +55,7 @@ internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer<JSONCo
 
 private fun JSONSerializer<JSONCoderContext>.failToSerialize(value: Any?) {
 	try {
-		serialize(value)
+		serializeValue(value)
 		throw AssertionError("should fail with a JSONException")
 	}
 	catch (e: JSONException) {

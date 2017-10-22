@@ -4,7 +4,7 @@ package com.github.fluidsonic.fluid.json
 object MapJSONCodec : JSONCodec<Map<*, *>, JSONCoderContext> {
 
 	override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Map<*, *> =
-		decoder.readMap()
+		decoder.readMap(JSONNullability.Value)
 
 
 	override fun encode(value: Map<*, *>, encoder: JSONEncoder<out JSONCoderContext>) =

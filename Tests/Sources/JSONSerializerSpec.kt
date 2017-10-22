@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.BooleanJSONCodec
 import com.github.fluidsonic.fluid.json.JSONCodecResolver
 import com.github.fluidsonic.fluid.json.JSONCoderContext
 import com.github.fluidsonic.fluid.json.JSONSerializer
-import com.github.fluidsonic.fluid.json.serialize
+import com.github.fluidsonic.fluid.json.serializeValue
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -21,7 +21,7 @@ internal object JSONSerializerSpec : Spek({
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
-					serialize(true).should.equal("true")
+					serializeValue(true).should.equal("true")
 				}
 
 			JSONSerializer.builder()
@@ -29,7 +29,7 @@ internal object JSONSerializerSpec : Spek({
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
-					serialize(true).should.equal("true")
+					serializeValue(true).should.equal("true")
 				}
 
 			JSONSerializer.builder()
@@ -37,7 +37,7 @@ internal object JSONSerializerSpec : Spek({
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
-					serialize(true).should.equal("true")
+					serializeValue(true).should.equal("true")
 				}
 
 			val testContext = TestCoderContext()
@@ -47,12 +47,12 @@ internal object JSONSerializerSpec : Spek({
 				.build()
 				.apply {
 					context.should.equal(testContext)
-					serialize(true).should.equal("true")
+					serializeValue(true).should.equal("true")
 				}
 		}
 
 		it(".default()") {
-			anyData.testEncoding(JSONSerializer.default()::serialize)
+			anyData.testEncoding(JSONSerializer.default()::serializeValue)
 		}
 
 		it(".withContext()") {

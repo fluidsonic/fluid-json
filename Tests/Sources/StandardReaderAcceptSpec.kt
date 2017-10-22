@@ -1,5 +1,6 @@
 package tests
 
+import com.github.fluidsonic.fluid.json.JSONNullability
 import com.github.fluidsonic.fluid.json.JSONReader
 import com.github.fluidsonic.fluid.json.JSONToken
 import com.github.fluidsonic.fluid.json.StandardReader
@@ -11,7 +12,10 @@ import com.github.fluidsonic.fluid.json.readElementsFromMap
 import com.github.fluidsonic.fluid.json.readEndOfInput
 import com.github.fluidsonic.fluid.json.readFloatOrNull
 import com.github.fluidsonic.fluid.json.readFromList
+import com.github.fluidsonic.fluid.json.readFromListByElement
 import com.github.fluidsonic.fluid.json.readFromMap
+import com.github.fluidsonic.fluid.json.readFromMapByElement
+import com.github.fluidsonic.fluid.json.readFromMapByElementValue
 import com.github.fluidsonic.fluid.json.readIntOrNull
 import com.github.fluidsonic.fluid.json.readList
 import com.github.fluidsonic.fluid.json.readListByElement
@@ -322,6 +326,14 @@ internal object StandardReaderAcceptSpec : Spek({
 			}
 		}
 
+		it("readFromListByElement()") {
+			reader("[1,2]").apply {
+				val list = mutableListOf<Int>()
+				readFromListByElement { list += readInt() }
+				list.should.equal(listOf(1, 2))
+			}
+		}
+
 		it("readFromMap() inline") {
 			reader("{}").apply {
 				readFromMap { Dummy1 }.should.equal(Dummy1)
@@ -384,6 +396,22 @@ internal object StandardReaderAcceptSpec : Spek({
 			}
 		}
 
+		it("readFromMapByElement()") {
+			reader("""{ "one": 1, "two": 2 }""").apply {
+				val map = mutableMapOf<String, Int>()
+				readFromMapByElement { map[readMapKey()] = readInt() }
+				map.should.equal(mapOf("one" to 1, "two" to 2))
+			}
+		}
+
+		it("readFromMapByElementValue()") {
+			reader("""{ "one": 1, "two": 2 }""").apply {
+				val map = mutableMapOf<String, Int>()
+				readFromMapByElementValue { key -> map[key] = readInt() }
+				map.should.equal(mapOf("one" to 1, "two" to 2))
+			}
+		}
+
 		it("readInt()") {
 			reader("0").readInt().should.equal(0)
 			reader("-0").readInt().should.equal(0)
@@ -431,7 +459,7 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("[]").readList().should.equal(emptyList())
 			reader("[ \t\n\r]").readList().should.equal(emptyList())
 			reader("[1]").readList().should.equal(listOf(1))
-			reader("[ true, \"hey\", null ]").readList().should.equal(listOf(true, "hey", null))
+			reader("[ true, \"hey\", null ]").readList(JSONNullability.Value).should.equal(listOf(true, "hey", null))
 			reader("[ [], [ 1 ] ]").readList().should.equal(listOf(emptyList<Any?>(), listOf(1)))
 		}
 
@@ -453,9 +481,10 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("[]").readListOrNull().should.equal(emptyList())
 			reader("[ \t\n\r]").readListOrNull().should.equal(emptyList())
 			reader("[1]").readListOrNull().should.equal(listOf(1))
-			reader("[ true, \"hey\", null ]").readListOrNull().should.equal(listOf(true, "hey", null))
+			reader("[ true, \"hey\", null ]").readListOrNull(JSONNullability.Value).should.equal(listOf(true, "hey", null))
 			reader("[ [], [ 1 ] ]").readListOrNull().should.equal(listOf(emptyList<Any?>(), listOf(1)))
 			reader("null").readListOrNull().should.be.`null`
+			reader("null").readListOrNull(JSONNullability.Value).should.be.`null`
 		}
 
 		it("readListOrNullByElement()") {
@@ -518,10 +547,10 @@ internal object StandardReaderAcceptSpec : Spek({
 		}
 
 		it("readMap()") {
-			reader("{}").readMap().should.equal(emptyMap<String, Any>())
-			reader("{ \t\n\r}").readMap().should.equal(emptyMap<String, Any>())
+			reader("{}").readMap().should.equal(emptyMap())
+			reader("{ \t\n\r}").readMap().should.equal(emptyMap())
 			reader("{\"key\":1}").readMap().should.equal(mapOf("key" to 1))
-			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").readMap().should.equal(mapOf(
+			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").readMap(JSONNullability.Value).should.equal(mapOf(
 				"key0" to true,
 				"key1" to "hey",
 				"key2" to null
@@ -597,10 +626,10 @@ internal object StandardReaderAcceptSpec : Spek({
 		}
 
 		it("readMapOrNull()") {
-			reader("{}").readMapOrNull().should.equal(emptyMap<String, Any>())
-			reader("{ \t\n\r}").readMapOrNull().should.equal(emptyMap<String, Any>())
+			reader("{}").readMapOrNull().should.equal(emptyMap())
+			reader("{ \t\n\r}").readMapOrNull().should.equal(emptyMap())
 			reader("{\"key\":1}").readMapOrNull().should.equal(mapOf("key" to 1))
-			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").readMapOrNull().should.equal(mapOf(
+			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").readMapOrNull(JSONNullability.Value).should.equal(mapOf(
 				"key0" to true,
 				"key1" to "hey",
 				"key2" to null
@@ -620,6 +649,7 @@ internal object StandardReaderAcceptSpec : Spek({
 				"-1" to -1
 			))
 			reader("null").readMapOrNull().should.be.`null`
+			reader("null").readMapOrNull(JSONNullability.Value).should.be.`null`
 		}
 
 		it("readMapOrNullByElement()") {

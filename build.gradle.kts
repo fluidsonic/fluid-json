@@ -5,6 +5,7 @@ import org.gradle.api.tasks.JavaExec
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.kotlin.dsl.the
+import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.junit.platform.gradle.plugin.EnginesExtension
@@ -29,13 +30,20 @@ java {
 	sourceCompatibility = JavaVersion.VERSION_1_8
 	targetCompatibility = JavaVersion.VERSION_1_8
 
-	sourceSets.getByName("main").apply {
-		kotlin.srcDirs("Sources")
-		resources.srcDirs("Resources")
-	}
-	sourceSets.getByName("test").apply {
-		kotlin.srcDirs("Tests/Sources")
-		resources.srcDirs("Tests/Resources")
+	sourceSets {
+		"examples" {
+			kotlin.srcDirs("Examples")
+		}
+
+		"main" {
+			kotlin.srcDirs("Sources")
+			resources.srcDirs("Resources")
+		}
+
+		"test" {
+			kotlin.srcDirs("Tests/Sources")
+			resources.srcDirs("Tests/Resources")
+		}
 	}
 }
 
@@ -83,14 +91,17 @@ afterEvaluate {
 }
 
 dependencies {
-	implementation(kotlin("stdlib", "1.1.51"))
+	api(kotlin("stdlib", "1.1.51"))
 
 	testImplementation("com.winterbe:expekt:0.5.0")
 	testImplementation("org.jetbrains.spek:spek-subject-extension:1.1.5")
 	testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.1.5")
 	testRuntime("org.junit.platform:junit-platform-runner:${junitPlatform.platformVersion}")
+
+	"examplesImplementation"(java.sourceSets["main"].output)
 }
 
+configurations["examplesImplementation"].extendsFrom(configurations["api"])
 configurations.all {
 	resolutionStrategy.apply {
 		force("org.jetbrains.kotlin:kotlin-reflect:1.1.51")
