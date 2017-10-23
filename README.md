@@ -3,8 +3,9 @@ fluid-json
 
 [![Build Status](https://travis-ci.org/fluidsonic/fluid-json.svg?branch=master)](https://travis-ci.org/fluidsonic/fluid-json)
 [![codecov.io](https://codecov.io/github/fluidsonic/fluid-json/coverage.svg?branch=master)](https://codecov.io/github/fluidsonic/fluid-json?branch=master)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.fluidsonic/fluid-json.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.fluidsonic%22%20a%3A%22fluid-json%22)
 
-A JSON library written for Kotlin, in Kotlin.
+A JSON library written in pure Kotlin.
 
 
 
@@ -322,15 +323,18 @@ Architecture
 -   At the lowest level there are `JSONReader`/`JSONWriter` which read/write JSON as a stream of `JSONToken`s:
     - character-level input/output
     - validation of read/written syntax
+    - one instance per parsing/serializing (maintains state & holds reference to `Reader`/`Writer`)
 -   Built on top are `JSONDecoder`/`JSONEncoder` which decode/encode Kotlin types from/to a stream of `JSONToken`s:
     - most read/write operations are forwarded to the underlying `JSONReader`/`JSONWriter`
     - some read/write operations are intercepted by `JSONEncoder` to encode compatible types using codecs
     - implementations provided by `JSONDecoderCodec`s and `JSONEncoderCodec`s
+    - one instance per parsing/serializing (holds reference to `JSONReader`/`JSONWriter`)
 -   Built on top are `JSONParser`/`JSONSerializer` which read/write a complete JSON value at once.
     - completely hides usage of underlying `JSONDecoder`/`JSONEncoder`
     - encoding is performed using the actual type of values to be encoded
     - decoding is performed using the type expected by the caller of `JSONParser`'s `parse…` methods and thus is only
       possible at the top-level and by `JSONDecoderCodec` implementations
+    - instance can be reused and creates one `JSONDecoder`/`JSONEncoder` per parsing/serializing
     - ease of use is important
     
 Most public API is provided as `interface`s in order to allow for plugging in custom behavior and to allow easy unit
@@ -339,7 +343,7 @@ testing of code which produces or consumes JSON.
 The default implementations of `JSONDecoder`/`JSONEncoder` use a set of pre-defined codecs in order to support
 decoding/encoding various basic Kotlin types like `String`, `List`, `Map`, `Boolean` and so on.
 
-### Recursive vs Non-Recursive
+### Recursive vs. Non-Recursive
 
 While codec-based decoding/encoding is supposed to be recursive in order to be efficient and easy to implement it's
 sometimes not desirable to parse/serialize JSON recursively. For that reason `AnyJSONCodec` provides encoding/decoding
