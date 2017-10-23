@@ -17,29 +17,29 @@ interface JSONSerializer<Context : JSONCoderContext> {
 	companion object {
 
 		private val default = builder()
-			.encoder(AnyJSONCodec)
+			.encodingWith(AnyJSONCodec)
 			.build()
 
 
-		fun builder(): BuilderForEncoder<JSONCoderContext> =
-			BuilderForDecoderImpl(context = JSONCoderContext.empty)
+		fun builder(): BuilderForEncoding<JSONCoderContext> =
+			BuilderForDecodingImpl(context = JSONCoderContext.empty)
 
 
-		fun <Context : JSONCoderContext> builder(context: Context): BuilderForEncoder<Context> =
-			BuilderForDecoderImpl(context = context)
+		fun <Context : JSONCoderContext> builder(context: Context): BuilderForEncoding<Context> =
+			BuilderForDecodingImpl(context = context)
 
 
 		fun default() =
 			JSONSerializer.default
 
 
-		interface BuilderForEncoder<Context : JSONCoderContext> {
+		interface BuilderForEncoding<Context : JSONCoderContext> {
 
-			fun encoder(factory: (destination: Writer, context: Context) -> JSONEncoder<Context>): Builder<Context>
+			fun encodingWith(factory: (destination: Writer, context: Context) -> JSONEncoder<Context>): Builder<Context>
 
 
-			fun encoder(resolver: JSONCodecResolver<Context>) =
-				encoder { destination, context ->
+			fun encodingWith(resolver: JSONCodecResolver<Context>) =
+				encodingWith { destination, context ->
 					JSONEncoder.builder(context)
 						.codecs(resolver)
 						.destination(destination)
@@ -47,26 +47,26 @@ interface JSONSerializer<Context : JSONCoderContext> {
 				}
 
 
-			fun encoder(
+			fun encodingWith(
 				vararg providers: JSONCodecProvider<Context>,
 				appendDefaultCodecs: Boolean = true
 			) =
-				encoder(JSONCodecResolver.of(providers = *providers, appendDefaultCodecs = appendDefaultCodecs))
+				encodingWith(JSONCodecResolver.of(providers = *providers, appendDefaultCodecs = appendDefaultCodecs))
 
 
-			fun encoder(
+			fun encodingWith(
 				providers: Iterable<JSONCodecProvider<Context>>,
 				appendDefaultCodecs: Boolean = true
 			) =
-				encoder(JSONCodecResolver.of(providers = providers, appendDefaultCodecs = appendDefaultCodecs))
+				encodingWith(JSONCodecResolver.of(providers = providers, appendDefaultCodecs = appendDefaultCodecs))
 		}
 
 
-		private class BuilderForDecoderImpl<Context : JSONCoderContext>(
+		private class BuilderForDecodingImpl<Context : JSONCoderContext>(
 			private val context: Context
-		) : BuilderForEncoder<Context> {
+		) : BuilderForEncoding<Context> {
 
-			override fun encoder(factory: (source: Writer, context: Context) -> JSONEncoder<Context>) =
+			override fun encodingWith(factory: (source: Writer, context: Context) -> JSONEncoder<Context>) =
 				BuilderImpl(
 					context = context,
 					encoderFactory = factory

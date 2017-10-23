@@ -11,13 +11,13 @@ import com.github.fluidsonic.fluid.json.serializeValue
 
 internal inline fun <reified Value : Any> JSONDecoderCodec<Value, JSONCoderContext>.parse(source: String): Value? =
 	JSONParser.builder()
-		.decoder(this, appendDefaultCodecs = false)
+		.decodingWith(this, appendDefaultCodecs = false)
 		.build()
 		.doParseWithClass(source, Value::class.java)
 
 
 internal fun <Value : Any> JSONEncoderCodec<Value, JSONCoderContext>.serialize(value: Value) =
 	JSONSerializer.builder()
-		.encoder(this, appendDefaultCodecs = false)
+		.encodingWith(this, appendDefaultCodecs = false)
 		.build()
 		.serializeValue(value)

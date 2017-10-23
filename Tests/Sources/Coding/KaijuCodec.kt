@@ -5,7 +5,7 @@ import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
 import com.github.fluidsonic.fluid.json.readDecodable
-import com.github.fluidsonic.fluid.json.readElementsFromMap
+import com.github.fluidsonic.fluid.json.readFromMapByElementValue
 import com.github.fluidsonic.fluid.json.writeIntoMap
 import com.github.fluidsonic.fluid.json.writeMapElement
 import tests.Kaiju.Status
@@ -27,7 +27,7 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 		var status: Status? = null
 		var weight: Double? = null
 
-		decoder.readElementsFromMap { key ->
+		decoder.readFromMapByElementValue { key ->
 			when (key) {
 				Keys.breachDate -> breachDate = readDecodable()
 				Keys.category -> category = readInt()

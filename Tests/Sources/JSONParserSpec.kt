@@ -26,7 +26,7 @@ internal object JSONParserSpec : Spek({
 
 		it(".builder()") {
 			JSONParser.builder()
-				.decoder(JSONCodecResolver.default)
+				.decodingWith(JSONCodecResolver.default)
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
@@ -34,7 +34,7 @@ internal object JSONParserSpec : Spek({
 				}
 
 			JSONParser.builder()
-				.decoder(BooleanJSONCodec)
+				.decodingWith(BooleanJSONCodec)
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
@@ -42,7 +42,7 @@ internal object JSONParserSpec : Spek({
 				}
 
 			JSONParser.builder()
-				.decoder(listOf(BooleanJSONCodec))
+				.decodingWith(listOf(BooleanJSONCodec))
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
@@ -52,7 +52,7 @@ internal object JSONParserSpec : Spek({
 			val testContext = TestCoderContext()
 
 			JSONParser.builder(testContext)
-				.decoder(JSONCodecResolver.default)
+				.decodingWith(JSONCodecResolver.default)
 				.build()
 				.apply {
 					context.should.equal(testContext)
@@ -74,7 +74,7 @@ internal object JSONParserSpec : Spek({
 
 		it(".parse()") {
 			val parentParser = JSONParser.builder()
-				.decoder(LocalDateCodec)
+				.decodingWith(LocalDateCodec)
 				.build()
 
 			val parser = object : JSONParser<JSONCoderContext> by parentParser {

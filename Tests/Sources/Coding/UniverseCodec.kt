@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.JSONCodec
 import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
 import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.readElementsFromMap
+import com.github.fluidsonic.fluid.json.readFromMapByElementValue
 import com.github.fluidsonic.fluid.json.readListOfDecodableElements
 import com.github.fluidsonic.fluid.json.writeIntoMap
 import com.github.fluidsonic.fluid.json.writeMapElement
@@ -16,7 +16,7 @@ internal object UniverseCodec : JSONCodec<Universe, TestCoderContext> {
 		var jaegers: List<Jaeger>? = null
 		var kaijus: List<Kaiju>? = null
 
-		decoder.readElementsFromMap { key ->
+		decoder.readFromMapByElementValue { key ->
 			when (key) {
 				Keys.jaegers -> jaegers = readListOfDecodableElements()
 				Keys.kaijus -> kaijus = readListOfDecodableElements()
