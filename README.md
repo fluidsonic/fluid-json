@@ -328,6 +328,7 @@ Architecture
     - most read/write operations are forwarded to the underlying `JSONReader`/`JSONWriter`
     - some read/write operations are intercepted by `JSONEncoder` to encode compatible types using codecs
     - implementations provided by `JSONDecoderCodec`s and `JSONEncoderCodec`s
+    - inspired by MongoDB's [Codec and CodecRegistry](http://mongodb.github.io/mongo-java-driver/3.6/bson/codecs/)
     - one instance per parsing/serializing (holds reference to `JSONReader`/`JSONWriter`)
 -   Built on top are `JSONParser`/`JSONSerializer` which read/write a complete JSON value at once.
     - completely hides usage of underlying `JSONDecoder`/`JSONEncoder`
