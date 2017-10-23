@@ -1,5 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
+import kotlin.reflect.KClass
+
 
 internal class StandardEncoder<Context : JSONCoderContext>(
 	override val context: Context,
@@ -10,9 +12,9 @@ internal class StandardEncoder<Context : JSONCoderContext>(
 	@Suppress("UNCHECKED_CAST")
 	override fun writeEncodable(value: Any) {
 		withErrorChecking {
-			codecResolver.encoderCodecForClass(value::class.java as Class<Any>)
+			codecResolver.encoderCodecForClass(value::class as KClass<Any>)
 				?.encode(value = value, encoder = this)
-				?: throw JSONException("no encoder codec registered for ${value::class.java}: $value")
+				?: throw JSONException("no encoder codec registered for ${value::class}: $value")
 		}
 	}
 

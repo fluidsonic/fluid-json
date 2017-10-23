@@ -15,7 +15,7 @@ internal class TestData<out Value : Any>(
 		for ((expectedOutput, input) in symmetric.toList() + decodableOnly.map { it.value to it.key })
 			try {
 				val output = decode(input)
-					?: throw AssertionError("Output is null but expected $expectedOutput (${expectedOutput::class.java})")
+					?: throw AssertionError("Output is null but expected $expectedOutput (${expectedOutput::class})")
 
 				testEquals(output, expectedOutput)
 			}
@@ -33,7 +33,7 @@ internal class TestData<out Value : Any>(
 				encode(input).should.equal(expectedOutput)
 			}
 			catch (e: Throwable) {
-				throw AssertionError("${e.message} - when encoding ${input::class.java}: $input").apply {
+				throw AssertionError("${e.message} - when encoding ${input::class}: $input").apply {
 					stackTrace = e.stackTrace
 				}
 			}
@@ -41,7 +41,7 @@ internal class TestData<out Value : Any>(
 		for (input in nonEncodable)
 			try {
 				encode(input)
-				throw AssertionError("Encoding succeeded but should have failed when encoding ${input::class.java}: $input")
+				throw AssertionError("Encoding succeeded but should have failed when encoding ${input::class}: $input")
 			}
 			catch (e: JSONException) {
 				// good
@@ -55,7 +55,7 @@ internal class TestData<out Value : Any>(
 			val printableActual = (actual as? Sequence<*>)?.toList() ?: actual
 			val printableExpected = (expected as? Sequence<*>)?.toList() ?: expected
 
-			throw AssertionError("$printableActual (${actual::class.java}) should equal $printableExpected (${expected::class.java})")
+			throw AssertionError("$printableActual (${actual::class}) should equal $printableExpected (${expected::class})")
 		}
 	}
 

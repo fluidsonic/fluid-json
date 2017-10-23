@@ -13,7 +13,7 @@ internal inline fun <reified Value : Any> JSONDecoderCodec<Value, JSONCoderConte
 	JSONParser.builder()
 		.decodingWith(this, appendDefaultCodecs = false)
 		.build()
-		.doParseWithClass(source, Value::class.java)
+		.doParseWithClass(source, Value::class)
 
 
 internal fun <Value : Any> JSONEncoderCodec<Value, JSONCoderContext>.serialize(value: Value) =

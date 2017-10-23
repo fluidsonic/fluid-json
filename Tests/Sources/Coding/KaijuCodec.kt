@@ -15,7 +15,7 @@ import java.time.LocalDate
 internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 
 	override val codecs = listOf(this, StatusCodec)
-	override val decodableClass = Kaiju::class.java
+	override val decodableClass = Kaiju::class
 
 
 	override fun decode(decoder: JSONDecoder<out TestCoderContext>): Kaiju {
@@ -79,7 +79,7 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 
 	object StatusCodec : JSONCodec<Status, TestCoderContext> {
 
-		override val decodableClass = Status::class.java
+		override val decodableClass = Status::class
 
 
 		override fun decode(decoder: JSONDecoder<out TestCoderContext>): Status {

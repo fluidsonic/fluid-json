@@ -75,7 +75,7 @@ interface JSONWriter : Closeable, Flushable {
 			is String -> writeString(value)
 			is Number -> writeNumber(value) // after subclasses
 			null -> writeNull()
-			else -> throw JSONException("Cannot write JSON value of ${value::class.java}: $value")
+			else -> throw JSONException("Cannot write JSON value of ${value::class}: $value")
 		}
 	}
 
@@ -84,7 +84,7 @@ interface JSONWriter : Closeable, Flushable {
 		when (value) {
 			is String -> writeMapKey(value)
 			null -> throw JSONException("Cannot write null JSON map key")
-			else -> throw JSONException("Cannot write JSON map key of ${value::class.java}: $value")
+			else -> throw JSONException("Cannot write JSON map key of ${value::class}: $value")
 		}
 	}
 

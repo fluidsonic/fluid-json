@@ -12,6 +12,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.TestBody
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import kotlin.reflect.KClass
 
 
 internal object StandardCodecResolverSpec : Spek({
@@ -22,25 +23,25 @@ internal object StandardCodecResolverSpec : Spek({
 
 			it("finds a codec by exact interface type") {
 				resolver(NothingDecoderCodec, ParentDecoderCodec, ChildDecoderCodec)
-					.decoderCodecForClass(Parent::class.java)
+					.decoderCodecForClass(Parent::class)
 					.should.equal(ParentDecoderCodec)
 			}
 
 			it("finds a codec by exact class type") {
 				resolver(NothingDecoderCodec, ChildDecoderCodec, ParentDecoderCodec)
-					.decoderCodecForClass(Child::class.java)
+					.decoderCodecForClass(Child::class)
 					.should.equal(ChildDecoderCodec)
 			}
 
 			it("finds a codec for subclasses / implementing classes") {
 				resolver(NothingDecoderCodec, ChildDecoderCodec)
-					.decoderCodecForClass(Parent::class.java)
+					.decoderCodecForClass(Parent::class)
 					.should.equal(ChildDecoderCodec)
 			}
 
 			it("obeys order of codecs") {
 				resolver(NothingDecoderCodec, ChildDecoderCodec, ParentDecoderCodec)
-					.decoderCodecForClass(Parent::class.java)
+					.decoderCodecForClass(Parent::class)
 					.should.equal(ChildDecoderCodec)
 			}
 		}
@@ -50,34 +51,34 @@ internal object StandardCodecResolverSpec : Spek({
 
 			it("finds a codec by exact interface type") {
 				resolver(NothingEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
-					.encoderCodecForClass(Parent::class.java)
+					.encoderCodecForClass(Parent::class)
 					.should.equal(ParentEncoderCodec)
 			}
 
 			it("finds a codec by exact class type") {
 				resolver(NothingEncoderCodec, ChildEncoderCodec, ParentEncoderCodec)
-					.encoderCodecForClass(Child::class.java)
+					.encoderCodecForClass(Child::class)
 					.should.equal(ChildEncoderCodec)
 			}
 
 			it("finds a codec for array type") {
-				resolver(ArrayJSONCodec).encoderCodecForClass(Array<Any?>::class.java).should.equal(ArrayJSONCodec)
-				resolver(ArrayJSONCodec).encoderCodecForClass(Array<String>::class.java).should.equal(ArrayJSONCodec)
+				resolver(ArrayJSONCodec).encoderCodecForClass(Array<Any?>::class).should.equal(ArrayJSONCodec)
+				resolver(ArrayJSONCodec).encoderCodecForClass(Array<String>::class).should.equal(ArrayJSONCodec)
 			}
 
 			it("finds a codec for superclasses / interface") {
 				resolver(NothingEncoderCodec, ParentEncoderCodec)
-					.encoderCodecForClass(Child::class.java)
+					.encoderCodecForClass(Child::class)
 					.should.equal(ParentEncoderCodec)
 			}
 
 			it("finds no object array codec for primitive array type") {
-				resolver(ArrayJSONCodec).encoderCodecForClass(IntArray::class.java as Class<*>).should.be.`null`
+				resolver(ArrayJSONCodec).encoderCodecForClass(IntArray::class as KClass<*>).should.be.`null`
 			}
 
 			it("obeys order of codecs") {
 				resolver(NothingEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
-					.encoderCodecForClass(Child::class.java)
+					.encoderCodecForClass(Child::class)
 					.should.equal(ParentEncoderCodec)
 			}
 		}
@@ -95,7 +96,7 @@ internal object StandardCodecResolverSpec : Spek({
 
 		override fun decode(decoder: JSONDecoder<out Context>) = error("dummy")
 
-		override val decodableClass = Child::class.java
+		override val decodableClass = Child::class
 	}
 
 
@@ -103,7 +104,7 @@ internal object StandardCodecResolverSpec : Spek({
 
 		override fun encode(value: Child, encoder: JSONEncoder<out Context>) = error("dummy")
 
-		override val encodableClasses = setOf(Child::class.java)
+		override val encodableClasses = setOf(Child::class)
 	}
 
 
@@ -111,7 +112,7 @@ internal object StandardCodecResolverSpec : Spek({
 
 		override fun decode(decoder: JSONDecoder<out Context>) = error("dummy")
 
-		override val decodableClass = Parent::class.java
+		override val decodableClass = Parent::class
 	}
 
 
@@ -121,7 +122,7 @@ internal object StandardCodecResolverSpec : Spek({
 			value.should.be.instanceof(Parent::class.java)
 		}
 
-		override val encodableClasses = setOf(Parent::class.java)
+		override val encodableClasses = setOf(Parent::class)
 	}
 
 
@@ -129,7 +130,7 @@ internal object StandardCodecResolverSpec : Spek({
 
 		override fun decode(decoder: JSONDecoder<out Context>) = error("dummy")
 
-		override val decodableClass = Nothing::class.java
+		override val decodableClass = Nothing::class
 	}
 
 
@@ -137,7 +138,7 @@ internal object StandardCodecResolverSpec : Spek({
 
 		override fun encode(value: Nothing, encoder: JSONEncoder<out Context>) = error("dummy")
 
-		override val encodableClasses = setOf(Nothing::class.java)
+		override val encodableClasses = setOf(Nothing::class)
 	}
 }
 

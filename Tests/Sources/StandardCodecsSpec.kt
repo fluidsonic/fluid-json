@@ -52,7 +52,7 @@ internal object StandardCodecsSpec : Spek({
 		StringJSONCodec to stringData
 	)
 		.forEach { (codec, testData) ->
-			describe(codec::class.java.simpleName) {
+			describe(codec::class.simpleName ?: "<unnamed>") {
 				val decoderCodec = codec as? JSONDecoderCodec<*, JSONCoderContext>
 				if (decoderCodec != null) {
 					it("decodes a value") {
@@ -60,7 +60,7 @@ internal object StandardCodecsSpec : Spek({
 							testData.testDecoding(decoderCodec::parse)
 						}
 						catch (e: Throwable) {
-							throw AssertionError("${codec::class.java.simpleName}: ${e.message}").apply {
+							throw AssertionError("${codec::class.simpleName}: ${e.message}").apply {
 								stackTrace = e.stackTrace
 							}
 						}
@@ -74,7 +74,7 @@ internal object StandardCodecsSpec : Spek({
 						testData.testEncoding(codec::serialize)
 					}
 					catch (e: Throwable) {
-						throw AssertionError("${codec::class.java.simpleName}: ${e.message}").apply {
+						throw AssertionError("${codec::class.simpleName}: ${e.message}").apply {
 							stackTrace = e.stackTrace
 						}
 					}

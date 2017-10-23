@@ -21,5 +21,5 @@ internal object LocalDateCodec : JSONCodec<LocalDate, JSONCoderContext> {
 	}
 
 
-	override val decodableClass = LocalDate::class.java
+	override val decodableClass = LocalDate::class
 }

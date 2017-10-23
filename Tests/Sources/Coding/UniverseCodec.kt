@@ -39,7 +39,7 @@ internal object UniverseCodec : JSONCodec<Universe, TestCoderContext> {
 	}
 
 
-	override val decodableClass = Universe::class.java
+	override val decodableClass = Universe::class
 
 
 	private object Keys {

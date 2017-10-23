@@ -2,6 +2,7 @@ package com.github.fluidsonic.fluid.json
 
 import java.io.Reader
 import java.io.StringReader
+import kotlin.reflect.KClass
 
 
 @Suppress("AddVarianceModifier")
@@ -10,7 +11,7 @@ interface JSONDecoder<Context : JSONCoderContext> : JSONReader {
 	val context: Context
 
 
-	fun <Value : Any> readDecodableOfClass(valueClass: Class<out Value>): Value
+	fun <Value : Any> readDecodableOfClass(valueClass: KClass<out Value>): Value
 
 
 	companion object {
@@ -107,25 +108,25 @@ interface JSONDecoder<Context : JSONCoderContext> : JSONReader {
 
 
 inline fun <reified Value : Any> JSONDecoder<*>.readDecodable() =
-	readDecodableOfClass(Value::class.java)
+	readDecodableOfClass(Value::class)
 
 
 inline fun <reified Value : Any> JSONDecoder<*>.readDecodableOrNull() =
 	if (nextToken != JSONToken.nullValue) readDecodable<Value>() else readNull()
 
 
-fun <Value : Any> JSONDecoder<*>.readDecodableOrNullOfClass(valueClass: Class<out Value>) =
+fun <Value : Any> JSONDecoder<*>.readDecodableOrNullOfClass(valueClass: KClass<out Value>) =
 	if (nextToken != JSONToken.nullValue) readDecodableOfClass(valueClass) else readNull()
 
 
 inline fun <reified Element : Any> JSONDecoder<*>.readListOfDecodableElements() =
-	readListByElement { readDecodableOfClass(Element::class.java) }
+	readListByElement { readDecodableOfClass(Element::class) }
 
 
 inline fun <reified Element : Any> JSONDecoder<*>.readListOfDecodableElements(
 	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value
 ) =
-	readListByElement { readDecodableOrNullOfClass(Element::class.java) }
+	readListByElement { readDecodableOrNullOfClass(Element::class) }
 
 
 inline fun <reified Element : Any> JSONDecoder<*>.readListOrNullOfDecodableElements() =
@@ -139,45 +140,45 @@ inline fun <reified Element : Any> JSONDecoder<*>.readListOrNullOfDecodableEleme
 
 
 inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableElements() =
-	readMapByElement { readDecodableOfClass(ElementKey::class.java) to readDecodableOfClass(ElementValue::class.java) }
+	readMapByElement { readDecodableOfClass(ElementKey::class) to readDecodableOfClass(ElementValue::class) }
 
 
 inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableElements(
 	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Key
 ) =
-	readMapByElement { readDecodableOrNullOfClass(ElementKey::class.java) to readDecodableOfClass(ElementValue::class.java) }
+	readMapByElement { readDecodableOrNullOfClass(ElementKey::class) to readDecodableOfClass(ElementValue::class) }
 
 
 inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableElements(
 	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.KeyAndValue
 ) =
-	readMapByElement { readDecodableOrNullOfClass(ElementKey::class.java) to readDecodableOrNullOfClass(ElementValue::class.java) }
+	readMapByElement { readDecodableOrNullOfClass(ElementKey::class) to readDecodableOrNullOfClass(ElementValue::class) }
 
 
 inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableElements(
 	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value
 ) =
-	readMapByElement { readDecodableOfClass(ElementKey::class.java) to readDecodableOrNullOfClass(ElementValue::class.java) }
+	readMapByElement { readDecodableOfClass(ElementKey::class) to readDecodableOrNullOfClass(ElementValue::class) }
 
 
 inline fun <reified ElementKey : Any> JSONDecoder<*>.readMapOfDecodableKeys() =
-	readMapByElement { readDecodableOfClass(ElementKey::class.java) to readValue() }
+	readMapByElement { readDecodableOfClass(ElementKey::class) to readValue() }
 
 
 inline fun <reified ElementKey : Any> JSONDecoder<*>.readMapOfDecodableKeys(
 	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Key
 ) =
-	readMapByElement { readDecodableOrNullOfClass(ElementKey::class.java) to readValue() }
+	readMapByElement { readDecodableOrNullOfClass(ElementKey::class) to readValue() }
 
 
 inline fun <reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableValues() =
-	readMapByElement { readMapKey() to readDecodableOfClass(ElementValue::class.java) }
+	readMapByElement { readMapKey() to readDecodableOfClass(ElementValue::class) }
 
 
 inline fun <reified ElementValue : Any> JSONDecoder<*>.readMapOfDecodableValues(
 	@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value
 ) =
-	readMapByElement { readMapKey() to readDecodableOrNullOfClass(ElementValue::class.java) }
+	readMapByElement { readMapKey() to readDecodableOrNullOfClass(ElementValue::class) }
 
 
 inline fun <reified ElementKey : Any, reified ElementValue : Any> JSONDecoder<*>.readMapOrNullOfDecodableElements() =

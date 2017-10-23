@@ -11,5 +11,5 @@ object BooleanJSONCodec : JSONCodec<Boolean, JSONCoderContext> {
 		encoder.writeBoolean(value)
 
 
-	override val decodableClass = Boolean::class.java
+	override val decodableClass = Boolean::class
 }

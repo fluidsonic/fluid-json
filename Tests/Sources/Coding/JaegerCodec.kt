@@ -15,7 +15,7 @@ import java.time.LocalDate
 internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 
 	override val codecs = listOf(this, StatusCodec)
-	override val decodableClass = Jaeger::class.java
+	override val decodableClass = Jaeger::class
 
 
 	override fun decode(decoder: JSONDecoder<out TestCoderContext>): Jaeger {
@@ -79,7 +79,7 @@ internal object JaegerCodec : JSONCodec<Jaeger, TestCoderContext> {
 
 	object StatusCodec : JSONCodec<Status, TestCoderContext> {
 
-		override val decodableClass = Status::class.java
+		override val decodableClass = Status::class
 
 
 		override fun decode(decoder: JSONDecoder<out TestCoderContext>): Status {

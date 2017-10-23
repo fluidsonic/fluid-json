@@ -11,5 +11,5 @@ object LongJSONCodec : JSONCodec<Long, JSONCoderContext> {
 		encoder.writeLong(value)
 
 
-	override val decodableClass = Long::class.java
+	override val decodableClass = Long::class
 }

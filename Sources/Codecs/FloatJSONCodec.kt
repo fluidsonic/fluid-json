@@ -11,5 +11,5 @@ object FloatJSONCodec : JSONCodec<Float, JSONCoderContext> {
 		encoder.writeFloat(value)
 
 
-	override val decodableClass = Float::class.java
+	override val decodableClass = Float::class
 }

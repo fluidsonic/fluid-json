@@ -119,7 +119,7 @@ object CodingAsStreamExample {
 		}
 
 
-		override val decodableClass = Event::class.java
+		override val decodableClass = Event::class
 	}
 
 
@@ -141,6 +141,6 @@ object CodingAsStreamExample {
 		}
 
 
-		override val decodableClass = Instant::class.java
+		override val decodableClass = Instant::class
 	}
 }

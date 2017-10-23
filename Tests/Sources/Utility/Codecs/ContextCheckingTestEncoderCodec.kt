@@ -18,5 +18,5 @@ internal class ContextCheckingTestEncoderCodec<in Context : JSONCoderContext>(
 	}
 
 
-	override val encodableClasses = setOf(String::class.java)
+	override val encodableClasses = setOf(String::class)
 }

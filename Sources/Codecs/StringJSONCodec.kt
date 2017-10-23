@@ -11,5 +11,5 @@ object StringJSONCodec : JSONCodec<String, JSONCoderContext> {
 		encoder.writeString(value)
 
 
-	override val decodableClass = String::class.java
+	override val decodableClass = String::class
 }

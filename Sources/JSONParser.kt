@@ -2,6 +2,7 @@ package com.github.fluidsonic.fluid.json
 
 import java.io.Reader
 import java.io.StringReader
+import kotlin.reflect.KClass
 
 
 interface JSONParser<Context : JSONCoderContext> {
@@ -11,50 +12,50 @@ interface JSONParser<Context : JSONCoderContext> {
 
 	fun <Value : Any> doParseWithClass(
 		source: Reader,
-		valueClass: Class<out Value>
+		valueClass: KClass<out Value>
 	): Value?
 
 
 	fun <Value : Any> doParseListWithClass(
 		source: Reader,
-		valueClass: Class<out Value>
+		valueClass: KClass<out Value>
 	): List<Value>?
 
 
 	fun <Value : Any> doParseListWithClass(
 		source: Reader,
-		valueClass: Class<out Value>,
+		valueClass: KClass<out Value>,
 		nullability: JSONNullability.Value
 	): List<Value?>?
 
 
 	fun <Key : Any, Value : Any> doParseMapWithClasses(
 		source: Reader,
-		keyClass: Class<out Key>,
-		valueClass: Class<out Value>
+		keyClass: KClass<out Key>,
+		valueClass: KClass<out Value>
 	): Map<Key, Value>?
 
 
 	fun <Key : Any, Value : Any> doParseMapWithClasses(
 		source: Reader,
-		keyClass: Class<out Key>,
-		valueClass: Class<out Value>,
+		keyClass: KClass<out Key>,
+		valueClass: KClass<out Value>,
 		nullability: JSONNullability.Key
 	): Map<Key?, Value>?
 
 
 	fun <Key : Any, Value : Any> doParseMapWithClasses(
 		source: Reader,
-		keyClass: Class<out Key>,
-		valueClass: Class<out Value>,
+		keyClass: KClass<out Key>,
+		valueClass: KClass<out Value>,
 		nullability: JSONNullability.KeyAndValue
 	): Map<Key?, Value?>?
 
 
 	fun <Key : Any, Value : Any> doParseMapWithClasses(
 		source: Reader,
-		keyClass: Class<out Key>,
-		valueClass: Class<out Value>,
+		keyClass: KClass<out Key>,
+		valueClass: KClass<out Value>,
 		nullability: JSONNullability.Value
 	): Map<Key, Value?>?
 
@@ -145,21 +146,21 @@ interface JSONParser<Context : JSONCoderContext> {
 
 fun <Value : Any> JSONParser<*>.doParseWithClass(
 	source: String,
-	valueClass: Class<out Value>
+	valueClass: KClass<out Value>
 ): Value? =
 	doParseWithClass(StringReader(source), valueClass = valueClass)
 
 
 fun <Value : Any> JSONParser<*>.doParseListWithClass(
 	source: String,
-	valueClass: Class<out Value>
+	valueClass: KClass<out Value>
 ): List<Value>? =
 	doParseListWithClass(StringReader(source), valueClass = valueClass)
 
 
 fun <Value : Any> JSONParser<*>.doParseListWithClass(
 	source: String,
-	valueClass: Class<out Value>,
+	valueClass: KClass<out Value>,
 	nullability: JSONNullability.Value
 ): List<Value?>? =
 	doParseListWithClass(StringReader(source), valueClass = valueClass, nullability = nullability)
@@ -167,16 +168,16 @@ fun <Value : Any> JSONParser<*>.doParseListWithClass(
 
 fun <Key : Any, Value : Any> JSONParser<*>.doParseMapWithClasses(
 	source: String,
-	keyClass: Class<out Key>,
-	valueClass: Class<out Value>
+	keyClass: KClass<out Key>,
+	valueClass: KClass<out Value>
 ): Map<Key, Value>? =
 	doParseMapWithClasses(StringReader(source), keyClass = keyClass, valueClass = valueClass)
 
 
 fun <Key : Any, Value : Any> JSONParser<*>.doParseMapWithClasses(
 	source: String,
-	keyClass: Class<out Key>,
-	valueClass: Class<out Value>,
+	keyClass: KClass<out Key>,
+	valueClass: KClass<out Value>,
 	nullability: JSONNullability.Key
 ): Map<Key?, Value>? =
 	doParseMapWithClasses(StringReader(source), keyClass = keyClass, valueClass = valueClass, nullability = nullability)
@@ -184,8 +185,8 @@ fun <Key : Any, Value : Any> JSONParser<*>.doParseMapWithClasses(
 
 fun <Key : Any, Value : Any> JSONParser<*>.doParseMapWithClasses(
 	source: String,
-	keyClass: Class<out Key>,
-	valueClass: Class<out Value>,
+	keyClass: KClass<out Key>,
+	valueClass: KClass<out Value>,
 	nullability: JSONNullability.KeyAndValue
 ): Map<Key?, Value?>? =
 	doParseMapWithClasses(StringReader(source), keyClass = keyClass, valueClass = valueClass, nullability = nullability)
@@ -193,8 +194,8 @@ fun <Key : Any, Value : Any> JSONParser<*>.doParseMapWithClasses(
 
 fun <Key : Any, Value : Any> JSONParser<*>.doParseMapWithClasses(
 	source: String,
-	keyClass: Class<out Key>,
-	valueClass: Class<out Value>,
+	keyClass: KClass<out Key>,
+	valueClass: KClass<out Value>,
 	nullability: JSONNullability.Value
 ): Map<Key, Value?>? =
 	doParseMapWithClasses(StringReader(source), keyClass = keyClass, valueClass = valueClass, nullability = nullability)
@@ -229,27 +230,27 @@ fun JSONParser<*>.parseList(
 inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
 	source: Reader
 ): List<Value>? =
-	doParseListWithClass(source, valueClass = Value::class.java)
+	doParseListWithClass(source, valueClass = Value::class)
 
 
 inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
 	source: Reader,
 	nullability: JSONNullability.Value
 ): List<Value?>? =
-	doParseListWithClass(source, valueClass = Value::class.java, nullability = nullability)
+	doParseListWithClass(source, valueClass = Value::class, nullability = nullability)
 
 
 inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
 	source: String
 ): List<Value>? =
-	doParseListWithClass(source, valueClass = Value::class.java)
+	doParseListWithClass(source, valueClass = Value::class)
 
 
 inline fun <reified Value : Any> JSONParser<*>.parseListOfType(
 	source: String,
 	nullability: JSONNullability.Value
 ): List<Value?>? =
-	doParseListWithClass(source, valueClass = Value::class.java, nullability = nullability)
+	doParseListWithClass(source, valueClass = Value::class, nullability = nullability)
 
 
 fun JSONParser<*>.parseMap(
@@ -309,55 +310,55 @@ fun JSONParser<*>.parseMap(
 inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
 	source: Reader
 ): Map<Key, Value>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java)
+	doParseMapWithClasses(source, keyClass = Key::class, valueClass = Value::class)
 
 
 inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
 	source: Reader,
 	nullability: JSONNullability.Key
 ): Map<Key?, Value>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+	doParseMapWithClasses(source, keyClass = Key::class, valueClass = Value::class, nullability = nullability)
 
 
 inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
 	source: Reader,
 	nullability: JSONNullability.KeyAndValue
 ): Map<Key?, Value?>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+	doParseMapWithClasses(source, keyClass = Key::class, valueClass = Value::class, nullability = nullability)
 
 
 inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
 	source: Reader,
 	nullability: JSONNullability.Value
 ): Map<Key, Value?>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+	doParseMapWithClasses(source, keyClass = Key::class, valueClass = Value::class, nullability = nullability)
 
 
 inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
 	source: String
 ): Map<Key, Value>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java)
+	doParseMapWithClasses(source, keyClass = Key::class, valueClass = Value::class)
 
 
 inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
 	source: String,
 	nullability: JSONNullability.Key
 ): Map<Key?, Value>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+	doParseMapWithClasses(source, keyClass = Key::class, valueClass = Value::class, nullability = nullability)
 
 
 inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
 	source: String,
 	nullability: JSONNullability.KeyAndValue
 ): Map<Key?, Value?>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+	doParseMapWithClasses(source, keyClass = Key::class, valueClass = Value::class, nullability = nullability)
 
 
 inline fun <reified Key : Any, reified Value : Any> JSONParser<*>.parseMapOfType(
 	source: String,
 	nullability: JSONNullability.Value
 ): Map<Key, Value?>? =
-	doParseMapWithClasses(source, keyClass = Key::class.java, valueClass = Value::class.java, nullability = nullability)
+	doParseMapWithClasses(source, keyClass = Key::class, valueClass = Value::class, nullability = nullability)
 
 
 fun JSONParser<*>.parseValue(
@@ -375,10 +376,10 @@ fun JSONParser<*>.parseValue(
 inline fun <reified Value : Any> JSONParser<*>.parseValueOfType(
 	source: Reader
 ): Value? =
-	doParseWithClass(source, valueClass = Value::class.java)
+	doParseWithClass(source, valueClass = Value::class)
 
 
 inline fun <reified Value : Any> JSONParser<*>.parseValueOfType(
 	source: String
 ): Value? =
-	doParseWithClass(source, valueClass = Value::class.java)
+	doParseWithClass(source, valueClass = Value::class)

@@ -1,6 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
 import java.io.Reader
+import kotlin.reflect.KClass
 
 
 internal class StandardParser<Context : JSONCoderContext>(
@@ -10,7 +11,7 @@ internal class StandardParser<Context : JSONCoderContext>(
 
 	override fun <Value : Any> doParseWithClass(
 		source: Reader,
-		valueClass: Class<out Value>
+		valueClass: KClass<out Value>
 	): Value? {
 		val decoder = decoderFactory(source, context)
 		return decoder.use {
@@ -24,7 +25,7 @@ internal class StandardParser<Context : JSONCoderContext>(
 
 	override fun <Value : Any> doParseListWithClass(
 		source: Reader,
-		valueClass: Class<out Value>
+		valueClass: KClass<out Value>
 	): List<Value>? {
 		val decoder = decoderFactory(source, context)
 		return decoder.use {
@@ -38,7 +39,7 @@ internal class StandardParser<Context : JSONCoderContext>(
 
 	override fun <Value : Any> doParseListWithClass(
 		source: Reader,
-		valueClass: Class<out Value>,
+		valueClass: KClass<out Value>,
 		nullability: JSONNullability.Value
 	): List<Value?>? {
 		val decoder = decoderFactory(source, context)
@@ -53,8 +54,8 @@ internal class StandardParser<Context : JSONCoderContext>(
 
 	override fun <Key : Any, Value : Any> doParseMapWithClasses(
 		source: Reader,
-		keyClass: Class<out Key>,
-		valueClass: Class<out Value>
+		keyClass: KClass<out Key>,
+		valueClass: KClass<out Value>
 	): Map<Key, Value>? {
 		val decoder = decoderFactory(source, context)
 		return decoder.use {
@@ -68,8 +69,8 @@ internal class StandardParser<Context : JSONCoderContext>(
 
 	override fun <Key : Any, Value : Any> doParseMapWithClasses(
 		source: Reader,
-		keyClass: Class<out Key>,
-		valueClass: Class<out Value>,
+		keyClass: KClass<out Key>,
+		valueClass: KClass<out Value>,
 		nullability: JSONNullability.Key
 	): Map<Key?, Value>? {
 		val decoder = decoderFactory(source, context)
@@ -84,8 +85,8 @@ internal class StandardParser<Context : JSONCoderContext>(
 
 	override fun <Key : Any, Value : Any> doParseMapWithClasses(
 		source: Reader,
-		keyClass: Class<out Key>,
-		valueClass: Class<out Value>,
+		keyClass: KClass<out Key>,
+		valueClass: KClass<out Value>,
 		nullability: JSONNullability.KeyAndValue
 	): Map<Key?, Value?>? {
 		val decoder = decoderFactory(source, context)
@@ -100,8 +101,8 @@ internal class StandardParser<Context : JSONCoderContext>(
 
 	override fun <Key : Any, Value : Any> doParseMapWithClasses(
 		source: Reader,
-		keyClass: Class<out Key>,
-		valueClass: Class<out Value>,
+		keyClass: KClass<out Key>,
+		valueClass: KClass<out Value>,
 		nullability: JSONNullability.Value
 	): Map<Key, Value?>? {
 		val decoder = decoderFactory(source, context)

@@ -52,7 +52,7 @@ object EncodingExample {
 		}
 
 
-		override val encodableClasses = setOf(Event::class.java)
+		override val encodableClasses = setOf(Event::class)
 	}
 
 
@@ -63,6 +63,6 @@ object EncodingExample {
 		}
 
 
-		override val encodableClasses = setOf(Instant::class.java)
+		override val encodableClasses = setOf(Instant::class)
 	}
 }

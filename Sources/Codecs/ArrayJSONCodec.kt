@@ -7,5 +7,5 @@ object ArrayJSONCodec : JSONEncoderCodec<Array<out Any?>, JSONCoderContext> {
 		encoder.writeList(value)
 
 
-	override val encodableClasses = setOf(Array<out Any?>::class.java)
+	override val encodableClasses = setOf(Array<out Any?>::class)
 }

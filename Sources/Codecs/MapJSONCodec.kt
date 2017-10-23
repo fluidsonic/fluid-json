@@ -11,5 +11,5 @@ object MapJSONCodec : JSONCodec<Map<*, *>, JSONCoderContext> {
 		encoder.writeMap(value)
 
 
-	override val decodableClass = Map::class.java
+	override val decodableClass = Map::class
 }

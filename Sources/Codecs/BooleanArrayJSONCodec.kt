@@ -7,5 +7,5 @@ object BooleanArrayJSONCodec : JSONEncoderCodec<BooleanArray, JSONCoderContext> 
 		encoder.writeList(value)
 
 
-	override val encodableClasses = setOf(BooleanArray::class.java)
+	override val encodableClasses = setOf(BooleanArray::class)
 }

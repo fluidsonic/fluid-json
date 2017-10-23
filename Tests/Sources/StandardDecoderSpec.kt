@@ -89,7 +89,7 @@ internal object StandardDecoderSpec : Spek({
 		it("fails when a codec was no found") {
 			decode("{}") {
 				try {
-					readDecodableOfClass(object {}::class.java)
+					readDecodableOfClass(object {}::class)
 					throw AssertionError("an exception was expected")
 				}
 				catch (e: JSONException) {

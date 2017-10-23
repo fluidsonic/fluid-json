@@ -7,5 +7,5 @@ object DoubleArrayJSONCodec : JSONEncoderCodec<DoubleArray, JSONCoderContext> {
 		encoder.writeList(value)
 
 
-	override val encodableClasses = setOf(DoubleArray::class.java)
+	override val encodableClasses = setOf(DoubleArray::class)
 }

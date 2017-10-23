@@ -18,6 +18,7 @@ import org.jetbrains.spek.api.dsl.it
 import java.io.Reader
 import java.io.StringReader
 import java.time.LocalDate
+import kotlin.reflect.KClass
 
 
 internal object JSONParserSpec : Spek({
@@ -81,8 +82,8 @@ internal object JSONParserSpec : Spek({
 
 				override fun <Key : Any, Value : Any> doParseMapWithClasses(
 					source: Reader,
-					keyClass: Class<out Key>,
-					valueClass: Class<out Value>,
+					keyClass: KClass<out Key>,
+					valueClass: KClass<out Value>,
 					nullability: JSONNullability.Key
 				) =
 					parentParser.doParseMapWithClasses(source, keyClass, valueClass, nullability)
@@ -91,8 +92,8 @@ internal object JSONParserSpec : Spek({
 
 				override fun <Key : Any, Value : Any> doParseMapWithClasses(
 					source: Reader,
-					keyClass: Class<out Key>,
-					valueClass: Class<out Value>,
+					keyClass: KClass<out Key>,
+					valueClass: KClass<out Value>,
 					nullability: JSONNullability.KeyAndValue
 				) =
 					parentParser.doParseMapWithClasses(source, keyClass, valueClass, nullability)

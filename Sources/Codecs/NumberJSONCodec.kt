@@ -11,5 +11,5 @@ object NumberJSONCodec : JSONCodec<Number, JSONCoderContext> {
 		encoder.writeNumber(value)
 
 
-	override val decodableClass = Number::class.java
+	override val decodableClass = Number::class
 }

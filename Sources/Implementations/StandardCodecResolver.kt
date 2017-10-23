@@ -1,26 +1,28 @@
 package com.github.fluidsonic.fluid.json
 
+import kotlin.reflect.KClass
+
 
 internal class StandardCodecResolver<in Context : JSONCoderContext> private constructor(
-	private val decoderCodecByClass: MutableMap<Class<*>, JSONDecoderCodec<*, Context>>,
-	private val encoderCodecByClass: MutableMap<Class<*>, JSONEncoderCodec<*, Context>>
+	private val decoderCodecByClass: MutableMap<KClass<*>, JSONDecoderCodec<*, Context>>,
+	private val encoderCodecByClass: MutableMap<KClass<*>, JSONEncoderCodec<*, Context>>
 ) : JSONCodecResolver<Context> {
 
-	private val resolvedDecoderCodecByClass = mutableMapOf<Class<*>, JSONDecoderCodec<*, Context>>()
-	private val resolvedEncoderCodecByClass = mutableMapOf<Class<*>, JSONEncoderCodec<*, Context>>()
+	private val resolvedDecoderCodecByClass = mutableMapOf<KClass<*>, JSONDecoderCodec<*, Context>>()
+	private val resolvedEncoderCodecByClass = mutableMapOf<KClass<*>, JSONEncoderCodec<*, Context>>()
 
 	override val decoderCodecs = decoderCodecByClass.values.toSet().toList()
 	override val encoderCodecs = encoderCodecByClass.values.toSet().toList()
 
 
 	@Suppress("UNCHECKED_CAST")
-	override fun <Value : Any> decoderCodecForClass(`class`: Class<out Value>): JSONDecoderCodec<Value, Context>? {
+	override fun <Value : Any> decoderCodecForClass(`class`: KClass<out Value>): JSONDecoderCodec<Value, Context>? {
 		val codecs = resolvedDecoderCodecByClass
 
 		var decoder = synchronized(codecs) { codecs[`class`] }
 		if (decoder == null) {
-			if (`class` == Any::class.java) {
-				decoder = decoderCodecByClass[Any::class.java]
+			if (`class` == Any::class) {
+				decoder = decoderCodecByClass[Any::class]
 			}
 			if (decoder == null) {
 				decoder = decoderCodecByClass.entries.firstOrNull { it.key.isAssignableOrBoxableTo(`class`) }?.value
@@ -38,7 +40,7 @@ internal class StandardCodecResolver<in Context : JSONCoderContext> private cons
 
 
 	@Suppress("UNCHECKED_CAST")
-	override fun <Value : Any> encoderCodecForClass(`class`: Class<out Value>): JSONEncoderCodec<in Value, Context>? {
+	override fun <Value : Any> encoderCodecForClass(`class`: KClass<out Value>): JSONEncoderCodec<in Value, Context>? {
 		val codecs = resolvedEncoderCodecByClass
 
 		var encoder = synchronized(codecs) { codecs[`class`] }
@@ -61,7 +63,7 @@ internal class StandardCodecResolver<in Context : JSONCoderContext> private cons
 
 		private fun <Context : JSONCoderContext> collectDecoderCodecs(
 			codecs: List<JSONDecoderCodec<*, Context>>,
-			into: MutableMap<Class<*>, JSONDecoderCodec<*, Context>>
+			into: MutableMap<KClass<*>, JSONDecoderCodec<*, Context>>
 		) {
 			codecs
 				.filter { into.putIfAbsent(it.decodableClass, it) == null }
@@ -71,7 +73,7 @@ internal class StandardCodecResolver<in Context : JSONCoderContext> private cons
 
 		private fun <Context : JSONCoderContext> collectEncoderCodecs(
 			codecs: List<JSONEncoderCodec<*, Context>>,
-			into: MutableMap<Class<*>, JSONEncoderCodec<*, Context>>
+			into: MutableMap<KClass<*>, JSONEncoderCodec<*, Context>>
 		) {
 			for (codec in codecs) {
 				codec.encodableClasses
@@ -85,11 +87,11 @@ internal class StandardCodecResolver<in Context : JSONCoderContext> private cons
 			providers: Iterable<JSONCodecProvider<Context>>
 		): StandardCodecResolver<Context> =
 			StandardCodecResolver(
-				decoderCodecByClass = mutableMapOf<Class<*>, JSONDecoderCodec<*, Context>>()
+				decoderCodecByClass = mutableMapOf<KClass<*>, JSONDecoderCodec<*, Context>>()
 					.apply {
 						collectDecoderCodecs(providers.flatMap { it.decoderCodecs }, into = this)
 					},
-				encoderCodecByClass = mutableMapOf<Class<*>, JSONEncoderCodec<*, Context>>()
+				encoderCodecByClass = mutableMapOf<KClass<*>, JSONEncoderCodec<*, Context>>()
 					.apply {
 						collectEncoderCodecs(providers.flatMap { it.encoderCodecs }, into = this)
 					}

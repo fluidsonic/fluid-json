@@ -91,7 +91,7 @@ object CodingExample {
 		}
 
 
-		override val decodableClass = Event::class.java
+		override val decodableClass = Event::class
 	}
 
 
@@ -113,6 +113,6 @@ object CodingExample {
 		}
 
 
-		override val decodableClass = Instant::class.java
+		override val decodableClass = Instant::class
 	}
 }

@@ -11,5 +11,5 @@ object ShortJSONCodec : JSONCodec<Short, JSONCoderContext> {
 		encoder.writeShort(value)
 
 
-	override val decodableClass = Short::class.java
+	override val decodableClass = Short::class
 }

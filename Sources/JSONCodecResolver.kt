@@ -1,10 +1,12 @@
 package com.github.fluidsonic.fluid.json
 
+import kotlin.reflect.KClass
+
 
 interface JSONCodecResolver<in Context : JSONCoderContext> : JSONCodecProvider<Context> {
 
-	fun <Value : Any> decoderCodecForClass(`class`: Class<out Value>): JSONDecoderCodec<Value, Context>?
-	fun <Value : Any> encoderCodecForClass(`class`: Class<out Value>): JSONEncoderCodec<in Value, Context>?
+	fun <Value : Any> decoderCodecForClass(`class`: KClass<out Value>): JSONDecoderCodec<Value, Context>?
+	fun <Value : Any> encoderCodecForClass(`class`: KClass<out Value>): JSONEncoderCodec<in Value, Context>?
 
 
 	companion object {

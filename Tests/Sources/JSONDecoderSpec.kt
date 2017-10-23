@@ -23,6 +23,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.StringReader
+import kotlin.reflect.KClass
 
 
 internal object JSONDecoderSpec : Spek({
@@ -107,7 +108,7 @@ internal object JSONDecoderSpec : Spek({
 					updateCurrentToken()
 				}
 
-				override fun <Value : Any> readDecodableOfClass(valueClass: Class<out Value>): Value {
+				override fun <Value : Any> readDecodableOfClass(valueClass: KClass<out Value>): Value {
 					if (currentToken == JSONToken.mapKey) {
 						consumeNextToken(JSONToken.mapKey)
 						return inputKey as Value
@@ -180,7 +181,7 @@ internal object JSONDecoderSpec : Spek({
 
 			decoder.with(JSONToken.stringValue) {
 				inputValue = "okay"
-				decoder.readDecodableOrNullOfClass(String::class.java).should.equal(inputValue)
+				decoder.readDecodableOrNullOfClass(String::class).should.equal(inputValue)
 			}
 
 			decoder.with(
@@ -189,7 +190,7 @@ internal object JSONDecoderSpec : Spek({
 			) {
 				inputValue = null
 				decoder.readDecodableOrNull<String>().should.equal(null)
-				decoder.readDecodableOrNullOfClass(String::class.java).should.equal(null)
+				decoder.readDecodableOrNullOfClass(String::class).should.equal(null)
 			}
 
 			decoder.with(

@@ -11,5 +11,5 @@ object IterableJSONCodec : JSONCodec<Iterable<*>, JSONCoderContext> {
 		encoder.writeList(value)
 
 
-	override val decodableClass = Iterable::class.java
+	override val decodableClass = Iterable::class
 }

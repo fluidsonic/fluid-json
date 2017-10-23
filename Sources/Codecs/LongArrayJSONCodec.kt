@@ -7,5 +7,5 @@ object LongArrayJSONCodec : JSONEncoderCodec<LongArray, JSONCoderContext> {
 		encoder.writeList(value)
 
 
-	override val encodableClasses = setOf(LongArray::class.java)
+	override val encodableClasses = setOf(LongArray::class)
 }

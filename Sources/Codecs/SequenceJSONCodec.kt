@@ -11,5 +11,5 @@ object SequenceJSONCodec : JSONCodec<Sequence<*>, JSONCoderContext> {
 		encoder.writeList(value)
 
 
-	override val decodableClass = Sequence::class.java
+	override val decodableClass = Sequence::class
 }

@@ -172,7 +172,7 @@ object MyTypeCodec : JSONEncoderCodec<MyType, JSONCoderContext> {
     }
 
 
-    override val encodableClasses = setOf(MyType::class.java)
+    override val encodableClasses = setOf(MyType::class)
 }
 ```
 
@@ -202,7 +202,7 @@ object MyTypeCodec : JSONDecoderCodec<MyType, JSONCoderContext> {
     }
 
 
-    override val decodableClass = MyType::class.java
+    override val decodableClass = MyType::class
 }
 ```
 

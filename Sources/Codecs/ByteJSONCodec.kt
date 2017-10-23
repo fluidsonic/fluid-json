@@ -11,5 +11,5 @@ object ByteJSONCodec : JSONCodec<Byte, JSONCoderContext> {
 		encoder.writeByte(value)
 
 
-	override val decodableClass = Byte::class.java
+	override val decodableClass = Byte::class
 }

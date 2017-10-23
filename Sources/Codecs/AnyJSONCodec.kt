@@ -245,7 +245,7 @@ object AnyJSONCodec : JSONCodec<Any, JSONCoderContext> {
 						val (elementKey, elementValue) = currentValue
 						when (elementKey) {
 							is String -> encoder.writeMapKey(elementKey)
-							else -> throw JSONException("Cannot serialize non-String key of ${currentValue::class.java}: $currentValue")
+							else -> throw JSONException("Cannot serialize non-String key of ${currentValue::class}: $currentValue")
 						}
 
 						currentValue = elementValue
@@ -253,13 +253,13 @@ object AnyJSONCodec : JSONCodec<Any, JSONCoderContext> {
 						continue@loop
 					}
 					else
-						throw JSONException("Cannot serialize value of ${currentValue::class.java}: $currentValue")
+						throw JSONException("Cannot serialize value of ${currentValue::class}: $currentValue")
 
 				is Number -> // after subclasses
 					encoder.writeNumber(currentValue)
 
 				else ->
-					throw JSONException("Cannot serialize value of ${currentValue::class.java}: $currentValue")
+					throw JSONException("Cannot serialize value of ${currentValue::class}: $currentValue")
 			}
 
 			isInMapElementValue = false
@@ -269,28 +269,28 @@ object AnyJSONCodec : JSONCodec<Any, JSONCoderContext> {
 
 
 	override val encodableClasses = setOf(
-		Array<Any?>::class.java,
-		Boolean::class.java,
-		BooleanArray::class.java,
-		Byte::class.java,
-		ByteArray::class.java,
-		Double::class.java,
-		DoubleArray::class.java,
-		Float::class.java,
-		FloatArray::class.java,
-		Int::class.java,
-		IntArray::class.java,
-		Iterable::class.java,
-		Long::class.java,
-		LongArray::class.java,
-		Map::class.java,
-		Number::class.java,
-		Sequence::class.java,
-		Short::class.java,
-		ShortArray::class.java,
-		String::class.java
+		Array<Any?>::class,
+		Boolean::class,
+		BooleanArray::class,
+		Byte::class,
+		ByteArray::class,
+		Double::class,
+		DoubleArray::class,
+		Float::class,
+		FloatArray::class,
+		Int::class,
+		IntArray::class,
+		Iterable::class,
+		Long::class,
+		LongArray::class,
+		Map::class,
+		Number::class,
+		Sequence::class,
+		Short::class,
+		ShortArray::class,
+		String::class
 	)
 
 
-	override val decodableClass = Any::class.java
+	override val decodableClass = Any::class
 }

@@ -11,5 +11,5 @@ object DoubleJSONCodec : JSONCodec<Double, JSONCoderContext> {
 		encoder.writeDouble(value)
 
 
-	override val decodableClass = Double::class.java
+	override val decodableClass = Double::class
 }

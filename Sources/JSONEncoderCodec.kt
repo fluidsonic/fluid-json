@@ -1,5 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
+import kotlin.reflect.KClass
+
 
 interface JSONEncoderCodec<Value : Any, in Context : JSONCoderContext> : JSONCodecProvider<Context> {
 
@@ -9,7 +11,7 @@ interface JSONEncoderCodec<Value : Any, in Context : JSONCoderContext> : JSONCod
 	override val encoderCodecs: List<JSONEncoderCodec<*, Context>>
 		get() = listOf(this)
 
-	val encodableClasses: Set<Class<out Value>>
+	val encodableClasses: Set<KClass<out Value>>
 
 
 	fun encode(value: Value, encoder: JSONEncoder<out Context>)
