@@ -1,13 +1,11 @@
 /.gradle
-/.idea
-!/.idea/compiler.xml
+/.idea/*
+!/.idea/codeStyles
 !/.idea/encodings.xml
 !/.idea/gradle.xml
 !/.idea/inspectionProfiles
 !/.idea/kotlinc.xml
 !/.idea/misc.xml
-!/.idea/modules
-!/.idea/modules.xml
 !/.idea/runConfigurations
 !/.idea/saveactions_settings.xml
 !/.idea/vcs.xml
