@@ -1,10 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONCodec
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.StringJSONCodec
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 
 
@@ -12,10 +8,10 @@ internal class ContextCheckingTestCodec<in Context : JSONCoderContext>(
 	private val expectedContext: Context
 ) : JSONCodec<String, Context> {
 
-	override fun decode(decoder: JSONDecoder<out Context>): String {
+	override fun decode(valueType: JSONCodableType<in String>, decoder: JSONDecoder<out Context>): String {
 		decoder.context.should.equal(expectedContext)
 
-		return StringJSONCodec.decode(decoder)
+		return StringJSONCodec.decode(valueType, decoder)
 	}
 
 
@@ -26,5 +22,5 @@ internal class ContextCheckingTestCodec<in Context : JSONCoderContext>(
 	}
 
 
-	override val decodableClass = String::class
+	override val decodableType = jsonCodableType<String>()
 }

@@ -1,12 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONCodecResolver
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONParser
-import com.github.fluidsonic.fluid.json.StandardParser
-import com.github.fluidsonic.fluid.json.parseValue
+import com.github.fluidsonic.fluid.json.*
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
@@ -17,7 +11,7 @@ internal object StandardParserRejectSpec : SubjectSpek<JSONParser<JSONCoderConte
 	subject {
 		StandardParser(JSONCoderContext.empty) { source, context ->
 			JSONDecoder.builder(context)
-				.codecs(JSONCodecResolver.default)
+				.codecs(JSONCodecProvider.nonRecursive)
 				.source(source)
 				.build()
 		}

@@ -1,12 +1,11 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.JSONWriter
+import com.github.fluidsonic.fluid.json.*
 import java.io.StringWriter
 
 
 fun main(args: Array<String>) {
-	// you can also avoid the high-order functions for stream serializing and write token by token
-
+	// You can also avoid the higher-order functions for stream serializing and write token by token
 	val output = StringWriter()
 	JSONWriter.build(output).use { writer ->
 		writer.apply {

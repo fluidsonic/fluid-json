@@ -11,13 +11,19 @@ interface JSONSerializer<Context : JSONCoderContext> {
 
 	fun serializeValue(value: Any?, destination: Writer)
 
+
 	fun <NewContext : Context> withContext(context: NewContext): JSONSerializer<NewContext>
 
 
 	companion object {
 
 		private val default = builder()
-			.encodingWith(AnyJSONCodec)
+			.encodingWith(JSONCodecProvider.default)
+			.build()
+
+
+		private val nonRecursive = builder()
+			.encodingWith(JSONCodecProvider.nonRecursive)
 			.build()
 
 
@@ -33,15 +39,19 @@ interface JSONSerializer<Context : JSONCoderContext> {
 			JSONSerializer.default
 
 
+		fun nonRecursive() =
+			JSONSerializer.nonRecursive
+
+
 		interface BuilderForEncoding<Context : JSONCoderContext> {
 
 			fun encodingWith(factory: (destination: Writer, context: Context) -> JSONEncoder<Context>): Builder<Context>
 
 
-			fun encodingWith(resolver: JSONCodecResolver<Context>) =
+			private fun encodingWith(provider: JSONCodecProvider<Context>) =
 				encodingWith { destination, context ->
 					JSONEncoder.builder(context)
-						.codecs(resolver)
+						.codecs(provider)
 						.destination(destination)
 						.build()
 				}
@@ -49,16 +59,16 @@ interface JSONSerializer<Context : JSONCoderContext> {
 
 			fun encodingWith(
 				vararg providers: JSONCodecProvider<Context>,
-				appendDefaultCodecs: Boolean = true
+				appendDefault: Boolean = true
 			) =
-				encodingWith(JSONCodecResolver.of(providers = *providers, appendDefaultCodecs = appendDefaultCodecs))
+				encodingWith(JSONCodecProvider.of(providers = *providers, appendDefault = appendDefault))
 
 
 			fun encodingWith(
 				providers: Iterable<JSONCodecProvider<Context>>,
-				appendDefaultCodecs: Boolean = true
+				appendDefault: Boolean = true
 			) =
-				encodingWith(JSONCodecResolver.of(providers = providers, appendDefaultCodecs = appendDefaultCodecs))
+				encodingWith(JSONCodecProvider.of(providers = providers, appendDefault = appendDefault))
 		}
 
 

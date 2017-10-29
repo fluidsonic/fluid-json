@@ -1,15 +1,20 @@
 package com.github.fluidsonic.fluid.json
 
 
-object SequenceJSONCodec : JSONCodec<Sequence<*>, JSONCoderContext> {
+object SequenceJSONCodec : AbstractJSONCodec<Sequence<*>, JSONCoderContext>() {
 
-	override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Sequence<*> =
-		decoder.readList(JSONNullability.Value).asSequence()
+	override fun decode(valueType: JSONCodableType<in Sequence<*>>, decoder: JSONDecoder<out JSONCoderContext>): Sequence<*> {
+		val valueType = valueType.arguments.single()
+
+		return decoder.readListByElement {
+			readValueOfTypeOrNull(valueType)
+		}.asSequence()
+	}
 
 
 	override fun encode(value: Sequence<*>, encoder: JSONEncoder<out JSONCoderContext>) =
 		encoder.writeList(value)
 
 
-	override val decodableClass = Sequence::class
+	val nonRecursive = NonRecursiveJSONCodec.create<Sequence<*>>()
 }

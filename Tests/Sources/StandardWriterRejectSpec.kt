@@ -1,9 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONWriter
-import com.github.fluidsonic.fluid.json.StandardWriter
-import com.github.fluidsonic.fluid.json.withErrorChecking
+import com.github.fluidsonic.fluid.json.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.TestBody
 import org.jetbrains.spek.api.dsl.describe
@@ -64,14 +61,6 @@ internal object StandardWriterRejectSpec : Spek({
 
 		it(".writeValue() for unsupported types") {
 			writerShouldFail { writeValue(object {}) }
-		}
-
-		it(".writeValueAsMapKey() for null") {
-			writerShouldFail { writeValueAsMapKey(null) }
-		}
-
-		it(".writeValueAsMapKey() for unsupported types") {
-			writerShouldFail { writeValueAsMapKey(object {}) }
 		}
 	}
 })

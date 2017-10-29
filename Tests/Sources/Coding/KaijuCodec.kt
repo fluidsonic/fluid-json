@@ -1,24 +1,15 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONCodec
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.readDecodable
-import com.github.fluidsonic.fluid.json.readFromMapByElementValue
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeMapElement
+import com.github.fluidsonic.fluid.json.*
 import tests.Kaiju.Status
 import java.time.LocalDate
 
 
-internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
+internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
+	additionalProviders = listOf(StatusCodec)
+) {
 
-	override val codecs = listOf(this, StatusCodec)
-	override val decodableClass = Kaiju::class
-
-
-	override fun decode(decoder: JSONDecoder<out TestCoderContext>): Kaiju {
+	override fun decode(valueType: JSONCodableType<in Kaiju>, decoder: JSONDecoder<out TestCoderContext>): Kaiju {
 		var breachDate: LocalDate? = null
 		var category: Int? = null
 		var height: Double? = null
@@ -29,12 +20,12 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 
 		decoder.readFromMapByElementValue { key ->
 			when (key) {
-				Keys.breachDate -> breachDate = readDecodable()
+				Keys.breachDate -> breachDate = readValueOfType()
 				Keys.category -> category = readInt()
 				Keys.height -> height = readDouble()
 				Keys.name -> name = readString()
 				Keys.origin -> origin = readString()
-				Keys.status -> status = readDecodable()
+				Keys.status -> status = readValueOfType()
 				Keys.weight -> weight = readDouble()
 				else -> skipValue()
 			}
@@ -54,12 +45,12 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 
 	override fun encode(value: Kaiju, encoder: JSONEncoder<out TestCoderContext>) {
 		encoder.writeIntoMap {
-			writeMapElement(Keys.breachDate, encodable = value.breachDate)
+			writeMapElement(Keys.breachDate, value = value.breachDate)
 			writeMapElement(Keys.category, int = value.category)
 			writeMapElement(Keys.height, double = value.height)
 			writeMapElement(Keys.name, string = value.name)
 			writeMapElement(Keys.origin, string = value.origin)
-			writeMapElement(Keys.status, encodable = value.status)
+			writeMapElement(Keys.status, value = value.status)
 			writeMapElement(Keys.weight, double = value.weight)
 		}
 	}
@@ -77,12 +68,9 @@ internal object KaijuCodec : JSONCodec<Kaiju, TestCoderContext> {
 	}
 
 
-	object StatusCodec : JSONCodec<Status, TestCoderContext> {
+	object StatusCodec : AbstractJSONCodec<Status, TestCoderContext>() {
 
-		override val decodableClass = Status::class
-
-
-		override fun decode(decoder: JSONDecoder<out TestCoderContext>): Status {
+		override fun decode(valueType: JSONCodableType<in Status>, decoder: JSONDecoder<out TestCoderContext>): Status {
 			val id = decoder.readString()
 			return when (id) {
 				"deceased" -> Status.deceased

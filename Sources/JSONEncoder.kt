@@ -9,17 +9,6 @@ interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
 	val context: Context
 
 
-	fun writeEncodable(value: Any)
-
-
-	override fun writeValue(value: Any?) =
-		if (value != null) writeEncodable(value) else writeNull()
-
-
-	override fun writeValueAsMapKey(value: Any?) =
-		if (value != null) writeEncodable(value) else throw JSONException("Cannot write null as JSON map key")
-
-
 	companion object {
 
 		fun builder(): BuilderForCodecs<JSONCoderContext> =
@@ -32,21 +21,21 @@ interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
 
 		interface BuilderForCodecs<Context : JSONCoderContext> {
 
-			fun codecs(resolver: JSONCodecResolver<Context>): BuilderForDestination<Context>
+			fun codecs(provider: JSONCodecProvider<Context>): BuilderForDestination<Context>
 
 
 			fun codecs(
 				vararg providers: JSONCodecProvider<Context>,
 				appendDefaultCodecs: Boolean = true
 			) =
-				codecs(JSONCodecResolver.of(providers = *providers, appendDefaultCodecs = appendDefaultCodecs))
+				codecs(JSONCodecProvider.of(providers = *providers, appendDefault = appendDefaultCodecs))
 
 
 			fun codecs(
 				providers: Iterable<JSONCodecProvider<Context>>,
 				appendDefaultCodecs: Boolean = true
 			) =
-				codecs(JSONCodecResolver.of(providers = providers, appendDefaultCodecs = appendDefaultCodecs))
+				codecs(JSONCodecProvider.of(providers = providers, appendDefault = appendDefaultCodecs))
 		}
 
 
@@ -54,10 +43,10 @@ interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
 			private val context: Context
 		) : BuilderForCodecs<Context> {
 
-			override fun codecs(resolver: JSONCodecResolver<Context>) =
+			override fun codecs(provider: JSONCodecProvider<Context>) =
 				BuilderForDestinationImpl(
 					context = context,
-					codecResolver = resolver
+					codecProvider = provider
 				)
 		}
 
@@ -74,13 +63,13 @@ interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
 
 		private class BuilderForDestinationImpl<Context : JSONCoderContext>(
 			private val context: Context,
-			private val codecResolver: JSONCodecResolver<Context>
+			private val codecProvider: JSONCodecProvider<Context>
 		) : BuilderForDestination<Context> {
 
 			override fun destination(destination: JSONWriter) =
 				BuilderImpl(
 					context = context,
-					codecResolver = codecResolver,
+					codecProvider = codecProvider,
 					destination = destination
 				)
 		}
@@ -94,35 +83,16 @@ interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
 
 		private class BuilderImpl<Context : JSONCoderContext>(
 			private val context: Context,
-			private val codecResolver: JSONCodecResolver<Context>,
+			private val codecProvider: JSONCodecProvider<Context>,
 			private val destination: JSONWriter
 		) : Builder<Context> {
 
 			override fun build() =
 				StandardEncoder(
 					context = context,
-					codecResolver = codecResolver,
+					codecProvider = codecProvider,
 					destination = destination
 				)
 		}
 	}
 }
-
-
-fun JSONEncoder<*>.writeEncodableOrNull(value: Any?) =
-	if (value != null) writeEncodable(value) else writeNull()
-
-
-fun JSONEncoder<*>.writeMapElement(key: String, encodable: Any) {
-	writeMapKey(key)
-	writeEncodable(encodable)
-}
-
-
-fun JSONEncoder<*>.writeMapElement(key: String, encodable: Any?, skipIfNull: Boolean = false) =
-	if (encodable != null)
-		writeMapElement(key, encodable)
-	else if (!skipIfNull)
-		writeMapNullElement(key)
-	else
-		Unit

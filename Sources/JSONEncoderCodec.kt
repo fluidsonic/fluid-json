@@ -5,16 +5,22 @@ import kotlin.reflect.KClass
 
 interface JSONEncoderCodec<Value : Any, in Context : JSONCoderContext> : JSONCodecProvider<Context> {
 
-	override val decoderCodecs: List<JSONDecoderCodec<*, Context>>
-		get() = emptyList()
-
-	override val encoderCodecs: List<JSONEncoderCodec<*, Context>>
-		get() = listOf(this)
-
-	val encodableClasses: Set<KClass<out Value>>
+	val encodableClass: KClass<Value>
 
 
 	fun encode(value: Value, encoder: JSONEncoder<out Context>)
+
+
+	override fun <Value : Any> decoderCodecForType(decodableType: JSONCodableType<in Value>): JSONDecoderCodec<out Value, Context>? =
+		null
+
+
+	@Suppress("UNCHECKED_CAST")
+	override fun <Value : Any> encoderCodecForClass(encodableClass: KClass<out Value>): JSONEncoderCodec<in Value, Context>? =
+		if (encodableClass.isAssignableOrBoxableTo(this.encodableClass))
+			this as JSONEncoderCodec<in Value, Context>
+		else
+			null
 
 
 	companion object

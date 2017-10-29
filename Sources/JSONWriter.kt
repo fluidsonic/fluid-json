@@ -53,7 +53,7 @@ interface JSONWriter : Closeable, Flushable {
 		writeLong(value.toLong())
 
 
-	fun writeValue(value: Any?) {
+	fun writeValue(value: Any) {
 		when (value) {
 			is Array<*> -> writeList(value)
 			is Boolean -> writeBoolean(value)
@@ -74,17 +74,7 @@ interface JSONWriter : Closeable, Flushable {
 			is ShortArray -> writeList(value)
 			is String -> writeString(value)
 			is Number -> writeNumber(value) // after subclasses
-			null -> writeNull()
 			else -> throw JSONException("Cannot write JSON value of ${value::class}: $value")
-		}
-	}
-
-
-	fun writeValueAsMapKey(value: Any?) {
-		when (value) {
-			is String -> writeMapKey(value)
-			null -> throw JSONException("Cannot write null JSON map key")
-			else -> throw JSONException("Cannot write JSON map key of ${value::class}: $value")
 		}
 	}
 
@@ -175,15 +165,15 @@ fun JSONWriter.writeList(value: ShortArray) =
 
 
 fun JSONWriter.writeList(value: Array<*>) =
-	writeListByElement(value) { writeValue(it) }
+	writeListByElement(value) { writeValueOrNull(it) }
 
 
 fun JSONWriter.writeList(value: Iterable<*>) =
-	writeListByElement(value) { writeValue(it) }
+	writeListByElement(value) { writeValueOrNull(it) }
 
 
 fun JSONWriter.writeList(value: Sequence<*>) =
-	writeListByElement(value) { writeValue(it) }
+	writeListByElement(value) { writeValueOrNull(it) }
 
 
 inline fun <Writer : JSONWriter> Writer.writeListByElement(
@@ -401,7 +391,7 @@ fun JSONWriter.writeLongOrNull(value: Long?) =
 
 
 fun JSONWriter.writeMap(value: Map<*, *>) =
-	writeMapByElementValue(value) { writeValue(it) }
+	writeMapByElementValue(value) { writeValueOrNull(it) }
 
 
 inline fun <Writer : JSONWriter, ElementKey, ElementValue> Writer.writeMapByElement(
@@ -419,7 +409,7 @@ inline fun <Writer : JSONWriter, ElementValue> Writer.writeMapByElementValue(
 	writeElementValue: Writer.(value: ElementValue) -> Unit
 ) =
 	writeMapByElement(value) { elementKey, elementValue ->
-		writeValueAsMapKey(elementKey)
+		writeValueOrNull(elementKey)
 		writeElementValue(elementValue)
 	}
 
@@ -577,6 +567,21 @@ fun JSONWriter.writeMapElement(key: String, string: String?, skipIfNull: Boolean
 		Unit
 
 
+fun JSONWriter.writeMapElement(key: String, value: Any) {
+	writeMapKey(key)
+	writeValue(value)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, value: Any?, skipIfNull: Boolean = false) =
+	if (value != null)
+		writeMapElement(key, value)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
 inline fun <Writer : JSONWriter> Writer.writeMapElement(key: String, writeValue: Writer.() -> Unit) {
 	writeMapKey(key)
 	writeValue()
@@ -599,3 +604,7 @@ fun JSONWriter.writeShortOrNull(value: Short?) =
 
 fun JSONWriter.writeStringOrNull(value: String?) =
 	if (value != null) writeString(value) else writeNull()
+
+
+fun JSONWriter.writeValueOrNull(value: Any?) =
+	if (value != null) writeValue(value) else writeNull()

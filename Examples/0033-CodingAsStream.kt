@@ -1,16 +1,6 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.JSONCodec
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONToken
-import com.github.fluidsonic.fluid.json.readDecodable
-import com.github.fluidsonic.fluid.json.readDecodableOrNull
-import com.github.fluidsonic.fluid.json.readFromMapByElementValue
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeMapElement
+import com.github.fluidsonic.fluid.json.*
 import java.io.StringWriter
 import java.time.Instant
 import java.time.format.DateTimeFormatter
@@ -21,7 +11,7 @@ object CodingAsStreamExample {
 
 	@JvmStatic
 	fun main(args: Array<String>) {
-		// parsing and serialization using codecs is also supported when streaming by using JSONDecoder instead of
+		// Parsing and serialization using codecs is also supported when streaming by using JSONDecoder instead of
 		// JSONReader and JSONEncoder instead of JSONWriter
 
 		val input = listOf(
@@ -52,7 +42,7 @@ object CodingAsStreamExample {
 
 				decoder.readListStart()
 				while (decoder.nextToken != JSONToken.listEnd) {
-					output.add(decoder.readDecodable())
+					output.add(decoder.readValueOfType())
 				}
 				decoder.readListEnd()
 
@@ -70,7 +60,7 @@ object CodingAsStreamExample {
 			.use { encoder ->
 				encoder.writeListStart()
 				for (event in input) {
-					encoder.writeEncodable(event)
+					encoder.writeValue(event)
 				}
 				encoder.writeListEnd()
 
@@ -86,9 +76,9 @@ object CodingAsStreamExample {
 	)
 
 
-	private object EventCodec : JSONCodec<Event, JSONCoderContext> {
+	private object EventCodec : AbstractJSONCodec<Event, JSONCoderContext>() {
 
-		override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Event {
+		override fun decode(valueType: JSONCodableType<in Event>, decoder: JSONDecoder<out JSONCoderContext>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null
@@ -96,7 +86,7 @@ object CodingAsStreamExample {
 			decoder.readFromMapByElementValue { key ->
 				when (key) {
 					"id" -> id = readInt()
-					"date" -> date = readDecodableOrNull()
+					"date" -> date = readValueOfType()
 					"title" -> title = readString()
 					else -> skipValue()
 				}
@@ -113,19 +103,16 @@ object CodingAsStreamExample {
 		override fun encode(value: Event, encoder: JSONEncoder<out JSONCoderContext>) {
 			encoder.writeIntoMap {
 				writeMapElement("id", int = value.id)
-				writeMapElement("date", encodable = value.date, skipIfNull = true)
+				writeMapElement("date", value = value.date, skipIfNull = true)
 				writeMapElement("title", string = value.title)
 			}
 		}
-
-
-		override val decodableClass = Event::class
 	}
 
 
-	private object InstantCodec : JSONCodec<Instant, JSONCoderContext> {
+	private object InstantCodec : AbstractJSONCodec<Instant, JSONCoderContext>() {
 
-		override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Instant =
+		override fun decode(valueType: JSONCodableType<in Instant>, decoder: JSONDecoder<out JSONCoderContext>): Instant =
 			decoder.readString().let {
 				try {
 					Instant.parse(it)
@@ -139,8 +126,5 @@ object CodingAsStreamExample {
 		override fun encode(value: Instant, encoder: JSONEncoder<out JSONCoderContext>) {
 			encoder.writeString(DateTimeFormatter.ISO_INSTANT.format(value))
 		}
-
-
-		override val decodableClass = Instant::class
 	}
 }

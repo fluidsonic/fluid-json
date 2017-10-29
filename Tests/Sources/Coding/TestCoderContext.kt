@@ -1,6 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONCoderContext
+import com.github.fluidsonic.fluid.json.*
 
 
 internal class TestCoderContext : JSONCoderContext

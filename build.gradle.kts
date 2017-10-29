@@ -91,6 +91,7 @@ afterEvaluate {
 }
 
 dependencies {
+	api(kotlin("reflect", "1.1.51"))
 	api(kotlin("stdlib", "1.1.51"))
 
 	testImplementation("com.winterbe:expekt:0.5.0")

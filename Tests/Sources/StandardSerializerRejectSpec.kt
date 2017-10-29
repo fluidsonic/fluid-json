@@ -1,12 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.AnyJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONSerializer
-import com.github.fluidsonic.fluid.json.StandardSerializer
-import com.github.fluidsonic.fluid.json.serializeValue
+import com.github.fluidsonic.fluid.json.*
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
@@ -17,7 +11,7 @@ internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer<JSONCo
 	subject {
 		StandardSerializer(JSONCoderContext.empty) { destination, context ->
 			JSONEncoder.builder(context)
-				.codecs(AnyJSONCodec)
+				.codecs(JSONCodecProvider.nonRecursive)
 				.destination(destination)
 				.build()
 		}

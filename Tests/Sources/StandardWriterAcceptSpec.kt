@@ -1,29 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONWriter
-import com.github.fluidsonic.fluid.json.writeBooleanOrNull
-import com.github.fluidsonic.fluid.json.writeByteOrNull
-import com.github.fluidsonic.fluid.json.writeDoubleOrNull
-import com.github.fluidsonic.fluid.json.writeFloatOrNull
-import com.github.fluidsonic.fluid.json.writeIntOrNull
-import com.github.fluidsonic.fluid.json.writeIntoList
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeList
-import com.github.fluidsonic.fluid.json.writeListByElement
-import com.github.fluidsonic.fluid.json.writeListOrNull
-import com.github.fluidsonic.fluid.json.writeListOrNullByElement
-import com.github.fluidsonic.fluid.json.writeLongOrNull
-import com.github.fluidsonic.fluid.json.writeMap
-import com.github.fluidsonic.fluid.json.writeMapByElement
-import com.github.fluidsonic.fluid.json.writeMapByElementValue
-import com.github.fluidsonic.fluid.json.writeMapElement
-import com.github.fluidsonic.fluid.json.writeMapNullElement
-import com.github.fluidsonic.fluid.json.writeMapOrNull
-import com.github.fluidsonic.fluid.json.writeMapOrNullByElement
-import com.github.fluidsonic.fluid.json.writeMapOrNullByElementValue
-import com.github.fluidsonic.fluid.json.writeNumberOrNull
-import com.github.fluidsonic.fluid.json.writeShortOrNull
-import com.github.fluidsonic.fluid.json.writeStringOrNull
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.dsl.TestBody
 import org.jetbrains.spek.api.dsl.describe
@@ -363,8 +340,9 @@ internal object StandardWriterAcceptSpec : SubjectSpek<JSONWriter>({
 					writeMapElement("", string = null, skipIfNull = false)
 					writeMapElement("", string = null, skipIfNull = true)
 
-					writeMapNullElement("")
+					writeMapElement("") { writeString("inline") }
 
+					writeMapNullElement("")
 				}
 			}.should.equal("""
 				{
@@ -412,6 +390,8 @@ internal object StandardWriterAcceptSpec : SubjectSpek<JSONWriter>({
 					"": "",
 					"": "",
 					"": null,
+
+					"": "inline",
 
 					"": null
 				}
@@ -624,17 +604,44 @@ internal object StandardWriterAcceptSpec : SubjectSpek<JSONWriter>({
 					writeValue(shortArrayOf(0, 1))
 					writeValue("")
 					writeValue(1.toBigDecimal())
-					writeValue(null)
+				}
+			}.should.equal("""[["",""],true,[true,true],1,[0,1],1.0,[0.0,1.0],1.0,[0.0,1.0],1,[0,1],[true,true],1,[0,1],{"0":0,"1":1},[true,true],1,[0,1],"",1.0]""")
+		}
+
+		it(".writeValueOrNull()") {
+			write {
+				writeIntoList {
+					writeValueOrNull(arrayOf("", ""))
+					writeValueOrNull(true)
+					writeValueOrNull(booleanArrayOf(true, true))
+					writeValueOrNull(1.toByte())
+					writeValueOrNull(byteArrayOf(0, 1))
+					writeValueOrNull(1.0)
+					writeValueOrNull(doubleArrayOf(0.0, 1.0))
+					writeValueOrNull(1.0f)
+					writeValueOrNull(floatArrayOf(0.0f, 1.0f))
+					writeValueOrNull(1)
+					writeValueOrNull(intArrayOf(0, 1))
+					writeValueOrNull(booleanArrayOf(true, true).asSequence().asIterable())
+					writeValueOrNull(1L)
+					writeValueOrNull(longArrayOf(0, 1))
+					writeValueOrNull(mapOf("0" to 0, "1" to 1))
+					writeValueOrNull(booleanArrayOf(true, true).asSequence())
+					writeValueOrNull(1.toShort())
+					writeValueOrNull(shortArrayOf(0, 1))
+					writeValueOrNull("")
+					writeValueOrNull(1.toBigDecimal())
+					writeValueOrNull(null)
 				}
 			}.should.equal("""[["",""],true,[true,true],1,[0,1],1.0,[0.0,1.0],1.0,[0.0,1.0],1,[0,1],[true,true],1,[0,1],{"0":0,"1":1},[true,true],1,[0,1],"",1.0,null]""")
 		}
 
-		it(".writeValueAsMapKey()") {
+		it(".writeValue() as map key") {
 			write {
-				writeMapStart()
-				writeValueAsMapKey("hey")
-				writeNull()
-				writeMapEnd()
+				writeIntoMap {
+					writeValue("hey")
+					writeNull()
+				}
 			}.should.equal("""{"hey":null}""")
 		}
 	}

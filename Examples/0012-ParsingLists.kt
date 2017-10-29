@@ -1,27 +1,22 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.JSONNullability
-import com.github.fluidsonic.fluid.json.JSONParser
-import com.github.fluidsonic.fluid.json.parseList
-import com.github.fluidsonic.fluid.json.parseListOfType
+import com.github.fluidsonic.fluid.json.*
 
 
 fun main(args: Array<String>) {
 	val parser = JSONParser.default()
 
-	// you can parse a List of non-nullable values in a typesafe way
-	val example1: List<Any>? = parser.parseList("[1, true, []]")
-	println(example1)
+	// You can parse a List of values in a typesafe way
+	val value1 = parser.parseValueOfType<List<*>>("[1, true, []]")
+	println(value1)
 
-	// you can parse a List of non-nullable values of a specific type in a typesafe way
-	val example2: List<String>? = parser.parseListOfType("""["one", "two", "three"]""")
-	println(example2)
+	// You can parse a List of values of a specific type in a typesafe way
+	val value2 = parser.parseValueOfType<List<String?>>("""["one", "two", null]""")
+	println(value2)
 
-	// you can parse a List of nullable values in a typesafe way
-	val example3: List<Any?>? = parser.parseList("[1, true, null]", JSONNullability.Value)
-	println(example3)
-
-	// you can parse a List of nullable values of a specific type in a typesafe way
-	val example4: List<String?>? = parser.parseListOfType("""["one", "two", null]""", JSONNullability.Value)
-	println(example4)
+	// Note that due to a limitation of Kotlin and the JVM you can specify either `List<String>` or `List<String?>` but
+	// the resulting list can always contain `null` values. This can cause an unexpected `NullPointerException` at
+	// runtime if the source data contains `null`s.
+	val value3 = parser.parseValueOfType<List<String>>("""["one", "two", null]""")
+	println(value3)
 }

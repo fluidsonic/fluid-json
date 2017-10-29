@@ -1,21 +1,29 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.BooleanJSONCodec
-import com.github.fluidsonic.fluid.json.IntJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCodec
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.MapJSONCodec
-import com.github.fluidsonic.fluid.json.StringJSONCodec
+import com.github.fluidsonic.fluid.json.*
 
 
-internal object MapJSONTestCodec : JSONCodec<Map<*, *>, JSONCoderContext> by MapJSONCodec {
+internal object MapJSONTestCodec : AbstractJSONCodec<Map<*, *>, JSONCoderContext>(
+	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, LocalDateCodec, NumberJSONCodec, StringJSONCodec)
+) {
 
-	override val codecs
-		get() = MapJSONCodec.codecs + listOf(BooleanJSONCodec, IntJSONCodec, StringJSONCodec)
+	override fun decode(valueType: JSONCodableType<in Map<*, *>>, decoder: JSONDecoder<out JSONCoderContext>) =
+		MapJSONCodec.decode(valueType, decoder)
 
-	override val decoderCodecs
-		get() = super.decoderCodecs
 
-	override val encoderCodecs
-		get() = super.encoderCodecs
+	override fun encode(value: Map<*, *>, encoder: JSONEncoder<out JSONCoderContext>) =
+		MapJSONCodec.encode(value, encoder)
+
+
+	object NonRecursive : AbstractJSONCodec<Map<String, *>, JSONCoderContext>(
+		additionalProviders = listOf(BooleanJSONCodec, IntJSONCodec, StringJSONCodec)
+	) {
+
+		override fun decode(valueType: JSONCodableType<in Map<String, *>>, decoder: JSONDecoder<out JSONCoderContext>) =
+			MapJSONCodec.nonRecursive.decode(valueType, decoder)
+
+
+		override fun encode(value: Map<String, *>, encoder: JSONEncoder<out JSONCoderContext>) =
+			MapJSONCodec.nonRecursive.encode(value, encoder)
+	}
 }

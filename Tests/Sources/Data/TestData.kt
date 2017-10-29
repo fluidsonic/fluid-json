@@ -1,6 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONException
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 
 

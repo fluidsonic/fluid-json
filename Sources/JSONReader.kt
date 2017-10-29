@@ -59,6 +59,20 @@ interface JSONReader : Closeable {
 	}
 
 
+	fun readValue(): Any {
+		val token = nextToken
+		return when (token) {
+			JSONToken.booleanValue -> readBoolean()
+			JSONToken.listStart -> readList()
+			JSONToken.mapKey -> readMapKey()
+			JSONToken.mapStart -> readMap()
+			JSONToken.numberValue -> readNumber()
+			JSONToken.stringValue -> readString()
+			else -> throw JSONException("Cannot read value. Current token is '$token'")
+		}
+	}
+
+
 	fun skipValue() {
 		val token = nextToken
 		when (token) {
@@ -167,12 +181,8 @@ inline fun <Reader : JSONReader> Reader.readFromMapByElementValue(
 	}
 
 
-fun JSONReader.readList(): List<Any> =
-	readListByElement { readValue() ?: throw JSONException("unexpected null value in list") }
-
-
-fun JSONReader.readList(@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value): List<Any?> =
-	readListByElement { readValue() }
+fun JSONReader.readList() =
+	readListByElement { readValueOrNull() }
 
 
 inline fun <Reader : JSONReader, Value> Reader.readListByElement(readElement: Reader.() -> Value): List<Value> =
@@ -187,10 +197,6 @@ fun JSONReader.readListOrNull() =
 	if (nextToken != JSONToken.nullValue) readList() else readNull()
 
 
-fun JSONReader.readListOrNull(nullability: JSONNullability.Value) =
-	if (nextToken != JSONToken.nullValue) readList(nullability) else readNull()
-
-
 inline fun <Reader : JSONReader, Value> Reader.readListOrNullByElement(readElement: Reader.() -> Value): List<Value>? =
 	if (nextToken != JSONToken.nullValue) readListByElement(readElement) else readNull()
 
@@ -200,11 +206,7 @@ fun JSONReader.readLongOrNull() =
 
 
 fun JSONReader.readMap() =
-	readMapByElementValue { readValue() ?: throw JSONException("unexpected null value in list") }
-
-
-fun JSONReader.readMap(@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value) =
-	readMapByElementValue { readValue() }
+	readMapByElementValue { readValueOrNull() }
 
 
 inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapByElement(
@@ -231,10 +233,6 @@ fun JSONReader.readMapOrNull() =
 	if (nextToken != JSONToken.nullValue) readMap() else readNull()
 
 
-fun JSONReader.readMapOrNull(@Suppress("UNUSED_PARAMETER") nullability: JSONNullability.Value) =
-	if (nextToken != JSONToken.nullValue) readMap(nullability) else readNull()
-
-
 inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapOrNullByElement(
 	readElement: Reader.() -> Pair<ElementKey, ElementValue>
 ): Map<ElementKey, ElementValue>? =
@@ -259,16 +257,5 @@ fun JSONReader.readStringOrNull() =
 	if (nextToken != JSONToken.nullValue) readString() else readNull()
 
 
-fun JSONReader.readValue(): Any? {
-	val token = nextToken
-	return when (token) {
-		JSONToken.booleanValue -> readBoolean()
-		JSONToken.listStart -> readList()
-		JSONToken.mapKey -> readMapKey()
-		JSONToken.mapStart -> readMap()
-		JSONToken.nullValue -> readNull()
-		JSONToken.numberValue -> readNumber()
-		JSONToken.stringValue -> readString()
-		else -> throw JSONException("Cannot read value. Current token is '$token'")
-	}
-}
+fun JSONReader.readValueOrNull() =
+	if (nextToken != JSONToken.nullValue) readValue() else readNull()

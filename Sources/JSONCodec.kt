@@ -6,17 +6,16 @@ import kotlin.reflect.KClass
 interface JSONCodec<Value : Any, in Context : JSONCoderContext>
 	: JSONDecoderCodec<Value, Context>, JSONEncoderCodec<Value, Context> {
 
-	val codecs: List<JSONCodec<*, Context>>
-		get() = listOf(this)
+	override val encodableClass
+		get() = decodableType.rawClass
 
-	override val encodableClasses: Set<KClass<out Value>>
-		get() = setOf(decodableClass)
 
-	override val decoderCodecs: List<JSONDecoderCodec<*, Context>>
-		get() = codecs
+	override fun <Value : Any> decoderCodecForType(decodableType: JSONCodableType<in Value>) =
+		super<JSONDecoderCodec>.decoderCodecForType(decodableType)
 
-	override val encoderCodecs: List<JSONEncoderCodec<*, Context>>
-		get() = codecs
+
+	override fun <Value : Any> encoderCodecForClass(encodableClass: KClass<out Value>) =
+		super<JSONEncoderCodec>.encoderCodecForClass(encodableClass)
 
 
 	companion object

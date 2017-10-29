@@ -1,7 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONReader
-import com.github.fluidsonic.fluid.json.JSONToken
+import com.github.fluidsonic.fluid.json.*
 
 
 internal open class DummyJSONReader : JSONReader {

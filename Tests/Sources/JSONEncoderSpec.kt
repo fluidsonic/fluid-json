@@ -1,13 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.BooleanJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCodecResolver
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONWriter
-import com.github.fluidsonic.fluid.json.writeEncodableOrNull
-import com.github.fluidsonic.fluid.json.writeMapElement
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -22,7 +15,7 @@ internal object JSONEncoderSpec : Spek({
 		it(".builder()") {
 			StringWriter().let { writer ->
 				JSONEncoder.builder()
-					.codecs(JSONCodecResolver.default)
+					.codecs(JSONCodecProvider.nonRecursive)
 					.destination(JSONWriter.build(writer))
 					.build()
 					.apply {
@@ -34,7 +27,7 @@ internal object JSONEncoderSpec : Spek({
 
 			StringWriter().let { writer ->
 				JSONEncoder.builder()
-					.codecs(JSONCodecResolver.default)
+					.codecs(JSONCodecProvider.nonRecursive)
 					.destination(writer)
 					.build()
 					.apply {
@@ -72,7 +65,7 @@ internal object JSONEncoderSpec : Spek({
 
 			StringWriter().let { writer ->
 				JSONEncoder.builder(testContext)
-					.codecs(JSONCodecResolver.default)
+					.codecs(JSONCodecProvider.nonRecursive)
 					.destination(JSONWriter.build(writer))
 					.build()
 					.apply {
@@ -84,7 +77,7 @@ internal object JSONEncoderSpec : Spek({
 
 			StringWriter().let { writer ->
 				JSONEncoder.builder(testContext)
-					.codecs(JSONCodecResolver.default)
+					.codecs(JSONCodecProvider.nonRecursive)
 					.destination(writer)
 					.build()
 					.apply {
@@ -95,11 +88,11 @@ internal object JSONEncoderSpec : Spek({
 			}
 		}
 
-		it(".writeEncodableOrNull()") {
+		it(".writeValueOrNull()") {
 			var expectedValue: Any? = null
 
 			val encoder = object : DummyJSONEncoder() {
-				override fun writeEncodable(value: Any) {
+				override fun writeValue(value: Any) {
 					value.should.equal(expectedValue)
 				}
 
@@ -109,10 +102,10 @@ internal object JSONEncoderSpec : Spek({
 			}
 
 			expectedValue = "okay"
-			encoder.writeEncodableOrNull("okay")
+			encoder.writeValueOrNull("okay")
 
 			expectedValue = null
-			encoder.writeEncodableOrNull(null)
+			encoder.writeValueOrNull(null)
 		}
 
 		it(".writeMapElement()") {
@@ -124,7 +117,7 @@ internal object JSONEncoderSpec : Spek({
 					(value as Any?).should.equal(expectedKey)
 				}
 
-				override fun writeEncodable(value: Any) {
+				override fun writeValue(value: Any) {
 					value.should.equal(expectedValue)
 				}
 
@@ -135,36 +128,27 @@ internal object JSONEncoderSpec : Spek({
 
 			expectedKey = "key"
 			expectedValue = "value"
-			encoder.writeMapElement(key = expectedKey, encodable = expectedValue!!)
-			encoder.writeMapElement(key = expectedKey, encodable = expectedValue!!, skipIfNull = false)
-			encoder.writeMapElement(key = expectedKey, encodable = expectedValue, skipIfNull = true)
+			encoder.writeMapElement(key = expectedKey, value = expectedValue!!)
+			encoder.writeMapElement(key = expectedKey, value = expectedValue!!, skipIfNull = false)
+			encoder.writeMapElement(key = expectedKey, value = expectedValue, skipIfNull = true)
 
 			expectedValue = null
-			encoder.writeMapElement(key = expectedKey, encodable = expectedValue, skipIfNull = false)
+			encoder.writeMapElement(key = expectedKey, value = expectedValue, skipIfNull = false)
 
 			expectedKey = null
-			encoder.writeMapElement(key = "none", encodable = expectedValue, skipIfNull = true)
+			encoder.writeMapElement(key = "none", value = expectedValue, skipIfNull = true)
 		}
 
-		it(".writeValue[OrNull]()") {
+		it(".writeValue()") {
 			val expectedValue = "okay"
 
 			val encoder = object : DummyJSONEncoder() {
-				override fun writeEncodable(value: Any) {
+				override fun writeValue(value: Any) {
 					value.should.equal(expectedValue)
 				}
 			}
 
 			encoder.writeValue("okay")
-			encoder.writeValueAsMapKey("okay")
-
-			try {
-				encoder.writeValueAsMapKey(null)
-				throw AssertionError("JSONEncoder.writeValueAsMapKey(null) should throw an exception")
-			}
-			catch (e: JSONException) {
-				// good
-			}
 		}
 	}
 })

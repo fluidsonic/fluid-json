@@ -1,7 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONEncoder
+import com.github.fluidsonic.fluid.json.*
 
 
 internal open class DummyJSONEncoder : DummyJSONWriter(), JSONEncoder<JSONCoderContext> {
@@ -10,5 +9,6 @@ internal open class DummyJSONEncoder : DummyJSONWriter(), JSONEncoder<JSONCoderC
 		get() = error("")
 
 
-	override fun writeEncodable(value: Any): Unit = error("")
+	override fun writeValue(value: Any): Unit =
+		error("")
 }

@@ -1,6 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONWriter
+import com.github.fluidsonic.fluid.json.*
 
 
 internal open class DummyJSONWriter : JSONWriter {

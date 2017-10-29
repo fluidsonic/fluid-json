@@ -1,22 +1,29 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.BooleanJSONCodec
-import com.github.fluidsonic.fluid.json.IntJSONCodec
-import com.github.fluidsonic.fluid.json.IterableJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCodec
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.SequenceJSONCodec
-import com.github.fluidsonic.fluid.json.StringJSONCodec
+import com.github.fluidsonic.fluid.json.*
 
 
-internal object SequenceJSONTestCodec : JSONCodec<Sequence<*>, JSONCoderContext> by SequenceJSONCodec {
+internal object SequenceJSONTestCodec : AbstractJSONCodec<Sequence<*>, JSONCoderContext>(
+	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, IterableJSONEncoderCodec, ListJSONDecoderCodec, NumberJSONCodec, StringJSONCodec)
+) {
 
-	override val codecs
-		get() = SequenceJSONCodec.codecs + listOf(BooleanJSONCodec, IntJSONCodec, IterableJSONCodec, StringJSONCodec)
+	override fun decode(valueType: JSONCodableType<in Sequence<*>>, decoder: JSONDecoder<out JSONCoderContext>) =
+		SequenceJSONCodec.decode(valueType, decoder)
 
-	override val decoderCodecs
-		get() = super.decoderCodecs
 
-	override val encoderCodecs
-		get() = super.encoderCodecs
+	override fun encode(value: Sequence<*>, encoder: JSONEncoder<out JSONCoderContext>) =
+		SequenceJSONCodec.encode(value, encoder)
+
+
+	object NonRecursive : AbstractJSONCodec<Sequence<*>, JSONCoderContext>(
+		additionalProviders = listOf(BooleanJSONCodec, IntJSONCodec, IterableJSONEncoderCodec, StringJSONCodec)
+	) {
+
+		override fun decode(valueType: JSONCodableType<in Sequence<*>>, decoder: JSONDecoder<out JSONCoderContext>) =
+			SequenceJSONCodec.nonRecursive.decode(valueType, decoder)
+
+
+		override fun encode(value: Sequence<*>, encoder: JSONEncoder<out JSONCoderContext>) =
+			SequenceJSONCodec.nonRecursive.encode(value, encoder)
+	}
 }

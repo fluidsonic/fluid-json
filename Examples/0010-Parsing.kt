@@ -1,14 +1,17 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.JSONParser
-import com.github.fluidsonic.fluid.json.parseValue
+import com.github.fluidsonic.fluid.json.*
 
 
 fun main(args: Array<String>) {
 	val parser = JSONParser.default()
 
-	// given a JSON string you get a value of basic Kotlin types (String, Int, List, Map, etc.)
-	val value = parser.parseValue(""" { "hello": "world", "test":  123 } """)
+	// Given a JSON string you get a value of basic Kotlin types (String, Int, List, Map, etc.)
+	val value1 = parser.parseValue(""" { "hello": "world", "test": 123 } """)
+	println(value1)
 
-	println(value)
+	// Many functions have `…OrNull` versions which allow a `null` value to be returned instead of causing a
+	// `JSONException` in such cases.
+	val value2 = parser.parseValueOrNull("null")
+	println(value2)
 }

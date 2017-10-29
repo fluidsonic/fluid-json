@@ -12,7 +12,7 @@ A JSON library written in pure Kotlin.
 Installation
 ------------
 
-This library is [available in Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.fluidsonic%22%20a%3A%22fluid-json%22) as `fluid-json` in the group `com.github.fluidsonic`.
+This library is **soon** [available in Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.fluidsonic%22%20a%3A%22fluid-json%22) as `fluid-json` in the group `com.github.fluidsonic`.
 
 `build.gradle.kts`:
 ```kotlin
@@ -26,7 +26,7 @@ Examples
 --------
 
 Check out the [Examples](https://github.com/fluidsonic/fluid-json/tree/master/Examples) directory. If you've checked out
-this project locally then you can run them directly from within IntelliJ.
+this project locally then you can run them directly from within [IntelliJ IDEA](https://www.jetbrains.com/idea/).
 
 
 
@@ -44,6 +44,8 @@ mapOf(
     "test" to 123
 )
 ```
+
+You can also accept a `null` value by using `parseValueOrNull` instead.
 
 [Full example](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0010-Parsing.kt)
 
@@ -81,23 +83,21 @@ and [for Writer](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0
 
 ### Parsing Lists and Maps
 
-The methods below return the expected type directly or `null` if the input string is `"null"`.  
-Any other input value causes a `JSONException`.
+You can also parse lists and maps in a type-safe way directly. Should it not be possible to parse the input as the
+requested Kotlin type a `JSONException` is thrown.
 
 ```kotlin
 val parser = JSONParser.default()
 
-parser.parseList(…)                     // returns List<Any>?
-parser.parseListOfType<String>(…)       // returns List<String>?
-parser.parseMap(…)                      // returns Map<String,Any>?
-parser.parseMapOfType<String,String>(…) // returns Map<String,String>?
-
-// you can also specify nullability
-parser.parseList(…, JSONNullability.Value)                     // returns List<Any?>?
-parser.parseListOfType<String>(…, JSONNullability.Value)       // returns List<String?>?
-parser.parseMap(…, JSONNullability.Value)                      // returns Map<String,Any?>?
-parser.parseMapOfType<String,String>(…, JSONNullability.Value) // returns Map<String,String?>?
+parser.parseValueOfType<List<*>>(…)              // returns List<*>
+parser.parseValueOfType<List<String?>>(…)        // returns List<String?>
+parser.parseValueOfType<Map<*,*>>(…)             // returns Map<*,*>
+parser.parseValueOfType<Map<String,String?>>(…)  // returns Map<String,String?>
 ```
+
+Note that you can also specify non-nullable `String` instead of nullable `String?`. But due to a limitation of Kotlin
+and the JVM the resulting list/map can always contain `null` keys and values. This can cause an unexpected
+`NullPointerException` at runtime if the source data contains `null`s.
 
 Full example [for Lists](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0012-ParsingLists.kt)
 and [for Maps](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0013-ParsingMaps.kt)
@@ -121,7 +121,7 @@ JSONReader.build(input).use { reader ->
 ```
 
 Full example
-[using high-order functions](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0014-ParsingAsStream.kt) and
+[using higher-order functions](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0014-ParsingAsStream.kt) and
 [using low-level functions](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0015-ParsingAsStreamLowLevel.kt)
 
 
@@ -145,76 +145,85 @@ JSONWriter.build(output).use { writer ->
 ```
 
 Full example
-[using high-order functions](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0022-SerializingAsStream.kt) and
+[using higher-order functions](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0022-SerializingAsStream.kt) and
 [using low-level functions](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0023-SerializingAsStreamLowLevel.kt)
 
 
-### Type Encoders
+### Type Encoder Codecs
 
 While many basic Kotlin types like `String`, `List`, `Map` and `Boolean` are serialized automatically to their
 respective JSON counterparts you can easily add support for other types. Just write a codec for the type you'd like to
-serialize by implementing `JSONEncoderCodec` and pass an instance to the builder of either `JSONSerializer` (high-level)
-or `JSONEncoder` (streaming).
+serialize by implementing `JSONEncoderCodec` and pass an instance to the builder of either `JSONSerializer`
+(high-level API) or `JSONEncoder` (streaming API).
 
 Codecs in turn can write other encodable values and `JSONEncoder` will automatically look up the right codec and use it
 to serialize these values.
 
-If your codec encounters an inappropriate value which it cannot encode then it can simply throw a `JSONException` in
-order to stop the serialization process.
+If your codec encounters an inappropriate value which it cannot encode then it will throw a `JSONException` in order to
+stop the serialization process.
+
+Because `JSONEncoderCodec` is simply an interface you can use `AbstractJSONEncoderCodec` as base class for your codec
+which simplifies implementing that interface.
 
 ```kotlin
 data class MyType(…)
 
-object MyTypeCodec : JSONEncoderCodec<MyType, JSONCoderContext> {
+object MyTypeCodec : AbstractJSONEncoderCodec<MyType, JSONCoderContext>() {
 
     override fun encode(value: MyType, encoder: JSONEncoder<out JSONCoderContext>) {
         // write JSON for `value` directly using `encoder`  
     }
-
-
-    override val encodableClasses = setOf(MyType::class)
 }
 ```
 
-[Full example](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0030-TypeEncoders.kt)
+[Full example](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0030-TypeEncoderCodecs.kt)
 
 
-### Type Decoders
+### Type Decoder Codecs
 
 While all JSON types are parsed automatically using appropriate Kotlin couterparts like `String`, `List`, `Map` and
 `Boolean` you can easily add support for other types. Just write a codec for the type you'd like to parse by
-implementing `JSONDecoderCodec` and pass an instance to the builder of either `JSONParser` (high-level) or `JSONDecoder`
-(streaming).
+implementing `JSONDecoderCodec` and pass an instance to the builder of either `JSONParser` (high-level API) or
+`JSONDecoder` (streaming API).
 
 Codecs in turn can read other decodable values and `JSONDecoder` will automatically look up the right codec and use it
 to parse these values.
 
-If your codec encounters inappropriate JSON data which it cannot decode then it can simply throw a `JSONException` in
-order to stop the parsing process.
+If your codec encounters inappropriate JSON data which it cannot decode then it will throw a `JSONException` in order to
+stop the parsing process.
+
+Because `JSONDecoderCodec` is simply an interface you can use `AbstractJSONDecoderCodec` as base class for your codec
+which simplifies implementing that interface.
 
 ```kotlin
 data class MyType(…)
 
-object MyTypeCodec : JSONDecoderCodec<MyType, JSONCoderContext> {
+object MyTypeCodec : AbstractJSONDecoderCodec<MyType, JSONCoderContext>() {
 
-    override fun decode(decoder: JSONDecoder<out JSONCoderContext>): MyType {
+    override fun decode(valueType: JSONCodableType<in MyType>, decoder: JSONDecoder<out JSONCoderContext>): MyType {
         // read JSON using `decoder` and create an instance of `MyType`  
     }
-
-
-    override val decodableClass = MyType::class
 }
 ```
 
-[Full example](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0031-TypeDecoders.kt)
+A `JSONDecoderCodec` can also decode generic types. The instance passed to `JSONCodableType` contains information about
+generic arguments expected by the call which caused this codec to be invoked. For `List<Something>` for example a single
+generic argument of type `Something` would be reported which allows for example the list codec to serialize the list
+value's directly as `Something` using the respective codec.
+
+[Full example](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0031-TypeDecoderCodecs.kt)
 
 
-### Type Coders
+### Type Codecs
 
 If you want to be able to encode and decode the same type you can implement the interface `JSONCodec` which in turn
-extends `JSONEncoderCodec` and `JSONDecoderCodec`. That way you can reuse the same codec for encoding and decoding.
+extends `JSONEncoderCodec` and `JSONDecoderCodec`. That way you can reuse the same codec class for both, encoding and
+decoding.
 
-[Full example](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0032-TypeCoders.kt)
+Because `JSONCodec` is simply an interface you can use `AbstractJSONCodec` as base class for your codec which simplifies
+implementing that interface.
+
+[Full example](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0032-TypeCodecs.kt)
 
 
 ### Coding and Streaming
@@ -237,12 +246,12 @@ parse JSON data from an unsafe source like a public API.
 
 ### Thread Safety
 
-Only the default implementations of `JSONParser`, `JSONSerializer` and `JSONCodecResolver` are thread-safe and can be
-used from multiple threads without synchronization. It's strongly advised, though not required, that other
-implementations of these three interfaces are also thread-safe by default.
+All implementations of `JSONParser`, `JSONSerializer`, `JSONCodecProvider` as well as all codecs provided by this
+library are thread-safe and can be used from multiple threads without synchronization. It's strongly advised, though not
+required, that custom implementations are also thread-safe by default.
 
-All other interfaces are not thread-safe and must be used with approriate synchronization in place. It's recommended
-however to simply use a separate instance per thread and not share these mutable instances at all.
+All other classes and interfaces are not thread-safe and must be used with approriate synchronization in place. It's
+recommended however to simply use a separate instance per thread and not share these mutable instances at all.
 
 
 
@@ -256,10 +265,10 @@ imported directly from [JSONTestSuite](https://github.com/nst/JSONTestSuite) (ku
 
 Note that until [KT-12605](https://youtrack.jetbrains.com/issue/KT-12605) is fixed the code coverage
 [reported by Codecov](https://codecov.io/github/fluidsonic/fluid-json) (and measured using
-[JaCoCo](http://www.eclemma.org/jacoco)) is a lot lower than it should be. It's more likely around 94% - 98%.
+[JaCoCo](http://www.eclemma.org/jacoco)) is a lot lower than it should be. It's more likely around 90% - 95%.
 
-You can run the tests manually using IntelliJ with [Spek](https://plugins.jetbrains.com/plugin/8564-spek) plugin, the
-Gradle run configuration `Test` or from the command line by using:
+You can run the tests manually using IntelliJ IDEA and the [Spek](https://plugins.jetbrains.com/plugin/8564-spek)
+plugin, the Gradle run configuration `Test` or from the command line by using:
 
 ```bash
 ./gradlew check
@@ -346,14 +355,37 @@ decoding/encoding various basic Kotlin types like `String`, `List`, `Map`, `Bool
 
 ### Recursive vs. Non-Recursive
 
-While codec-based decoding/encoding is supposed to be recursive in order to be efficient and easy to implement it's
-sometimes not desirable to parse/serialize JSON recursively. For that reason `AnyJSONCodec` provides encoding/decoding
-for all [basic types](#Basic-Types) in a non-recusive way. Since it reads/writes a whole value using
-`JSONReader`'s/`JSONWriter`'s primitive `read*`/`write*` methods it will not use any other codecs and thus not support
+While codec-based decoding/encoding has to be implemented recursively in order to be efficient and easy to use it's
+sometimes not desirable to parse/serialize JSON recursively. For that reason the default container codecs like
+`MapJSONCodec` also provide a `nonRecursive` codec. Since they read/write a whole value at once using
+`JSONReader`'s/`JSONWriter`'s primitive `read*`/`write*` methods they will not use any other codecs and thus not support
 other types.
 
-`JSONParser.default()` and `JSONSerializer.default()` both operate solely on `AnyJSONCodec` and are thus a non-recursive
-parser/serializer by default.
+`JSONParser.nonRecursive()` and `JSONSerializer.nonRecursive()` both operate on these codecs and are thus a
+non-recursive parser/serializer.
+
+### Classes and Interfaces
+
+| Type                       | Description
+| -------------------------- | -----------
+| `AbstractJSONCodec`        | Abstract base class which simplifies implementing `JSONCodec`.
+| `AbstractJSONDecoderCodec` | Abstract base class which simplifies implementing `JSONDecoderCodec`.
+| `AbstractJSONEncoderCodec` | Abstract base class which simplifies implementing `JSONEncoderCodec`.
+| `JSONCodableType`          | Roughly describes a Kotlin type which can be decoded from JSON. It includes relevant generic information which allows decoding for example `List<Something>` instead of just `List<*>`. Also known as [type token](http://gafter.blogspot.de/2006/12/super-type-tokens.html)).
+| `JSONCodec`                | Interface for classes which implement both, `JSONEncoderCodec` and `JSONDecoderCodec`. Also simplifies creating such codecs.
+| `JSONCodecProvider`        | Interface for classes which when given a `JSONCodableType` (for decoding) or `KClass` (for encoding) return a codec which is able to decode/encode values of that type.
+| `JSONCoderContext`         | Interface for context types. Instances of context types can be passed to `JSONParser`, `JSONSerializer`, `JSONDecoder` and `JSONEncoder`. They in turn can be used by codecs to help decoding/encoding values if needed.
+| `JSONDecoder`              | Interface which extends `JSONReader` to enable reading values of any Kotlin type from JSON using `JSONCodecProvider`s for type mapping.
+| `JSONDecoderCodec`         | Interface for decoding a value of a specific Kotlin type using a `JSONDecoder`.
+| `JSONEncoder`              | Interface which extends `JSONWriter` to enable writing values of any Kotlin type as JSON using `JSONCodecProvider`s for type mapping.
+| `JSONEncoderCodec`         | Interface for encoding a value of a specific Kotlin type using a `JSONEncoder`.
+| `JSONException`            | Exception which is thrown whenever JSON cannot be written or read for non-IO reasons (e.g. malformed JSON, wrong state in reader/writer, missing type mapping).
+| `JSONParser`               | Interface for high-level JSON parsing where codec providers and context are already configured.
+| `JSONReader`               | Interface for low-level JSON parsing on a token-by-token basis.
+| `JSONSerializer`           | Interface for high-level JSON serialization where codec providers and context are already configured.
+| `JSONToken`                | Enum containing all types of tokens a `JSONReader` can read.
+| `JSONWriter`               | Interface for low-level JSON serialization on a token-by-token basis.
+| `*Codec`                   | The various codec classes are concrete codecs for common Kotlin types. 
 
 
 
@@ -368,6 +400,12 @@ This is on the backlog for later consideration, in no specific order:
 - [Add low-level support for `BigDecimal` / `BigInteger`](https://github.com/fluidsonic/fluid-json/issues/18)
 - [Add pretty serialization](https://github.com/fluidsonic/fluid-json/issues/15)
 - [Improve performance by operating on `InputStream`/`OutputStream`](https://github.com/fluidsonic/fluid-json/issues/9)
+- [Add standard decoders for array types](https://github.com/fluidsonic/fluid-json/issues/23)
+- [Add a codec for enums](https://github.com/fluidsonic/fluid-json/issues/24)
+- [Wrap (some) other throwables in JSONException](https://github.com/fluidsonic/fluid-json/issues/25)
+- [Ensure that codecs operate solely on value boundaries](https://github.com/fluidsonic/fluid-json/issues/26)
+- [Split up into two libraries](https://github.com/fluidsonic/fluid-json/issues/22)
+
 
 
 License

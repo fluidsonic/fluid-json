@@ -1,27 +1,22 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.JSONNullability
-import com.github.fluidsonic.fluid.json.JSONParser
-import com.github.fluidsonic.fluid.json.parseMap
-import com.github.fluidsonic.fluid.json.parseMapOfType
+import com.github.fluidsonic.fluid.json.*
 
 
 fun main(args: Array<String>) {
 	val parser = JSONParser.default()
 
-	// you can parse a Map of non-nullable keys and values in a typesafe way
-	val example1: Map<String, Any>? = parser.parseMap("""{ "one": 1, "two": 2, "three": 3 }""")
-	println(example1)
+	// You can parse a Map of keys and values in a typesafe way
+	val value1 = parser.parseValueOfType<Map<*, *>>("""{ "one": 1, "two": 2, "three": 3 }""")
+	println(value1)
 
-	// you can parse a Map of non-nullable keys and values of a specific value type in a typesafe way
-	val example2: Map<String, String>? = parser.parseMapOfType("""{ "one": "one", "two": "two", "three": "three" }""")
-	println(example2)
+	// You can parse a Map of keys and values of a specific value type in a typesafe way
+	val value2 = parser.parseValueOfType<Map<String, String?>>("""{ "one": "one", "two": "two", "three": null }""")
+	println(value2)
 
-	// you can parse a Map of non-nullable keys and nullable values in a typesafe way
-	val example3: Map<String, Any?>? = parser.parseMap("""{ "one": 1, "two": 2, "three": null }""", JSONNullability.Value)
-	println(example3)
-
-	// you can parse a Map of non-nullable keys and nullable values of a specific value type in a typesafe way
-	val example4: Map<String, String?>? = parser.parseMapOfType("""{ "one": "one", "two": "two", "three": null }""", JSONNullability.Value)
-	println(example4)
+	// Note that due to a limitation of Kotlin and the JVM you can specify either `Map<String,String>` or
+	// `Map<String?,String?>` but the resulting map can always contain `null` keys and values. This can cause an
+	// unexpected `NullPointerException` at runtime if the source data contains `null`s.
+	val value3 = parser.parseValueOfType<Map<String, String>>("""{ "one": "one", "two": "two", "three": null }""")
+	println(value3)
 }

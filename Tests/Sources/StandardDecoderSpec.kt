@@ -1,11 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONCodecResolver
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONReader
-import com.github.fluidsonic.fluid.json.StandardDecoder
-import com.github.fluidsonic.fluid.json.readDecodable
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -74,13 +69,13 @@ internal object StandardDecoderSpec : Spek({
 
 			val output = decode(
 				input = input,
-				codecResolver = JSONCodecResolver.of(
+				codecProvider = JSONCodecProvider.of(
 					JaegerCodec,
 					KaijuCodec,
 					LocalDateCodec,
 					UniverseCodec
 				)
-			) { readDecodable<Universe>() }
+			) { readValueOfType<Universe>() }
 
 			output.should.equal(expectedOutput)
 		}
@@ -88,8 +83,10 @@ internal object StandardDecoderSpec : Spek({
 
 		it("fails when a codec was no found") {
 			decode("{}") {
+				class Unsupported
+
 				try {
-					readDecodableOfClass(object {}::class)
+					readValueOfType<Unsupported>()
 					throw AssertionError("an exception was expected")
 				}
 				catch (e: JSONException) {
@@ -104,15 +101,15 @@ internal object StandardDecoderSpec : Spek({
 
 			decode(
 				input = "\"test\"",
-				codecResolver = JSONCodecResolver.of(ContextCheckingTestCodec(context)),
+				codecProvider = JSONCodecProvider.of(ContextCheckingTestCodec(context)),
 				context = context
-			) { readDecodable<String>() }
+			) { readValueOfType<String>() }
 
 			decode(
 				input = "\"test\"",
-				codecResolver = JSONCodecResolver.of(ContextCheckingTestDecoderCodec(context)),
+				codecProvider = JSONCodecProvider.of(ContextCheckingTestDecoderCodec(context)),
 				context = context
-			) { readDecodable<String>() }
+			) { readValueOfType<String>() }
 		}
 	}
 })
@@ -123,12 +120,12 @@ internal object StandardDecoderSpec : Spek({
 
 private inline fun <ReturnValue> decode(
 	input: String,
-	codecResolver: JSONCodecResolver<TestCoderContext> = JSONCodecResolver.of(),
+	codecProvider: JSONCodecProvider<TestCoderContext> = JSONCodecProvider.of(),
 	context: TestCoderContext = TestCoderContext(),
 	body: JSONDecoder<TestCoderContext>.() -> ReturnValue
 ) =
 	StandardDecoder(
-		codecResolver = codecResolver,
+		codecProvider = codecProvider,
 		context = context,
 		source = JSONReader.build(input)
 	).let { it.use { it.body() } }

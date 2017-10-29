@@ -1,15 +1,12 @@
 package com.github.fluidsonic.fluid.json
 
 
-object FloatJSONCodec : JSONCodec<Float, JSONCoderContext> {
+object FloatJSONCodec : AbstractJSONCodec<Float, JSONCoderContext>() {
 
-	override fun decode(decoder: JSONDecoder<out JSONCoderContext>) =
+	override fun decode(valueType: JSONCodableType<in Float>, decoder: JSONDecoder<out JSONCoderContext>) =
 		decoder.readFloat()
 
 
 	override fun encode(value: Float, encoder: JSONEncoder<out JSONCoderContext>) =
 		encoder.writeFloat(value)
-
-
-	override val decodableClass = Float::class
 }

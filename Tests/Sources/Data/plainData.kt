@@ -4,6 +4,7 @@ package tests
 internal val anyData = TestData.of(
 	complexData,
 	iterableData,
+	listData,
 	mapData,
 	numberData,
 	stringData,
@@ -19,6 +20,7 @@ internal val anyData = TestData.of(
 		floatData,
 		intArrayData,
 		intData,
+		listData,
 		longArrayData,
 		longData,
 		sequenceData,

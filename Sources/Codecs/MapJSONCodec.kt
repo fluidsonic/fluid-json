@@ -1,15 +1,20 @@
 package com.github.fluidsonic.fluid.json
 
 
-object MapJSONCodec : JSONCodec<Map<*, *>, JSONCoderContext> {
+object MapJSONCodec : AbstractJSONCodec<Map<*, *>, JSONCoderContext>() {
 
-	override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Map<*, *> =
-		decoder.readMap(JSONNullability.Value)
+	override fun decode(valueType: JSONCodableType<in Map<*, *>>, decoder: JSONDecoder<out JSONCoderContext>): Map<*, *> {
+		val (keyType, valueType) = valueType.arguments
+
+		return decoder.readMapByElement {
+			readValueOfTypeOrNull(keyType) to readValueOfTypeOrNull(valueType)
+		}
+	}
 
 
 	override fun encode(value: Map<*, *>, encoder: JSONEncoder<out JSONCoderContext>) =
 		encoder.writeMap(value)
 
 
-	override val decodableClass = Map::class
+	val nonRecursive = NonRecursiveJSONCodec.create<Map<String, *>>()
 }

@@ -1,13 +1,6 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONDecoderCodec
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONParser
-import com.github.fluidsonic.fluid.json.parseListOfType
-import com.github.fluidsonic.fluid.json.readDecodableOrNull
-import com.github.fluidsonic.fluid.json.readFromMapByElementValue
+import com.github.fluidsonic.fluid.json.*
 import java.time.Instant
 import java.time.format.DateTimeParseException
 
@@ -16,13 +9,13 @@ object DecodingExample {
 
 	@JvmStatic
 	fun main(args: Array<String>) {
-		// using a codec for decoding specific classes simplifies JSON parsing a lot
+		// Using a codec for decoding specific classes simplifies JSON parsing a lot
 
 		val parser = JSONParser.builder()
 			.decodingWith(EventCodec, InstantCodec)
 			.build()
 
-		val json = parser.parseListOfType<Event>("""
+		val json = parser.parseValueOfType<List<Event>>("""
 			[
 			   {
 			      "id":1,
@@ -67,9 +60,9 @@ object DecodingExample {
 	)
 
 
-	private object EventCodec : JSONDecoderCodec<Event, JSONCoderContext> {
+	private object EventCodec : AbstractJSONDecoderCodec<Event, JSONCoderContext>() {
 
-		override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Event {
+		override fun decode(valueType: JSONCodableType<in Event>, decoder: JSONDecoder<out JSONCoderContext>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null
@@ -77,7 +70,7 @@ object DecodingExample {
 			decoder.readFromMapByElementValue { key ->
 				when (key) {
 					"id" -> id = readInt()
-					"date" -> date = readDecodableOrNull()
+					"date" -> date = readValueOfType()
 					"title" -> title = readString()
 					else -> skipValue()
 				}
@@ -89,15 +82,12 @@ object DecodingExample {
 				title = title ?: throw JSONException("missing title")
 			)
 		}
-
-
-		override val decodableClass = Event::class
 	}
 
 
-	private object InstantCodec : JSONDecoderCodec<Instant, JSONCoderContext> {
+	private object InstantCodec : AbstractJSONDecoderCodec<Instant, JSONCoderContext>() {
 
-		override fun decode(decoder: JSONDecoder<out JSONCoderContext>): Instant =
+		override fun decode(valueType: JSONCodableType<in Instant>, decoder: JSONDecoder<out JSONCoderContext>): Instant =
 			decoder.readString().let {
 				try {
 					Instant.parse(it)
@@ -106,8 +96,5 @@ object DecodingExample {
 					throw JSONException("Cannot parse Instant '$it'", e)
 				}
 			}
-
-
-		override val decodableClass = Instant::class
 	}
 }

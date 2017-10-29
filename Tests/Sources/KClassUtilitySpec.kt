@@ -1,8 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.boxed
-import com.github.fluidsonic.fluid.json.isAssignableOrBoxableFrom
-import com.github.fluidsonic.fluid.json.isAssignableOrBoxableTo
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe

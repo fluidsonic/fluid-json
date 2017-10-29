@@ -1,7 +1,6 @@
 package com.github.fluidsonic.fluid.json
 
 import java.io.Reader
-import kotlin.reflect.KClass
 
 
 internal class StandardParser<Context : JSONCoderContext>(
@@ -9,110 +8,13 @@ internal class StandardParser<Context : JSONCoderContext>(
 	private val decoderFactory: (source: Reader, context: Context) -> JSONDecoder<in Context>
 ) : JSONParser<Context> {
 
-	override fun <Value : Any> doParseWithClass(
-		source: Reader,
-		valueClass: KClass<out Value>
-	): Value? {
-		val decoder = decoderFactory(source, context)
-		return decoder.use {
-			val value = decoder.readDecodableOrNullOfClass(valueClass)
+	override fun <Value : Any> parseValueOfTypeOrNull(source: Reader, valueType: JSONCodableType<Value>) =
+		decoderFactory(source, context).use { decoder ->
+			val value = decoder.readValueOfTypeOrNull(valueType)
 			decoder.readEndOfInput()
 
 			value
 		}
-	}
-
-
-	override fun <Value : Any> doParseListWithClass(
-		source: Reader,
-		valueClass: KClass<out Value>
-	): List<Value>? {
-		val decoder = decoderFactory(source, context)
-		return decoder.use {
-			val value = decoder.readListByElement { readDecodableOfClass(valueClass) }
-			decoder.readEndOfInput()
-
-			value
-		}
-	}
-
-
-	override fun <Value : Any> doParseListWithClass(
-		source: Reader,
-		valueClass: KClass<out Value>,
-		nullability: JSONNullability.Value
-	): List<Value?>? {
-		val decoder = decoderFactory(source, context)
-		return decoder.use {
-			val value = decoder.readListByElement { readDecodableOrNullOfClass(valueClass) }
-			decoder.readEndOfInput()
-
-			value
-		}
-	}
-
-
-	override fun <Key : Any, Value : Any> doParseMapWithClasses(
-		source: Reader,
-		keyClass: KClass<out Key>,
-		valueClass: KClass<out Value>
-	): Map<Key, Value>? {
-		val decoder = decoderFactory(source, context)
-		return decoder.use {
-			val value = decoder.readMapByElement { readDecodableOfClass(keyClass) to readDecodableOfClass(valueClass) }
-			decoder.readEndOfInput()
-
-			value
-		}
-	}
-
-
-	override fun <Key : Any, Value : Any> doParseMapWithClasses(
-		source: Reader,
-		keyClass: KClass<out Key>,
-		valueClass: KClass<out Value>,
-		nullability: JSONNullability.Key
-	): Map<Key?, Value>? {
-		val decoder = decoderFactory(source, context)
-		return decoder.use {
-			val value = decoder.readMapByElement { readDecodableOrNullOfClass(keyClass) to readDecodableOfClass(valueClass) }
-			decoder.readEndOfInput()
-
-			value
-		}
-	}
-
-
-	override fun <Key : Any, Value : Any> doParseMapWithClasses(
-		source: Reader,
-		keyClass: KClass<out Key>,
-		valueClass: KClass<out Value>,
-		nullability: JSONNullability.KeyAndValue
-	): Map<Key?, Value?>? {
-		val decoder = decoderFactory(source, context)
-		return decoder.use {
-			val value = decoder.readMapByElement { readDecodableOrNullOfClass(keyClass) to readDecodableOrNullOfClass(valueClass) }
-			decoder.readEndOfInput()
-
-			value
-		}
-	}
-
-
-	override fun <Key : Any, Value : Any> doParseMapWithClasses(
-		source: Reader,
-		keyClass: KClass<out Key>,
-		valueClass: KClass<out Value>,
-		nullability: JSONNullability.Value
-	): Map<Key, Value?>? {
-		val decoder = decoderFactory(source, context)
-		return decoder.use {
-			val value = decoder.readMapByElement { readDecodableOfClass(keyClass) to readDecodableOrNullOfClass(valueClass) }
-			decoder.readEndOfInput()
-
-			value
-		}
-	}
 
 
 	override fun <NewContext : Context> withContext(context: NewContext) =

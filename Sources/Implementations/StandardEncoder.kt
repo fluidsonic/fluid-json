@@ -1,28 +1,17 @@
 package com.github.fluidsonic.fluid.json
 
-import kotlin.reflect.KClass
-
 
 internal class StandardEncoder<Context : JSONCoderContext>(
 	override val context: Context,
-	private val codecResolver: JSONCodecResolver<Context>,
+	private val codecProvider: JSONCodecProvider<Context>,
 	private val destination: JSONWriter
 ) : JSONEncoder<Context>, JSONWriter by destination {
 
-	@Suppress("UNCHECKED_CAST")
-	override fun writeEncodable(value: Any) {
+	override fun writeValue(value: Any) {
 		withErrorChecking {
-			codecResolver.encoderCodecForClass(value::class as KClass<Any>)
+			codecProvider.encoderCodecForClass(value::class)
 				?.encode(value = value, encoder = this)
 				?: throw JSONException("no encoder codec registered for ${value::class}: $value")
 		}
 	}
-
-
-	override fun writeValue(value: Any?) =
-		super<JSONEncoder>.writeValue(value)
-
-
-	override fun writeValueAsMapKey(value: Any?) =
-		super<JSONEncoder>.writeValueAsMapKey(value)
 }

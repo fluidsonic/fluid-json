@@ -1,13 +1,12 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.JSONSerializer
-import com.github.fluidsonic.fluid.json.serializeValue
+import com.github.fluidsonic.fluid.json.*
 
 
 fun main(args: Array<String>) {
 	val serializer = JSONSerializer.default()
 
-	// given a value of basic Kotlin types (String, Int, List, Map, etc.) you can get a JSON string
+	// Given a value of a basic Kotlin type (String, Int, List, Map, etc.) you can get a JSON string
 	val json = serializer.serializeValue(mapOf(
 		"hello" to "world",
 		"test" to 123

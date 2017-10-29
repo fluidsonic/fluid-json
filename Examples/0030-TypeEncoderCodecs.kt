@@ -1,12 +1,6 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONEncoderCodec
-import com.github.fluidsonic.fluid.json.JSONSerializer
-import com.github.fluidsonic.fluid.json.serializeValue
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeMapElement
+import com.github.fluidsonic.fluid.json.*
 import java.time.Instant
 import java.time.format.DateTimeFormatter
 
@@ -15,7 +9,7 @@ object EncodingExample {
 
 	@JvmStatic
 	fun main(args: Array<String>) {
-		// using a codec for serializing specific classes simplifies JSON serialization a lot
+		// Using a codec for encoding specific Kotlin types simplifies JSON serialization a lot
 
 		val serializer = JSONSerializer.builder()
 			.encodingWith(EventCodec, InstantCodec)
@@ -41,28 +35,22 @@ object EncodingExample {
 	)
 
 
-	private object EventCodec : JSONEncoderCodec<Event, JSONCoderContext> {
+	private object EventCodec : AbstractJSONEncoderCodec<Event, JSONCoderContext>() {
 
 		override fun encode(value: Event, encoder: JSONEncoder<out JSONCoderContext>) {
 			encoder.writeIntoMap {
 				writeMapElement("id", int = value.id)
-				writeMapElement("date", encodable = value.date, skipIfNull = true)
+				writeMapElement("date", value = value.date, skipIfNull = true)
 				writeMapElement("title", string = value.title)
 			}
 		}
-
-
-		override val encodableClasses = setOf(Event::class)
 	}
 
 
-	private object InstantCodec : JSONEncoderCodec<Instant, JSONCoderContext> {
+	private object InstantCodec : AbstractJSONEncoderCodec<Instant, JSONCoderContext>() {
 
 		override fun encode(value: Instant, encoder: JSONEncoder<out JSONCoderContext>) {
 			encoder.writeString(DateTimeFormatter.ISO_INSTANT.format(value))
 		}
-
-
-		override val encodableClasses = setOf(Instant::class)
 	}
 }

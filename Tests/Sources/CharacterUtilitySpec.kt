@@ -1,6 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.Character
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe

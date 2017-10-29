@@ -1,10 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.BooleanJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCodecResolver
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONSerializer
-import com.github.fluidsonic.fluid.json.serializeValue
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -17,7 +13,7 @@ internal object JSONSerializerSpec : Spek({
 
 		it(".builder()") {
 			JSONSerializer.builder()
-				.encodingWith(JSONCodecResolver.default)
+				.encodingWith(JSONCodecProvider.nonRecursive)
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
@@ -43,7 +39,7 @@ internal object JSONSerializerSpec : Spek({
 			val testContext = TestCoderContext()
 
 			JSONSerializer.builder(testContext)
-				.encodingWith(JSONCodecResolver.default)
+				.encodingWith(JSONCodecProvider.nonRecursive)
 				.build()
 				.apply {
 					context.should.equal(testContext)
@@ -55,10 +51,14 @@ internal object JSONSerializerSpec : Spek({
 			anyData.testEncoding(JSONSerializer.default()::serializeValue)
 		}
 
+		it(".nonRecursive()") {
+			anyData.testEncoding(JSONSerializer.nonRecursive()::serializeValue)
+		}
+
 		it(".withContext()") {
 			val testContext = TestCoderContext()
 
-			JSONSerializer.default()
+			JSONSerializer.nonRecursive()
 				.withContext(testContext)
 				.context.should.equal(testContext)
 		}

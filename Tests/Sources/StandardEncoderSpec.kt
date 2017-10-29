@@ -1,10 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONCodecResolver
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONWriter
-import com.github.fluidsonic.fluid.json.StandardEncoder
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
@@ -48,14 +44,14 @@ internal object StandardEncoderSpec : Spek({
 			val expectedOutput = """{"jaegers":[{"height":76.2,"launchDate":"2019-11-02","mark":5,"name":"Striker Eureka","origin":"Australia","status":"destroyed","weight":1850.0}],"kaijus":[{"breachDate":"2025-01-12","category":5,"height":181.7,"name":"Slattern","origin":"Anteverse","status":"deceased","weight":6750.0}]}"""
 
 			val output = encode(
-				codecResolver = JSONCodecResolver.of(
+				codecProvider = JSONCodecProvider.of(
 					JaegerCodec,
 					KaijuCodec,
 					LocalDateCodec,
 					UniverseCodec
 				)
 			) {
-				writeEncodable(input)
+				writeValue(input)
 			}
 
 			output.should.equal(expectedOutput)
@@ -64,7 +60,7 @@ internal object StandardEncoderSpec : Spek({
 		it("fails when a codec was no found") {
 			encode {
 				try {
-					writeEncodable(object {})
+					writeValue(object {})
 					throw AssertionError("an exception was expected")
 				}
 				catch (e: JSONException) {
@@ -77,14 +73,14 @@ internal object StandardEncoderSpec : Spek({
 			val context = TestCoderContext()
 
 			encode(
-				codecResolver = JSONCodecResolver.of(ContextCheckingTestCodec(context)),
+				codecProvider = JSONCodecProvider.of(ContextCheckingTestCodec(context)),
 				context = context
-			) { writeEncodable("test") }
+			) { writeValue("test") }
 
 			encode(
-				codecResolver = JSONCodecResolver.of(ContextCheckingTestEncoderCodec(context)),
+				codecProvider = JSONCodecProvider.of(ContextCheckingTestEncoderCodec(context)),
 				context = context
-			) { writeEncodable("test") }
+			) { writeValue("test") }
 		}
 	}
 })
@@ -94,14 +90,14 @@ internal object StandardEncoderSpec : Spek({
 // https://youtrack.jetbrains.com/issue/KT-19796
 
 private inline fun encode(
-	codecResolver: JSONCodecResolver<TestCoderContext> = JSONCodecResolver.of(),
+	codecProvider: JSONCodecProvider<TestCoderContext> = JSONCodecProvider.of(),
 	context: TestCoderContext = TestCoderContext(),
 	body: JSONEncoder<TestCoderContext>.() -> Unit
 ): String {
 	val writer = StringWriter()
 	val encoder =
 		StandardEncoder(
-			codecResolver = codecResolver,
+			codecProvider = codecProvider,
 			context = context,
 			destination = JSONWriter.build(writer)
 		)

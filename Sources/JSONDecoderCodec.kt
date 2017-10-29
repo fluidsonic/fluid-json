@@ -3,19 +3,48 @@ package com.github.fluidsonic.fluid.json
 import kotlin.reflect.KClass
 
 
-interface JSONDecoderCodec<out Value : Any, in Context : JSONCoderContext> : JSONCodecProvider<Context> {
+interface JSONDecoderCodec<Value : Any, in Context : JSONCoderContext> : JSONCodecProvider<Context> {
 
-	override val decoderCodecs: List<JSONDecoderCodec<*, Context>>
-		get() = listOf(this)
-
-	override val encoderCodecs: List<JSONEncoderCodec<*, Context>>
-		get() = emptyList()
-
-	val decodableClass: KClass<out Value>
+	val decodableType: JSONCodableType<Value>
 
 
-	fun decode(decoder: JSONDecoder<out Context>): Value
+	fun decode(valueType: JSONCodableType<in Value>, decoder: JSONDecoder<out Context>): Value
 
 
-	companion object
+	@Suppress("UNCHECKED_CAST")
+	override fun <Value : Any> decoderCodecForType(decodableType: JSONCodableType<in Value>): JSONDecoderCodec<out Value, Context>? =
+		if (this.decodableType.satisfiesType(decodableType))
+			this as JSONDecoderCodec<out Value, Context>
+		else
+			null
+
+
+	override fun <Value : Any> encoderCodecForClass(encodableClass: KClass<out Value>): JSONEncoderCodec<in Value, Context>? =
+		null
+
+
+	companion object {
+
+		private fun JSONCodableType<*>.satisfiesType(requestedType: JSONCodableType<*>): Boolean {
+			if (isMostOpenUpperBound) {
+				return true
+			}
+			if (requestedType.rawClass != rawClass) {
+				return false
+			}
+
+			val decodableArguments = arguments
+			val requestedArguments = requestedType.arguments
+			assert(decodableArguments.size == requestedArguments.size)
+
+			@Suppress("LoopToCallChain")
+			for ((index, decodableArgument) in decodableArguments.withIndex()) {
+				if (!decodableArgument.satisfiesType(requestedArguments[index])) {
+					return false
+				}
+			}
+
+			return true
+		}
+	}
 }

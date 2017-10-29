@@ -1,9 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONEncoderCodec
-import com.github.fluidsonic.fluid.json.StringJSONCodec
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 
 
@@ -18,5 +15,5 @@ internal class ContextCheckingTestEncoderCodec<in Context : JSONCoderContext>(
 	}
 
 
-	override val encodableClasses = setOf(String::class)
+	override val encodableClass = String::class
 }

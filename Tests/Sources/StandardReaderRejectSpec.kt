@@ -1,27 +1,6 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.JSONReader
-import com.github.fluidsonic.fluid.json.StandardReader
-import com.github.fluidsonic.fluid.json.TextInput
-import com.github.fluidsonic.fluid.json.readBooleanOrNull
-import com.github.fluidsonic.fluid.json.readByteOrNull
-import com.github.fluidsonic.fluid.json.readDoubleOrNull
-import com.github.fluidsonic.fluid.json.readElementsFromMap
-import com.github.fluidsonic.fluid.json.readEndOfInput
-import com.github.fluidsonic.fluid.json.readFloatOrNull
-import com.github.fluidsonic.fluid.json.readFromList
-import com.github.fluidsonic.fluid.json.readIntOrNull
-import com.github.fluidsonic.fluid.json.readList
-import com.github.fluidsonic.fluid.json.readListByElement
-import com.github.fluidsonic.fluid.json.readListOrNull
-import com.github.fluidsonic.fluid.json.readLongOrNull
-import com.github.fluidsonic.fluid.json.readMap
-import com.github.fluidsonic.fluid.json.readMapOrNull
-import com.github.fluidsonic.fluid.json.readNumberOrNull
-import com.github.fluidsonic.fluid.json.readShortOrNull
-import com.github.fluidsonic.fluid.json.readStringOrNull
-import com.github.fluidsonic.fluid.json.readValue
+import com.github.fluidsonic.fluid.json.*
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.TestBody
 import org.jetbrains.spek.api.dsl.describe
@@ -743,6 +722,17 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("[]") { readListStart();readValue() }
 			readerShouldFail("0") { readValue(); readValue() }
 			readerShouldFail("0") { close(); readValue() }
+		}
+
+		it("readValueOrNull()") {
+			readerShouldFail("") { readValueOrNull() }
+			readerShouldFail("true") { skipValue(); readValueOrNull() }
+			readerShouldFail("{") { readValueOrNull() }
+			readerShouldFail("[") { readValueOrNull() }
+			readerShouldFail("{}") { readMapStart(); readValueOrNull() }
+			readerShouldFail("[]") { readListStart();readValueOrNull() }
+			readerShouldFail("0") { readValueOrNull(); readValueOrNull() }
+			readerShouldFail("0") { close(); readValueOrNull() }
 		}
 
 		it("skipValue()") {

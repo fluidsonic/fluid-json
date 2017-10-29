@@ -1,13 +1,21 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.ArrayJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONEncoderCodec
-import com.github.fluidsonic.fluid.json.StringJSONCodec
+import com.github.fluidsonic.fluid.json.*
 
 
-internal object ArrayJSONTestCodec : JSONEncoderCodec<Array<*>, JSONCoderContext> by ArrayJSONCodec {
+internal object ArrayJSONTestCodec : AbstractJSONEncoderCodec<Array<*>, JSONCoderContext>(
+	additionalProviders = listOf(StringJSONCodec)
+) {
 
-	override val encoderCodecs
-		get() = ArrayJSONCodec.encoderCodecs + StringJSONCodec
+	override fun encode(value: Array<*>, encoder: JSONEncoder<out JSONCoderContext>) =
+		ArrayJSONCodec.encode(value, encoder)
+
+
+	object NonRecursive : AbstractJSONEncoderCodec<Array<*>, JSONCoderContext>(
+		additionalProviders = listOf(StringJSONCodec)
+	) {
+
+		override fun encode(value: Array<*>, encoder: JSONEncoder<out JSONCoderContext>) =
+			ArrayJSONCodec.nonRecursive.encode(value, encoder)
+	}
 }

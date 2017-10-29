@@ -1,24 +1,12 @@
 package tests
 
-import com.github.fluidsonic.fluid.json.BooleanJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCodecResolver
-import com.github.fluidsonic.fluid.json.JSONCoderContext
-import com.github.fluidsonic.fluid.json.JSONNullability
-import com.github.fluidsonic.fluid.json.JSONParser
-import com.github.fluidsonic.fluid.json.parseList
-import com.github.fluidsonic.fluid.json.parseListOfType
-import com.github.fluidsonic.fluid.json.parseMap
-import com.github.fluidsonic.fluid.json.parseMapOfType
-import com.github.fluidsonic.fluid.json.parseValue
-import com.github.fluidsonic.fluid.json.parseValueOfType
+import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import java.io.Reader
 import java.io.StringReader
-import java.time.LocalDate
-import kotlin.reflect.KClass
 
 
 internal object JSONParserSpec : Spek({
@@ -27,7 +15,7 @@ internal object JSONParserSpec : Spek({
 
 		it(".builder()") {
 			JSONParser.builder()
-				.decodingWith(JSONCodecResolver.default)
+				.decodingWith(JSONCodecProvider.nonRecursive, appendDefault = false)
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
@@ -35,7 +23,7 @@ internal object JSONParserSpec : Spek({
 				}
 
 			JSONParser.builder()
-				.decodingWith(BooleanJSONCodec)
+				.decodingWith(JSONCodecProvider.nonRecursive, appendDefault = false)
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
@@ -43,7 +31,7 @@ internal object JSONParserSpec : Spek({
 				}
 
 			JSONParser.builder()
-				.decodingWith(listOf(BooleanJSONCodec))
+				.decodingWith(listOf(JSONCodecProvider.nonRecursive), appendDefault = false)
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
@@ -53,7 +41,7 @@ internal object JSONParserSpec : Spek({
 			val testContext = TestCoderContext()
 
 			JSONParser.builder(testContext)
-				.decodingWith(JSONCodecResolver.default)
+				.decodingWith(JSONCodecProvider.nonRecursive)
 				.build()
 				.apply {
 					context.should.equal(testContext)
@@ -65,126 +53,117 @@ internal object JSONParserSpec : Spek({
 			anyData.testDecoding(JSONParser.default()::parseValue)
 		}
 
+		it(".nonRecursive()") {
+			anyData.testDecoding(JSONParser.nonRecursive()::parseValue)
+		}
+
 		it(".withContext()") {
 			val testContext = TestCoderContext()
 
-			JSONParser.default()
+			JSONParser.nonRecursive()
 				.withContext(testContext)
 				.context.should.equal(testContext)
 		}
 
 		it(".parse()") {
-			val parentParser = JSONParser.builder()
-				.decodingWith(LocalDateCodec)
-				.build()
+			testParseMethod<Any>(true) { parseValue("") }
+			testParseMethod<Any>(true) { parseValueOrNull("") }
+			testParseMethod<Any>(null) { parseValueOrNull("") }
 
-			val parser = object : JSONParser<JSONCoderContext> by parentParser {
+			testParseMethod<Any>(true) { parseValue(StringReader("")) }
+			testParseMethod<Any>(true) { parseValueOrNull(StringReader("")) }
+			testParseMethod<Any>(null) { parseValueOrNull(StringReader("")) }
 
-				override fun <Key : Any, Value : Any> doParseMapWithClasses(
-					source: Reader,
-					keyClass: KClass<out Key>,
-					valueClass: KClass<out Value>,
-					nullability: JSONNullability.Key
-				) =
-					parentParser.doParseMapWithClasses(source, keyClass, valueClass, nullability)
-						?.mapKeys { null as Key? }
+			testParseMethod(listOf(true)) { parseValueOfType("") }
+			testParseMethod(listOf(true)) { parseValueOfTypeOrNull("") }
+			testParseMethod(null as List<Boolean>?) { parseValueOfTypeOrNull("") }
+			testParseMethod(listOf(true)) { parseValueOfTypeOrNull("", it) }
+			testParseMethod(null as List<Boolean>?) { parseValueOfTypeOrNull("", it) }
 
+			testParseMethod(listOf(true)) { parseValueOfType(StringReader("")) }
+			testParseMethod(listOf(true)) { parseValueOfTypeOrNull(StringReader("")) }
+			testParseMethod(null as List<Boolean>?) { parseValueOfTypeOrNull(StringReader("")) }
 
-				override fun <Key : Any, Value : Any> doParseMapWithClasses(
-					source: Reader,
-					keyClass: KClass<out Key>,
-					valueClass: KClass<out Value>,
-					nullability: JSONNullability.KeyAndValue
-				) =
-					parentParser.doParseMapWithClasses(source, keyClass, valueClass, nullability)
-						?.mapKeys { null as Key? }
-			}
+			testParseMethod(listOf(true, null)) { parseValueOfType("") }
+			testParseMethod(listOf(true, null)) { parseValueOfTypeOrNull("") }
+			testParseMethod(null as List<Boolean?>?) { parseValueOfTypeOrNull("") }
+			testParseMethod(listOf(true, null)) { parseValueOfTypeOrNull("", it) }
+			testParseMethod(null as List<Boolean?>?) { parseValueOfTypeOrNull("", it) }
 
-			parser.parseValue("true")
-				.should.equal(true)
+			testParseMethod(listOf(true, null)) { parseValueOfType(StringReader("")) }
+			testParseMethod(listOf(true, null)) { parseValueOfTypeOrNull(StringReader("")) }
+			testParseMethod(null as List<Boolean?>?) { parseValueOfTypeOrNull(StringReader("")) }
 
-			parser.parseValue(StringReader("true"))
-				.should.equal(true)
+			testParseMethod(mapOf("key" to true)) { parseValueOfType("") }
+			testParseMethod(mapOf("key" to true)) { parseValueOfTypeOrNull("") }
+			testParseMethod(null as Map<String, Boolean>?) { parseValueOfTypeOrNull("") }
+			testParseMethod(mapOf("key" to true)) { parseValueOfTypeOrNull("", it) }
+			testParseMethod(null as Map<String, Boolean>?) { parseValueOfTypeOrNull("", it) }
 
-			parser.parseList("[true]")
-				.should.equal(listOf(true))
+			testParseMethod(mapOf("key" to true)) { parseValueOfType(StringReader("")) }
+			testParseMethod(mapOf("key" to true)) { parseValueOfTypeOrNull(StringReader("")) }
+			testParseMethod(null as Map<String, Boolean>?) { parseValueOfTypeOrNull(StringReader("")) }
 
-			parser.parseList(StringReader("[true]"))
-				.should.equal(listOf(true))
+			testParseMethod(mapOf("key" to true, "key" to null)) { parseValueOfType("") }
+			testParseMethod(mapOf("key" to true, "key" to null)) { parseValueOfTypeOrNull("") }
+			testParseMethod(null as Map<String, Boolean?>?) { parseValueOfTypeOrNull("") }
+			testParseMethod(mapOf("key" to true, "key" to null)) { parseValueOfTypeOrNull("", it) }
+			testParseMethod(null as Map<String, Boolean?>?) { parseValueOfTypeOrNull("", it) }
 
-			parser.parseList("[true,null]", nullability = JSONNullability.Value)
-				.should.equal(listOf(true, null))
+			testParseMethod(mapOf("key" to true, "key" to null)) { parseValueOfType(StringReader("")) }
+			testParseMethod(mapOf("key" to true, "key" to null)) { parseValueOfTypeOrNull(StringReader("")) }
+			testParseMethod(null as Map<String, Boolean?>?) { parseValueOfTypeOrNull(StringReader("")) }
 
-			parser.parseList(StringReader("[true,null]"), nullability = JSONNullability.Value)
-				.should.equal(listOf(true, null))
+			testParseMethod(mapOf("key" to true, null to true)) { parseValueOfType("") }
+			testParseMethod(mapOf("key" to true, null to true)) { parseValueOfTypeOrNull("") }
+			testParseMethod(null as Map<String?, Boolean>?) { parseValueOfTypeOrNull("") }
+			testParseMethod(mapOf("key" to true, null to true)) { parseValueOfTypeOrNull("", it) }
+			testParseMethod(null as Map<String?, Boolean>?) { parseValueOfTypeOrNull("", it) }
 
-			parser.parseMap("""{"key":true}""")
-				.should.equal(mapOf("key" to true))
+			testParseMethod(mapOf("key" to true, null to true)) { parseValueOfType(StringReader("")) }
+			testParseMethod(mapOf("key" to true, null to true)) { parseValueOfTypeOrNull(StringReader("")) }
+			testParseMethod(null as Map<String?, Boolean>?) { parseValueOfTypeOrNull(StringReader("")) }
 
-			parser.parseMap(StringReader("""{"key":true}"""))
-				.should.equal(mapOf("key" to true))
+			testParseMethod(mapOf("key" to true, null to null)) { parseValueOfType("") }
+			testParseMethod(mapOf("key" to true, null to null)) { parseValueOfTypeOrNull("") }
+			testParseMethod(null as Map<String?, Boolean?>?) { parseValueOfTypeOrNull("") }
+			testParseMethod(mapOf("key" to true, null to null)) { parseValueOfTypeOrNull("", it) }
+			testParseMethod(null as Map<String?, Boolean?>?) { parseValueOfTypeOrNull("", it) }
 
-			parser.parseMap("""{"key":true}""", nullability = JSONNullability.Key)
-				.should.equal(mapOf(null to true))
-
-			parser.parseMap(StringReader("""{"key":true}"""), nullability = JSONNullability.Key)
-				.should.equal(mapOf(null to true))
-
-			parser.parseMap("""{"key":null}""", nullability = JSONNullability.KeyAndValue)
-				.should.equal(mapOf(null to null))
-
-			parser.parseMap(StringReader("""{"key":null}"""), nullability = JSONNullability.KeyAndValue)
-				.should.equal(mapOf(null to null))
-
-			parser.parseMap("""{"key":null}""", nullability = JSONNullability.Value)
-				.should.equal(mapOf("key" to null))
-
-			parser.parseMap(StringReader("""{"key":null}"""), nullability = JSONNullability.Value)
-				.should.equal(mapOf("key" to null))
-
-			val testValue = LocalDate.of(2018, 1, 1)
-
-			parser.parseValueOfType<LocalDate>("\"2018-01-01\"")
-				.should.equal(testValue)
-
-			parser.parseValueOfType<LocalDate>(StringReader("\"2018-01-01\""))
-				.should.equal(testValue)
-
-			parser.parseListOfType<LocalDate>("""["2018-01-01"]""")
-				.should.equal(listOf(testValue))
-
-			parser.parseListOfType<LocalDate>(StringReader("""["2018-01-01"]"""))
-				.should.equal(listOf(testValue))
-
-			parser.parseListOfType<LocalDate>("""["2018-01-01",null]""", nullability = JSONNullability.Value)
-				.should.equal(listOf(testValue, null))
-
-			parser.parseListOfType<LocalDate>(StringReader("""["2018-01-01",null]"""), nullability = JSONNullability.Value)
-				.should.equal(listOf(testValue, null))
-
-			parser.parseMapOfType<LocalDate, LocalDate>("""{"2018-01-01":"2018-01-01"}""")
-				.should.equal(mapOf(testValue to testValue))
-
-			parser.parseMapOfType<LocalDate, LocalDate>(StringReader("""{"2018-01-01":"2018-01-01"}"""))
-				.should.equal(mapOf(testValue to testValue))
-
-			parser.parseMapOfType<LocalDate, LocalDate>("""{"2018-01-01":"2018-01-01"}""", nullability = JSONNullability.Key)
-				.should.equal(mapOf(null to testValue))
-
-			parser.parseMapOfType<LocalDate, LocalDate>(StringReader("""{"2018-01-01":"2018-01-01"}"""), nullability = JSONNullability.Key)
-				.should.equal(mapOf(null to testValue))
-
-			parser.parseMapOfType<LocalDate, LocalDate>("""{"2018-01-01":null}""", nullability = JSONNullability.KeyAndValue)
-				.should.equal(mapOf(null to null))
-
-			parser.parseMapOfType<LocalDate, LocalDate>(StringReader("""{"2018-01-01":null}"""), nullability = JSONNullability.KeyAndValue)
-				.should.equal(mapOf(null to null))
-
-			parser.parseMapOfType<LocalDate, LocalDate>("""{"2018-01-01":null}""", nullability = JSONNullability.Value)
-				.should.equal(mapOf(testValue to null))
-
-			parser.parseMapOfType<LocalDate, LocalDate>(StringReader("""{"2018-01-01":null}"""), nullability = JSONNullability.Value)
-				.should.equal(mapOf(testValue to null))
+			testParseMethod(mapOf("key" to true, null to null)) { parseValueOfType(StringReader("")) }
+			testParseMethod(mapOf("key" to true, null to null)) { parseValueOfTypeOrNull(StringReader("")) }
+			testParseMethod(null as Map<String?, Boolean?>?) { parseValueOfTypeOrNull(StringReader("")) }
 		}
 	}
 })
+
+
+// TODO move the following methods inside the object above once KT-19796 is fixed
+// https://youtrack.jetbrains.com/issue/KT-19796
+
+private inline fun <reified Value : Any> testParseMethod(
+	expectedValue: Value?,
+	testBody: JSONParser<JSONCoderContext>.(type: JSONCodableType<Value>) -> Value?
+) {
+	val expectedType = jsonCodableType<Value>()
+
+	val parser = object : JSONParser<JSONCoderContext> {
+
+		override val context
+			get() = error("")
+
+
+		override fun <Value : Any> parseValueOfTypeOrNull(source: Reader, valueType: JSONCodableType<Value>): Value? {
+			(valueType as JSONCodableType<*>).should.equal(expectedType)
+
+			@Suppress("UNCHECKED_CAST")
+			return expectedValue as Value?
+		}
+
+
+		override fun <NewContext : JSONCoderContext> withContext(context: NewContext) =
+			error("")
+	}
+
+	parser.testBody(expectedType).should.equal(expectedValue)
+}
