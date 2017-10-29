@@ -22,7 +22,7 @@ plugins {
 	`java-library`
 	`maven-publish`
 	id("com.jfrog.bintray") version "1.7.3"
-	id("com.github.ben-manes.versions") version "0.15.0"
+	id("com.github.ben-manes.versions") version "0.17.0"
 	id("org.junit.platform.gradle.plugin") version "1.0.1"
 }
 
