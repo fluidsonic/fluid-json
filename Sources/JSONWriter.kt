@@ -507,6 +507,156 @@ fun JSONWriter.writeMapElement(key: String, int: Int?, skipIfNull: Boolean = fal
 		Unit
 
 
+fun JSONWriter.writeMapElement(key: String, list: Array<*>) {
+	writeMapKey(key)
+	writeList(list)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, list: Array<*>?, skipIfNull: Boolean = false) =
+	if (list != null)
+		writeMapElement(key, list)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, list: BooleanArray) {
+	writeMapKey(key)
+	writeList(list)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, list: BooleanArray?, skipIfNull: Boolean = false) =
+	if (list != null)
+		writeMapElement(key, list)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, list: ByteArray) {
+	writeMapKey(key)
+	writeList(list)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, list: ByteArray?, skipIfNull: Boolean = false) =
+	if (list != null)
+		writeMapElement(key, list)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, list: DoubleArray) {
+	writeMapKey(key)
+	writeList(list)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, list: DoubleArray?, skipIfNull: Boolean = false) =
+	if (list != null)
+		writeMapElement(key, list)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, list: FloatArray) {
+	writeMapKey(key)
+	writeList(list)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, list: FloatArray?, skipIfNull: Boolean = false) =
+	if (list != null)
+		writeMapElement(key, list)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, list: IntArray) {
+	writeMapKey(key)
+	writeList(list)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, list: IntArray?, skipIfNull: Boolean = false) =
+	if (list != null)
+		writeMapElement(key, list)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, list: Iterable<*>) {
+	writeMapKey(key)
+	writeList(list)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, list: Iterable<*>?, skipIfNull: Boolean = false) =
+	if (list != null)
+		writeMapElement(key, list)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, list: LongArray) {
+	writeMapKey(key)
+	writeList(list)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, list: LongArray?, skipIfNull: Boolean = false) =
+	if (list != null)
+		writeMapElement(key, list)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, list: Sequence<*>) {
+	writeMapKey(key)
+	writeList(list)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, list: Sequence<*>?, skipIfNull: Boolean = false) =
+	if (list != null)
+		writeMapElement(key, list)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, list: ShortArray) {
+	writeMapKey(key)
+	writeList(list)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, list: ShortArray?, skipIfNull: Boolean = false) =
+	if (list != null)
+		writeMapElement(key, list)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
 fun JSONWriter.writeMapElement(key: String, long: Long) {
 	writeMapKey(key)
 	writeLong(long)
@@ -516,6 +666,21 @@ fun JSONWriter.writeMapElement(key: String, long: Long) {
 fun JSONWriter.writeMapElement(key: String, long: Long?, skipIfNull: Boolean = false) =
 	if (long != null)
 		writeMapElement(key, long)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, map: Map<*, *>) {
+	writeMapKey(key)
+	writeMap(map)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, map: Map<*, *>?, skipIfNull: Boolean = false) =
+	if (map != null)
+		writeMapElement(key, map)
 	else if (!skipIfNull)
 		writeMapNullElement(key)
 	else
