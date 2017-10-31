@@ -1,11 +1,6 @@
 import com.jfrog.bintray.gradle.BintrayExtension
 import org.gradle.api.internal.HasConvention
-import org.gradle.api.plugins.ExtensionAware
-import org.gradle.api.tasks.JavaExec
-import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.kotlin
-import org.gradle.kotlin.dsl.the
-import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
+import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.junit.platform.gradle.plugin.EnginesExtension
@@ -14,7 +9,9 @@ import org.junit.platform.gradle.plugin.JUnitPlatformExtension
 
 
 group = "com.github.fluidsonic"
-version = "0.0.1"
+version = "0.0.2"
+
+description = "A JSON library written in pure Kotlin."
 
 plugins {
 	kotlin("jvm") version "1.1.51"
@@ -25,6 +22,7 @@ plugins {
 	id("com.github.ben-manes.versions") version "0.17.0"
 	id("org.junit.platform.gradle.plugin") version "1.0.1"
 }
+
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_8
@@ -138,11 +136,18 @@ val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin<Kotlin
 
 // publishing
 
-val sourcesJar = task<Jar>("sourcesJars") {
-	dependsOn += "classes"
+val sourcesJar by tasks.creating(Jar::class) {
 	classifier = "sources"
+	from(java.sourceSets["main"].allSource)
+}
 
-	from(java.sourceSets.getByName("main").allSource)
+publishing {
+	(publications) {
+		"mavenJava"(MavenPublication::class) {
+			from(components["java"])
+			artifact(sourcesJar)
+		}
+	}
 }
 
 configure<BintrayExtension> {
@@ -164,18 +169,6 @@ configure<BintrayExtension> {
 		version.apply {
 			name = project.version as String?
 			vcsTag = project.version as String?
-		}
-	}
-}
-
-configure<PublishingExtension> {
-	publications {
-		create<MavenPublication>("default") {
-			artifactId = "fluid-json"
-
-			from(components.getByName("java"))
-
-			artifact(sourcesJar)
 		}
 	}
 }
