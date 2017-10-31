@@ -8,10 +8,10 @@ import org.junit.platform.gradle.plugin.FiltersExtension
 import org.junit.platform.gradle.plugin.JUnitPlatformExtension
 
 
+description = "A JSON library written in pure Kotlin."
 group = "com.github.fluidsonic"
 version = "0.0.2"
 
-description = "A JSON library written in pure Kotlin."
 
 plugins {
 	kotlin("jvm") version "1.1.51"
@@ -35,12 +35,10 @@ java {
 
 		"main" {
 			kotlin.srcDirs("Sources")
-			resources.srcDirs("Resources")
 		}
 
 		"test" {
 			kotlin.srcDirs("Tests/Sources")
-			resources.srcDirs("Tests/Resources")
 		}
 	}
 }
@@ -143,7 +141,7 @@ val sourcesJar by tasks.creating(Jar::class) {
 
 publishing {
 	(publications) {
-		"mavenJava"(MavenPublication::class) {
+		"default".invoke(MavenPublication::class) {
 			from(components["java"])
 			artifact(sourcesJar)
 		}
@@ -159,7 +157,7 @@ configure<BintrayExtension> {
 	pkg.apply {
 		repo = "maven"
 		name = "fluid-json"
-		publicDownloadNumbers = false
+		publicDownloadNumbers = true
 		publish = true
 		vcsUrl = "https://github.com/fluidsonic/fluid-json.git"
 		websiteUrl = "https://github.com/fluidsonic/fluid-json"
