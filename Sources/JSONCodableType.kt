@@ -17,15 +17,16 @@ inline fun <reified Type : Any> jsonCodableType() =
 class JSONCodableType<Type : Any> private constructor(
 	val rawClass: KClass<Type>,
 	val arguments: List<JSONCodableType<*>>,
-	upperBound: KClass<*>?,
-	variance: KVariance
+	upperBoundInGenericContext: KClass<*>?,
+	varianceInGenericContext: KVariance
 ) {
 
 	private val hashCode =
 		rawClass.hashCode() xor arguments.hashCode()
 
 
-	internal val isMostOpenUpperBound = (rawClass == upperBound && (variance == KVariance.OUT || variance == KVariance.INVARIANT))
+	internal val isUnconstrainedUpperBoundInGenericContext =
+		(rawClass == upperBoundInGenericContext && (varianceInGenericContext == KVariance.OUT || varianceInGenericContext == KVariance.INVARIANT))
 
 
 	override fun equals(other: Any?): Boolean {
@@ -52,7 +53,7 @@ class JSONCodableType<Type : Any> private constructor(
 			if (arguments.isNotEmpty()) {
 				append("<")
 				arguments.joinTo(this, separator = ", ") {
-					if (it.isMostOpenUpperBound) "*" else it.toString()
+					if (it.isUnconstrainedUpperBoundInGenericContext) "*" else it.toString()
 				}
 				append(">")
 			}
@@ -80,15 +81,15 @@ class JSONCodableType<Type : Any> private constructor(
 				JSONCodableType(
 					rawClass = Array<Any?>::class,
 					arguments = listOf(componentType.toCodableType(upperBound = Any::class, variance = KVariance.INVARIANT)),
-					upperBound = upperBound,
-					variance = variance
+					upperBoundInGenericContext = upperBound,
+					varianceInGenericContext = variance
 				)
 			else
 				JSONCodableType(
 					rawClass = kotlin,
 					arguments = emptyList(),
-					upperBound = upperBound,
-					variance = variance
+					upperBoundInGenericContext = upperBound,
+					varianceInGenericContext = variance
 				)
 
 
@@ -99,8 +100,8 @@ class JSONCodableType<Type : Any> private constructor(
 					upperBound = null,
 					variance = KVariance.INVARIANT
 				)),
-				upperBound = upperBound,
-				variance = variance
+				upperBoundInGenericContext = upperBound,
+				varianceInGenericContext = variance
 			)
 
 
@@ -115,8 +116,8 @@ class JSONCodableType<Type : Any> private constructor(
 						variance = KVariance.INVARIANT
 					)
 				},
-				upperBound = upperBound,
-				variance = variance
+				upperBoundInGenericContext = upperBound,
+				varianceInGenericContext = variance
 			)
 		}
 

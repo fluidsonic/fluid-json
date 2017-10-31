@@ -26,7 +26,7 @@ interface JSONDecoderCodec<Value : Any, in Context : JSONCoderContext> : JSONCod
 	companion object {
 
 		private fun JSONCodableType<*>.satisfiesType(requestedType: JSONCodableType<*>): Boolean {
-			if (isMostOpenUpperBound) {
+			if (isUnconstrainedUpperBoundInGenericContext) {
 				return true
 			}
 			if (requestedType.rawClass != rawClass) {
