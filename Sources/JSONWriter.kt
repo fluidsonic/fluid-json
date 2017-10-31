@@ -644,11 +644,11 @@ fun JSONWriter.writeMapElement(key: String, long: Long?, skipIfNull: Boolean = f
 		Unit
 
 
-fun JSONWriter.writeMapElement(key: String, map: Map<String, *>?, skipIfNull: Boolean = false) =
+fun JSONWriter.writeMapElement(key: String, map: Map<*, *>?, skipIfNull: Boolean = false) =
 	writeMapElement(key, map = map, skipIfNull = skipIfNull) { writeValueOrNull(it) }
 
 
-inline fun <Child> JSONWriter.writeMapElement(key: String, map: Map<String, Child>?, skipIfNull: Boolean = false, writeChild: JSONWriter.(value: Child) -> Unit) =
+inline fun <Child> JSONWriter.writeMapElement(key: String, map: Map<*, Child>?, skipIfNull: Boolean = false, writeChild: JSONWriter.(value: Child) -> Unit) =
 	if (map != null) {
 		writeMapKey(key)
 		writeMapByElementValue(map, writeChild)
