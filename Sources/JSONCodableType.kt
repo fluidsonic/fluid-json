@@ -112,7 +112,7 @@ class JSONCodableType<Type : Any> private constructor(
 				rawClass = rawClass.kotlin,
 				arguments = actualTypeArguments.mapIndexed { index, type ->
 					type.toCodableType(
-						upperBound = rawClass.typeParameters[index].bounds.single().toRawClass().kotlin,
+						upperBound = rawClass.typeParameters[index].bounds.first().toRawClass().kotlin,
 						variance = KVariance.INVARIANT
 					)
 				},
