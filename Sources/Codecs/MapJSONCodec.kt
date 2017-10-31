@@ -4,10 +4,10 @@ package com.github.fluidsonic.fluid.json
 object MapJSONCodec : AbstractJSONCodec<Map<*, *>, JSONCoderContext>() {
 
 	override fun decode(valueType: JSONCodableType<in Map<*, *>>, decoder: JSONDecoder<out JSONCoderContext>): Map<*, *> {
-		val (keyType, valueType) = valueType.arguments
+		val (elementKeyType, elementValueType) = valueType.arguments
 
 		return decoder.readMapByElement {
-			readValueOfTypeOrNull(keyType) to readValueOfTypeOrNull(valueType)
+			readValueOfTypeOrNull(elementKeyType) to readValueOfTypeOrNull(elementValueType)
 		}
 	}
 
