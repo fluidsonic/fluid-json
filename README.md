@@ -12,7 +12,7 @@ A JSON library written in pure Kotlin.
 Installation
 ------------
 
-This library is **soon** [available in Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.fluidsonic%22%20a%3A%22fluid-json%22) as `fluid-json` in the group `com.github.fluidsonic`.
+This library is [available in Maven Central](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.fluidsonic%22%20a%3A%22fluid-json%22) as `fluid-json` in the group `com.github.fluidsonic`.
 
 `build.gradle.kts`:
 ```kotlin
@@ -265,7 +265,7 @@ imported directly from [JSONTestSuite](https://github.com/nst/JSONTestSuite) (ku
 
 Note that until [KT-12605](https://youtrack.jetbrains.com/issue/KT-12605) is fixed the code coverage
 [reported by Codecov](https://codecov.io/github/fluidsonic/fluid-json) (and measured using
-[JaCoCo](http://www.eclemma.org/jacoco)) is a lot lower than it should be. It's more likely around 90% - 95%.
+[JaCoCo](http://www.eclemma.org/jacoco)) is a lot lower than it should be.
 
 You can run the tests manually using IntelliJ IDEA and the [Spek](https://plugins.jetbrains.com/plugin/8564-spek)
 plugin, the Gradle run configuration `Test` or from the command line by using:
