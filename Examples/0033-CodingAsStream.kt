@@ -78,7 +78,7 @@ object CodingAsStreamExample {
 
 	private object EventCodec : AbstractJSONCodec<Event, JSONCoderContext>() {
 
-		override fun decode(valueType: JSONCodableType<in Event>, decoder: JSONDecoder<out JSONCoderContext>): Event {
+		override fun decode(valueType: JSONCodableType<in Event>, decoder: JSONDecoder<JSONCoderContext>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null
@@ -100,7 +100,7 @@ object CodingAsStreamExample {
 		}
 
 
-		override fun encode(value: Event, encoder: JSONEncoder<out JSONCoderContext>) {
+		override fun encode(value: Event, encoder: JSONEncoder<JSONCoderContext>) {
 			encoder.writeIntoMap {
 				writeMapElement("id", int = value.id)
 				writeMapElement("date", value = value.date, skipIfNull = true)
@@ -112,7 +112,7 @@ object CodingAsStreamExample {
 
 	private object InstantCodec : AbstractJSONCodec<Instant, JSONCoderContext>() {
 
-		override fun decode(valueType: JSONCodableType<in Instant>, decoder: JSONDecoder<out JSONCoderContext>): Instant =
+		override fun decode(valueType: JSONCodableType<in Instant>, decoder: JSONDecoder<JSONCoderContext>): Instant =
 			decoder.readString().let {
 				try {
 					Instant.parse(it)
@@ -123,7 +123,7 @@ object CodingAsStreamExample {
 			}
 
 
-		override fun encode(value: Instant, encoder: JSONEncoder<out JSONCoderContext>) {
+		override fun encode(value: Instant, encoder: JSONEncoder<JSONCoderContext>) {
 			encoder.writeString(DateTimeFormatter.ISO_INSTANT.format(value))
 		}
 	}

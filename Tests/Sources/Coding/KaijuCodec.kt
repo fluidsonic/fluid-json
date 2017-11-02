@@ -9,7 +9,7 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 	additionalProviders = listOf(StatusCodec)
 ) {
 
-	override fun decode(valueType: JSONCodableType<in Kaiju>, decoder: JSONDecoder<out TestCoderContext>): Kaiju {
+	override fun decode(valueType: JSONCodableType<in Kaiju>, decoder: JSONDecoder<TestCoderContext>): Kaiju {
 		var breachDate: LocalDate? = null
 		var category: Int? = null
 		var height: Double? = null
@@ -43,7 +43,7 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 	}
 
 
-	override fun encode(value: Kaiju, encoder: JSONEncoder<out TestCoderContext>) {
+	override fun encode(value: Kaiju, encoder: JSONEncoder<TestCoderContext>) {
 		encoder.writeIntoMap {
 			writeMapElement(Keys.breachDate, value = value.breachDate)
 			writeMapElement(Keys.category, int = value.category)
@@ -70,7 +70,7 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 
 	object StatusCodec : AbstractJSONCodec<Status, TestCoderContext>() {
 
-		override fun decode(valueType: JSONCodableType<in Status>, decoder: JSONDecoder<out TestCoderContext>): Status {
+		override fun decode(valueType: JSONCodableType<in Status>, decoder: JSONDecoder<TestCoderContext>): Status {
 			val id = decoder.readString()
 			return when (id) {
 				"deceased" -> Status.deceased
@@ -79,7 +79,7 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 		}
 
 
-		override fun encode(value: Status, encoder: JSONEncoder<out TestCoderContext>) {
+		override fun encode(value: Status, encoder: JSONEncoder<TestCoderContext>) {
 			encoder.writeString(when (value) {
 				Status.deceased -> "deceased"
 			})

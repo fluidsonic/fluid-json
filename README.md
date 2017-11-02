@@ -17,7 +17,7 @@ This library is **soon** [available in Maven Central](https://search.maven.org/#
 `build.gradle.kts`:
 ```kotlin
 dependencies {
-    implementation("com.github.fluidsonic:fluid-json:0.0.2")
+    implementation("com.github.fluidsonic:fluid-json:0.9.0")
 }
 ```
 
@@ -36,7 +36,7 @@ Usage
 ### Simple Parsing
 
 ```kotlin
-… = JSONParser.default().parseValue("""{ "hello": "world", "test": 123 }""")
+… = JSONParser.default.parseValue("""{ "hello": "world", "test": 123 }""")
 
 // returns a value like this:
 mapOf(
@@ -53,7 +53,7 @@ You can also accept a `null` value by using `parseValueOrNull` instead.
 ### Simple Serializing
 
 ```kotlin
-JSONSerializer.default().serializeValue(mapOf(
+JSONSerializer.default.serializeValue(mapOf(
     "hello" to "world",
     "test" to 123
 ))
@@ -71,10 +71,10 @@ While the examples above parse and return JSON as `String` you can also use `Rea
 
 ```kotlin
 val reader: Reader = …
-… = JSONParser.default().parseValue(source = reader)
+… = JSONParser.default.parseValue(source = reader)
 
 val writer: Writer = …
-JSONSerializer.default().serializeValue(…, destination = writer)
+JSONSerializer.default.serializeValue(…, destination = writer)
 ```
 
 Full example [for Reader](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0011-ParsingFromReader.kt)
@@ -87,7 +87,7 @@ You can also parse lists and maps in a type-safe way directly. Should it not be 
 requested Kotlin type a `JSONException` is thrown.
 
 ```kotlin
-val parser = JSONParser.default()
+val parser = JSONParser.default
 
 parser.parseValueOfType<List<*>>(…)              // returns List<*>
 parser.parseValueOfType<List<String?>>(…)        // returns List<String?>
@@ -170,7 +170,7 @@ data class MyType(…)
 
 object MyTypeCodec : AbstractJSONEncoderCodec<MyType, JSONCoderContext>() {
 
-    override fun encode(value: MyType, encoder: JSONEncoder<out JSONCoderContext>) {
+    override fun encode(value: MyType, encoder: JSONEncoder<JSONCoderContext>) {
         // write JSON for `value` directly using `encoder`  
     }
 }
@@ -200,7 +200,7 @@ data class MyType(…)
 
 object MyTypeCodec : AbstractJSONDecoderCodec<MyType, JSONCoderContext>() {
 
-    override fun decode(valueType: JSONCodableType<in MyType>, decoder: JSONDecoder<out JSONCoderContext>): MyType {
+    override fun decode(valueType: JSONCodableType<in MyType>, decoder: JSONDecoder<JSONCoderContext>): MyType {
         // read JSON using `decoder` and create an instance of `MyType`  
     }
 }
@@ -361,8 +361,8 @@ sometimes not desirable to parse/serialize JSON recursively. For that reason the
 `JSONReader`'s/`JSONWriter`'s primitive `read*`/`write*` methods they will not use any other codecs and thus not support
 other types.
 
-`JSONParser.nonRecursive()` and `JSONSerializer.nonRecursive()` both operate on these codecs and are thus a
-non-recursive parser/serializer.
+`JSONParser.default` and `JSONSerializer.default` both operate on these codecs and are thus a non-recursive
+parser/serializer.
 
 ### Classes and Interfaces
 
@@ -394,6 +394,7 @@ Future Planning
 
 This is on the backlog for later consideration, in no specific order:
 
+- [Add KDoc to all public API](https://github.com/fluidsonic/fluid-json/issues/28)
 - [Add extended set of standard codecs (e.g. for `java.time`)](https://github.com/fluidsonic/fluid-json/issues/17)
 - [Add annotation-based preprocessor for automatic create codecs](https://github.com/fluidsonic/fluid-json/issues/16)
 - [Add performance testing](https://github.com/fluidsonic/fluid-json/issues/4)

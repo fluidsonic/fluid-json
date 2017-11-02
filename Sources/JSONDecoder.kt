@@ -4,8 +4,7 @@ import java.io.Reader
 import java.io.StringReader
 
 
-@Suppress("AddVarianceModifier")
-interface JSONDecoder<Context : JSONCoderContext> : JSONReader {
+interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
 
 	val context: Context
 
@@ -27,7 +26,7 @@ interface JSONDecoder<Context : JSONCoderContext> : JSONReader {
 			BuilderForCodecsImpl(context = context)
 
 
-		interface BuilderForCodecs<Context : JSONCoderContext> {
+		interface BuilderForCodecs<out Context : JSONCoderContext> {
 
 			fun codecs(provider: JSONCodecProvider<Context>): BuilderForSource<Context>
 
@@ -36,18 +35,18 @@ interface JSONDecoder<Context : JSONCoderContext> : JSONReader {
 				vararg providers: JSONCodecProvider<Context>,
 				appendDefault: Boolean = true
 			) =
-				codecs(JSONCodecProvider.of(providers = *providers, appendDefault = appendDefault))
+				codecs(JSONCodecProvider.of(providers = *providers, appendBasic = appendDefault))
 
 
 			fun codecs(
 				providers: Iterable<JSONCodecProvider<Context>>,
 				appendDefault: Boolean = true
 			) =
-				codecs(JSONCodecProvider.of(providers = providers, appendDefault = appendDefault))
+				codecs(JSONCodecProvider.of(providers = providers, appendBasic = appendDefault))
 		}
 
 
-		private class BuilderForCodecsImpl<Context : JSONCoderContext>(
+		private class BuilderForCodecsImpl<out Context : JSONCoderContext>(
 			private val context: Context
 		) : BuilderForCodecs<Context> {
 
@@ -59,7 +58,7 @@ interface JSONDecoder<Context : JSONCoderContext> : JSONReader {
 		}
 
 
-		interface BuilderForSource<Context : JSONCoderContext> {
+		interface BuilderForSource<out Context : JSONCoderContext> {
 
 			fun source(source: JSONReader): Builder<Context>
 
@@ -73,7 +72,7 @@ interface JSONDecoder<Context : JSONCoderContext> : JSONReader {
 		}
 
 
-		private class BuilderForSourceImpl<Context : JSONCoderContext>(
+		private class BuilderForSourceImpl<out Context : JSONCoderContext>(
 			private val context: Context,
 			private val codecProvider: JSONCodecProvider<Context>
 		) : BuilderForSource<Context> {
@@ -87,13 +86,13 @@ interface JSONDecoder<Context : JSONCoderContext> : JSONReader {
 		}
 
 
-		interface Builder<Context : JSONCoderContext> {
+		interface Builder<out Context : JSONCoderContext> {
 
 			fun build(): JSONDecoder<Context>
 		}
 
 
-		private class BuilderImpl<Context : JSONCoderContext>(
+		private class BuilderImpl<out Context : JSONCoderContext>(
 			private val context: Context,
 			private val codecProvider: JSONCodecProvider<Context>,
 			private val source: JSONReader

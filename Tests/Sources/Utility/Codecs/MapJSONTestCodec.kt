@@ -7,11 +7,11 @@ internal object MapJSONTestCodec : AbstractJSONCodec<Map<*, *>, JSONCoderContext
 	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, LocalDateCodec, NumberJSONCodec, StringJSONCodec)
 ) {
 
-	override fun decode(valueType: JSONCodableType<in Map<*, *>>, decoder: JSONDecoder<out JSONCoderContext>) =
+	override fun decode(valueType: JSONCodableType<in Map<*, *>>, decoder: JSONDecoder<JSONCoderContext>) =
 		MapJSONCodec.decode(valueType, decoder)
 
 
-	override fun encode(value: Map<*, *>, encoder: JSONEncoder<out JSONCoderContext>) =
+	override fun encode(value: Map<*, *>, encoder: JSONEncoder<JSONCoderContext>) =
 		MapJSONCodec.encode(value, encoder)
 
 
@@ -19,11 +19,11 @@ internal object MapJSONTestCodec : AbstractJSONCodec<Map<*, *>, JSONCoderContext
 		additionalProviders = listOf(BooleanJSONCodec, IntJSONCodec, StringJSONCodec)
 	) {
 
-		override fun decode(valueType: JSONCodableType<in Map<String, *>>, decoder: JSONDecoder<out JSONCoderContext>) =
+		override fun decode(valueType: JSONCodableType<in Map<String, *>>, decoder: JSONDecoder<JSONCoderContext>) =
 			MapJSONCodec.nonRecursive.decode(valueType, decoder)
 
 
-		override fun encode(value: Map<String, *>, encoder: JSONEncoder<out JSONCoderContext>) =
+		override fun encode(value: Map<String, *>, encoder: JSONEncoder<JSONCoderContext>) =
 			MapJSONCodec.nonRecursive.encode(value, encoder)
 	}
 }

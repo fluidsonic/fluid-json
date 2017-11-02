@@ -14,7 +14,7 @@ internal object JSONDecoderSpec : Spek({
 
 		it(".builder()") {
 			JSONDecoder.builder()
-				.codecs(JSONCodecProvider.nonRecursive)
+				.codecs(JSONCodecProvider.default)
 				.source(JSONReader.build(StringReader("true")))
 				.build()
 				.apply {
@@ -23,7 +23,7 @@ internal object JSONDecoderSpec : Spek({
 				}
 
 			JSONDecoder.builder()
-				.codecs(JSONCodecProvider.nonRecursive)
+				.codecs(JSONCodecProvider.default)
 				.source(StringReader("true"))
 				.build()
 				.apply {
@@ -32,7 +32,7 @@ internal object JSONDecoderSpec : Spek({
 				}
 
 			JSONDecoder.builder()
-				.codecs(JSONCodecProvider.nonRecursive)
+				.codecs(JSONCodecProvider.default)
 				.source("true")
 				.build()
 				.apply {
@@ -61,7 +61,7 @@ internal object JSONDecoderSpec : Spek({
 			val testContext = TestCoderContext()
 
 			JSONDecoder.builder(testContext)
-				.codecs(JSONCodecProvider.nonRecursive)
+				.codecs(JSONCodecProvider.default)
 				.source(JSONReader.build(StringReader("true")))
 				.build()
 				.apply {

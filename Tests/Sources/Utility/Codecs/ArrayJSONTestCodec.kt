@@ -7,7 +7,7 @@ internal object ArrayJSONTestCodec : AbstractJSONEncoderCodec<Array<*>, JSONCode
 	additionalProviders = listOf(StringJSONCodec)
 ) {
 
-	override fun encode(value: Array<*>, encoder: JSONEncoder<out JSONCoderContext>) =
+	override fun encode(value: Array<*>, encoder: JSONEncoder<JSONCoderContext>) =
 		ArrayJSONCodec.encode(value, encoder)
 
 
@@ -15,7 +15,7 @@ internal object ArrayJSONTestCodec : AbstractJSONEncoderCodec<Array<*>, JSONCode
 		additionalProviders = listOf(StringJSONCodec)
 	) {
 
-		override fun encode(value: Array<*>, encoder: JSONEncoder<out JSONCoderContext>) =
+		override fun encode(value: Array<*>, encoder: JSONEncoder<JSONCoderContext>) =
 			ArrayJSONCodec.nonRecursive.encode(value, encoder)
 	}
 }

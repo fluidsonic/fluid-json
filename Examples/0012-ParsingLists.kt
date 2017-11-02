@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 
 
 fun main(args: Array<String>) {
-	val parser = JSONParser.default()
+	val parser = JSONParser.default
 
 	// You can parse a List of values in a typesafe way
 	val value1 = parser.parseValueOfType<List<*>>("[1, true, []]")

@@ -4,28 +4,12 @@ import java.io.Reader
 import java.io.StringReader
 
 
-interface JSONParser<Context : JSONCoderContext> {
-
-	val context: Context
-
+interface JSONParser {
 
 	fun <Value : Any> parseValueOfTypeOrNull(source: Reader, valueType: JSONCodableType<Value>): Value?
 
 
-	fun <NewContext : Context> withContext(context: NewContext): JSONParser<NewContext>
-
-
 	companion object {
-
-		private val default = builder()
-			.decodingWith(JSONCodecProvider.default, appendDefault = false)
-			.build()
-
-
-		private val nonRecursive = builder()
-			.decodingWith(JSONCodecProvider.nonRecursive, appendDefault = false)
-			.build()
-
 
 		fun builder(): BuilderForDecoding<JSONCoderContext> =
 			BuilderForDecodingImpl(context = JSONCoderContext.empty)
@@ -35,22 +19,19 @@ interface JSONParser<Context : JSONCoderContext> {
 			BuilderForDecodingImpl(context = context)
 
 
-		fun default() =
-			default
-
-
-		fun nonRecursive() =
-			nonRecursive
+		val default = builder()
+			.decodingWith(JSONCodecProvider.default, appendBasic = false)
+			.build()
 
 
 		interface BuilderForDecoding<Context : JSONCoderContext> {
 
-			fun decodingWith(factory: (source: Reader, context: Context) -> JSONDecoder<Context>): Builder<Context>
+			fun decodingWith(factory: (source: Reader, context: Context) -> JSONDecoder<Context>): Builder
 
 
 			private fun decodingWith(
 				provider: JSONCodecProvider<Context>
-			) =
+			): Builder =
 				decodingWith { source, context ->
 					JSONDecoder.builder(context)
 						.codecs(provider)
@@ -61,16 +42,16 @@ interface JSONParser<Context : JSONCoderContext> {
 
 			fun decodingWith(
 				vararg providers: JSONCodecProvider<Context>,
-				appendDefault: Boolean = true
+				appendBasic: Boolean = true
 			) =
-				decodingWith(JSONCodecProvider.of(providers = *providers, appendDefault = appendDefault))
+				decodingWith(JSONCodecProvider.of(providers = *providers, appendBasic = appendBasic))
 
 
 			fun decodingWith(
 				providers: Iterable<JSONCodecProvider<Context>>,
-				appendDefault: Boolean = true
+				appendBasic: Boolean = true
 			) =
-				decodingWith(JSONCodecProvider.of(providers = providers, appendDefault = appendDefault))
+				decodingWith(JSONCodecProvider.of(providers = providers, appendBasic = appendBasic))
 		}
 
 
@@ -86,16 +67,16 @@ interface JSONParser<Context : JSONCoderContext> {
 		}
 
 
-		interface Builder<Context : JSONCoderContext> {
+		interface Builder {
 
-			fun build(): JSONParser<Context>
+			fun build(): JSONParser
 		}
 
 
-		private class BuilderImpl<Context : JSONCoderContext>(
+		private class BuilderImpl<out Context : JSONCoderContext>(
 			private val context: Context,
 			private val decoderFactory: (source: Reader, context: Context) -> JSONDecoder<Context>
-		) : Builder<Context> {
+		) : Builder {
 
 			override fun build() =
 				StandardParser(
@@ -107,45 +88,45 @@ interface JSONParser<Context : JSONCoderContext> {
 }
 
 
-fun JSONParser<*>.parseValue(source: Reader) =
+fun JSONParser.parseValue(source: Reader) =
 	parseValueOrNull(source) ?: throw JSONException("Unexpected null value at top-level")
 
 
-fun JSONParser<*>.parseValue(source: String) =
+fun JSONParser.parseValue(source: String) =
 	parseValue(StringReader(source))
 
 
-inline fun <reified Value : Any> JSONParser<*>.parseValueOfType(source: Reader): Value =
+inline fun <reified Value : Any> JSONParser.parseValueOfType(source: Reader): Value =
 	parseValueOfType(source, valueType = jsonCodableType())
 
 
-inline fun <reified Value : Any> JSONParser<*>.parseValueOfType(source: String): Value =
+inline fun <reified Value : Any> JSONParser.parseValueOfType(source: String): Value =
 	parseValueOfType(StringReader(source))
 
 
-fun <Value : Any> JSONParser<*>.parseValueOfType(source: Reader, valueType: JSONCodableType<Value>) =
+fun <Value : Any> JSONParser.parseValueOfType(source: Reader, valueType: JSONCodableType<Value>) =
 	parseValueOfTypeOrNull(source, valueType = valueType) ?: throw JSONException("Unexpected null value at top-level")
 
 
-fun <Value : Any> JSONParser<*>.parseValueOfType(source: String, valueType: JSONCodableType<Value>): Value =
+fun <Value : Any> JSONParser.parseValueOfType(source: String, valueType: JSONCodableType<Value>): Value =
 	parseValueOfType(StringReader(source), valueType = valueType)
 
 
-inline fun <reified Value : Any> JSONParser<*>.parseValueOfTypeOrNull(source: Reader): Value? =
+inline fun <reified Value : Any> JSONParser.parseValueOfTypeOrNull(source: Reader): Value? =
 	parseValueOfTypeOrNull(source, valueType = jsonCodableType())
 
 
-inline fun <reified Value : Any> JSONParser<*>.parseValueOfTypeOrNull(source: String): Value? =
+inline fun <reified Value : Any> JSONParser.parseValueOfTypeOrNull(source: String): Value? =
 	parseValueOfTypeOrNull(StringReader(source))
 
 
-fun <Value : Any> JSONParser<*>.parseValueOfTypeOrNull(source: String, valueType: JSONCodableType<Value>): Value? =
+fun <Value : Any> JSONParser.parseValueOfTypeOrNull(source: String, valueType: JSONCodableType<Value>): Value? =
 	parseValueOfTypeOrNull(StringReader(source), valueType = valueType)
 
 
-fun JSONParser<*>.parseValueOrNull(source: Reader) =
+fun JSONParser.parseValueOrNull(source: Reader) =
 	parseValueOfTypeOrNull<Any>(source)
 
 
-fun JSONParser<*>.parseValueOrNull(source: String) =
+fun JSONParser.parseValueOrNull(source: String) =
 	parseValueOrNull(StringReader(source))

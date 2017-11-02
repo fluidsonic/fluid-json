@@ -6,12 +6,12 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
 
 
-internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer<JSONCoderContext>>({
+internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer>({
 
 	subject {
 		StandardSerializer(JSONCoderContext.empty) { destination, context ->
 			JSONEncoder.builder(context)
-				.codecs(JSONCodecProvider.nonRecursive)
+				.codecs(JSONCodecProvider.default)
 				.destination(destination)
 				.build()
 		}
@@ -47,7 +47,7 @@ internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer<JSONCo
 // TODO move the following method inside the object above once KT-19796 is fixed
 // https://youtrack.jetbrains.com/issue/KT-19796
 
-private fun JSONSerializer<JSONCoderContext>.failToSerialize(value: Any?) {
+private fun JSONSerializer.failToSerialize(value: Any?) {
 	try {
 		serializeValue(value)
 		throw AssertionError("should fail with a JSONException")

@@ -15,54 +15,42 @@ internal object JSONParserSpec : Spek({
 
 		it(".builder()") {
 			JSONParser.builder()
-				.decodingWith(JSONCodecProvider.nonRecursive, appendDefault = false)
+				.decodingWith(JSONCodecProvider.default, appendBasic = false)
 				.build()
 				.apply {
-					context.should.equal(JSONCoderContext.empty)
+					// TODO check correct context
 					parseValue(StringReader("true")).should.equal(true)
 				}
 
 			JSONParser.builder()
-				.decodingWith(JSONCodecProvider.nonRecursive, appendDefault = false)
+				.decodingWith(JSONCodecProvider.default, appendBasic = false)
 				.build()
 				.apply {
-					context.should.equal(JSONCoderContext.empty)
+					// TODO check correct context
 					parseValue(StringReader("true")).should.equal(true)
 				}
 
 			JSONParser.builder()
-				.decodingWith(listOf(JSONCodecProvider.nonRecursive), appendDefault = false)
+				.decodingWith(listOf(JSONCodecProvider.default), appendBasic = false)
 				.build()
 				.apply {
-					context.should.equal(JSONCoderContext.empty)
+					// TODO check correct context
 					parseValue(StringReader("true")).should.equal(true)
 				}
 
 			val testContext = TestCoderContext()
 
 			JSONParser.builder(testContext)
-				.decodingWith(JSONCodecProvider.nonRecursive)
+				.decodingWith(JSONCodecProvider.default)
 				.build()
 				.apply {
-					context.should.equal(testContext)
+					// TODO check correct context
 					parseValue(StringReader("true")).should.equal(true)
 				}
 		}
 
-		it(".default()") {
-			anyData.testDecoding(JSONParser.default()::parseValue)
-		}
-
-		it(".nonRecursive()") {
-			anyData.testDecoding(JSONParser.nonRecursive()::parseValue)
-		}
-
-		it(".withContext()") {
-			val testContext = TestCoderContext()
-
-			JSONParser.nonRecursive()
-				.withContext(testContext)
-				.context.should.equal(testContext)
+		it(".default") {
+			anyData.testDecoding(JSONParser.default::parseValue)
 		}
 
 		it(".parse()") {
@@ -143,15 +131,11 @@ internal object JSONParserSpec : Spek({
 
 private inline fun <reified Value : Any> testParseMethod(
 	expectedValue: Value?,
-	testBody: JSONParser<JSONCoderContext>.(type: JSONCodableType<Value>) -> Value?
+	testBody: JSONParser.(type: JSONCodableType<Value>) -> Value?
 ) {
 	val expectedType = jsonCodableType<Value>()
 
-	val parser = object : JSONParser<JSONCoderContext> {
-
-		override val context
-			get() = error("")
-
+	val parser = object : JSONParser {
 
 		override fun <Value : Any> parseValueOfTypeOrNull(source: Reader, valueType: JSONCodableType<Value>): Value? {
 			(valueType as JSONCodableType<*>).should.equal(expectedType)
@@ -159,10 +143,6 @@ private inline fun <reified Value : Any> testParseMethod(
 			@Suppress("UNCHECKED_CAST")
 			return expectedValue as Value?
 		}
-
-
-		override fun <NewContext : JSONCoderContext> withContext(context: NewContext) =
-			error("")
 	}
 
 	parser.testBody(expectedType).should.equal(expectedValue)

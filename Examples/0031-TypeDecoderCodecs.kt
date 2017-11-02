@@ -62,7 +62,7 @@ object DecodingExample {
 
 	private object EventCodec : AbstractJSONDecoderCodec<Event, JSONCoderContext>() {
 
-		override fun decode(valueType: JSONCodableType<in Event>, decoder: JSONDecoder<out JSONCoderContext>): Event {
+		override fun decode(valueType: JSONCodableType<in Event>, decoder: JSONDecoder<JSONCoderContext>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null
@@ -87,7 +87,7 @@ object DecodingExample {
 
 	private object InstantCodec : AbstractJSONDecoderCodec<Instant, JSONCoderContext>() {
 
-		override fun decode(valueType: JSONCodableType<in Instant>, decoder: JSONDecoder<out JSONCoderContext>): Instant =
+		override fun decode(valueType: JSONCodableType<in Instant>, decoder: JSONDecoder<JSONCoderContext>): Instant =
 			decoder.readString().let {
 				try {
 					Instant.parse(it)

@@ -1,7 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
 
-internal class StandardDecoder<Context : JSONCoderContext>(
+internal class StandardDecoder<out Context : JSONCoderContext>(
 	override val context: Context,
 	private val codecProvider: JSONCodecProvider<Context>,
 	source: JSONReader

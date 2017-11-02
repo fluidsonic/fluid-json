@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object AnyJSONDecoderCodec : AbstractJSONDecoderCodec<Any, JSONCoderContext>() {
 
-	override fun decode(valueType: JSONCodableType<in Any>, decoder: JSONDecoder<out JSONCoderContext>): Any =
+	override fun decode(valueType: JSONCodableType<in Any>, decoder: JSONDecoder<JSONCoderContext>): Any =
 		when (decoder.nextToken) {
 			JSONToken.booleanValue -> decoder.readValueOfType<Boolean>()
 			JSONToken.listStart -> decoder.readValueOfType<List<*>>()

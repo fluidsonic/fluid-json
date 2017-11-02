@@ -8,7 +8,7 @@ interface JSONDecoderCodec<Value : Any, in Context : JSONCoderContext> : JSONCod
 	val decodableType: JSONCodableType<Value>
 
 
-	fun decode(valueType: JSONCodableType<in Value>, decoder: JSONDecoder<out Context>): Value
+	fun decode(valueType: JSONCodableType<in Value>, decoder: JSONDecoder<Context>): Value
 
 
 	@Suppress("UNCHECKED_CAST")

@@ -17,8 +17,8 @@ internal object JSONTestSuiteSpec : Spek({
 		)
 
 		listOf(
-			TestEnvironment("Recursive Parser", JSONParser.default(), parserIsRecursive = true),
-			TestEnvironment("Non-Recursive Parser", JSONParser.nonRecursive(), parserIsRecursive = false)
+			TestEnvironment("Default (non-recursive) Parser", JSONParser.default, parserIsRecursive = false),
+			TestEnvironment("Recursive Parser", JSONParser.builder().decodingWith().build(), parserIsRecursive = true)
 		)
 			.forEach { environment ->
 				describe(environment.name) {
@@ -74,7 +74,7 @@ internal object JSONTestSuiteSpec : Spek({
 
 	private class TestEnvironment(
 		val name: String,
-		val parser: JSONParser<*>,
+		val parser: JSONParser,
 		val parserIsRecursive: Boolean
 	)
 }

@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 
 
 fun main(args: Array<String>) {
-	val parser = JSONParser.default()
+	val parser = JSONParser.default
 
 	// You can parse a Map of keys and values in a typesafe way
 	val value1 = parser.parseValueOfType<Map<*, *>>("""{ "one": 1, "two": 2, "three": 3 }""")

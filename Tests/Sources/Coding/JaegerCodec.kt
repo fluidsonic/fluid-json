@@ -9,7 +9,7 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 	additionalProviders = listOf(StatusCodec)
 ) {
 
-	override fun decode(valueType: JSONCodableType<in Jaeger>, decoder: JSONDecoder<out TestCoderContext>): Jaeger {
+	override fun decode(valueType: JSONCodableType<in Jaeger>, decoder: JSONDecoder<TestCoderContext>): Jaeger {
 		var height: Double? = null
 		var launchDate: LocalDate? = null
 		var mark: Int? = null
@@ -43,7 +43,7 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 	}
 
 
-	override fun encode(value: Jaeger, encoder: JSONEncoder<out TestCoderContext>) {
+	override fun encode(value: Jaeger, encoder: JSONEncoder<TestCoderContext>) {
 		encoder.writeIntoMap {
 			writeMapElement(Keys.height, double = value.height)
 			writeMapElement(Keys.launchDate, value = value.launchDate)
@@ -70,7 +70,7 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 
 	object StatusCodec : AbstractJSONCodec<Status, TestCoderContext>() {
 
-		override fun decode(valueType: JSONCodableType<in Status>, decoder: JSONDecoder<out TestCoderContext>): Status {
+		override fun decode(valueType: JSONCodableType<in Status>, decoder: JSONDecoder<TestCoderContext>): Status {
 			val id = decoder.readString()
 			return when (id) {
 				"destroyed" -> Status.destroyed
@@ -79,7 +79,7 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 		}
 
 
-		override fun encode(value: Status, encoder: JSONEncoder<out TestCoderContext>) {
+		override fun encode(value: Status, encoder: JSONEncoder<TestCoderContext>) {
 			encoder.writeString(when (value) {
 				Status.destroyed -> "destroyed"
 			})

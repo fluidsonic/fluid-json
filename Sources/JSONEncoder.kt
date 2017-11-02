@@ -3,8 +3,7 @@ package com.github.fluidsonic.fluid.json
 import java.io.Writer
 
 
-@Suppress("AddVarianceModifier")
-interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
+interface JSONEncoder<out Context : JSONCoderContext> : JSONWriter {
 
 	val context: Context
 
@@ -19,27 +18,27 @@ interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
 			BuilderForCodecsImpl(context = context)
 
 
-		interface BuilderForCodecs<Context : JSONCoderContext> {
+		interface BuilderForCodecs<out Context : JSONCoderContext> {
 
 			fun codecs(provider: JSONCodecProvider<Context>): BuilderForDestination<Context>
 
 
 			fun codecs(
 				vararg providers: JSONCodecProvider<Context>,
-				appendDefaultCodecs: Boolean = true
+				appendBasic: Boolean = true
 			) =
-				codecs(JSONCodecProvider.of(providers = *providers, appendDefault = appendDefaultCodecs))
+				codecs(JSONCodecProvider.of(providers = *providers, appendBasic = appendBasic))
 
 
 			fun codecs(
 				providers: Iterable<JSONCodecProvider<Context>>,
-				appendDefaultCodecs: Boolean = true
+				appendBasic: Boolean = true
 			) =
-				codecs(JSONCodecProvider.of(providers = providers, appendDefault = appendDefaultCodecs))
+				codecs(JSONCodecProvider.of(providers = providers, appendBasic = appendBasic))
 		}
 
 
-		private class BuilderForCodecsImpl<Context : JSONCoderContext>(
+		private class BuilderForCodecsImpl<out Context : JSONCoderContext>(
 			private val context: Context
 		) : BuilderForCodecs<Context> {
 
@@ -51,7 +50,7 @@ interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
 		}
 
 
-		interface BuilderForDestination<Context : JSONCoderContext> {
+		interface BuilderForDestination<out Context : JSONCoderContext> {
 
 			fun destination(destination: JSONWriter): Builder<Context>
 
@@ -61,7 +60,7 @@ interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
 		}
 
 
-		private class BuilderForDestinationImpl<Context : JSONCoderContext>(
+		private class BuilderForDestinationImpl<out Context : JSONCoderContext>(
 			private val context: Context,
 			private val codecProvider: JSONCodecProvider<Context>
 		) : BuilderForDestination<Context> {
@@ -75,13 +74,13 @@ interface JSONEncoder<Context : JSONCoderContext> : JSONWriter {
 		}
 
 
-		interface Builder<Context : JSONCoderContext> {
+		interface Builder<out Context : JSONCoderContext> {
 
 			fun build(): JSONEncoder<Context>
 		}
 
 
-		private class BuilderImpl<Context : JSONCoderContext>(
+		private class BuilderImpl<out Context : JSONCoderContext>(
 			private val context: Context,
 			private val codecProvider: JSONCodecProvider<Context>,
 			private val destination: JSONWriter

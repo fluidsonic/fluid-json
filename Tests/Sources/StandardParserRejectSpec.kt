@@ -6,12 +6,12 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.subject.SubjectSpek
 
 
-internal object StandardParserRejectSpec : SubjectSpek<JSONParser<JSONCoderContext>>({
+internal object StandardParserRejectSpec : SubjectSpek<JSONParser>({
 
 	subject {
 		StandardParser(JSONCoderContext.empty) { source, context ->
 			JSONDecoder.builder(context)
-				.codecs(JSONCodecProvider.nonRecursive)
+				.codecs(JSONCodecProvider.default)
 				.source(source)
 				.build()
 		}
@@ -189,6 +189,6 @@ private inline fun shouldFailWithJSONException(body: () -> Unit) {
 }
 
 
-private fun JSONParser<JSONCoderContext>.failToParse(string: String) {
+private fun JSONParser.failToParse(string: String) {
 	shouldFailWithJSONException { parseValue(string) }
 }

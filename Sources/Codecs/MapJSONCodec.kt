@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object MapJSONCodec : AbstractJSONCodec<Map<*, *>, JSONCoderContext>() {
 
-	override fun decode(valueType: JSONCodableType<in Map<*, *>>, decoder: JSONDecoder<out JSONCoderContext>): Map<*, *> {
+	override fun decode(valueType: JSONCodableType<in Map<*, *>>, decoder: JSONDecoder<JSONCoderContext>): Map<*, *> {
 		val (elementKeyType, elementValueType) = valueType.arguments
 
 		return decoder.readMapByElement {
@@ -12,7 +12,7 @@ object MapJSONCodec : AbstractJSONCodec<Map<*, *>, JSONCoderContext>() {
 	}
 
 
-	override fun encode(value: Map<*, *>, encoder: JSONEncoder<out JSONCoderContext>) =
+	override fun encode(value: Map<*, *>, encoder: JSONEncoder<JSONCoderContext>) =
 		encoder.writeMap(value)
 
 

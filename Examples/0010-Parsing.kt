@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 
 
 fun main(args: Array<String>) {
-	val parser = JSONParser.default()
+	val parser = JSONParser.default
 
 	// Given a JSON string you get a value of basic Kotlin types (String, Int, List, Map, etc.)
 	val value1 = parser.parseValue(""" { "hello": "world", "test": 123 } """)

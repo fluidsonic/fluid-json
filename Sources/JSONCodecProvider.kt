@@ -11,7 +11,7 @@ interface JSONCodecProvider<in Context : JSONCoderContext> {
 
 	companion object {
 
-		val default by lazy {
+		val basic by lazy {
 			of(
 				AnyJSONDecoderCodec,
 				ArrayJSONCodec,
@@ -35,12 +35,12 @@ interface JSONCodecProvider<in Context : JSONCoderContext> {
 				StringJSONCodec,
 				IterableJSONEncoderCodec, // after subclasses
 				NumberJSONCodec, // after subclasses
-				appendDefault = false
+				appendBasic = false
 			)
 		}
 
 
-		val nonRecursive by lazy {
+		val default by lazy {
 			of(
 				ArrayJSONCodec.nonRecursive,
 				ListJSONDecoderCodec.nonRecursive,
@@ -53,17 +53,17 @@ interface JSONCodecProvider<in Context : JSONCoderContext> {
 
 		fun <Context : JSONCoderContext> of(
 			vararg providers: JSONCodecProvider<Context>,
-			appendDefault: Boolean = true
+			appendBasic: Boolean = true
 		) =
-			of(providers.asIterable(), appendDefault = appendDefault)
+			of(providers.asIterable(), appendBasic = appendBasic)
 
 
 		fun <Context : JSONCoderContext> of(
 			providers: Iterable<JSONCodecProvider<Context>>,
-			appendDefault: Boolean = true
+			appendBasic: Boolean = true
 		): JSONCodecProvider<Context> =
-			if (appendDefault)
-				StandardCodecProvider(providers = providers + default)
+			if (appendBasic)
+				StandardCodecProvider(providers = providers + basic)
 			else
 				StandardCodecProvider(providers = providers)
 	}

@@ -13,10 +13,10 @@ internal object JSONSerializerSpec : Spek({
 
 		it(".builder()") {
 			JSONSerializer.builder()
-				.encodingWith(JSONCodecProvider.nonRecursive)
+				.encodingWith(JSONCodecProvider.default)
 				.build()
 				.apply {
-					context.should.equal(JSONCoderContext.empty)
+					// TODO check correct context
 					serializeValue(true).should.equal("true")
 				}
 
@@ -24,7 +24,7 @@ internal object JSONSerializerSpec : Spek({
 				.encodingWith(BooleanJSONCodec)
 				.build()
 				.apply {
-					context.should.equal(JSONCoderContext.empty)
+					// TODO check correct context
 					serializeValue(true).should.equal("true")
 				}
 
@@ -32,35 +32,23 @@ internal object JSONSerializerSpec : Spek({
 				.encodingWith(listOf(BooleanJSONCodec))
 				.build()
 				.apply {
-					context.should.equal(JSONCoderContext.empty)
+					// TODO check correct context
 					serializeValue(true).should.equal("true")
 				}
 
 			val testContext = TestCoderContext()
 
 			JSONSerializer.builder(testContext)
-				.encodingWith(JSONCodecProvider.nonRecursive)
+				.encodingWith(JSONCodecProvider.default)
 				.build()
 				.apply {
-					context.should.equal(testContext)
+					// TODO check correct context
 					serializeValue(true).should.equal("true")
 				}
 		}
 
-		it(".default()") {
-			anyData.testEncoding(JSONSerializer.default()::serializeValue)
-		}
-
-		it(".nonRecursive()") {
-			anyData.testEncoding(JSONSerializer.nonRecursive()::serializeValue)
-		}
-
-		it(".withContext()") {
-			val testContext = TestCoderContext()
-
-			JSONSerializer.nonRecursive()
-				.withContext(testContext)
-				.context.should.equal(testContext)
+		it(".default") {
+			anyData.testEncoding(JSONSerializer.default::serializeValue)
 		}
 	}
 })

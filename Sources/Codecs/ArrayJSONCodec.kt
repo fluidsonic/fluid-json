@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object ArrayJSONCodec : AbstractJSONEncoderCodec<Array<out Any?>, JSONCoderContext>() {
 
-	override fun encode(value: Array<out Any?>, encoder: JSONEncoder<out JSONCoderContext>) =
+	override fun encode(value: Array<out Any?>, encoder: JSONEncoder<JSONCoderContext>) =
 		encoder.writeList(value)
 
 

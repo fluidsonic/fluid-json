@@ -37,7 +37,7 @@ object EncodingExample {
 
 	private object EventCodec : AbstractJSONEncoderCodec<Event, JSONCoderContext>() {
 
-		override fun encode(value: Event, encoder: JSONEncoder<out JSONCoderContext>) {
+		override fun encode(value: Event, encoder: JSONEncoder<JSONCoderContext>) {
 			encoder.writeIntoMap {
 				writeMapElement("id", int = value.id)
 				writeMapElement("date", value = value.date, skipIfNull = true)
@@ -49,7 +49,7 @@ object EncodingExample {
 
 	private object InstantCodec : AbstractJSONEncoderCodec<Instant, JSONCoderContext>() {
 
-		override fun encode(value: Instant, encoder: JSONEncoder<out JSONCoderContext>) {
+		override fun encode(value: Instant, encoder: JSONEncoder<JSONCoderContext>) {
 			encoder.writeString(DateTimeFormatter.ISO_INSTANT.format(value))
 		}
 	}

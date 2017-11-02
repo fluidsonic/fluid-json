@@ -84,7 +84,7 @@ internal object StandardCodecProviderSpec : Spek({
 
 	object ChildDecoderCodec : JSONDecoderCodec<Child, Context> {
 
-		override fun decode(valueType: JSONCodableType<in Child>, decoder: JSONDecoder<out Context>) = error("dummy")
+		override fun decode(valueType: JSONCodableType<in Child>, decoder: JSONDecoder<Context>) = error("dummy")
 
 		override val decodableType = jsonCodableType<Child>()
 	}
@@ -92,7 +92,7 @@ internal object StandardCodecProviderSpec : Spek({
 
 	object ChildDecoderCodec2 : JSONDecoderCodec<Child, Context> {
 
-		override fun decode(valueType: JSONCodableType<in Child>, decoder: JSONDecoder<out Context>) = error("dummy")
+		override fun decode(valueType: JSONCodableType<in Child>, decoder: JSONDecoder<Context>) = error("dummy")
 
 		override val decodableType = jsonCodableType<Child>()
 	}
@@ -100,7 +100,7 @@ internal object StandardCodecProviderSpec : Spek({
 
 	object ChildEncoderCodec : JSONEncoderCodec<Child, Context> {
 
-		override fun encode(value: Child, encoder: JSONEncoder<out Context>) = error("dummy")
+		override fun encode(value: Child, encoder: JSONEncoder<Context>) = error("dummy")
 
 		override val encodableClass = Child::class
 	}
@@ -108,7 +108,7 @@ internal object StandardCodecProviderSpec : Spek({
 
 	object ParentDecoderCodec : JSONDecoderCodec<Parent, Context> {
 
-		override fun decode(valueType: JSONCodableType<in Parent>, decoder: JSONDecoder<out Context>) = error("dummy")
+		override fun decode(valueType: JSONCodableType<in Parent>, decoder: JSONDecoder<Context>) = error("dummy")
 
 		override val decodableType = jsonCodableType<Parent>()
 	}
@@ -116,7 +116,7 @@ internal object StandardCodecProviderSpec : Spek({
 
 	object ParentEncoderCodec : JSONEncoderCodec<Parent, Context> {
 
-		override fun encode(value: Parent, encoder: JSONEncoder<out Context>) = error("dummy")
+		override fun encode(value: Parent, encoder: JSONEncoder<Context>) = error("dummy")
 
 		override val encodableClass = Parent::class
 	}
@@ -124,7 +124,7 @@ internal object StandardCodecProviderSpec : Spek({
 
 	object UnrelatedDecoderCodec : JSONDecoderCodec<Unrelated, Context> {
 
-		override fun decode(valueType: JSONCodableType<in Unrelated>, decoder: JSONDecoder<out Context>) = error("dummy")
+		override fun decode(valueType: JSONCodableType<in Unrelated>, decoder: JSONDecoder<Context>) = error("dummy")
 
 		override val decodableType = jsonCodableType<Unrelated>()
 	}
@@ -132,7 +132,7 @@ internal object StandardCodecProviderSpec : Spek({
 
 	object UnrelatedEncoderCodec : JSONEncoderCodec<Unrelated, Context> {
 
-		override fun encode(value: Unrelated, encoder: JSONEncoder<out Context>) = error("dummy")
+		override fun encode(value: Unrelated, encoder: JSONEncoder<Context>) = error("dummy")
 
 		override val encodableClass = Unrelated::class
 	}

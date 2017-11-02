@@ -316,11 +316,95 @@ internal object StandardWriterAcceptSpec : SubjectSpek<JSONWriter>({
 					writeMapElement("", int = null, skipIfNull = false)
 					writeMapElement("", int = null, skipIfNull = true)
 
+					writeMapElement("", list = arrayOf(""))
+					writeMapElement("", list = arrayOf(""), skipIfNull = false)
+					writeMapElement("", list = arrayOf(""), skipIfNull = true)
+					writeMapElement("", list = null as Array<*>?, skipIfNull = false)
+					writeMapElement("", list = null as Array<*>?, skipIfNull = true)
+
+					writeMapElement("", list = booleanArrayOf(true))
+					writeMapElement("", list = booleanArrayOf(true), skipIfNull = false)
+					writeMapElement("", list = booleanArrayOf(true), skipIfNull = true)
+					writeMapElement("", list = null as BooleanArray?, skipIfNull = false)
+					writeMapElement("", list = null as BooleanArray?, skipIfNull = true)
+
+					writeMapElement("", list = byteArrayOf(0))
+					writeMapElement("", list = byteArrayOf(0), skipIfNull = false)
+					writeMapElement("", list = byteArrayOf(0), skipIfNull = true)
+					writeMapElement("", list = null as ByteArray?, skipIfNull = false)
+					writeMapElement("", list = null as ByteArray?, skipIfNull = true)
+
+					writeMapElement("", list = doubleArrayOf(0.0))
+					writeMapElement("", list = doubleArrayOf(0.0), skipIfNull = false)
+					writeMapElement("", list = doubleArrayOf(0.0), skipIfNull = true)
+					writeMapElement("", list = null as DoubleArray?, skipIfNull = false)
+					writeMapElement("", list = null as DoubleArray?, skipIfNull = true)
+
+					writeMapElement("", list = floatArrayOf(0.0f))
+					writeMapElement("", list = floatArrayOf(0.0f), skipIfNull = false)
+					writeMapElement("", list = floatArrayOf(0.0f), skipIfNull = true)
+					writeMapElement("", list = null as FloatArray?, skipIfNull = false)
+					writeMapElement("", list = null as FloatArray?, skipIfNull = true)
+
+					writeMapElement("", list = intArrayOf(0))
+					writeMapElement("", list = intArrayOf(0), skipIfNull = false)
+					writeMapElement("", list = intArrayOf(0), skipIfNull = true)
+					writeMapElement("", list = null as IntArray?, skipIfNull = false)
+					writeMapElement("", list = null as IntArray?, skipIfNull = true)
+
+					writeMapElement("", list = listOf("") as Iterable<*>)
+					writeMapElement("", list = listOf("") as Iterable<*>, skipIfNull = false)
+					writeMapElement("", list = listOf("") as Iterable<*>, skipIfNull = true)
+					writeMapElement("", list = null as Iterable<*>?, skipIfNull = false)
+					writeMapElement("", list = null as Iterable<*>?, skipIfNull = true)
+
+					writeMapElement("", list = listOf(0) as Iterable<Int>) { writeInt(it + 1) }
+					writeMapElement("", list = listOf(0) as Iterable<Int>, skipIfNull = false) { writeInt(it + 1) }
+					writeMapElement("", list = listOf(0) as Iterable<Int>, skipIfNull = true) { writeInt(it + 1) }
+					writeMapElement("", list = null as Iterable<Int>?, skipIfNull = false) { writeInt(it + 1) }
+					writeMapElement("", list = null as Iterable<Int>?, skipIfNull = true) { writeInt(it + 1) }
+
+					writeMapElement("", list = longArrayOf(0))
+					writeMapElement("", list = longArrayOf(0), skipIfNull = false)
+					writeMapElement("", list = longArrayOf(0), skipIfNull = true)
+					writeMapElement("", list = null as LongArray?, skipIfNull = false)
+					writeMapElement("", list = null as LongArray?, skipIfNull = true)
+
+					writeMapElement("", list = listOf("").asSequence())
+					writeMapElement("", list = listOf("").asSequence(), skipIfNull = false)
+					writeMapElement("", list = listOf("").asSequence(), skipIfNull = true)
+					writeMapElement("", list = null as Sequence<*>?, skipIfNull = false)
+					writeMapElement("", list = null as Sequence<*>?, skipIfNull = true)
+
+					writeMapElement("", list = listOf(0).asSequence()) { writeInt(it + 1) }
+					writeMapElement("", list = listOf(0).asSequence(), skipIfNull = false) { writeInt(it + 1) }
+					writeMapElement("", list = listOf(0).asSequence(), skipIfNull = true) { writeInt(it + 1) }
+					writeMapElement("", list = null as Sequence<Int>?, skipIfNull = false) { writeInt(it + 1) }
+					writeMapElement("", list = null as Sequence<Int>?, skipIfNull = true) { writeInt(it + 1) }
+
+					writeMapElement("", list = shortArrayOf(0))
+					writeMapElement("", list = shortArrayOf(0), skipIfNull = false)
+					writeMapElement("", list = shortArrayOf(0), skipIfNull = true)
+					writeMapElement("", list = null as ShortArray?, skipIfNull = false)
+					writeMapElement("", list = null as ShortArray?, skipIfNull = true)
+
 					writeMapElement("", long = 0)
 					writeMapElement("", long = 0, skipIfNull = false)
 					writeMapElement("", long = 0, skipIfNull = true)
 					writeMapElement("", long = null, skipIfNull = false)
 					writeMapElement("", long = null, skipIfNull = true)
+
+					writeMapElement("", map = mapOf("" to 0) as Map<*, *>)
+					writeMapElement("", map = mapOf("" to 0) as Map<*, *>, skipIfNull = false)
+					writeMapElement("", map = mapOf("" to 0) as Map<*, *>, skipIfNull = true)
+					writeMapElement("", map = null as Map<*, *>?, skipIfNull = false)
+					writeMapElement("", map = null as Map<*, *>?, skipIfNull = true)
+
+					writeMapElement("", map = mapOf("" to 0) as Map<*, Int>) { writeInt(it + 1) }
+					writeMapElement("", map = mapOf("" to 0) as Map<*, Int>, skipIfNull = false) { writeInt(it + 1) }
+					writeMapElement("", map = mapOf("" to 0) as Map<*, Int>, skipIfNull = true) { writeInt(it + 1) }
+					writeMapElement("", map = null as Map<*, Int>?, skipIfNull = false) { writeInt(it + 1) }
+					writeMapElement("", map = null as Map<*, Int>?, skipIfNull = true) { writeInt(it + 1) }
 
 					writeMapElement("", number = 0)
 					writeMapElement("", number = 0, skipIfNull = false)
@@ -339,6 +423,18 @@ internal object StandardWriterAcceptSpec : SubjectSpek<JSONWriter>({
 					writeMapElement("", string = "", skipIfNull = true)
 					writeMapElement("", string = null, skipIfNull = false)
 					writeMapElement("", string = null, skipIfNull = true)
+
+					writeMapElement("", value = "")
+					writeMapElement("", value = "", skipIfNull = false)
+					writeMapElement("", value = "", skipIfNull = true)
+					writeMapElement("", value = null, skipIfNull = false)
+					writeMapElement("", value = null, skipIfNull = true)
+
+					writeMapElement("", value = 0) { writeInt(it + 1) }
+					writeMapElement("", value = 0, skipIfNull = false) { writeInt(it + 1) }
+					writeMapElement("", value = 0, skipIfNull = true) { writeInt(it + 1) }
+					writeMapElement("", value = null as Int?, skipIfNull = false) { writeInt(it + 1) }
+					writeMapElement("", value = null as Int?, skipIfNull = true) { writeInt(it + 1) }
 
 					writeMapElement("") { writeString("inline") }
 
@@ -371,9 +467,79 @@ internal object StandardWriterAcceptSpec : SubjectSpek<JSONWriter>({
 					"": 0,
 					"": null,
 
+					"": [""],
+					"": [""],
+					"": [""],
+					"": null,
+
+					"": [true],
+					"": [true],
+					"": [true],
+					"": null,
+
+					"": [0],
+					"": [0],
+					"": [0],
+					"": null,
+
+					"": [0.0],
+					"": [0.0],
+					"": [0.0],
+					"": null,
+
+					"": [0.0],
+					"": [0.0],
+					"": [0.0],
+					"": null,
+
+					"": [0],
+					"": [0],
+					"": [0],
+					"": null,
+
+					"": [""],
+					"": [""],
+					"": [""],
+					"": null,
+
+					"": [1],
+					"": [1],
+					"": [1],
+					"": null,
+
+					"": [0],
+					"": [0],
+					"": [0],
+					"": null,
+
+					"": [""],
+					"": [""],
+					"": [""],
+					"": null,
+
+					"": [1],
+					"": [1],
+					"": [1],
+					"": null,
+
+					"": [0],
+					"": [0],
+					"": [0],
+					"": null,
+
 					"": 0,
 					"": 0,
 					"": 0,
+					"": null,
+
+					"": {"":0},
+					"": {"":0},
+					"": {"":0},
+					"": null,
+
+					"": {"":1},
+					"": {"":1},
+					"": {"":1},
 					"": null,
 
 					"": 0,
@@ -389,6 +555,16 @@ internal object StandardWriterAcceptSpec : SubjectSpek<JSONWriter>({
 					"": "",
 					"": "",
 					"": "",
+					"": null,
+
+					"": "",
+					"": "",
+					"": "",
+					"": null,
+
+					"": 1,
+					"": 1,
+					"": 1,
 					"": null,
 
 					"": "inline",

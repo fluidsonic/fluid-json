@@ -7,7 +7,7 @@ internal object IterableJSONEncoderTestCodec : AbstractJSONEncoderCodec<Iterable
 	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, NumberJSONCodec, StringJSONCodec)
 ) {
 
-	override fun encode(value: Iterable<*>, encoder: JSONEncoder<out JSONCoderContext>) =
+	override fun encode(value: Iterable<*>, encoder: JSONEncoder<JSONCoderContext>) =
 		IterableJSONEncoderCodec.encode(value, encoder)
 
 
@@ -15,7 +15,7 @@ internal object IterableJSONEncoderTestCodec : AbstractJSONEncoderCodec<Iterable
 		additionalProviders = listOf(BooleanJSONCodec, IntJSONCodec, StringJSONCodec)
 	) {
 
-		override fun encode(value: Iterable<*>, encoder: JSONEncoder<out JSONCoderContext>) =
+		override fun encode(value: Iterable<*>, encoder: JSONEncoder<JSONCoderContext>) =
 			IterableJSONEncoderCodec.nonRecursive.encode(value, encoder)
 	}
 }
