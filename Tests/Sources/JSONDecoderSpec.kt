@@ -14,33 +14,6 @@ internal object JSONDecoderSpec : Spek({
 
 		it(".builder()") {
 			JSONDecoder.builder()
-				.codecs(JSONCodecProvider.default)
-				.source(JSONReader.build(StringReader("true")))
-				.build()
-				.apply {
-					context.should.equal(JSONCoderContext.empty)
-					readBoolean().should.be.`true`
-				}
-
-			JSONDecoder.builder()
-				.codecs(JSONCodecProvider.default)
-				.source(StringReader("true"))
-				.build()
-				.apply {
-					context.should.equal(JSONCoderContext.empty)
-					readBoolean().should.be.`true`
-				}
-
-			JSONDecoder.builder()
-				.codecs(JSONCodecProvider.default)
-				.source("true")
-				.build()
-				.apply {
-					context.should.equal(JSONCoderContext.empty)
-					readBoolean().should.be.`true`
-				}
-
-			JSONDecoder.builder()
 				.codecs(BooleanJSONCodec)
 				.source("true")
 				.build()
@@ -51,7 +24,7 @@ internal object JSONDecoderSpec : Spek({
 
 			JSONDecoder.builder()
 				.codecs(listOf(BooleanJSONCodec))
-				.source("true")
+				.source(StringReader("true"))
 				.build()
 				.apply {
 					context.should.equal(JSONCoderContext.empty)
@@ -61,7 +34,7 @@ internal object JSONDecoderSpec : Spek({
 			val testContext = TestCoderContext()
 
 			JSONDecoder.builder(testContext)
-				.codecs(JSONCodecProvider.default)
+				.codecs()
 				.source(JSONReader.build(StringReader("true")))
 				.build()
 				.apply {

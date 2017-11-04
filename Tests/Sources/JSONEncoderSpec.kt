@@ -15,30 +15,6 @@ internal object JSONEncoderSpec : Spek({
 		it(".builder()") {
 			StringWriter().let { writer ->
 				JSONEncoder.builder()
-					.codecs(JSONCodecProvider.default)
-					.destination(JSONWriter.build(writer))
-					.build()
-					.apply {
-						context.should.equal(JSONCoderContext.empty)
-						writeBoolean(true)
-						writer.toString().should.equal("true")
-					}
-			}
-
-			StringWriter().let { writer ->
-				JSONEncoder.builder()
-					.codecs(JSONCodecProvider.default)
-					.destination(writer)
-					.build()
-					.apply {
-						context.should.equal(JSONCoderContext.empty)
-						writeBoolean(true)
-						writer.toString().should.equal("true")
-					}
-			}
-
-			StringWriter().let { writer ->
-				JSONEncoder.builder()
 					.codecs(BooleanJSONCodec)
 					.destination(writer)
 					.build()
@@ -65,7 +41,7 @@ internal object JSONEncoderSpec : Spek({
 
 			StringWriter().let { writer ->
 				JSONEncoder.builder(testContext)
-					.codecs(JSONCodecProvider.default)
+					.codecs()
 					.destination(JSONWriter.build(writer))
 					.build()
 					.apply {
@@ -77,7 +53,7 @@ internal object JSONEncoderSpec : Spek({
 
 			StringWriter().let { writer ->
 				JSONEncoder.builder(testContext)
-					.codecs(JSONCodecProvider.default)
+					.codecs()
 					.destination(writer)
 					.build()
 					.apply {

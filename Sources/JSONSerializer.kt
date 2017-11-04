@@ -21,7 +21,7 @@ interface JSONSerializer {
 
 
 		val default = builder()
-			.encodingWith(JSONCodecProvider.default)
+			.encodingWith(DefaultJSONCodecs.nonRecursive)
 			.build()
 
 
@@ -30,27 +30,23 @@ interface JSONSerializer {
 			fun encodingWith(factory: (destination: Writer, context: Context) -> JSONEncoder<Context>): Builder
 
 
-			private fun encodingWith(provider: JSONCodecProvider<Context>): Builder =
-				encodingWith { destination, context ->
-					JSONEncoder.builder(context)
-						.codecs(provider)
-						.destination(destination)
-						.build()
-				}
-
-
 			fun encodingWith(
 				vararg providers: JSONCodecProvider<Context>,
-				appendBasic: Boolean = true
+				base: JSONCodecProvider<JSONCoderContext>? = JSONCodecProvider.extended
 			) =
-				encodingWith(JSONCodecProvider.of(providers = *providers, appendBasic = appendBasic))
+				encodingWith(providers = providers.toList(), base = base)
 
 
 			fun encodingWith(
 				providers: Iterable<JSONCodecProvider<Context>>,
-				appendBasic: Boolean = true
+				base: JSONCodecProvider<JSONCoderContext>? = JSONCodecProvider.extended
 			) =
-				encodingWith(JSONCodecProvider.of(providers = providers, appendBasic = appendBasic))
+				encodingWith { destination, context ->
+					JSONEncoder.builder(context)
+						.codecs(JSONCodecProvider.of(providers = providers, base = base))
+						.destination(destination)
+						.build()
+				}
 		}
 
 

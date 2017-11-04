@@ -11,7 +11,7 @@ internal object StandardParserRejectSpec : SubjectSpek<JSONParser>({
 	subject {
 		StandardParser(JSONCoderContext.empty) { source, context ->
 			JSONDecoder.builder(context)
-				.codecs(JSONCodecProvider.default)
+				.codecs()
 				.source(source)
 				.build()
 		}

@@ -15,7 +15,7 @@ internal object JSONParserSpec : Spek({
 
 		it(".builder()") {
 			JSONParser.builder()
-				.decodingWith(JSONCodecProvider.default, appendBasic = false)
+				.decodingWith(BooleanJSONCodec)
 				.build()
 				.apply {
 					// TODO check correct context
@@ -23,15 +23,7 @@ internal object JSONParserSpec : Spek({
 				}
 
 			JSONParser.builder()
-				.decodingWith(JSONCodecProvider.default, appendBasic = false)
-				.build()
-				.apply {
-					// TODO check correct context
-					parseValue(StringReader("true")).should.equal(true)
-				}
-
-			JSONParser.builder()
-				.decodingWith(listOf(JSONCodecProvider.default), appendBasic = false)
+				.decodingWith(listOf(BooleanJSONCodec))
 				.build()
 				.apply {
 					// TODO check correct context
@@ -41,7 +33,7 @@ internal object JSONParserSpec : Spek({
 			val testContext = TestCoderContext()
 
 			JSONParser.builder(testContext)
-				.decodingWith(JSONCodecProvider.default)
+				.decodingWith()
 				.build()
 				.apply {
 					// TODO check correct context

@@ -11,61 +11,22 @@ interface JSONCodecProvider<in Context : JSONCoderContext> {
 
 	companion object {
 
-		val basic by lazy {
-			of(
-				AnyJSONDecoderCodec,
-				ArrayJSONCodec,
-				BooleanArrayJSONCodec,
-				BooleanJSONCodec,
-				ByteArrayJSONCodec,
-				ByteJSONCodec,
-				DoubleArrayJSONCodec,
-				DoubleJSONCodec,
-				FloatArrayJSONCodec,
-				FloatJSONCodec,
-				IntArrayJSONCodec,
-				IntJSONCodec,
-				ListJSONDecoderCodec,
-				LongArrayJSONCodec,
-				LongJSONCodec,
-				MapJSONCodec,
-				SequenceJSONCodec,
-				ShortArrayJSONCodec,
-				ShortJSONCodec,
-				StringJSONCodec,
-				IterableJSONEncoderCodec, // after subclasses
-				NumberJSONCodec, // after subclasses
-				appendBasic = false
-			)
-		}
-
-
-		val default by lazy {
-			of(
-				ArrayJSONCodec.nonRecursive,
-				ListJSONDecoderCodec.nonRecursive,
-				MapJSONCodec.nonRecursive,
-				SequenceJSONCodec.nonRecursive,
-				IterableJSONEncoderCodec.nonRecursive // after subclasses
-			)
-		}
+		val basic = of(DefaultJSONCodecs.basic + DefaultJSONCodecs.nonRecursive)
+		val extended = of(DefaultJSONCodecs.extended + DefaultJSONCodecs.basic + DefaultJSONCodecs.nonRecursive)
 
 
 		fun <Context : JSONCoderContext> of(
 			vararg providers: JSONCodecProvider<Context>,
-			appendBasic: Boolean = true
+			base: JSONCodecProvider<JSONCoderContext>? = extended
 		) =
-			of(providers.asIterable(), appendBasic = appendBasic)
+			of(providers.asIterable(), base = base)
 
 
 		fun <Context : JSONCoderContext> of(
 			providers: Iterable<JSONCodecProvider<Context>>,
-			appendBasic: Boolean = true
+			base: JSONCodecProvider<JSONCoderContext>? = extended
 		): JSONCodecProvider<Context> =
-			if (appendBasic)
-				StandardCodecProvider(providers = providers + basic)
-			else
-				StandardCodecProvider(providers = providers)
+			StandardCodecProvider(providers = base?.let { providers + it } ?: providers)
 	}
 }
 

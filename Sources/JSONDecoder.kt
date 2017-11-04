@@ -28,21 +28,17 @@ interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
 
 		interface BuilderForCodecs<out Context : JSONCoderContext> {
 
-			fun codecs(provider: JSONCodecProvider<Context>): BuilderForSource<Context>
-
-
 			fun codecs(
 				vararg providers: JSONCodecProvider<Context>,
-				appendDefault: Boolean = true
+				base: JSONCodecProvider<JSONCoderContext>? = JSONCodecProvider.extended
 			) =
-				codecs(JSONCodecProvider.of(providers = *providers, appendBasic = appendDefault))
+				codecs(providers = providers.toList(), base = base)
 
 
 			fun codecs(
 				providers: Iterable<JSONCodecProvider<Context>>,
-				appendDefault: Boolean = true
-			) =
-				codecs(JSONCodecProvider.of(providers = providers, appendBasic = appendDefault))
+				base: JSONCodecProvider<JSONCoderContext>? = JSONCodecProvider.extended
+			): BuilderForSource<Context>
 		}
 
 
@@ -50,10 +46,13 @@ interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
 			private val context: Context
 		) : BuilderForCodecs<Context> {
 
-			override fun codecs(provider: JSONCodecProvider<Context>) =
+			override fun codecs(
+				providers: Iterable<JSONCodecProvider<Context>>,
+				base: JSONCodecProvider<JSONCoderContext>?
+			) =
 				BuilderForSourceImpl(
 					context = context,
-					codecProvider = provider
+					codecProvider = JSONCodecProvider.of(providers = providers, base = base)
 				)
 		}
 

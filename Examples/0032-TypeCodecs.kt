@@ -2,8 +2,6 @@ package examples
 
 import com.github.fluidsonic.fluid.json.*
 import java.time.Instant
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 
 object CodingExample {
@@ -22,13 +20,13 @@ object CodingExample {
 		)
 
 		val serializer = JSONSerializer.builder()
-			.encodingWith(EventCodec, InstantCodec)
+			.encodingWith(EventCodec)
 			.build()
 
 		val json = serializer.serializeValue(input)
 
 		val parser = JSONParser.builder()
-			.decodingWith(EventCodec, InstantCodec)
+			.decodingWith(EventCodec)
 			.build()
 
 		val output = parser.parseValueOfType<List<Event>>(json)
@@ -76,25 +74,6 @@ object CodingExample {
 				writeMapElement("date", value = value.date, skipIfNull = true)
 				writeMapElement("title", string = value.title)
 			}
-		}
-	}
-
-
-	private object InstantCodec : AbstractJSONCodec<Instant, JSONCoderContext>() {
-
-		override fun decode(valueType: JSONCodableType<in Instant>, decoder: JSONDecoder<JSONCoderContext>): Instant =
-			decoder.readString().let {
-				try {
-					Instant.parse(it)
-				}
-				catch (e: DateTimeParseException) {
-					throw JSONException("Cannot parse Instant '$it'", e)
-				}
-			}
-
-
-		override fun encode(value: Instant, encoder: JSONEncoder<JSONCoderContext>) {
-			encoder.writeString(DateTimeFormatter.ISO_INSTANT.format(value))
 		}
 	}
 }

@@ -13,14 +13,6 @@ internal object JSONSerializerSpec : Spek({
 
 		it(".builder()") {
 			JSONSerializer.builder()
-				.encodingWith(JSONCodecProvider.default)
-				.build()
-				.apply {
-					// TODO check correct context
-					serializeValue(true).should.equal("true")
-				}
-
-			JSONSerializer.builder()
 				.encodingWith(BooleanJSONCodec)
 				.build()
 				.apply {
@@ -39,7 +31,7 @@ internal object JSONSerializerSpec : Spek({
 			val testContext = TestCoderContext()
 
 			JSONSerializer.builder(testContext)
-				.encodingWith(JSONCodecProvider.default)
+				.encodingWith()
 				.build()
 				.apply {
 					// TODO check correct context

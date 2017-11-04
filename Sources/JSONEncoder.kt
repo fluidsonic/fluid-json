@@ -20,21 +20,17 @@ interface JSONEncoder<out Context : JSONCoderContext> : JSONWriter {
 
 		interface BuilderForCodecs<out Context : JSONCoderContext> {
 
-			fun codecs(provider: JSONCodecProvider<Context>): BuilderForDestination<Context>
-
-
 			fun codecs(
 				vararg providers: JSONCodecProvider<Context>,
-				appendBasic: Boolean = true
+				base: JSONCodecProvider<JSONCoderContext>? = JSONCodecProvider.extended
 			) =
-				codecs(JSONCodecProvider.of(providers = *providers, appendBasic = appendBasic))
+				codecs(providers = providers.toList(), base = base)
 
 
 			fun codecs(
 				providers: Iterable<JSONCodecProvider<Context>>,
-				appendBasic: Boolean = true
-			) =
-				codecs(JSONCodecProvider.of(providers = providers, appendBasic = appendBasic))
+				base: JSONCodecProvider<JSONCoderContext>? = JSONCodecProvider.extended
+			): BuilderForDestination<Context>
 		}
 
 
@@ -42,10 +38,13 @@ interface JSONEncoder<out Context : JSONCoderContext> : JSONWriter {
 			private val context: Context
 		) : BuilderForCodecs<Context> {
 
-			override fun codecs(provider: JSONCodecProvider<Context>) =
+			override fun codecs(
+				providers: Iterable<JSONCodecProvider<Context>>,
+				base: JSONCodecProvider<JSONCoderContext>?
+			) =
 				BuilderForDestinationImpl(
 					context = context,
-					codecProvider = provider
+					codecProvider = JSONCodecProvider.of(providers = providers, base = base)
 				)
 		}
 

@@ -3,15 +3,15 @@ package tests
 import com.github.fluidsonic.fluid.json.*
 
 
-internal fun <Value : Any> JSONDecoderCodec<Value, JSONCoderContext>.parse(source: String, type: JSONCodableType<Value>): Value? =
+internal fun <Value : Any> JSONDecoderCodec<Value, JSONCoderContext>.parse(source: String, type: JSONCodableType<Value>) =
 	JSONParser.builder()
-		.decodingWith(this, appendBasic = false)
+		.decodingWith(this, base = null)
 		.build()
 		.parseValueOfType(source, type)
 
 
 internal fun <Value : Any> JSONEncoderCodec<Value, JSONCoderContext>.serialize(value: Value) =
 	JSONSerializer.builder()
-		.encodingWith(this, appendBasic = false)
+		.encodingWith(this, base = null)
 		.build()
 		.serializeValue(value)

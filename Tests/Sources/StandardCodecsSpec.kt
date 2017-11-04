@@ -11,6 +11,7 @@ import org.jetbrains.spek.api.dsl.it
 internal object StandardCodecsSpec : Spek({
 
 	listOf(
+		// basic
 		Test("Any", AnyJSONTestDecoderCodec, anyData),
 		Test("Array", ArrayJSONTestCodec, arrayData),
 		Test("Array (non-recursive)", ArrayJSONTestCodec.NonRecursive, arrayData),
@@ -38,7 +39,25 @@ internal object StandardCodecsSpec : Spek({
 		Test("Sequence (non-recursive)", SequenceJSONTestCodec.NonRecursive, sequenceData),
 		Test("Short", ShortJSONCodec, shortData),
 		Test("ShortArray", ShortArrayJSONCodec, shortArrayData),
-		Test("String", StringJSONCodec, stringData)
+		Test("String", StringJSONCodec, stringData),
+
+		// extended
+		Test("DayOfWeek", DayOfWeekJSONCodec, dayOfWeekData),
+		Test("Duration", DurationJSONCodec, durationData),
+		Test("Instant", InstantJSONCodec, instantData),
+		Test("LocalDate", LocalDateJSONCodec, localDateData),
+		Test("LocalDateTime", LocalDateTimeJSONCodec, localDateTimeData),
+		Test("LocalTime", LocalTimeJSONCodec, localTimeData),
+		Test("Month", MonthJSONCodec, monthData),
+		Test("MonthDay", MonthDayJSONCodec, monthDayData),
+		Test("OffsetDateTime", OffsetDateTimeJSONCodec, offsetDateTimeData),
+		Test("OffsetTime", OffsetTimeJSONCodec, offsetTimeData),
+		Test("Period", PeriodJSONCodec, periodData),
+		Test("Year", YearJSONCodec, yearData),
+		Test("YearMonth", YearMonthJSONCodec, yearMonthData),
+		Test("ZonedDateTime", ZonedDateTimeJSONCodec, zonedDateTimeData),
+		Test("ZoneId", ZoneIdJSONCodec, zoneIdData),
+		Test("ZoneOffset", ZoneOffsetJSONCodec, zoneOffsetData)
 	)
 		.forEach { test ->
 			describe(test.name) {
@@ -75,7 +94,7 @@ internal object StandardCodecsSpec : Spek({
 
 	it("Map maintains entry order") {
 		MapJSONTestCodec.parse("""{ "3": 3, "1": 1, "2": 2, "0": 0 }""", jsonCodableType())
-			?.entries?.toList()
+			.entries.toList()
 			.should.equal(mapOf("3" to 3, "1" to 1, "2" to 2, "0" to 0).entries.toList())
 	}
 }) {

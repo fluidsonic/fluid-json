@@ -2,7 +2,6 @@ package examples
 
 import com.github.fluidsonic.fluid.json.*
 import java.time.Instant
-import java.time.format.DateTimeFormatter
 
 
 object EncodingExample {
@@ -12,7 +11,7 @@ object EncodingExample {
 		// Using a codec for encoding specific Kotlin types simplifies JSON serialization a lot
 
 		val serializer = JSONSerializer.builder()
-			.encodingWith(EventCodec, InstantCodec)
+			.encodingWith(EventCodec)
 			.build()
 
 		val json = serializer.serializeValue(listOf(
@@ -43,14 +42,6 @@ object EncodingExample {
 				writeMapElement("date", value = value.date, skipIfNull = true)
 				writeMapElement("title", string = value.title)
 			}
-		}
-	}
-
-
-	private object InstantCodec : AbstractJSONEncoderCodec<Instant, JSONCoderContext>() {
-
-		override fun encode(value: Instant, encoder: JSONEncoder<JSONCoderContext>) {
-			encoder.writeString(DateTimeFormatter.ISO_INSTANT.format(value))
 		}
 	}
 }

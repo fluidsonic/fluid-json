@@ -20,7 +20,7 @@ interface JSONParser {
 
 
 		val default = builder()
-			.decodingWith(JSONCodecProvider.default, appendBasic = false)
+			.decodingWith(DefaultJSONCodecs.nonRecursive)
 			.build()
 
 
@@ -29,29 +29,23 @@ interface JSONParser {
 			fun decodingWith(factory: (source: Reader, context: Context) -> JSONDecoder<Context>): Builder
 
 
-			private fun decodingWith(
-				provider: JSONCodecProvider<Context>
-			): Builder =
-				decodingWith { source, context ->
-					JSONDecoder.builder(context)
-						.codecs(provider)
-						.source(source)
-						.build()
-				}
-
-
 			fun decodingWith(
 				vararg providers: JSONCodecProvider<Context>,
-				appendBasic: Boolean = true
+				base: JSONCodecProvider<JSONCoderContext>? = JSONCodecProvider.extended
 			) =
-				decodingWith(JSONCodecProvider.of(providers = *providers, appendBasic = appendBasic))
+				decodingWith(providers = providers.toList(), base = base)
 
 
 			fun decodingWith(
 				providers: Iterable<JSONCodecProvider<Context>>,
-				appendBasic: Boolean = true
+				base: JSONCodecProvider<JSONCoderContext>? = JSONCodecProvider.extended
 			) =
-				decodingWith(JSONCodecProvider.of(providers = providers, appendBasic = appendBasic))
+				decodingWith { source, context ->
+					JSONDecoder.builder(context)
+						.codecs(JSONCodecProvider.of(providers = providers, base = base))
+						.source(source)
+						.build()
+				}
 		}
 
 

@@ -324,6 +324,29 @@ The default implementations of `JSONReader` and `JSONParser` decode JSON types a
 | `object<string,*>` | `Map<String,*>`  |
 | `string`           | `String`         |
 
+### Extended Types
+
+The following classes of the `java.time` package can also be decoded and encoded out of the box:
+
+| Kotlin           | JSON     | Remarks
+| ---------------- | -------- | -------
+| `DayOfWeek`      | `string` | `"monday"`, …, `"friday"`
+| `Duration`       | `string` | using `.parse()` / `.toString()`
+| `Instant`        | `string` | using `.parse()` / `.toString()`
+| `LocalDate`      | `string` | using `.parse()` / `.toString()`
+| `LocalDateTime`  | `string` | using `.parse()` / `.toString()`
+| `LocalTime`      | `string` | using `.parse()` / `.toString()`
+| `MonthDay`       | `string` | using `.parse()` / `.toString()`
+| `Month`          | `string` | `"january"`, …, `"december"`
+| `OffsetDateTime` | `string` | using `.parse()` / `.toString()`
+| `OffsetTime`     | `string` | using `.parse()` / `.toString()`
+| `Period`         | `string` | using `.parse()` / `.toString()`
+| `Year`           | `int`    | using `.value`
+| `YearMonth`      | `string` | using `.parse()` / `.toString()`
+| `ZonedDateTime`  | `string` | using `.parse()` / `.toString()`
+| `ZoneId`         | `string` | using `.of()` / `.id`
+| `ZoneOffset`     | `string` | using `.of()` / `.id`
+
 
 
 Architecture
@@ -371,6 +394,7 @@ parser/serializer.
 | `AbstractJSONCodec`        | Abstract base class which simplifies implementing `JSONCodec`.
 | `AbstractJSONDecoderCodec` | Abstract base class which simplifies implementing `JSONDecoderCodec`.
 | `AbstractJSONEncoderCodec` | Abstract base class which simplifies implementing `JSONEncoderCodec`.
+| `DefaultJSONCodecs`        | Contains lists of default codecs which can be used when contructing custom `JSONCodecProvider`s.
 | `JSONCodableType`          | Roughly describes a Kotlin type which can be decoded from JSON. It includes relevant generic information which allows decoding for example `List<Something>` instead of just `List<*>`. Also known as [type token](http://gafter.blogspot.de/2006/12/super-type-tokens.html)).
 | `JSONCodec`                | Interface for classes which implement both, `JSONEncoderCodec` and `JSONDecoderCodec`. Also simplifies creating such codecs.
 | `JSONCodecProvider`        | Interface for classes which when given a `JSONCodableType` (for decoding) or `KClass` (for encoding) return a codec which is able to decode/encode values of that type.
@@ -395,7 +419,6 @@ Future Planning
 This is on the backlog for later consideration, in no specific order:
 
 - [Add KDoc to all public API](https://github.com/fluidsonic/fluid-json/issues/28)
-- [Add extended set of standard codecs (e.g. for `java.time`)](https://github.com/fluidsonic/fluid-json/issues/17)
 - [Add annotation-based preprocessor for automatic create codecs](https://github.com/fluidsonic/fluid-json/issues/16)
 - [Add performance testing](https://github.com/fluidsonic/fluid-json/issues/4)
 - [Add low-level support for `BigDecimal` / `BigInteger`](https://github.com/fluidsonic/fluid-json/issues/18)

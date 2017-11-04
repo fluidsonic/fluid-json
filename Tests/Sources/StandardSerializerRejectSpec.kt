@@ -11,7 +11,7 @@ internal object StandardSerializerRejectSpec : SubjectSpek<JSONSerializer>({
 	subject {
 		StandardSerializer(JSONCoderContext.empty) { destination, context ->
 			JSONEncoder.builder(context)
-				.codecs(JSONCodecProvider.default)
+				.codecs()
 				.destination(destination)
 				.build()
 		}

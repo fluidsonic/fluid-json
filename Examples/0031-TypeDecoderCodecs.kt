@@ -2,7 +2,6 @@ package examples
 
 import com.github.fluidsonic.fluid.json.*
 import java.time.Instant
-import java.time.format.DateTimeParseException
 
 
 object DecodingExample {
@@ -12,7 +11,7 @@ object DecodingExample {
 		// Using a codec for decoding specific classes simplifies JSON parsing a lot
 
 		val parser = JSONParser.builder()
-			.decodingWith(EventCodec, InstantCodec)
+			.decodingWith(EventCodec)
 			.build()
 
 		val json = parser.parseValueOfType<List<Event>>("""
@@ -82,19 +81,5 @@ object DecodingExample {
 				title = title ?: throw JSONException("missing title")
 			)
 		}
-	}
-
-
-	private object InstantCodec : AbstractJSONDecoderCodec<Instant, JSONCoderContext>() {
-
-		override fun decode(valueType: JSONCodableType<in Instant>, decoder: JSONDecoder<JSONCoderContext>): Instant =
-			decoder.readString().let {
-				try {
-					Instant.parse(it)
-				}
-				catch (e: DateTimeParseException) {
-					throw JSONException("Cannot parse Instant '$it'", e)
-				}
-			}
 	}
 }
