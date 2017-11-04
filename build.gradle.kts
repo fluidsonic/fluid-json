@@ -90,7 +90,7 @@ afterEvaluate {
 
 dependencies {
 	api(kotlin("reflect", "1.1.51"))
-	api(kotlin("stdlib", "1.1.51"))
+	api(kotlin("stdlib-jre8", "1.1.51"))
 
 	testImplementation("com.winterbe:expekt:0.5.0")
 	testImplementation("org.jetbrains.spek:spek-subject-extension:1.1.5")
