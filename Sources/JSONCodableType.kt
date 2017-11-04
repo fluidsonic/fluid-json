@@ -13,6 +13,10 @@ inline fun <reified Type : Any> jsonCodableType() =
 	JSONCodableType.of<Type>(object : JSONCodableTypeReference<Type>() {}::class.java.genericSuperclass as ParameterizedType)
 
 
+fun <Type : Any> jsonCodableType(clazz: KClass<Type>) =
+	JSONCodableType.of(clazz)
+
+
 @Suppress("unused")
 class JSONCodableType<Type : Any> private constructor(
 	val rawClass: KClass<Type>,
@@ -76,10 +80,14 @@ class JSONCodableType<Type : Any> private constructor(
 			} as JSONCodableType<Type>
 
 
-		private fun Class<*>.toCodableType(upperBound: KClass<*>?, variance: KVariance): JSONCodableType<*> =
+		internal fun <Type : Any> of(clazz: KClass<Type>) =
+			clazz.java.toCodableType(upperBound = null, variance = KVariance.INVARIANT)
+
+
+		private fun <Type : Any> Class<Type>.toCodableType(upperBound: KClass<*>?, variance: KVariance): JSONCodableType<Type> =
 			if (isArray && !componentType.isPrimitive)
 				JSONCodableType(
-					rawClass = Array<Any?>::class,
+					rawClass = kotlin,
 					arguments = listOf(componentType.toCodableType(upperBound = Any::class, variance = KVariance.INVARIANT)),
 					upperBoundInGenericContext = upperBound,
 					varianceInGenericContext = variance
@@ -87,7 +95,7 @@ class JSONCodableType<Type : Any> private constructor(
 			else
 				JSONCodableType(
 					rawClass = kotlin,
-					arguments = emptyList(),
+					arguments = typeParameters.map { it.bounds.first().toCodableType(upperBound = null, variance = KVariance.INVARIANT) },
 					upperBoundInGenericContext = upperBound,
 					varianceInGenericContext = variance
 				)
@@ -138,9 +146,10 @@ class JSONCodableType<Type : Any> private constructor(
 			}
 
 
+		@Suppress("UNCHECKED_CAST")
 		private fun Type.toCodableType(upperBound: KClass<*>?, variance: KVariance): JSONCodableType<*> =
 			when (this) {
-				is Class<*> -> toCodableType(upperBound = upperBound, variance = variance)
+				is Class<*> -> (this as Class<Any>).toCodableType(upperBound = upperBound, variance = variance)
 				is ParameterizedType -> toCodableType(upperBound = upperBound, variance = variance)
 				is WildcardType -> toCodableType(upperBound = upperBound)
 				is GenericArrayType -> toCodableType(upperBound = upperBound, variance = variance)
