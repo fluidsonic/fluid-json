@@ -20,6 +20,11 @@ interface JSONParser {
 
 
 		val default = builder()
+			.decodingWith()
+			.build()
+
+
+		val nonRecursive = builder()
 			.decodingWith(DefaultJSONCodecs.nonRecursive)
 			.build()
 

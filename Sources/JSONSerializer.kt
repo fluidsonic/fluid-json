@@ -11,7 +11,6 @@ interface JSONSerializer {
 
 	companion object {
 
-
 		fun builder(): BuilderForEncoding<JSONCoderContext> =
 			BuilderForEncodingImpl(context = JSONCoderContext.empty)
 
@@ -21,6 +20,11 @@ interface JSONSerializer {
 
 
 		val default = builder()
+			.encodingWith()
+			.build()
+
+
+		val nonRecursive = builder()
 			.encodingWith(DefaultJSONCodecs.nonRecursive)
 			.build()
 

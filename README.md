@@ -384,7 +384,7 @@ sometimes not desirable to parse/serialize JSON recursively. For that reason the
 `JSONReader`'s/`JSONWriter`'s primitive `read*`/`write*` methods they will not use any other codecs and thus not support
 other types.
 
-`JSONParser.default` and `JSONSerializer.default` both operate on these codecs and are thus a non-recursive
+`JSONParser.nonRecursive` and `JSONSerializer.nonRecursive` both operate on these codecs and are thus a non-recursive
 parser/serializer.
 
 ### Classes and Interfaces
