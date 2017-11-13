@@ -10,7 +10,7 @@ import org.junit.platform.gradle.plugin.JUnitPlatformExtension
 
 description = "A JSON library written in pure Kotlin."
 group = "com.github.fluidsonic"
-version = "0.9.0"
+version = "0.9.1"
 
 
 plugins {
