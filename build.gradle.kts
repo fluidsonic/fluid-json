@@ -1,4 +1,3 @@
-import com.jfrog.bintray.gradle.BintrayExtension
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -14,15 +13,14 @@ version = "0.9.1"
 
 
 plugins {
-	kotlin("jvm") version "1.1.51"
+	kotlin("jvm") version "1.1.60"
 	jacoco
 	`java-library`
 	maven
 	`maven-publish`
 	signing
-	id("com.jfrog.bintray") version "1.7.3"
 	id("com.github.ben-manes.versions") version "0.17.0"
-	id("org.junit.platform.gradle.plugin") version "1.0.1"
+	id("org.junit.platform.gradle.plugin") version "1.0.2"
 }
 
 
@@ -47,7 +45,7 @@ java {
 }
 
 junitPlatform {
-	platformVersion = "1.0.1"
+	platformVersion = "1.0.2"
 
 	filters {
 		engines {
@@ -90,8 +88,8 @@ afterEvaluate {
 }
 
 dependencies {
-	api(kotlin("reflect", "1.1.51"))
-	api(kotlin("stdlib-jre8", "1.1.51"))
+	api(kotlin("reflect", "1.1.60"))
+	api(kotlin("stdlib-jre8", "1.1.60"))
 
 	testImplementation("com.winterbe:expekt:0.5.0")
 	testImplementation("org.jetbrains.spek:spek-subject-extension:1.1.5")
@@ -104,8 +102,8 @@ dependencies {
 configurations["examplesImplementation"].extendsFrom(configurations["api"])
 configurations.all {
 	resolutionStrategy.apply {
-		force("org.jetbrains.kotlin:kotlin-reflect:1.1.51")
-		force("org.jetbrains.kotlin:kotlin-stdlib:1.1.51")
+		force("org.jetbrains.kotlin:kotlin-reflect:1.1.60")
+		force("org.jetbrains.kotlin:kotlin-stdlib:1.1.60")
 
 		failOnVersionConflict()
 	}
@@ -156,30 +154,6 @@ publishing {
 		}
 	}
 }
-
-configure<BintrayExtension> {
-	user = findProperty("bintrayUser") as String?
-	key = findProperty("bintrayApiKey") as String?
-
-	setPublications("default")
-
-	pkg.apply {
-		repo = "maven"
-		name = "fluid-json"
-		publicDownloadNumbers = true
-		publish = true
-		vcsUrl = "https://github.com/fluidsonic/fluid-json.git"
-		websiteUrl = "https://github.com/fluidsonic/fluid-json"
-
-		setLicenses("MIT")
-
-		version.apply {
-			name = project.version as String?
-			vcsTag = project.version as String?
-		}
-	}
-}
-
 
 val ossrhUserName = findProperty("ossrhUserName") as String?
 val ossrhPassword = findProperty("ossrhPassword") as String?
