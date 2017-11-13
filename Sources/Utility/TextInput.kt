@@ -37,7 +37,7 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 		}
 
 		if (bufferStartIndex >= windowSize + 1) {
-			System.arraycopy(buffer, bufferStartIndex - 1, buffer, 0, unreadCharacterCount)
+			System.arraycopy(buffer, bufferStartIndex - 1, buffer, 0, unreadCharacterCount + 1)
 
 			this.bufferEndIndex = 1 + unreadCharacterCount
 			this.bufferStartIndex = 1

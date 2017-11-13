@@ -6,6 +6,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.TestBody
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
+import java.io.Reader
 import java.io.StringReader
 
 
@@ -848,6 +849,17 @@ internal object StandardReaderAcceptSpec : Spek({
 				}
 			}
 		}
+
+		it("large input") {
+			reader(Resources.stream("large.json").reader()).apply {
+				val value = readMap()
+
+				val innerMap = (0 .. 100).associate { it.toString() to it }
+				val outerMap = (0 .. 100).associate { it.toString() to innerMap }
+
+				value.should.equal(outerMap)
+			}
+		}
 	}
 }) {
 
@@ -859,6 +871,10 @@ internal object StandardReaderAcceptSpec : Spek({
 
 // TODO move the following methods inside the object above once KT-19796 is fixed
 // https://youtrack.jetbrains.com/issue/KT-19796
+
+@Suppress("unused")
+private fun TestBody.reader(reader: Reader): JSONReader =
+	StandardReader(TextInput(reader))
 
 @Suppress("unused")
 private fun TestBody.reader(string: String): JSONReader =

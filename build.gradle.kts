@@ -41,6 +41,7 @@ java {
 
 		"test" {
 			kotlin.srcDirs("Tests/Sources")
+			resources.srcDirs("Tests/Resources")
 		}
 	}
 }
