@@ -112,7 +112,7 @@ val input = StringReader("""{ "data": [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] }""")
 JSONReader.build(input).use { reader ->
     reader.readFromMapByElementValue { key ->
         println(key)
-        
+
         readFromListByElement {
             println(readInt())
         }
@@ -171,7 +171,7 @@ data class MyType(…)
 object MyTypeCodec : AbstractJSONEncoderCodec<MyType, JSONCoderContext>() {
 
     override fun encode(value: MyType, encoder: JSONEncoder<JSONCoderContext>) {
-        // write JSON for `value` directly using `encoder`  
+        // write JSON for `value` directly using `encoder`
     }
 }
 ```
@@ -201,7 +201,7 @@ data class MyType(…)
 object MyTypeCodec : AbstractJSONDecoderCodec<MyType, JSONCoderContext>() {
 
     override fun decode(valueType: JSONCodableType<in MyType>, decoder: JSONDecoder<JSONCoderContext>): MyType {
-        // read JSON using `decoder` and create an instance of `MyType`  
+        // read JSON using `decoder` and create an instance of `MyType`
     }
 }
 ```
@@ -229,7 +229,7 @@ implementing that interface.
 ### Coding and Streaming
 
 You can use encoding and decoding codecs not just for high-level encoding and decoding using `JSONSerializer` and
-`JSONParser` but also for streaming-based encoding and decoding using `JSONEncoder` and `JSONDecoder`. 
+`JSONParser` but also for streaming-based encoding and decoding using `JSONEncoder` and `JSONDecoder`.
 
 [Full example](https://github.com/fluidsonic/fluid-json/blob/master/Examples/0033-CodingAsStream.kt)
 
@@ -241,7 +241,7 @@ Errors occuring due to unsupported or mismatching types, malformed JSON or misus
 
 Since in Kotlin every method can throw any kind of exception it's recommended to simply catch `Exception` when encoding
 or decoding JSON - unless handling errors explicitly is not needed in your use-case. This is especially important if you
-parse JSON data from an unsafe source like a public API.  
+parse JSON data from an unsafe source like a public API.
 
 
 ### Thread Safety
@@ -261,7 +261,7 @@ Testing
 This library is tested automatically using
 [extensive unit tests](https://github.com/fluidsonic/fluid-json/tree/master/Tests/Sources). Some parser tests are
 imported directly from [JSONTestSuite](https://github.com/nst/JSONTestSuite) (kudos to
-[Nicolas Seriot](https://github.com/nst) for that). 
+[Nicolas Seriot](https://github.com/nst) for that).
 
 Note that until [KT-12605](https://youtrack.jetbrains.com/issue/KT-12605) is fixed the code coverage
 [reported by Codecov](https://codecov.io/github/fluidsonic/fluid-json) (and measured using
@@ -318,8 +318,8 @@ The default implementations of `JSONReader` and `JSONParser` decode JSON types a
 | `array<*>`         | `List<*>`        |
 | `boolean`          | `Boolean`        |
 | `null`             | `null`           |
-| `number`           | `Int`            | if number doesn't include `.` (decimal separator) or `e` (exponent separator) and fits into `Int`  
-| `number`           | `Long`           | if number doesn't include `.` (decimal separator) or `e` (exponent separator) and fits into `Long` 
+| `number`           | `Int`            | if number doesn't include `.` (decimal separator) or `e` (exponent separator) and fits into `Int`
+| `number`           | `Long`           | if number doesn't include `.` (decimal separator) or `e` (exponent separator) and fits into `Long`
 | `number`           | `Double`         | otherwise
 | `object<string,*>` | `Map<String,*>`  |
 | `string`           | `String`         |
@@ -369,7 +369,7 @@ Architecture
       possible at the top-level and by `JSONDecoderCodec` implementations
     - instance can be reused and creates one `JSONDecoder`/`JSONEncoder` per parsing/serializing
     - ease of use is important
-    
+
 Most public API is provided as `interface`s in order to allow for plugging in custom behavior and to allow easy unit
 testing of code which produces or consumes JSON.
 
@@ -409,7 +409,7 @@ parser/serializer.
 | `JSONSerializer`           | Interface for high-level JSON serialization where codec providers and context are already configured.
 | `JSONToken`                | Enum containing all types of tokens a `JSONReader` can read.
 | `JSONWriter`               | Interface for low-level JSON serialization on a token-by-token basis.
-| `*Codec`                   | The various codec classes are concrete codecs for common Kotlin types. 
+| `*Codec`                   | The various codec classes are concrete codecs for common Kotlin types.
 
 
 
