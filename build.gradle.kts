@@ -23,25 +23,24 @@ plugins {
 	id("org.junit.platform.gradle.plugin") version "1.0.2"
 }
 
+sourceSets {
+	create("examples") {
+		kotlin.srcDirs("Examples")
+	}
+
+	getByName("main") {
+		kotlin.srcDirs("Sources")
+	}
+
+	getByName("test") {
+		kotlin.srcDirs("Tests/Sources")
+		resources.srcDirs("Tests/Resources")
+	}
+}
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_8
 	targetCompatibility = JavaVersion.VERSION_1_8
-
-	sourceSets {
-		"examples" {
-			kotlin.srcDirs("Examples")
-		}
-
-		"main" {
-			kotlin.srcDirs("Sources")
-		}
-
-		"test" {
-			kotlin.srcDirs("Tests/Sources")
-			resources.srcDirs("Tests/Resources")
-		}
-	}
 }
 
 junitPlatform {
@@ -73,7 +72,7 @@ afterEvaluate {
 	task<JacocoReport>("${junitPlatformTest.name}Report") {
 		executionData(junitPlatformTest)
 
-		val sourceSet = java.sourceSets["main"]
+		val sourceSet = sourceSets["main"]
 		sourceDirectories = files(sourceSet.allJava.srcDirs)
 		classDirectories = files(sourceSet.output)
 
@@ -96,7 +95,7 @@ dependencies {
 	testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.1.5")
 	testRuntime("org.junit.platform:junit-platform-runner:${junitPlatform.platformVersion}")
 
-	"examplesImplementation"(java.sourceSets["main"].output)
+	"examplesImplementation"(sourceSets["main"].output)
 }
 
 configurations["examplesImplementation"].extendsFrom(configurations["api"])
@@ -143,12 +142,12 @@ val javadocJar by tasks.creating(Jar::class) {
 
 val sourcesJar by tasks.creating(Jar::class) {
 	classifier = "sources"
-	from(java.sourceSets["main"].allSource)
+	from(sourceSets["main"].allSource)
 }
 
 publishing {
-	(publications) {
-		"default".invoke(MavenPublication::class) {
+	publications {
+		create<MavenPublication>("default") {
 			from(components["java"])
 			artifact(sourcesJar)
 		}
