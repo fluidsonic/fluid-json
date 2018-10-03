@@ -10,19 +10,19 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":cleanJunitPlatformTest" />
-          <option value=":junitPlatformTest" />
+          <option value=":cleanTest" />
           <option value=":check" />
         </list>
       </option>
       <option name="vmOptions" value="-ea" />
     </ExternalSystemSettings>
-    <extension name="coverage" enabled="false" merge="false" runner="idea">
+    <extension name="coverage" runner="jacoco">
       <pattern>
         <option name="PATTERN" value="com.github.fluidsonic.fluid.json.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <method />
+    <GradleScriptDebugEnabled>true</GradleScriptDebugEnabled>
+    <method v="2" />
   </configuration>
 </component>

@@ -2,9 +2,6 @@ import org.gradle.api.internal.HasConvention
 import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.junit.platform.gradle.plugin.EnginesExtension
-import org.junit.platform.gradle.plugin.FiltersExtension
-import org.junit.platform.gradle.plugin.JUnitPlatformExtension
 
 
 description = "A JSON library written in pure Kotlin."
@@ -13,14 +10,13 @@ version = "0.9.1"
 
 
 plugins {
-	kotlin("jvm") version "1.1.60"
+	kotlin("jvm") version "1.3.0-rc-131"
 	jacoco
 	`java-library`
 	maven
 	`maven-publish`
 	signing
-	id("com.github.ben-manes.versions") version "0.17.0"
-	id("org.junit.platform.gradle.plugin") version "1.0.2"
+	id("com.github.ben-manes.versions") version "0.20.0"
 }
 
 sourceSets {
@@ -43,90 +39,67 @@ java {
 	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-junitPlatform {
-	platformVersion = "1.0.2"
-
-	filters {
-		engines {
-			include("spek")
-		}
-	}
-}
-
 tasks {
+	val check by this
+
 	withType<KotlinCompile> {
 		sourceCompatibility = "1.8"
 		targetCompatibility = "1.8"
 
 		kotlinOptions.jvmTarget = "1.8"
 	}
-}
 
-afterEvaluate {
-	val junitPlatformTest: JavaExec by tasks
+	withType<Test> {
+		useJUnitPlatform {
+			includeEngines("spek")
+		}
 
-	jacoco {
-		applyTo(junitPlatformTest)
+		testLogging {
+			events("FAILED", "PASSED", "SKIPPED")
+		}
 	}
 
-	task<JacocoReport>("${junitPlatformTest.name}Report") {
-		executionData(junitPlatformTest)
-
-		val sourceSet = sourceSets["main"]
-		sourceDirectories = files(sourceSet.allJava.srcDirs)
-		classDirectories = files(sourceSet.output)
-
+	withType<JacocoReport> {
 		reports {
-			xml.destination = file("$buildDir/reports/jacoco.xml")
 			xml.isEnabled = true
 			html.isEnabled = false
 		}
 
-		tasks["check"].dependsOn(this)
+		check.dependsOn(this)
 	}
 }
 
 dependencies {
-	api(kotlin("reflect", "1.1.60"))
-	api(kotlin("stdlib-jre8", "1.1.60"))
+	api(kotlin("reflect", "1.3.0-rc-131"))
+	api(kotlin("stdlib-jdk8", "1.3.0-rc-131"))
 
 	testImplementation("com.winterbe:expekt:0.5.0")
-	testImplementation("org.jetbrains.spek:spek-subject-extension:1.1.5")
-	testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.1.5")
-	testRuntime("org.junit.platform:junit-platform-runner:${junitPlatform.platformVersion}")
+	testImplementation("org.jetbrains.spek:spek-subject-extension:1.2.1")
+	testRuntimeOnly("org.jetbrains.spek:spek-junit-platform-engine:1.2.1")
+	testRuntimeOnly("org.junit.platform:junit-platform-runner:1.3.1")
 
 	"examplesImplementation"(sourceSets["main"].output)
 }
 
-configurations["examplesImplementation"].extendsFrom(configurations["api"])
-configurations.all {
-	resolutionStrategy.apply {
-		force("org.jetbrains.kotlin:kotlin-reflect:1.1.60")
-		force("org.jetbrains.kotlin:kotlin-stdlib:1.1.60")
+configurations {
+	all {
+		resolutionStrategy {
+			force("org.jetbrains.kotlin:kotlin-reflect:1.3.0-rc-131")
+			force("org.jetbrains.kotlin:kotlin-stdlib:1.3.0-rc-131")
 
-		failOnVersionConflict()
+			failOnVersionConflict()
+		}
+	}
+
+	getByName("examplesImplementation") {
+		extendsFrom(configurations["api"])
 	}
 }
 
 repositories {
-	jcenter()
+	maven("http://dl.bintray.com/kotlin/kotlin-eap")
 	mavenCentral()
-}
-
-
-// extension for configuration
-fun JUnitPlatformExtension.filters(setup: FiltersExtension.() -> Unit) {
-	when (this) {
-		is ExtensionAware -> extensions.getByType(FiltersExtension::class.java).setup()
-		else -> throw Exception("${this::class} must be an instance of ExtensionAware")
-	}
-}
-
-fun FiltersExtension.engines(setup: EnginesExtension.() -> Unit) {
-	when (this) {
-		is ExtensionAware -> extensions.getByType(EnginesExtension::class.java).setup()
-		else -> throw Exception("${this::class} must be an instance of ExtensionAware")
-	}
+	jcenter()
 }
 
 val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin<KotlinSourceSet>().kotlin
