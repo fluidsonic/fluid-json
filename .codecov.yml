@@ -1,9 +1,0 @@
-# wtf, codecov?!
-
-fixes:
-  - "com/github/fluidsonic/fluid/json::Sources"
-  - "com/github/fluidsonic/fluid/json::Sources/Codecs"
-  - "com/github/fluidsonic/fluid/json::Sources/Codecs/Basic"
-  - "com/github/fluidsonic/fluid/json::Sources/Codecs/Extended"
-  - "com/github/fluidsonic/fluid/json::Sources/Implementations"
-  - "com/github/fluidsonic/fluid/json::Sources/Utility"
