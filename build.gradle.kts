@@ -166,7 +166,7 @@ if (ossrhUserName != null && ossrhPassword != null) {
 									"developer" {
 										"id"("fluidsonic")
 										"name"("Marc Knaup")
-										"email"("marc@knaup.koeln")
+										"email"("marc@knaup.io")
 									}
 								}
 								"licenses" {
