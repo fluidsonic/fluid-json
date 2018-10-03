@@ -39,6 +39,10 @@ java {
 	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
+jacoco {
+	toolVersion = "0.8.2"
+}
+
 tasks {
 	val check by this
 
