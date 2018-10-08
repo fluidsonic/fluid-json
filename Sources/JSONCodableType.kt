@@ -17,6 +17,15 @@ fun <Type : Any> jsonCodableType(clazz: KClass<Type>) =
 	JSONCodableType.of(clazz)
 
 
+@JvmName("jsonCodableTypeOfReference")
+fun <Type : Any> jsonCodableType(clazz: KClass<out JSONCodableTypeReference<out Type>>): JSONCodableType<Type> {
+	val javaClass = clazz.java
+	require(javaClass.superclass == JSONCodableTypeReference::class.java) { "An immediate subclass of ${JSONCodableTypeReference::class.simpleName} must be passed" }
+
+	return JSONCodableType.of(javaClass.genericSuperclass as ParameterizedType)
+}
+
+
 @Suppress("unused")
 class JSONCodableType<Type : Any> private constructor(
 	val rawClass: KClass<Type>,
@@ -168,6 +177,5 @@ class JSONCodableType<Type : Any> private constructor(
 }
 
 
-@PublishedApi
 @Suppress("unused")
-internal abstract class JSONCodableTypeReference<Type : Any>
+abstract class JSONCodableTypeReference<Type : Any>
