@@ -120,7 +120,7 @@ private inline fun <reified Value : Any> testReadMethod(
 			super<JSONDecoder>.readValue()
 
 
-		override fun <Value : Any> readValueOfType(valueType: JSONCodableType<in Value>): Value {
+		override fun <Value : Any> readValueOfType(valueType: JSONCodableType<Value>): Value {
 			(valueType as JSONCodableType<*>).should.equal(expectedType)
 
 			@Suppress("UNCHECKED_CAST")

@@ -13,7 +13,7 @@ interface JSONDecoder<out Context : JSONCoderContext> : JSONReader {
 		readValueOfType<Any>()
 
 
-	fun <Value : Any> readValueOfType(valueType: JSONCodableType<in Value>): Value
+	fun <Value : Any> readValueOfType(valueType: JSONCodableType<Value>): Value
 
 
 	companion object {
