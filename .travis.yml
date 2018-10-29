@@ -1,10 +1,4 @@
 language: java
 sudo: false
 after_success:
-- bash <(curl -s https://codecov.io/bash)
-notifications:
-  slack:
-    secure: suI+knTCi406jHSINGYvQFSp18TwGCkqTm438m9WvxwSqjuZY4sN56TSvekvLqZ8MszFBbmv1eKD6i5cGRVtP3wlAf04/K3lTpTpzDK/+6AX5NjSsVJMlWVQ+Nqr2FqglVuvsFkXjPONsprNP3SYEXwT/DSI+cBjf+zQcP+ufM6lZuejR+x7VB7tdiS31LJxpICG2mEF2k0+Jt+3DqOW7PhRHOztc7QL2IvNnDC5Q0wAOXDX1/ZrffGudsKzoSiTAV4SYo+b8FJACdCLdv4oEtGgFuialvTrAj4qG3c0keQYUiGztMgCPfPq0eI+Ass1A2vTixYnGhyvLXCmF6cZTpkRlI9n5gR6VGyvs1itybyojFO1N7IQsIjnM3zI71td+nIWMjlZGTLL0PaMh3rceTkUfUvpqW2+ehsdGqXczrClQ1XpQ9AcnYua5ZtnovO6yuxv5Bj2ofHPNSmtXC57VC2skKlmWsOWlmY4Fjl+TPUg2uaJ9aE4oOgmbOgsdn3SmSJGs95+J4R5fUfZWO62xPYNUDuiFXEM3IQ6FJlfsvGLOajp/4tRL2v53tGTEKaWXVnbO0C5I9d4rINy+sW3A17VlAkQ94pA/5XVumFn8qLNT4N+cGSAEcmW460cpmgDVLCeBybmT6UIJZV0uJ05QtAjstG9LcqwTEeQyB7Ne2s=
-    on_success: change
-    on_failure: change
-    on_start:   never
+  - bash <(curl -s https://codecov.io/bash)

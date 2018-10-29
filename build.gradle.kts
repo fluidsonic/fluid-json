@@ -6,11 +6,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 description = "A JSON library written in pure Kotlin."
 group = "com.github.fluidsonic"
-version = "0.9.2"
+version = "0.9.5"
 
 
 plugins {
-	kotlin("jvm") version "1.3.0-rc-131"
+	kotlin("jvm") version "1.3.0"
 	jacoco
 	`java-library`
 	maven
@@ -74,8 +74,8 @@ tasks {
 }
 
 dependencies {
-	api(kotlin("reflect", "1.3.0-rc-131"))
-	api(kotlin("stdlib-jdk8", "1.3.0-rc-131"))
+	api(kotlin("reflect"))
+	api(kotlin("stdlib-jdk8"))
 
 	testImplementation("com.winterbe:expekt:0.5.0")
 	testImplementation("org.jetbrains.spek:spek-subject-extension:1.2.1")
@@ -88,8 +88,8 @@ dependencies {
 configurations {
 	all {
 		resolutionStrategy {
-			force("org.jetbrains.kotlin:kotlin-reflect:1.3.0-rc-131")
-			force("org.jetbrains.kotlin:kotlin-stdlib:1.3.0-rc-131")
+			force("org.jetbrains.kotlin:kotlin-reflect:1.3.0")
+			force("org.jetbrains.kotlin:kotlin-stdlib:1.3.0")
 
 			failOnVersionConflict()
 		}
@@ -101,12 +101,12 @@ configurations {
 }
 
 repositories {
-	maven("http://dl.bintray.com/kotlin/kotlin-eap")
 	mavenCentral()
 	jcenter()
 }
 
-val SourceSet.kotlin get() = (this as HasConvention).convention.getPlugin<KotlinSourceSet>().kotlin
+val SourceSet.kotlin
+	get() = withConvention(KotlinSourceSet::class) { kotlin }
 
 
 // publishing
@@ -140,7 +140,7 @@ if (ossrhUserName != null && ossrhPassword != null) {
 	}
 
 	signing {
-		sign(configurations.archives)
+		sign(configurations.archives.get())
 	}
 
 	tasks {
