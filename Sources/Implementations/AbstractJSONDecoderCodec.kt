@@ -1,6 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
 import java.lang.reflect.ParameterizedType
+import kotlin.reflect.KClass
 
 
 abstract class AbstractJSONDecoderCodec<Value : Any, in Context : JSONCoderContext>(
@@ -19,6 +20,18 @@ abstract class AbstractJSONDecoderCodec<Value : Any, in Context : JSONCoderConte
 
 		for (provider in additionalProviders) {
 			codec = provider.decoderCodecForType(decodableType)
+			if (codec != null) {
+				return codec
+			}
+		}
+
+		return null
+	}
+
+
+	override fun <Value : Any> encoderCodecForClass(encodableClass: KClass<out Value>): JSONEncoderCodec<in Value, Context>? {
+		for (provider in additionalProviders) {
+			val codec = provider.encoderCodecForClass(encodableClass)
 			if (codec != null) {
 				return codec
 			}
