@@ -1,7 +1,7 @@
 fluid-json
 ==========
 
-[![Kotlin 1.3.0](https://img.shields.io/badge/Kotlin-1.3.0-blue.svg)](http://kotlinlang.org)
+[![Kotlin 1.3.10](https://img.shields.io/badge/Kotlin-1.3.10-blue.svg)](http://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.fluidsonic/fluid-json.svg)](https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.fluidsonic%22%20a%3A%22fluid-json%22)
 [![Build Status](https://travis-ci.org/fluidsonic/fluid-json.svg?branch=master)](https://travis-ci.org/fluidsonic/fluid-json)
 [![codecov.io](https://codecov.io/github/fluidsonic/fluid-json/coverage.svg?branch=master)](https://codecov.io/github/fluidsonic/fluid-json?branch=master)

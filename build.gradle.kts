@@ -1,4 +1,3 @@
-import org.gradle.api.internal.HasConvention
 import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -10,7 +9,7 @@ version = "0.9.5"
 
 
 plugins {
-	kotlin("jvm") version "1.3.0"
+	kotlin("jvm") version "1.3.10"
 	jacoco
 	`java-library`
 	maven
@@ -80,7 +79,7 @@ dependencies {
 	testImplementation("com.winterbe:expekt:0.5.0")
 	testImplementation("org.jetbrains.spek:spek-subject-extension:1.2.1")
 	testRuntimeOnly("org.jetbrains.spek:spek-junit-platform-engine:1.2.1")
-	testRuntimeOnly("org.junit.platform:junit-platform-runner:1.3.1")
+	testRuntimeOnly("org.junit.platform:junit-platform-runner:1.3.2")
 
 	"examplesImplementation"(sourceSets["main"].output)
 }
@@ -88,8 +87,8 @@ dependencies {
 configurations {
 	all {
 		resolutionStrategy {
-			force("org.jetbrains.kotlin:kotlin-reflect:1.3.0")
-			force("org.jetbrains.kotlin:kotlin-stdlib:1.3.0")
+			force("org.jetbrains.kotlin:kotlin-reflect:1.3.10")
+			force("org.jetbrains.kotlin:kotlin-stdlib:1.3.10")
 
 			failOnVersionConflict()
 		}
