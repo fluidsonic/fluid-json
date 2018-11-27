@@ -54,7 +54,7 @@ tasks {
 
 	withType<Test> {
 		useJUnitPlatform {
-			includeEngines("spek")
+			includeEngines("spek2")
 		}
 
 		testLogging {
@@ -77,8 +77,8 @@ dependencies {
 	api(kotlin("stdlib-jdk8"))
 
 	testImplementation("com.winterbe:expekt:0.5.0")
-	testImplementation("org.jetbrains.spek:spek-subject-extension:1.2.1")
-	testRuntimeOnly("org.jetbrains.spek:spek-junit-platform-engine:1.2.1")
+	testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.0-rc.1")
+	testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:2.0.0-rc.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-runner:1.3.2")
 
 	"examplesImplementation"(sourceSets["main"].output)
@@ -89,6 +89,8 @@ configurations {
 		resolutionStrategy {
 			force("org.jetbrains.kotlin:kotlin-reflect:1.3.10")
 			force("org.jetbrains.kotlin:kotlin-stdlib:1.3.10")
+			force("org.jetbrains.kotlin:kotlin-stdlib-common:1.3.10")
+			force("org.junit.platform:junit-platform-engine:1.3.2")
 
 			failOnVersionConflict()
 		}

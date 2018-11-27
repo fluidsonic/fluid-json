@@ -2,10 +2,9 @@ package tests
 
 import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.TestBody
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.dsl.TestBody
+import org.spekframework.spek2.style.specification.describe
 import java.io.Reader
 import java.io.StringReader
 

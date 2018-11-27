@@ -2,17 +2,13 @@ package tests
 
 import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
-import org.jetbrains.spek.api.dsl.TestBody
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.subject.SubjectSpek
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.dsl.TestBody
+import org.spekframework.spek2.style.specification.describe
 import java.io.StringWriter
 
 
-internal object StandardWriterAcceptSpec : SubjectSpek<JSONWriter>({
-
-	subject { JSONWriter.build(StringWriter()) }
-
+internal object StandardWriterAcceptSpec : Spek({
 
 	describe("StandardWriter succeeds for") {
 

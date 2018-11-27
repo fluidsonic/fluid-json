@@ -1,9 +1,8 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.*
-import org.jetbrains.spek.api.Spek
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.style.specification.describe
 import java.io.File
 import java.io.FileReader
 
@@ -25,7 +24,7 @@ internal object JSONTestSuiteSpec : Spek({
 					File("Tests/Libraries/JSONTestSuite/test_parsing")
 						.listFiles()
 						.filter { it.name.endsWith(".json") }
-						.forEach testCase@ { file ->
+						.forEach testCase@{ file ->
 							if (environment.parserIsRecursive && nonRecursiveOnlyFileNames.contains(file.name)) {
 								return@testCase
 							}

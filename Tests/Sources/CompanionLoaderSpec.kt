@@ -1,7 +1,7 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.*
-import org.jetbrains.spek.api.Spek
+import org.spekframework.spek2.Spek
 
 
 internal object CompanionLoaderSpec : Spek({

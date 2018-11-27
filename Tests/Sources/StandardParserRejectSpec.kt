@@ -1,108 +1,98 @@
 package tests
 
 import com.github.fluidsonic.fluid.json.*
-import org.jetbrains.spek.api.dsl.describe
-import org.jetbrains.spek.api.dsl.it
-import org.jetbrains.spek.subject.SubjectSpek
+import org.spekframework.spek2.Spek
+import org.spekframework.spek2.dsl.TestBody
+import org.spekframework.spek2.style.specification.describe
 
 
-internal object StandardParserRejectSpec : SubjectSpek<JSONParser>({
-
-	subject {
-		StandardParser(JSONCoderContext.empty) { source, context ->
-			JSONDecoder.builder(context)
-				.codecs()
-				.source(source)
-				.build()
-		}
-	}
-
+internal object StandardParserRejectSpec : Spek({
 
 	describe("StandardParser rejects") {
 
 		it("unknown constants") {
-			subject.failToParse("void")
+			failToParse("void")
 		}
 
 		it("partial constants") {
-			subject.failToParse("tru")
-			subject.failToParse("fals")
-			subject.failToParse("nul")
+			failToParse("tru")
+			failToParse("fals")
+			failToParse("nul")
 		}
 
 		it("extra data after constants") {
-			subject.failToParse("true2")
-			subject.failToParse("false2")
-			subject.failToParse("null2")
-			subject.failToParse("null\"")
+			failToParse("true2")
+			failToParse("false2")
+			failToParse("null2")
+			failToParse("null\"")
 		}
 
 		it("multiple values") {
-			subject.failToParse("1 2")
-			subject.failToParse("1, 2")
-			subject.failToParse("true false")
-			subject.failToParse("null null")
+			failToParse("1 2")
+			failToParse("1, 2")
+			failToParse("true false")
+			failToParse("null null")
 		}
 
 		it("non-decimal number formats") {
-			subject.failToParse("0b0")
-			subject.failToParse("0o0")
-			subject.failToParse("0x0")
+			failToParse("0b0")
+			failToParse("0o0")
+			failToParse("0x0")
 		}
 
 		it("non-zero integrals with leading zero") {
-			subject.failToParse("01")
-			subject.failToParse("01.0")
+			failToParse("01")
+			failToParse("01.0")
 		}
 
 		it("positive number sign") {
-			subject.failToParse("+0")
-			subject.failToParse("+1")
-			subject.failToParse("+-1")
+			failToParse("+0")
+			failToParse("+1")
+			failToParse("+-1")
 		}
 
 		it("incomplete or weird numbers") {
-			subject.failToParse("-true")
-			subject.failToParse("-.")
-			subject.failToParse("-e")
-			subject.failToParse("0.")
-			subject.failToParse("0e")
-			subject.failToParse("1.")
-			subject.failToParse("1.e")
-			subject.failToParse("1e")
-			subject.failToParse("1ee")
-			subject.failToParse("1e.")
-			subject.failToParse("1e+")
-			subject.failToParse("1e+e")
-			subject.failToParse("1e-")
-			subject.failToParse("1e-e")
+			failToParse("-true")
+			failToParse("-.")
+			failToParse("-e")
+			failToParse("0.")
+			failToParse("0e")
+			failToParse("1.")
+			failToParse("1.e")
+			failToParse("1e")
+			failToParse("1ee")
+			failToParse("1e.")
+			failToParse("1e+")
+			failToParse("1e+e")
+			failToParse("1e-")
+			failToParse("1e-e")
 		}
 
 		it("extra data after number") {
-			subject.failToParse("0.0z")
-			subject.failToParse("0.0\"")
+			failToParse("0.0z")
+			failToParse("0.0\"")
 		}
 
 		it("unterminated string") {
-			subject.failToParse("\"test")
-			subject.failToParse("\"test\\uDD\"")
-			subject.failToParse("{\"test")
-			subject.failToParse("{\"key\":\"test")
+			failToParse("\"test")
+			failToParse("\"test\\uDD\"")
+			failToParse("{\"test")
+			failToParse("{\"key\":\"test")
 		}
 
 		it("unknown escape sequences") {
-			subject.failToParse("\"\\a\"")
-			subject.failToParse("\"\\0\"")
-			subject.failToParse("\"\\,\"")
-			subject.failToParse("\"\\:\"")
-			subject.failToParse("\"\\[\"")
+			failToParse("\"\\a\"")
+			failToParse("\"\\0\"")
+			failToParse("\"\\,\"")
+			failToParse("\"\\:\"")
+			failToParse("\"\\[\"")
 		}
 
 		it("invalid unicode escape sequences") {
-			subject.failToParse("\"\\u000Z\"")
-			subject.failToParse("\"\\u00ZZ\"")
-			subject.failToParse("\"\\u0ZZZ\"")
-			subject.failToParse("\"\\uZZZZ\"")
+			failToParse("\"\\u000Z\"")
+			failToParse("\"\\u00ZZ\"")
+			failToParse("\"\\u0ZZZ\"")
+			failToParse("\"\\uZZZZ\"")
 		}
 
 		it("unescaped control characters") {
@@ -112,64 +102,64 @@ internal object StandardParserRejectSpec : SubjectSpek<JSONParser>({
 				'\u0014', '\u0015', '\u0016', '\u0017', '\u0018', '\u0019', '\u001A', '\u001B',
 				'\u001C', '\u001D', '\u001E', '\u001F', '\b', '\n', '\r', '\t'
 			)
-				.forEach { subject.failToParse("\"$it\"") }
+				.forEach { failToParse("\"$it\"") }
 		}
 
 		it("unterminated array") {
-			subject.failToParse("[")
-			subject.failToParse("[1")
-			subject.failToParse("[1,")
+			failToParse("[")
+			failToParse("[1")
+			failToParse("[1,")
 		}
 
 		it("extra data after array") {
-			subject.failToParse("[1]b")
+			failToParse("[1]b")
 		}
 
 		it("extra data after array element") {
-			subject.failToParse("[1 1]")
+			failToParse("[1 1]")
 		}
 
 		it("misplaced commas in arrays") {
-			subject.failToParse("[,1,1]")
-			subject.failToParse("[1,,1]")
-			subject.failToParse("[1,1,]")
+			failToParse("[,1,1]")
+			failToParse("[1,,1]")
+			failToParse("[1,1,]")
 		}
 
 		it("unterminated object") {
-			subject.failToParse("{")
-			subject.failToParse("{\"")
-			subject.failToParse("{\"x")
-			subject.failToParse("{\"x\"")
-			subject.failToParse("{\"x\":")
-			subject.failToParse("{\"x\":1")
-			subject.failToParse("{\"x\":1,")
+			failToParse("{")
+			failToParse("{\"")
+			failToParse("{\"x")
+			failToParse("{\"x\"")
+			failToParse("{\"x\":")
+			failToParse("{\"x\":1")
+			failToParse("{\"x\":1,")
 		}
 
 		it("extra data after object") {
-			subject.failToParse("{\"key\": 1}b")
+			failToParse("{\"key\": 1}b")
 		}
 
 		it("extra data before object key") {
-			subject.failToParse("{true \"key\": 1}")
+			failToParse("{true \"key\": 1}")
 		}
 
 		it("extra data after object key") {
-			subject.failToParse("{\"key\" true: 1}")
+			failToParse("{\"key\" true: 1}")
 		}
 
 		it("extra data before object value") {
-			subject.failToParse("{\"key\"::1}")
+			failToParse("{\"key\"::1}")
 		}
 
 		it("extra data after object value") {
-			subject.failToParse("{\"key\":1:}")
-			subject.failToParse("{\"key\":1 \"key\"}")
+			failToParse("{\"key\":1:}")
+			failToParse("{\"key\":1 \"key\"}")
 		}
 
 		it("misplaced commas in objects") {
-			subject.failToParse("{,\"key0\":1,\"key1\":1}")
-			subject.failToParse("{\"key0\":1,,\"key1\":1}")
-			subject.failToParse("{\"key0\":1,\"key1\":1,}")
+			failToParse("{,\"key0\":1,\"key1\":1}")
+			failToParse("{\"key0\":1,,\"key1\":1}")
+			failToParse("{\"key0\":1,\"key1\":1,}")
 		}
 	}
 })
@@ -189,6 +179,14 @@ private inline fun shouldFailWithJSONException(body: () -> Unit) {
 }
 
 
-private fun JSONParser.failToParse(string: String) {
-	shouldFailWithJSONException { parseValue(string) }
+@Suppress("unused")
+private fun TestBody.failToParse(string: String) {
+	val parser = StandardParser(JSONCoderContext.empty) { source, context ->
+		JSONDecoder.builder(context)
+			.codecs()
+			.source(source)
+			.build()
+	}
+
+	shouldFailWithJSONException { parser.parseValue(string) }
 }
