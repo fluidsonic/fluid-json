@@ -90,6 +90,8 @@ configurations {
 			force("org.jetbrains.kotlin:kotlin-reflect:1.3.10")
 			force("org.jetbrains.kotlin:kotlin-stdlib:1.3.10")
 			force("org.jetbrains.kotlin:kotlin-stdlib-common:1.3.10")
+			force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.3.10")
+			force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.3.10")
 			force("org.junit.platform:junit-platform-engine:1.3.2")
 
 			failOnVersionConflict()
