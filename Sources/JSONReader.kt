@@ -3,6 +3,8 @@ package com.github.fluidsonic.fluid.json
 import java.io.Closeable
 import java.io.Reader
 import java.io.StringReader
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 
 interface JSONReader : Closeable {
@@ -113,6 +115,10 @@ fun JSONReader.readDoubleOrNull() =
 
 
 inline fun <Reader : JSONReader> Reader.readElementsFromMap(readElement: Reader.(key: String) -> Unit) {
+	contract {
+		callsInPlace(readElement, InvocationKind.UNKNOWN)
+	}
+
 	readMapStart()
 	while (nextToken != JSONToken.mapEnd)
 		readElement(readMapKey())
@@ -137,6 +143,10 @@ fun JSONReader.readIntOrNull() =
 
 
 inline fun <Reader : JSONReader, Value> Reader.readFromList(readContent: Reader.() -> Value): Value {
+	contract {
+		callsInPlace(readContent, InvocationKind.EXACTLY_ONCE)
+	}
+
 	readListStart()
 	val value = readContent()
 	readListEnd()
@@ -146,6 +156,10 @@ inline fun <Reader : JSONReader, Value> Reader.readFromList(readContent: Reader.
 
 
 inline fun <Reader : JSONReader, Value> Reader.readFromMap(readContent: Reader.() -> Value): Value {
+	contract {
+		callsInPlace(readContent, InvocationKind.EXACTLY_ONCE)
+	}
+
 	readMapStart()
 	val result = readContent()
 	readMapEnd()
@@ -156,49 +170,74 @@ inline fun <Reader : JSONReader, Value> Reader.readFromMap(readContent: Reader.(
 
 inline fun <Reader : JSONReader> Reader.readFromListByElement(
 	readElement: Reader.() -> Unit
-) =
+) {
+	contract {
+		callsInPlace(readElement, InvocationKind.UNKNOWN)
+	}
+
 	readFromList {
 		while (nextToken != JSONToken.listEnd)
 			readElement()
 	}
+}
 
 
 inline fun <Reader : JSONReader> Reader.readFromMapByElement(
 	readElement: Reader.() -> Unit
-) =
+) {
+	contract {
+		callsInPlace(readElement, InvocationKind.UNKNOWN)
+	}
+
 	readFromMap {
 		while (nextToken != JSONToken.mapEnd)
 			readElement()
 	}
+}
 
 
 inline fun <Reader : JSONReader> Reader.readFromMapByElementValue(
 	readElementValue: Reader.(key: String) -> Unit
-) =
+) {
+	contract {
+		callsInPlace(readElementValue, InvocationKind.UNKNOWN)
+	}
+
 	readFromMap {
 		while (nextToken != JSONToken.mapEnd)
 			readElementValue(readMapKey())
 	}
+}
 
 
 fun JSONReader.readList() =
 	readListByElement { readValueOrNull() }
 
 
-inline fun <Reader : JSONReader, Value> Reader.readListByElement(readElement: Reader.() -> Value): List<Value> =
-	mutableListOf<Value>().also { list ->
+inline fun <Reader : JSONReader, Value> Reader.readListByElement(readElement: Reader.() -> Value): List<Value> {
+	contract {
+		callsInPlace(readElement, InvocationKind.UNKNOWN)
+	}
+
+	return mutableListOf<Value>().also { list ->
 		readFromListByElement {
 			list += readElement()
 		}
 	}
+}
 
 
 fun JSONReader.readListOrNull() =
 	if (nextToken != JSONToken.nullValue) readList() else readNull()
 
 
-inline fun <Reader : JSONReader, Value> Reader.readListOrNullByElement(readElement: Reader.() -> Value): List<Value>? =
-	if (nextToken != JSONToken.nullValue) readListByElement(readElement) else readNull()
+inline fun <Reader : JSONReader, Value> Reader.readListOrNullByElement(readElement: Reader.() -> Value): List<Value>? {
+	contract {
+		callsInPlace(readElement, InvocationKind.UNKNOWN)
+	}
+
+	return if (nextToken != JSONToken.nullValue) readListByElement(readElement) else readNull()
+}
 
 
 fun JSONReader.readLongOrNull() =
@@ -211,22 +250,32 @@ fun JSONReader.readMap() =
 
 inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapByElement(
 	readElement: Reader.() -> Pair<ElementKey, ElementValue>
-): Map<ElementKey, ElementValue> =
-	mutableMapOf<ElementKey, ElementValue>().also { map ->
+): Map<ElementKey, ElementValue> {
+	contract {
+		callsInPlace(readElement, InvocationKind.UNKNOWN)
+	}
+
+	return mutableMapOf<ElementKey, ElementValue>().also { map ->
 		readFromMapByElement {
 			map += readElement()
 		}
 	}
+}
 
 
 inline fun <Reader : JSONReader, ElementValue> Reader.readMapByElementValue(
 	readElementValue: Reader.(key: String) -> ElementValue
-): Map<String, ElementValue> =
-	mutableMapOf<String, ElementValue>().also { map ->
+): Map<String, ElementValue> {
+	contract {
+		callsInPlace(readElementValue, InvocationKind.UNKNOWN)
+	}
+
+	return mutableMapOf<String, ElementValue>().also { map ->
 		readFromMapByElementValue { key ->
 			map[key] = readElementValue(key)
 		}
 	}
+}
 
 
 fun JSONReader.readMapOrNull() =
@@ -235,14 +284,24 @@ fun JSONReader.readMapOrNull() =
 
 inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapOrNullByElement(
 	readElement: Reader.() -> Pair<ElementKey, ElementValue>
-): Map<ElementKey, ElementValue>? =
-	if (nextToken != JSONToken.nullValue) readMapByElement(readElement) else readNull()
+): Map<ElementKey, ElementValue>? {
+	contract {
+		callsInPlace(readElement, InvocationKind.UNKNOWN)
+	}
+
+	return if (nextToken != JSONToken.nullValue) readMapByElement(readElement) else readNull()
+}
 
 
 inline fun <Reader : JSONReader, ElementValue> Reader.readMapOrNullByElementValue(
 	readElementValue: Reader.(key: String) -> ElementValue
-): Map<String, ElementValue>? =
-	if (nextToken != JSONToken.nullValue) readMapByElementValue(readElementValue) else readNull()
+): Map<String, ElementValue>? {
+	contract {
+		callsInPlace(readElementValue, InvocationKind.UNKNOWN)
+	}
+
+	return if (nextToken != JSONToken.nullValue) readMapByElementValue(readElementValue) else readNull()
+}
 
 
 fun JSONReader.readNumberOrNull() =

@@ -49,6 +49,7 @@ tasks {
 		sourceCompatibility = "1.8"
 		targetCompatibility = "1.8"
 
+		kotlinOptions.freeCompilerArgs = listOf("-Xuse-experimental=kotlin.contracts.ExperimentalContracts")
 		kotlinOptions.jvmTarget = "1.8"
 	}
 

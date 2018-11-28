@@ -3,6 +3,8 @@ package com.github.fluidsonic.fluid.json
 import java.io.Closeable
 import java.io.Reader
 import java.util.Arrays
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 
 internal class TextInput(private val source: Reader) : Closeable by source {
@@ -58,18 +60,6 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 		get() = bufferStartIndex
 
 
-	fun <ReturnValue> locked(body: () -> ReturnValue): ReturnValue {
-		lockBuffer()
-
-		try {
-			return body()
-		}
-		finally {
-			unlockBuffer()
-		}
-	}
-
-
 	fun lockBuffer() {
 		check(!bufferIsLocked) { "Input is already locked." }
 		bufferIsLocked = true
@@ -90,28 +80,6 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 			Character.end
 
 		bufferStartIndex += 1
-
-		return character
-	}
-
-
-	fun readCharacter(required: Int) =
-		readCharacter(required) { Character.toString(required) }
-
-
-	inline fun readCharacter(required: Int, expected: () -> String) =
-		readCharacter(required = { it == required }, expected = expected)
-
-
-	inline fun readCharacter(required: (character: Int) -> Boolean, expected: () -> String): Int {
-		val character = readCharacter()
-		if (!required(character)) {
-			throw JSONException.unexpectedCharacter(
-				character,
-				expected = expected(),
-				characterIndex = bufferStartIndex - 1
-			)
-		}
 
 		return character
 	}
@@ -218,4 +186,53 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 
 		const val windowSize = 2048
 	}
+}
+
+
+internal fun <ReturnValue> TextInput.locked(body: () -> ReturnValue): ReturnValue {
+	contract {
+		callsInPlace(body, InvocationKind.EXACTLY_ONCE)
+	}
+
+	lockBuffer()
+
+	try {
+		return body()
+	}
+	finally {
+		unlockBuffer()
+	}
+}
+
+
+internal fun TextInput.readCharacter(required: Int) =
+	readCharacter(required) { Character.toString(required) }
+
+
+@Suppress("MemberVisibilityCanBePrivate")
+internal inline fun TextInput.readCharacter(required: Int, expected: () -> String): Int {
+	contract {
+		callsInPlace(expected, InvocationKind.AT_MOST_ONCE)
+	}
+
+	return readCharacter(required = { it == required }, expected = expected)
+}
+
+
+internal inline fun TextInput.readCharacter(required: (character: Int) -> Boolean, expected: () -> String): Int {
+	contract {
+		callsInPlace(expected, InvocationKind.AT_MOST_ONCE)
+		callsInPlace(required, InvocationKind.EXACTLY_ONCE)
+	}
+
+	val character = readCharacter()
+	if (!required(character)) {
+		throw JSONException.unexpectedCharacter(
+			character,
+			expected = expected(),
+			characterIndex = index - 1
+		)
+	}
+
+	return character
 }
