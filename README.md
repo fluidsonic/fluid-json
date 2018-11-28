@@ -20,7 +20,7 @@ This library is [available in Maven Central](https://search.maven.org/#search%7C
 `build.gradle.kts`:
 ```kotlin
 dependencies {
-    implementation("com.github.fluidsonic:fluid-json:0.9.5")
+    implementation("com.github.fluidsonic:fluid-json:0.9.6")
 }
 ```
 
