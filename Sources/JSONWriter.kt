@@ -1,6 +1,5 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.Closeable
 import java.io.Flushable
 import java.io.IOException
 import java.io.Writer
@@ -8,7 +7,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 
-interface JSONWriter : Closeable, Flushable {
+interface JSONWriter : AutoCloseable, Flushable {
 
 	val isErrored: Boolean
 

@@ -1,13 +1,12 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.Closeable
 import java.io.Reader
 import java.io.StringReader
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 
-interface JSONReader : Closeable {
+interface JSONReader : AutoCloseable {
 
 	val nextToken: JSONToken?
 

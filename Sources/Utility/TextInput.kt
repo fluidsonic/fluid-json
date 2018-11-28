@@ -1,13 +1,12 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.Closeable
 import java.io.Reader
 import java.util.Arrays
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 
-internal class TextInput(private val source: Reader) : Closeable by source {
+internal class TextInput(private val source: Reader) : AutoCloseable by source {
 
 	private var bufferEndIndex = 0
 	private var bufferIsLocked = false

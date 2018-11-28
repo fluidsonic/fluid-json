@@ -1,13 +1,12 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.Closeable
 import java.io.Flushable
 import java.io.IOException
 import java.io.Writer
 
 
 internal class StandardWriter(private val destination: Writer)
-	: JSONWriter, Closeable, Flushable by destination {
+	: JSONWriter, AutoCloseable, Flushable by destination {
 
 	private var state = State.initial
 	private val stateStack = mutableListOf<State>()
