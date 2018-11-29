@@ -3,4 +3,4 @@ package tests
 import com.github.fluidsonic.fluid.json.*
 
 
-internal class TestCoderContext : JSONCoderContext
+internal class TestCoderContext : JSONCodingContext

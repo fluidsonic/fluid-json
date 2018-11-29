@@ -16,17 +16,17 @@ internal object AbstractJSONDecoderCodecSpec : Spek({
 	}
 }) {
 
-	private object InnerEncoderCodec : AbstractJSONEncoderCodec<Unit, JSONCoderContext>() {
+	private object InnerEncoderCodec : AbstractJSONEncoderCodec<Unit, JSONCodingContext>() {
 
-		override fun encode(value: Unit, encoder: JSONEncoder<JSONCoderContext>) {}
+		override fun encode(value: Unit, encoder: JSONEncoder<JSONCodingContext>) {}
 	}
 
 
-	private object OuterDecoderCodec : AbstractJSONDecoderCodec<String, JSONCoderContext>(
+	private object OuterDecoderCodec : AbstractJSONDecoderCodec<String, JSONCodingContext>(
 		additionalProviders = listOf(InnerEncoderCodec)
 	) {
 
-		override fun decode(valueType: JSONCodableType<in String>, decoder: JSONDecoder<JSONCoderContext>) =
+		override fun decode(valueType: JSONCodingType<in String>, decoder: JSONDecoder<JSONCodingContext>) =
 			""
 	}
 }

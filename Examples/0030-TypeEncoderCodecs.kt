@@ -10,7 +10,7 @@ object EncodingExample {
 	fun main(args: Array<String>) {
 		// Using a codec for encoding specific Kotlin types simplifies JSON serialization a lot
 
-		val serializer = JSONSerializer.builder()
+		val serializer = JSONCodingSerializer.builder()
 			.encodingWith(EventCodec)
 			.build()
 
@@ -34,9 +34,9 @@ object EncodingExample {
 	)
 
 
-	private object EventCodec : AbstractJSONEncoderCodec<Event, JSONCoderContext>() {
+	private object EventCodec : AbstractJSONEncoderCodec<Event, JSONCodingContext>() {
 
-		override fun encode(value: Event, encoder: JSONEncoder<JSONCoderContext>) {
+		override fun encode(value: Event, encoder: JSONEncoder<JSONCodingContext>) {
 			encoder.writeIntoMap {
 				writeMapElement("id", int = value.id)
 				writeMapElement("date", value = value.date, skipIfNull = true)

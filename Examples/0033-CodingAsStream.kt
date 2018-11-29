@@ -74,9 +74,9 @@ object CodingAsStreamExample {
 	)
 
 
-	private object EventCodec : AbstractJSONCodec<Event, JSONCoderContext>() {
+	private object EventCodec : AbstractJSONCodec<Event, JSONCodingContext>() {
 
-		override fun decode(valueType: JSONCodableType<in Event>, decoder: JSONDecoder<JSONCoderContext>): Event {
+		override fun decode(valueType: JSONCodingType<in Event>, decoder: JSONDecoder<JSONCodingContext>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null
@@ -98,7 +98,7 @@ object CodingAsStreamExample {
 		}
 
 
-		override fun encode(value: Event, encoder: JSONEncoder<JSONCoderContext>) {
+		override fun encode(value: Event, encoder: JSONEncoder<JSONCodingContext>) {
 			encoder.writeIntoMap {
 				writeMapElement("id", int = value.id)
 				writeMapElement("date", value = value.date, skipIfNull = true)

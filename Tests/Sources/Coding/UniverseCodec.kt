@@ -5,7 +5,7 @@ import com.github.fluidsonic.fluid.json.*
 
 internal object UniverseCodec : AbstractJSONCodec<Universe, TestCoderContext>() {
 
-	override fun decode(valueType: JSONCodableType<in Universe>, decoder: JSONDecoder<TestCoderContext>): Universe {
+	override fun decode(valueType: JSONCodingType<in Universe>, decoder: JSONDecoder<TestCoderContext>): Universe {
 		var jaegers: List<Jaeger>? = null
 		var kaijus: List<Kaiju>? = null
 

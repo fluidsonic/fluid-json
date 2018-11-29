@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 
 
-internal class ContextCheckingTestEncoderCodec<in Context : JSONCoderContext>(
+internal class ContextCheckingTestEncoderCodec<in Context : JSONCodingContext>(
 	private val expectedContext: Context
 ) : JSONEncoderCodec<String, Context> {
 

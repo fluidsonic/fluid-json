@@ -39,7 +39,7 @@ internal object StandardSerializerRejectSpec : Spek({
 
 @Suppress("unused")
 private fun TestBody.failToSerialize(value: Any?) {
-	val serializer = StandardSerializer(JSONCoderContext.empty) { destination, context ->
+	val serializer = StandardCodingSerializer(JSONCodingContext.empty) { destination, context ->
 		JSONEncoder.builder(context)
 			.codecs()
 			.destination(destination)

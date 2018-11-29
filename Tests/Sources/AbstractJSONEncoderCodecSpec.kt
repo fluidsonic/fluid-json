@@ -11,22 +11,22 @@ internal object AbstractJSONEncoderCodecSpec : Spek({
 	describe("AbstractJSONEncoderCodec") {
 
 		it("returns nested decoder codecs") {
-			OuterEncoderCodec.decoderCodecForType<Unit, JSONCoderContext>().should.equal(InnerDecoderCodec)
+			OuterEncoderCodec.decoderCodecForType<Unit, JSONCodingContext>().should.equal(InnerDecoderCodec)
 		}
 	}
 }) {
 
-	private object InnerDecoderCodec : AbstractJSONDecoderCodec<Unit, JSONCoderContext>() {
+	private object InnerDecoderCodec : AbstractJSONDecoderCodec<Unit, JSONCodingContext>() {
 
-		override fun decode(valueType: JSONCodableType<in Unit>, decoder: JSONDecoder<JSONCoderContext>) =
+		override fun decode(valueType: JSONCodingType<in Unit>, decoder: JSONDecoder<JSONCodingContext>) =
 			Unit
 	}
 
 
-	private object OuterEncoderCodec : AbstractJSONEncoderCodec<String, JSONCoderContext>(
+	private object OuterEncoderCodec : AbstractJSONEncoderCodec<String, JSONCodingContext>(
 		additionalProviders = listOf(InnerDecoderCodec)
 	) {
 
-		override fun encode(value: String, encoder: JSONEncoder<JSONCoderContext>) {}
+		override fun encode(value: String, encoder: JSONEncoder<JSONCodingContext>) {}
 	}
 }

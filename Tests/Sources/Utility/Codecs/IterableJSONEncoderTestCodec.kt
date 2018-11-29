@@ -3,19 +3,19 @@ package tests
 import com.github.fluidsonic.fluid.json.*
 
 
-internal object IterableJSONEncoderTestCodec : AbstractJSONEncoderCodec<Iterable<*>, JSONCoderContext>(
+internal object IterableJSONEncoderTestCodec : AbstractJSONEncoderCodec<Iterable<*>, JSONCodingContext>(
 	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, NumberJSONCodec, StringJSONCodec)
 ) {
 
-	override fun encode(value: Iterable<*>, encoder: JSONEncoder<JSONCoderContext>) =
+	override fun encode(value: Iterable<*>, encoder: JSONEncoder<JSONCodingContext>) =
 		IterableJSONEncoderCodec.encode(value, encoder)
 
 
-	object NonRecursive : AbstractJSONEncoderCodec<Iterable<*>, JSONCoderContext>(
+	object NonRecursive : AbstractJSONEncoderCodec<Iterable<*>, JSONCodingContext>(
 		additionalProviders = listOf(BooleanJSONCodec, IntJSONCodec, StringJSONCodec)
 	) {
 
-		override fun encode(value: Iterable<*>, encoder: JSONEncoder<JSONCoderContext>) =
+		override fun encode(value: Iterable<*>, encoder: JSONEncoder<JSONCodingContext>) =
 			IterableJSONEncoderCodec.nonRecursive.encode(value, encoder)
 	}
 }

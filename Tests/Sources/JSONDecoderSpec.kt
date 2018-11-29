@@ -17,7 +17,7 @@ internal object JSONDecoderSpec : Spek({
 				.source("true")
 				.build()
 				.apply {
-					context.should.equal(JSONCoderContext.empty)
+					context.should.equal(JSONCodingContext.empty)
 					readBoolean().should.be.`true`
 				}
 
@@ -26,7 +26,7 @@ internal object JSONDecoderSpec : Spek({
 				.source(StringReader("true"))
 				.build()
 				.apply {
-					context.should.equal(JSONCoderContext.empty)
+					context.should.equal(JSONCodingContext.empty)
 					readBoolean().should.be.`true`
 				}
 
@@ -97,13 +97,13 @@ internal object JSONDecoderSpec : Spek({
 
 private inline fun <reified Value : Any> testReadMethod(
 	expectedValue: Value?,
-	testBody: JSONDecoder<JSONCoderContext>.(type: JSONCodableType<Value>) -> Value?
+	testBody: JSONDecoder<JSONCodingContext>.(type: JSONCodingType<Value>) -> Value?
 ) {
-	val expectedType = jsonCodableType<Value>()
+	val expectedType = jsonCodingType<Value>()
 
-	val decoder = object : JSONDecoder<JSONCoderContext>, JSONReader by DummyJSONReader() {
+	val decoder = object : JSONDecoder<JSONCodingContext>, JSONReader by DummyJSONReader() {
 
-		override val context: JSONCoderContext
+		override val context: JSONCodingContext
 			get() = error("")
 
 
@@ -119,8 +119,8 @@ private inline fun <reified Value : Any> testReadMethod(
 			super<JSONDecoder>.readValue()
 
 
-		override fun <Value : Any> readValueOfType(valueType: JSONCodableType<Value>): Value {
-			(valueType as JSONCodableType<*>).should.equal(expectedType)
+		override fun <Value : Any> readValueOfType(valueType: JSONCodingType<Value>): Value {
+			(valueType as JSONCodingType<*>).should.equal(expectedType)
 
 			@Suppress("UNCHECKED_CAST")
 			return expectedValue as Value

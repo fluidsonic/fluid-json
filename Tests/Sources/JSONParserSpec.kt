@@ -13,7 +13,7 @@ internal object JSONParserSpec : Spek({
 	describe("JSONParser") {
 
 		it(".builder()") {
-			JSONParser.builder()
+			JSONCodingParser.builder()
 				.decodingWith(BooleanJSONCodec)
 				.build()
 				.apply {
@@ -21,7 +21,7 @@ internal object JSONParserSpec : Spek({
 					parseValue(StringReader("true")).should.equal(true)
 				}
 
-			JSONParser.builder()
+			JSONCodingParser.builder()
 				.decodingWith(listOf(BooleanJSONCodec))
 				.build()
 				.apply {
@@ -31,7 +31,7 @@ internal object JSONParserSpec : Spek({
 
 			val testContext = TestCoderContext()
 
-			JSONParser.builder(testContext)
+			JSONCodingParser.builder(testContext)
 				.decodingWith()
 				.build()
 				.apply {
@@ -41,7 +41,7 @@ internal object JSONParserSpec : Spek({
 		}
 
 		it(".default") {
-			anyData.testDecoding(JSONParser.default::parseValue)
+			anyData.testDecoding(JSONCodingParser.default::parseValue)
 		}
 
 		it(".parse()") {
@@ -122,14 +122,14 @@ internal object JSONParserSpec : Spek({
 
 private inline fun <reified Value : Any> testParseMethod(
 	expectedValue: Value?,
-	testBody: JSONParser.(type: JSONCodableType<Value>) -> Value?
+	testBody: JSONCodingParser.(type: JSONCodingType<Value>) -> Value?
 ) {
-	val expectedType = jsonCodableType<Value>()
+	val expectedType = jsonCodingType<Value>()
 
-	val parser = object : JSONParser {
+	val parser = object : JSONCodingParser {
 
-		override fun <Value : Any> parseValueOfTypeOrNull(source: Reader, valueType: JSONCodableType<Value>): Value? {
-			(valueType as JSONCodableType<*>).should.equal(expectedType)
+		override fun <Value : Any> parseValueOfTypeOrNull(source: Reader, valueType: JSONCodingType<Value>): Value? {
+			(valueType as JSONCodingType<*>).should.equal(expectedType)
 
 			@Suppress("UNCHECKED_CAST")
 			return expectedValue as Value?

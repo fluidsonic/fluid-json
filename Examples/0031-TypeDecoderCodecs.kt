@@ -10,7 +10,7 @@ object DecodingExample {
 	fun main(args: Array<String>) {
 		// Using a codec for decoding specific classes simplifies JSON parsing a lot
 
-		val parser = JSONParser.builder()
+		val parser = JSONCodingParser.builder()
 			.decodingWith(EventCodec)
 			.build()
 
@@ -59,9 +59,9 @@ object DecodingExample {
 	)
 
 
-	private object EventCodec : AbstractJSONDecoderCodec<Event, JSONCoderContext>() {
+	private object EventCodec : AbstractJSONDecoderCodec<Event, JSONCodingContext>() {
 
-		override fun decode(valueType: JSONCodableType<in Event>, decoder: JSONDecoder<JSONCoderContext>): Event {
+		override fun decode(valueType: JSONCodingType<in Event>, decoder: JSONDecoder<JSONCodingContext>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null

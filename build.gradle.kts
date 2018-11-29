@@ -20,17 +20,19 @@ plugins {
 
 sourceSets {
 	create("examples") {
-		kotlin.srcDirs("Examples")
+		kotlin.srcDirs("examples")
 	}
 
 	getByName("main") {
-		kotlin.srcDirs("Sources")
+		kotlin.srcDirs("sources")
 	}
 
+	/*
 	getByName("test") {
-		kotlin.srcDirs("Tests/Sources")
-		resources.srcDirs("Tests/Resources")
+		kotlin.srcDirs("tests/sources")
+		resources.srcDirs("tests/resources")
 	}
+	*/
 }
 
 java {

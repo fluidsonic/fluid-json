@@ -203,13 +203,13 @@ data class MyType(…)
 
 object MyTypeCodec : AbstractJSONDecoderCodec<MyType, JSONCoderContext>() {
 
-    override fun decode(valueType: JSONCodableType<in MyType>, decoder: JSONDecoder<JSONCoderContext>): MyType {
+    override fun decode(valueType: JSONCodingType<in MyType>, decoder: JSONDecoder<JSONCoderContext>): MyType {
         // read JSON using `decoder` and create an instance of `MyType`
     }
 }
 ```
 
-A `JSONDecoderCodec` can also decode generic types. The instance passed to `JSONCodableType` contains information about
+A `JSONDecoderCodec` can also decode generic types. The instance passed to `JSONCodingType` contains information about
 generic arguments expected by the call which caused this codec to be invoked. For `List<Something>` for example a single
 generic argument of type `Something` would be reported which allows for example the list codec to serialize the list
 value's directly as `Something` using the respective codec.
@@ -398,9 +398,9 @@ parser/serializer.
 | `AbstractJSONDecoderCodec` | Abstract base class which simplifies implementing `JSONDecoderCodec`.
 | `AbstractJSONEncoderCodec` | Abstract base class which simplifies implementing `JSONEncoderCodec`.
 | `DefaultJSONCodecs`        | Contains lists of default codecs which can be used when contructing custom `JSONCodecProvider`s.
-| `JSONCodableType`          | Roughly describes a Kotlin type which can be decoded from JSON. It includes relevant generic information which allows decoding for example `List<Something>` instead of just `List<*>`. Also known as [type token](http://gafter.blogspot.de/2006/12/super-type-tokens.html)).
+| `JSONCodingType`          | Roughly describes a Kotlin type which can be decoded from JSON. It includes relevant generic information which allows decoding for example `List<Something>` instead of just `List<*>`. Also known as [type token](http://gafter.blogspot.de/2006/12/super-type-tokens.html)).
 | `JSONCodec`                | Interface for classes which implement both, `JSONEncoderCodec` and `JSONDecoderCodec`. Also simplifies creating such codecs.
-| `JSONCodecProvider`        | Interface for classes which when given a `JSONCodableType` (for decoding) or `KClass` (for encoding) return a codec which is able to decode/encode values of that type.
+| `JSONCodecProvider`        | Interface for classes which when given a `JSONCodingType` (for decoding) or `KClass` (for encoding) return a codec which is able to decode/encode values of that type.
 | `JSONCoderContext`         | Interface for context types. Instances of context types can be passed to `JSONParser`, `JSONSerializer`, `JSONDecoder` and `JSONEncoder`. They in turn can be used by codecs to help decoding/encoding values if needed.
 | `JSONDecoder`              | Interface which extends `JSONReader` to enable reading values of any Kotlin type from JSON using `JSONCodecProvider`s for type mapping.
 | `JSONDecoderCodec`         | Interface for decoding a value of a specific Kotlin type using a `JSONDecoder`.

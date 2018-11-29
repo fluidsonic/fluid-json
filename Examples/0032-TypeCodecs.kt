@@ -19,13 +19,13 @@ object CodingExample {
 			Event(id = 6, title = "Six")
 		)
 
-		val serializer = JSONSerializer.builder()
+		val serializer = JSONCodingSerializer.builder()
 			.encodingWith(EventCodec)
 			.build()
 
 		val json = serializer.serializeValue(input)
 
-		val parser = JSONParser.builder()
+		val parser = JSONCodingParser.builder()
 			.decodingWith(EventCodec)
 			.build()
 
@@ -44,9 +44,9 @@ object CodingExample {
 	)
 
 
-	private object EventCodec : AbstractJSONCodec<Event, JSONCoderContext>() {
+	private object EventCodec : AbstractJSONCodec<Event, JSONCodingContext>() {
 
-		override fun decode(valueType: JSONCodableType<in Event>, decoder: JSONDecoder<JSONCoderContext>): Event {
+		override fun decode(valueType: JSONCodingType<in Event>, decoder: JSONDecoder<JSONCodingContext>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null
@@ -68,7 +68,7 @@ object CodingExample {
 		}
 
 
-		override fun encode(value: Event, encoder: JSONEncoder<JSONCoderContext>) {
+		override fun encode(value: Event, encoder: JSONEncoder<JSONCodingContext>) {
 			encoder.writeIntoMap {
 				writeMapElement("id", int = value.id)
 				writeMapElement("date", value = value.date, skipIfNull = true)

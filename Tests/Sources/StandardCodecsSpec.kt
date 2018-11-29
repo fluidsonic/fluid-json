@@ -61,11 +61,11 @@ internal object StandardCodecsSpec : Spek({
 		)
 			.forEach { test ->
 				describe(test.name) {
-					val decoderCodec = test.codec as? JSONDecoderCodec<Any, JSONCoderContext>
+					val decoderCodec = test.codec as? JSONDecoderCodec<Any, JSONCodingContext>
 					if (decoderCodec != null) {
 						it("decodes a value") {
 							try {
-								test.data.testDecoding { decoderCodec.parse(it, type = test.type as JSONCodableType<Any>) }
+								test.data.testDecoding { decoderCodec.parse(it, type = test.type as JSONCodingType<Any>) }
 							}
 							catch (e: Throwable) {
 								throw AssertionError("${decoderCodec::class.simpleName} (for ${test.type}): ${e.message}").apply {
@@ -75,7 +75,7 @@ internal object StandardCodecsSpec : Spek({
 						}
 					}
 
-					val encoderCodec = test.codec as? JSONEncoderCodec<Any, JSONCoderContext>
+					val encoderCodec = test.codec as? JSONEncoderCodec<Any, JSONCodingContext>
 					if (encoderCodec != null) {
 						it("encodes a value") {
 							try {
@@ -93,7 +93,7 @@ internal object StandardCodecsSpec : Spek({
 
 
 		it("Map maintains entry order") {
-			MapJSONTestCodec.parse("""{ "3": 3, "1": 1, "2": 2, "0": 0 }""", jsonCodableType())
+			MapJSONTestCodec.parse("""{ "3": 3, "1": 1, "2": 2, "0": 0 }""", jsonCodingType())
 				.entries.toList()
 				.should.equal(mapOf("3" to 3, "1" to 1, "2" to 2, "0" to 0).entries.toList())
 		}
@@ -102,8 +102,8 @@ internal object StandardCodecsSpec : Spek({
 
 	private class Test<Value : Any> private constructor(
 		val name: String,
-		val codec: JSONCodecProvider<JSONCoderContext>,
-		val type: JSONCodableType<Value>,
+		val codec: JSONCodecProvider<JSONCodingContext>,
+		val type: JSONCodingType<Value>,
 		val data: TestData<Value>
 	) {
 
@@ -111,10 +111,10 @@ internal object StandardCodecsSpec : Spek({
 
 			inline operator fun <reified Value : Any> invoke(
 				name: String,
-				codec: JSONCodecProvider<JSONCoderContext>,
+				codec: JSONCodecProvider<JSONCodingContext>,
 				data: TestData<Value>
 			) =
-				Test(name = name, codec = codec, type = jsonCodableType(), data = data)
+				Test(name = name, codec = codec, type = jsonCodingType(), data = data)
 		}
 	}
 }

@@ -13,16 +13,16 @@ internal object CharacterUtilitySpec : Spek({
 		it(".isControl()") {
 			val boundaries = (0 .. 0x1F).toSet()
 			for (character in 0 .. 0xFF)
-				Character.isControl(character).should.equal(boundaries.contains(character))
+				JSONCharacter.isControl(character).should.equal(boundaries.contains(character))
 		}
 
 		it(".isDigit()") {
 			val boundaries = setOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 			for (character in 0 .. 0xFF) {
-				Character.isDigit(character).should.equal(boundaries.contains(character.toChar()))
+				JSONCharacter.isDigit(character).should.equal(boundaries.contains(character.toChar()))
 			}
 
-			Character.isDigit(Character.end).should.be.`false`
+			JSONCharacter.isDigit(JSONCharacter.end).should.be.`false`
 		}
 
 		it(".isHexDigit()") {
@@ -32,28 +32,28 @@ internal object CharacterUtilitySpec : Spek({
 				'A', 'B', 'C', 'D', 'E', 'F'
 			)
 			for (character in 0 .. 0xFF) {
-				Character.isHexDigit(character).should.equal(boundaries.contains(character.toChar()))
+				JSONCharacter.isHexDigit(character).should.equal(boundaries.contains(character.toChar()))
 			}
 
-			Character.isHexDigit(Character.end).should.be.`false`
+			JSONCharacter.isHexDigit(JSONCharacter.end).should.be.`false`
 		}
 
 		it(".isValueBoundary()") {
 			val boundaries = setOf(',', ':', ',', '{', '[', '}', ']', '\r', '\t', '\n', ' ')
 			for (character in 0 .. 0xFF) {
-				Character.isValueBoundary(character).should.equal(boundaries.contains(character.toChar()))
+				JSONCharacter.isValueBoundary(character).should.equal(boundaries.contains(character.toChar()))
 			}
 
-			Character.isValueBoundary(Character.end).should.be.`true`
+			JSONCharacter.isValueBoundary(JSONCharacter.end).should.be.`true`
 		}
 
 		it(".isWhitespace()") {
 			val boundaries = setOf(' ', '\n', '\r', '\t')
 			for (character in 0 .. 0xFF) {
-				Character.isWhitespace(character).should.equal(boundaries.contains(character.toChar()))
+				JSONCharacter.isWhitespace(character).should.equal(boundaries.contains(character.toChar()))
 			}
 
-			Character.isWhitespace(Character.end).should.be.`false`
+			JSONCharacter.isWhitespace(JSONCharacter.end).should.be.`false`
 		}
 
 		it(".parseHexDigit()") {
@@ -65,11 +65,11 @@ internal object CharacterUtilitySpec : Spek({
 			for (character in 0 .. 0xFF) {
 				val expectValue = expectValues[character.toChar()]
 				if (expectValue != null) {
-					Character.parseHexDigit(character).should.equal(expectValue)
+					JSONCharacter.parseHexDigit(character).should.equal(expectValue)
 				}
 				else {
 					try {
-						Character.parseHexDigit(character)
+						JSONCharacter.parseHexDigit(character)
 						throw AssertionError("Character.parseHexDigit() should fail for '$character'")
 					}
 					catch (e: Exception) {
@@ -79,7 +79,7 @@ internal object CharacterUtilitySpec : Spek({
 			}
 
 			try {
-				Character.parseHexDigit(Character.end)
+				JSONCharacter.parseHexDigit(JSONCharacter.end)
 				throw AssertionError("Character.parseHexDigit() should fail for Character.end")
 			}
 			catch (e: Exception) {

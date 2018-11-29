@@ -181,7 +181,7 @@ private inline fun shouldFailWithJSONException(body: () -> Unit) {
 
 @Suppress("unused")
 private fun TestBody.failToParse(string: String) {
-	val parser = StandardParser(JSONCoderContext.empty) { source, context ->
+	val parser = StandardCodingParser(JSONCodingContext.empty) { source, context ->
 		JSONDecoder.builder(context)
 			.codecs()
 			.source(source)

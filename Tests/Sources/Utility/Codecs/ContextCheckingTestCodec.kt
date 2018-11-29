@@ -4,11 +4,11 @@ import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 
 
-internal class ContextCheckingTestCodec<in Context : JSONCoderContext>(
+internal class ContextCheckingTestCodec<in Context : JSONCodingContext>(
 	private val expectedContext: Context
 ) : JSONCodec<String, Context> {
 
-	override fun decode(valueType: JSONCodableType<in String>, decoder: JSONDecoder<Context>): String {
+	override fun decode(valueType: JSONCodingType<in String>, decoder: JSONDecoder<Context>): String {
 		decoder.context.should.equal(expectedContext)
 
 		return StringJSONCodec.decode(valueType, decoder)
@@ -22,5 +22,5 @@ internal class ContextCheckingTestCodec<in Context : JSONCoderContext>(
 	}
 
 
-	override val decodableType = jsonCodableType<String>()
+	override val decodableType = jsonCodingType<String>()
 }

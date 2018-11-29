@@ -18,7 +18,7 @@ internal object JSONEncoderSpec : Spek({
 					.destination(writer)
 					.build()
 					.apply {
-						context.should.equal(JSONCoderContext.empty)
+						context.should.equal(JSONCodingContext.empty)
 						writeBoolean(true)
 						writer.toString().should.equal("true")
 					}
@@ -30,7 +30,7 @@ internal object JSONEncoderSpec : Spek({
 					.destination(writer)
 					.build()
 					.apply {
-						context.should.equal(JSONCoderContext.empty)
+						context.should.equal(JSONCodingContext.empty)
 						writeBoolean(true)
 						writer.toString().should.equal("true")
 					}

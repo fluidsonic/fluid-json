@@ -11,7 +11,7 @@ internal object JSONSerializerSpec : Spek({
 	describe("JSONSerializer") {
 
 		it(".builder()") {
-			JSONSerializer.builder()
+			JSONCodingSerializer.builder()
 				.encodingWith(BooleanJSONCodec)
 				.build()
 				.apply {
@@ -19,7 +19,7 @@ internal object JSONSerializerSpec : Spek({
 					serializeValue(true).should.equal("true")
 				}
 
-			JSONSerializer.builder()
+			JSONCodingSerializer.builder()
 				.encodingWith(listOf(BooleanJSONCodec))
 				.build()
 				.apply {
@@ -29,7 +29,7 @@ internal object JSONSerializerSpec : Spek({
 
 			val testContext = TestCoderContext()
 
-			JSONSerializer.builder(testContext)
+			JSONCodingSerializer.builder(testContext)
 				.encodingWith()
 				.build()
 				.apply {
@@ -39,7 +39,7 @@ internal object JSONSerializerSpec : Spek({
 		}
 
 		it(".default") {
-			anyData.testEncoding(JSONSerializer.default::serializeValue)
+			anyData.testEncoding(JSONCodingSerializer.default::serializeValue)
 		}
 	}
 })
