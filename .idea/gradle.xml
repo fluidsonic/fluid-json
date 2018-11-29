@@ -10,6 +10,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/basic" />
+            <option value="$PROJECT_DIR$/coding" />
+            <option value="$PROJECT_DIR$/examples" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -10,8 +10,8 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value=":cleanTest" />
-          <option value=":check" />
+          <option value="cleanTest" />
+          <option value="check" />
         </list>
       </option>
       <option name="vmOptions" value="-ea" />

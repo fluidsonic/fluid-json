@@ -1,3 +1,3 @@
-[submodule "Tests/Libraries/JSONTestSuite"]
-	path = Tests/Libraries/JSONTestSuite
+[submodule "dependencies/JSONTestSuite"]
+	path = dependencies/JSONTestSuite
 	url = https://github.com/nst/JSONTestSuite.git
