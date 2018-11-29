@@ -5,17 +5,11 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "com.github.fluidsonic"
-version = "0.9.6"
-
 
 plugins {
 	kotlin("jvm") apply false
-	base
 	`java-library`
 	jacoco
-	`maven-publish`
-	signing
 	id("com.github.ben-manes.versions") version "0.20.0"
 }
 
@@ -24,6 +18,9 @@ tasks.withType<Wrapper> {
 }
 
 allprojects {
+	group = "com.github.fluidsonic"
+	version = "0.9.6"
+
 	apply<KotlinPlatformJvmPlugin>()
 	apply<JacocoPlugin>()
 	apply<JavaLibraryPlugin>()
