@@ -22,7 +22,7 @@ internal abstract class NonRecursiveJSONDecoderCodec<Value : Any> : AbstractJSON
 			throw JSONException("Cannot decode ${decoder.nextToken} as $valueType")
 		}
 
-		val value = JSONParser.default.parseValueOrNull(decoder, finalizeAndClose = false)
+		val value = JSONParser.default.parseValueOrNull(decoder, withTermination = false)
 
 		return if (valueType.rawClass == Sequence::class)
 			(value as Iterable<*>).asSequence() as Value

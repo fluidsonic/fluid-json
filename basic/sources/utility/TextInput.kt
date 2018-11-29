@@ -1,12 +1,13 @@
 package com.github.fluidsonic.fluid.json
 
+import java.io.Closeable
 import java.io.Reader
 import java.util.Arrays
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 
-internal class TextInput(private val source: Reader) : AutoCloseable by source {
+internal class TextInput(private val source: Reader) : Closeable by source {
 
 	private var bufferEndIndex = 0
 	private var bufferIsLocked = false
@@ -188,15 +189,15 @@ internal class TextInput(private val source: Reader) : AutoCloseable by source {
 }
 
 
-internal fun <ReturnValue> TextInput.locked(body: () -> ReturnValue): ReturnValue {
+internal fun <ReturnValue> TextInput.locked(block: () -> ReturnValue): ReturnValue {
 	contract {
-		callsInPlace(body, InvocationKind.EXACTLY_ONCE)
+		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
 	}
 
 	lockBuffer()
 
 	try {
-		return body()
+		return block()
 	}
 	finally {
 		unlockBuffer()

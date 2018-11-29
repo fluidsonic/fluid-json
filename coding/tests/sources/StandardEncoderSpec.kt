@@ -5,7 +5,6 @@ import com.winterbe.expekt.should
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
 import java.io.StringWriter
-import java.time.LocalDate
 
 
 // test data from http://pacificrim.wikia.com
@@ -19,7 +18,7 @@ internal object StandardEncoderSpec : Spek({
 				jaegers = listOf(
 					Jaeger(
 						height = 76.2,
-						launchDate = LocalDate.of(2019, 11, 2),
+						launchDate = YearMonthDay(2019, 11, 2),
 						mark = 5,
 						name = "Striker Eureka",
 						origin = "Australia",
@@ -29,7 +28,7 @@ internal object StandardEncoderSpec : Spek({
 				,
 				kaijus = listOf(
 					Kaiju(
-						breachDate = LocalDate.of(2025, 1, 12),
+						breachDate = YearMonthDay(2025, 1, 12),
 						category = 5,
 						height = 181.7,
 						name = "Slattern",
@@ -46,7 +45,7 @@ internal object StandardEncoderSpec : Spek({
 				codecProvider = JSONCodecProvider.of(
 					JaegerCodec,
 					KaijuCodec,
-					LocalDateCodec,
+					YearMonthDayCodec,
 					UniverseCodec
 				)
 			) {
@@ -91,19 +90,18 @@ internal object StandardEncoderSpec : Spek({
 private inline fun encode(
 	codecProvider: JSONCodecProvider<TestCoderContext> = JSONCodecProvider.of(),
 	context: TestCoderContext = TestCoderContext(),
-	body: JSONEncoder<TestCoderContext>.() -> Unit
+	block: JSONEncoder<TestCoderContext>.() -> Unit
 ): String {
 	val writer = StringWriter()
-	val encoder =
-		StandardEncoder(
-			codecProvider = codecProvider,
-			context = context,
-			destination = JSONWriter.build(writer)
-		)
 
-	encoder.use {
-		encoder.body()
-	}
+	StandardEncoder(
+		codecProvider = codecProvider,
+		context = context,
+		destination = JSONWriter.build(writer)
+	)
+		.use(withTermination = false) {
+			it.block()
+		}
 
 	return writer.toString()
 }

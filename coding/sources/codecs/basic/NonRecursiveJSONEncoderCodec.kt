@@ -8,7 +8,7 @@ internal class NonRecursiveJSONEncoderCodec<Value : Any>(
 ) : JSONEncoderCodec<Value, JSONCodingContext> {
 
 	override fun encode(value: Value, encoder: JSONEncoder<JSONCodingContext>) {
-		JSONSerializer.default.serializeValue(value, destination = encoder)
+		JSONSerializer.default.serializeValue(value, destination = encoder, withTermination = false)
 	}
 
 

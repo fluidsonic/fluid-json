@@ -196,10 +196,10 @@ internal object StandardReaderAcceptSpec : Spek({
 			))
 		}
 
-		it("readEndOfInput()") {
+		it("terminate()") {
 			reader("null").apply {
 				readNull()
-				readEndOfInput()
+				terminate()
 			}
 		}
 

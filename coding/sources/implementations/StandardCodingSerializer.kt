@@ -6,9 +6,8 @@ internal class StandardCodingSerializer<out Context : JSONCodingContext>(
 	private val encoderFactory: (destination: JSONWriter, context: Context) -> JSONEncoder<Context>
 ) : JSONCodingSerializer {
 
-	override fun serializeValue(value: Any?, destination: JSONWriter) {
-		encoderFactory(destination, context).use { encoder ->
-			encoder.writeValueOrNull(value)
-		}
+	override fun serializeValue(value: Any?, destination: JSONWriter, withTermination: Boolean) {
+		encoderFactory(destination, context)
+			.withTermination(withTermination) { writeValueOrNull(value) }
 	}
 }

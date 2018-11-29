@@ -2,7 +2,6 @@ package tests.coding
 
 import com.github.fluidsonic.fluid.json.*
 import tests.coding.Jaeger.Status
-import java.time.LocalDate
 
 
 internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
@@ -11,7 +10,7 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 
 	override fun decode(valueType: JSONCodingType<in Jaeger>, decoder: JSONDecoder<TestCoderContext>): Jaeger {
 		var height: Double? = null
-		var launchDate: LocalDate? = null
+		var launchDate: YearMonthDay? = null
 		var mark: Int? = null
 		var name: String? = null
 		var origin: String? = null

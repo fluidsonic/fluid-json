@@ -2,7 +2,6 @@ package tests.coding
 
 import com.github.fluidsonic.fluid.json.*
 import tests.coding.Kaiju.Status
-import java.time.LocalDate
 
 
 internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
@@ -10,7 +9,7 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 ) {
 
 	override fun decode(valueType: JSONCodingType<in Kaiju>, decoder: JSONDecoder<TestCoderContext>): Kaiju {
-		var breachDate: LocalDate? = null
+		var breachDate: YearMonthDay? = null
 		var category: Int? = null
 		var height: Double? = null
 		var name: String? = null

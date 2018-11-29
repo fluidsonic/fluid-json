@@ -1,4 +1,3 @@
 rootProject.name = "fluid-json"
 
-enableFeaturePreview("STABLE_PUBLISHING")
-include("basic", "coding", "examples")
+include("basic", "coding", "coding-jdk8", "examples")

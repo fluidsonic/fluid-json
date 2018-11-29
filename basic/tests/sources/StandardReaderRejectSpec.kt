@@ -205,10 +205,6 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("{}") { close(); readElementsFromMap { skipValue() } }
 		}
 
-		it("readEndOfInput()") {
-			readerShouldFail("null") { readEndOfInput() }
-		}
-
 		it("readFloat()") {
 			readerShouldFail("") { readFloat() }
 			readerShouldFail("0b0") { readFloat() }
@@ -742,6 +738,10 @@ internal object StandardReaderRejectSpec : Spek({
 			readerShouldFail("0") { skipValue(); skipValue() }
 			readerShouldFail("0") { close(); skipValue() }
 		}
+
+		it("terminate()") {
+			readerShouldFail("null") { terminate() }
+		}
 	}
 })
 
@@ -750,9 +750,9 @@ internal object StandardReaderRejectSpec : Spek({
 // https://youtrack.jetbrains.com/issue/KT-19796
 
 @Suppress("unused")
-private inline fun TestBody.readerShouldFail(string: String, body: JSONReader.() -> Unit) {
+private inline fun TestBody.readerShouldFail(string: String, block: JSONReader.() -> Unit) {
 	try {
-		StandardReader(TextInput(StringReader(string))).body()
+		StandardReader(TextInput(StringReader(string))).block()
 		throw AssertionError("should fail with a JSONException")
 	}
 	catch (e: JSONException) {

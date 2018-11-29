@@ -3,33 +3,25 @@ package com.github.fluidsonic.fluid.json
 
 internal object StandardParser : JSONParser {
 
-	private fun parse(source: JSONReader, expectedType: ExpectedType, finalizeAndClose: Boolean) =
-		if (finalizeAndClose) {
-			source.use {
-				parseUnclosed(source, expectedType)
-					.also { source.readEndOfInput() }
-			}
-		}
-		else {
-			parseUnclosed(source, expectedType)
-		}
+	private fun parse(source: JSONReader, expectedType: ExpectedType, withTermination: Boolean) =
+		source.withTermination(withTermination) { parseUnterminated(source, expectedType) }
 
 
-	override fun parseValueOrNull(source: JSONReader, finalizeAndClose: Boolean) =
-		parse(source, ExpectedType.any, finalizeAndClose = finalizeAndClose)
+	override fun parseValueOrNull(source: JSONReader, withTermination: Boolean) =
+		parse(source, ExpectedType.any, withTermination = withTermination)
 
 
-	override fun parseList(source: JSONReader, finalizeAndClose: Boolean) =
-		parse(source, ExpectedType.list, finalizeAndClose = finalizeAndClose) as List<*>
+	override fun parseList(source: JSONReader, withTermination: Boolean) =
+		parse(source, ExpectedType.list, withTermination = withTermination) as List<*>
 
 
 	@Suppress("UNCHECKED_CAST")
-	override fun parseMap(source: JSONReader, finalizeAndClose: Boolean) =
-		parse(source, ExpectedType.map, finalizeAndClose = finalizeAndClose) as Map<String, *>
+	override fun parseMap(source: JSONReader, withTermination: Boolean) =
+		parse(source, ExpectedType.map, withTermination = withTermination) as Map<String, *>
 
 
 	@Suppress("UNCHECKED_CAST")
-	private fun parseUnclosed(source: JSONReader, expectedType: ExpectedType): Any? {
+	private fun parseUnterminated(source: JSONReader, expectedType: ExpectedType): Any? {
 		var currentList: MutableList<Any?>? = null
 		var currentKey: String? = null
 		var currentMap: MutableMap<Any?, Any?>? = null

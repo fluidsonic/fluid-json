@@ -17,6 +17,10 @@ internal object StandardWriterAcceptSpec : Spek({
 			write { writeNull(); close(); close() }
 		}
 
+		it("terminate()") {
+			write { writeNull(); terminate() }
+		}
+
 		it(".markAsErrored()") {
 			write {
 				isErrored.should.be.`false`
@@ -824,5 +828,5 @@ internal object StandardWriterAcceptSpec : Spek({
 // https://youtrack.jetbrains.com/issue/KT-19796
 
 @Suppress("unused")
-private fun TestBody.write(body: JSONWriter.() -> Unit): String =
-	StringWriter().also { JSONWriter.build(it).body() }.toString()
+private fun TestBody.write(block: JSONWriter.() -> Unit): String =
+	StringWriter().also { JSONWriter.build(it).block() }.toString()

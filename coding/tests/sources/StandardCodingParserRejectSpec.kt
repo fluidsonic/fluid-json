@@ -168,9 +168,9 @@ internal object StandardCodingParserRejectSpec : Spek({
 // TODO move the following methods inside the object above once KT-19796 is fixed
 // https://youtrack.jetbrains.com/issue/KT-19796
 
-private inline fun shouldFailWithJSONException(body: () -> Unit) {
+private inline fun shouldFailWithJSONException(block: () -> Unit) {
 	try {
-		body()
+		block()
 		throw AssertionError("should fail with a JSONException")
 	}
 	catch (e: JSONException) {

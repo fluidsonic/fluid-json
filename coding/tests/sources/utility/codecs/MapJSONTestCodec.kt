@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 
 
 internal object MapJSONTestCodec : AbstractJSONCodec<Map<*, *>, JSONCodingContext>(
-	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, LocalDateCodec, NumberJSONCodec, StringJSONCodec)
+	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, NumberJSONCodec, StringJSONCodec, YearMonthDayCodec)
 ) {
 
 	override fun decode(valueType: JSONCodingType<in Map<*, *>>, decoder: JSONDecoder<JSONCodingContext>) =

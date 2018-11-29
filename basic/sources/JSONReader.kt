@@ -1,12 +1,13 @@
 package com.github.fluidsonic.fluid.json
 
+import java.io.Closeable
 import java.io.Reader
 import java.io.StringReader
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 
-interface JSONReader : AutoCloseable {
+interface JSONReader : Closeable {
 
 	val nextToken: JSONToken?
 
@@ -20,6 +21,7 @@ interface JSONReader : AutoCloseable {
 	fun readNull(): Nothing?
 	fun readNumber(): Number
 	fun readString(): String
+	fun terminate()
 
 
 	fun readByte(): Byte {
@@ -123,15 +125,6 @@ inline fun <Reader : JSONReader> Reader.readElementsFromMap(readElement: Reader.
 		readElement(readMapKey())
 	readMapEnd()
 }
-
-
-fun JSONReader.readEndOfInput() {
-	val nextToken = nextToken
-	if (nextToken != null) {
-		throw JSONException("Expected end of input but found token $nextToken")
-	}
-}
-
 
 fun JSONReader.readFloatOrNull() =
 	if (nextToken != JSONToken.nullValue) readFloat() else readNull()
@@ -317,3 +310,53 @@ fun JSONReader.readStringOrNull() =
 
 fun JSONReader.readValueOrNull() =
 	if (nextToken != JSONToken.nullValue) readValue() else readNull()
+
+
+inline fun <Reader : JSONReader?, Result> Reader.use(withTermination: Boolean = true, block: (Reader) -> Result): Result {
+	contract {
+		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+	}
+
+	var exception: Throwable? = null
+	try {
+		return block(this)
+	}
+	catch (e: Throwable) {
+		exception = e
+		throw e
+	}
+	finally {
+		val finalException = exception
+
+		when {
+			this == null ->
+				Unit
+
+			finalException == null ->
+				if (withTermination)
+					terminate()
+				else
+					close()
+
+			else ->
+				try {
+					close()
+				}
+				catch (closeException: Throwable) {
+					finalException.addSuppressed(closeException)
+				}
+		}
+	}
+}
+
+
+inline fun <Reader : JSONReader, Result> Reader.withTermination(withTermination: Boolean = true, block: Reader.() -> Result): Result {
+	contract {
+		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+	}
+
+	return if (withTermination)
+		use { it.block() }
+	else
+		block()
+}

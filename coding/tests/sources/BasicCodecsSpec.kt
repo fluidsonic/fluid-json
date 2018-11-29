@@ -7,11 +7,10 @@ import org.spekframework.spek2.style.specification.describe
 
 
 @Suppress("UNCHECKED_CAST")
-internal object StandardCodecsSpec : Spek({
+internal object BasicCodecsSpec : Spek({
 
-	describe("standard codecs") {
+	describe("basic codecs") {
 		listOf(
-			// basic
 			Test("Any", AnyJSONTestDecoderCodec, anyData),
 			Test("Array", ArrayJSONTestCodec, arrayData),
 			Test("Array (non-recursive)", ArrayJSONTestCodec.NonRecursive, arrayData),
@@ -39,25 +38,7 @@ internal object StandardCodecsSpec : Spek({
 			Test("Sequence (non-recursive)", SequenceJSONTestCodec.NonRecursive, sequenceData),
 			Test("Short", ShortJSONCodec, shortData),
 			Test("ShortArray", ShortArrayJSONCodec, shortArrayData),
-			Test("String", StringJSONCodec, stringData),
-
-			// extended
-			Test("DayOfWeek", DayOfWeekJSONCodec, dayOfWeekData),
-			Test("Duration", DurationJSONCodec, durationData),
-			Test("Instant", InstantJSONCodec, instantData),
-			Test("LocalDate", LocalDateJSONCodec, localDateData),
-			Test("LocalDateTime", LocalDateTimeJSONCodec, localDateTimeData),
-			Test("LocalTime", LocalTimeJSONCodec, localTimeData),
-			Test("Month", MonthJSONCodec, monthData),
-			Test("MonthDay", MonthDayJSONCodec, monthDayData),
-			Test("OffsetDateTime", OffsetDateTimeJSONCodec, offsetDateTimeData),
-			Test("OffsetTime", OffsetTimeJSONCodec, offsetTimeData),
-			Test("Period", PeriodJSONCodec, periodData),
-			Test("Year", YearJSONCodec, yearData),
-			Test("YearMonth", YearMonthJSONCodec, yearMonthData),
-			Test("ZonedDateTime", ZonedDateTimeJSONCodec, zonedDateTimeData),
-			Test("ZoneId", ZoneIdJSONCodec, zoneIdData),
-			Test("ZoneOffset", ZoneOffsetJSONCodec, zoneOffsetData)
+			Test("String", StringJSONCodec, stringData)
 		)
 			.forEach { test ->
 				describe(test.name) {
@@ -79,7 +60,7 @@ internal object StandardCodecsSpec : Spek({
 					if (encoderCodec != null) {
 						it("encodes a value") {
 							try {
-								test.data.testEncoding(encoderCodec::serialize)
+								test.data.testEncoding { encoderCodec.serialize(it) }
 							}
 							catch (e: Throwable) {
 								throw AssertionError("${encoderCodec::class.simpleName} (for ${test.type}): ${e.message}").apply {

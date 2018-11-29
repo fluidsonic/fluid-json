@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 interface JSONCodingSerializer : JSONSerializer {
 
-	override fun serializeValue(value: Any?, destination: JSONWriter)
+	override fun serializeValue(value: Any?, destination: JSONWriter, withTermination: Boolean)
 
 
 	companion object {

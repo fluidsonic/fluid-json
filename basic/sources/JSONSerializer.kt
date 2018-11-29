@@ -6,7 +6,7 @@ import java.io.Writer
 
 interface JSONSerializer {
 
-	fun serializeValue(value: Any?, destination: JSONWriter)
+	fun serializeValue(value: Any?, destination: JSONWriter, withTermination: Boolean = true)
 
 
 	companion object {
@@ -20,5 +20,5 @@ fun JSONSerializer.serializeValue(value: Any?) =
 	StringWriter().apply { serializeValue(value, destination = this) }.toString()
 
 
-fun JSONSerializer.serializeValue(value: Any?, destination: Writer) =
-	serializeValue(value, destination = JSONWriter.build(destination))
+fun JSONSerializer.serializeValue(value: Any?, destination: Writer, withTermination: Boolean = true) =
+	serializeValue(value, destination = JSONWriter.build(destination), withTermination = withTermination)

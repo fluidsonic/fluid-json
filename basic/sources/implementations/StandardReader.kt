@@ -20,12 +20,9 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 
 
 	override fun close() {
-		if (state == State.closed) {
-			return
-		}
+		if (state == State.closed) return
 
 		state = State.closed
-
 		source.close()
 	}
 
@@ -618,6 +615,17 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 
 	private fun saveState() {
 		stateStack.add(state)
+	}
+
+
+	override fun terminate() {
+		assertNotClosed()
+		val nextToken = nextToken
+
+		close()
+
+		if (nextToken != null)
+			throw JSONException("Expected end of input but found token $nextToken")
 	}
 
 

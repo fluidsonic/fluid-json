@@ -127,7 +127,7 @@ private inline fun <reified Value : Any> testParseMethod(
 
 	val parser = object : JSONCodingParser {
 
-		override fun <Value : Any> parseValueOfTypeOrNull(source: JSONReader, valueType: JSONCodingType<Value>, finalizeAndClose: Boolean): Value? {
+		override fun <Value : Any> parseValueOfTypeOrNull(source: JSONReader, valueType: JSONCodingType<Value>, withTermination: Boolean): Value? {
 			(valueType as JSONCodingType<*>).should.equal(expectedType)
 
 			@Suppress("UNCHECKED_CAST")

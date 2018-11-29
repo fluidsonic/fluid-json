@@ -111,7 +111,7 @@ private inline fun <reified Value : Any> testReadMethod(
 			get() = if (expectedValue == null) JSONToken.nullValue else JSONToken.stringValue
 
 
-		override fun readNull() =
+		override fun readNull(): Nothing? =
 			null
 
 

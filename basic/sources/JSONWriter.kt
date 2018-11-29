@@ -1,5 +1,6 @@
 package com.github.fluidsonic.fluid.json
 
+import java.io.Closeable
 import java.io.Flushable
 import java.io.IOException
 import java.io.Writer
@@ -7,11 +8,12 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 
-interface JSONWriter : AutoCloseable, Flushable {
+interface JSONWriter : Closeable, Flushable {
 
 	val isErrored: Boolean
 
 	fun markAsErrored()
+	fun terminate()
 	fun writeBoolean(value: Boolean)
 	fun writeDouble(value: Double)
 	fun writeListEnd()
@@ -88,9 +90,59 @@ interface JSONWriter : AutoCloseable, Flushable {
 }
 
 
-inline fun <Writer : JSONWriter, ReturnValue> Writer.withErrorChecking(body: Writer.() -> ReturnValue): ReturnValue {
+inline fun <Writer : JSONWriter?, Result> Writer.use(withTermination: Boolean = true, block: (Writer) -> Result): Result {
 	contract {
-		callsInPlace(body, InvocationKind.EXACTLY_ONCE)
+		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+	}
+
+	var exception: Throwable? = null
+	try {
+		return block(this)
+	}
+	catch (e: Throwable) {
+		exception = e
+		throw e
+	}
+	finally {
+		val finalException = exception
+
+		when {
+			this == null ->
+				Unit
+
+			finalException == null ->
+				if (withTermination)
+					terminate()
+				else
+					close()
+
+			else ->
+				try {
+					close()
+				}
+				catch (closeException: Throwable) {
+					finalException.addSuppressed(closeException)
+				}
+		}
+	}
+}
+
+
+inline fun <Writer : JSONWriter, Result> Writer.withTermination(withTermination: Boolean = true, block: Writer.() -> Result): Result {
+	contract {
+		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+	}
+
+	return if (withTermination)
+		use { it.block() }
+	else
+		block()
+}
+
+
+inline fun <Writer : JSONWriter, ReturnValue> Writer.withErrorChecking(block: Writer.() -> ReturnValue): ReturnValue {
+	contract {
+		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
 	}
 
 	if (isErrored) {
@@ -98,7 +150,7 @@ inline fun <Writer : JSONWriter, ReturnValue> Writer.withErrorChecking(body: Wri
 	}
 
 	return try {
-		body()
+		block()
 	}
 	catch (e: Throwable) {
 		markAsErrored()

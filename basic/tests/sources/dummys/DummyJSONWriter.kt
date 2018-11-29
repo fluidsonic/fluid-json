@@ -6,6 +6,7 @@ import com.github.fluidsonic.fluid.json.*
 internal open class DummyJSONWriter : JSONWriter {
 	override val isErrored: Boolean get() = error("")
 	override fun markAsErrored(): Unit = error("")
+	override fun terminate(): Unit = error("")
 	override fun writeBoolean(value: Boolean): Unit = error("")
 	override fun writeDouble(value: Double): Unit = error("")
 	override fun writeListEnd(): Unit = error("")

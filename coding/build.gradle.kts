@@ -1,3 +1,5 @@
+configurePublishing(id = "fluid-json-coding")
+
 dependencies {
 	api(project(":basic"))
 

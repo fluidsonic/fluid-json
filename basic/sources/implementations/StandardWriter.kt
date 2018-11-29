@@ -1,12 +1,13 @@
 package com.github.fluidsonic.fluid.json
 
+import java.io.Closeable
 import java.io.Flushable
 import java.io.IOException
 import java.io.Writer
 
 
 internal class StandardWriter(private val destination: Writer)
-	: JSONWriter, AutoCloseable, Flushable by destination {
+	: JSONWriter, Closeable, Flushable by destination {
 
 	private var state = State.initial
 	private val stateStack = mutableListOf<State>()
@@ -16,22 +17,16 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override fun close() {
-		val stateBeforeClosing = state
-		if (stateBeforeClosing == State.closed) {
-			return
-		}
+		if (state == State.closed) return
 
 		state = State.closed
-
 		destination.close()
-
-		if (!isErrored && stateBeforeClosing != State.end) {
-			throw JSONException("Must not close writer before all values were fully written.")
-		}
 	}
 
 
 	override fun markAsErrored() {
+		if (state == State.closed) return
+
 		isErrored = true
 	}
 
@@ -74,6 +69,20 @@ internal class StandardWriter(private val destination: Writer)
 
 			State.initial ->
 				state = State.end
+		}
+	}
+
+
+	override fun terminate() {
+		val state = state
+		if (state == State.closed)
+			throw IOException("Cannot operate on a closed writer")
+
+		close()
+
+		withErrorChecking {
+			if (state != State.end)
+				throw JSONException("JSONWriter was not terminated with a complete JSON value")
 		}
 	}
 

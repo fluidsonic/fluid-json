@@ -4,7 +4,6 @@ import com.github.fluidsonic.fluid.json.*
 import com.winterbe.expekt.should
 import org.spekframework.spek2.Spek
 import org.spekframework.spek2.style.specification.describe
-import java.time.LocalDate
 
 
 // test data from http://pacificrim.wikia.com
@@ -45,7 +44,7 @@ internal object StandardDecoderSpec : Spek({
 				jaegers = listOf(
 					Jaeger(
 						height = 76.2,
-						launchDate = LocalDate.of(2019, 11, 2),
+						launchDate = YearMonthDay(2019, 11, 2),
 						mark = 5,
 						name = "Striker Eureka",
 						origin = "Australia",
@@ -55,7 +54,7 @@ internal object StandardDecoderSpec : Spek({
 				,
 				kaijus = listOf(
 					Kaiju(
-						breachDate = LocalDate.of(2025, 1, 12),
+						breachDate = YearMonthDay(2025, 1, 12),
 						category = 5,
 						height = 181.7,
 						name = "Slattern",
@@ -71,7 +70,7 @@ internal object StandardDecoderSpec : Spek({
 				codecProvider = JSONCodecProvider.of(
 					JaegerCodec,
 					KaijuCodec,
-					LocalDateCodec,
+					YearMonthDayCodec,
 					UniverseCodec
 				)
 			) { readValueOfType<Universe>() }
@@ -121,10 +120,10 @@ private inline fun <ReturnValue> decode(
 	input: String,
 	codecProvider: JSONCodecProvider<TestCoderContext> = JSONCodecProvider.of(),
 	context: TestCoderContext = TestCoderContext(),
-	body: JSONDecoder<TestCoderContext>.() -> ReturnValue
+	block: JSONDecoder<TestCoderContext>.() -> ReturnValue
 ) =
 	StandardDecoder(
 		codecProvider = codecProvider,
 		context = context,
 		source = JSONReader.build(input)
-	).let { it.use { it.body() } }
+	).use(withTermination = false) { it.block() }

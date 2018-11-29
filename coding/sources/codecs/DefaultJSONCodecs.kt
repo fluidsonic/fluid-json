@@ -1,59 +1,47 @@
 package com.github.fluidsonic.fluid.json
 
+import com.github.fluidsonic.fluid.json.dynamic.*
+
 
 object DefaultJSONCodecs {
 
-	val basic = listOf(
-		AnyJSONDecoderCodec,
-		ArrayJSONCodec,
-		BooleanArrayJSONCodec,
-		BooleanJSONCodec,
-		ByteArrayJSONCodec,
-		ByteJSONCodec,
-		DoubleArrayJSONCodec,
-		DoubleJSONCodec,
-		FloatArrayJSONCodec,
-		FloatJSONCodec,
-		IntArrayJSONCodec,
-		IntJSONCodec,
-		ListJSONDecoderCodec,
-		LongArrayJSONCodec,
-		LongJSONCodec,
-		MapJSONCodec,
-		SequenceJSONCodec,
-		ShortArrayJSONCodec,
-		ShortJSONCodec,
-		StringJSONCodec,
-		IterableJSONEncoderCodec, // after subclasses
-		NumberJSONCodec // after subclasses
-	)
+	val basic: List<JSONCodecProvider<JSONCodingContext>> =
+		listOf(
+			AnyJSONDecoderCodec,
+			ArrayJSONCodec,
+			BooleanArrayJSONCodec,
+			BooleanJSONCodec,
+			ByteArrayJSONCodec,
+			ByteJSONCodec,
+			DoubleArrayJSONCodec,
+			DoubleJSONCodec,
+			FloatArrayJSONCodec,
+			FloatJSONCodec,
+			IntArrayJSONCodec,
+			IntJSONCodec,
+			ListJSONDecoderCodec,
+			LongArrayJSONCodec,
+			LongJSONCodec,
+			MapJSONCodec,
+			SequenceJSONCodec,
+			ShortArrayJSONCodec,
+			ShortJSONCodec,
+			StringJSONCodec,
+			IterableJSONEncoderCodec, // after subclasses
+			NumberJSONCodec // after subclasses
+		)
 
 
-	val extended = listOf(
-		DayOfWeekJSONCodec,
-		DurationJSONCodec,
-		InstantJSONCodec,
-		LocalDateJSONCodec,
-		LocalDateTimeJSONCodec,
-		LocalTimeJSONCodec,
-		MonthDayJSONCodec,
-		MonthJSONCodec,
-		OffsetTimeJSONCodec,
-		OffsetTimeJSONCodec,
-		PeriodJSONCodec,
-		YearJSONCodec,
-		YearMonthJSONCodec,
-		ZonedDateTimeJSONCodec,
-		ZoneIdJSONCodec,
-		ZoneOffsetJSONCodec
-	)
+	val extended: List<JSONCodecProvider<JSONCodingContext>> =
+		codingImplementationsJava.extendedCodecProviders()
 
 
-	val nonRecursive = listOf(
-		ArrayJSONCodec.nonRecursive,
-		ListJSONDecoderCodec.nonRecursive,
-		MapJSONCodec.nonRecursive,
-		SequenceJSONCodec.nonRecursive,
-		IterableJSONEncoderCodec.nonRecursive // after subclasses
-	)
+	val nonRecursive: List<JSONCodecProvider<JSONCodingContext>> =
+		listOf(
+			ArrayJSONCodec.nonRecursive,
+			ListJSONDecoderCodec.nonRecursive,
+			MapJSONCodec.nonRecursive,
+			SequenceJSONCodec.nonRecursive,
+			IterableJSONEncoderCodec.nonRecursive // after subclasses
+		)
 }

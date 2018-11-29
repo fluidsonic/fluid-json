@@ -12,10 +12,10 @@ internal object StandardWriterRejectSpec : Spek({
 
 	describe("StandardWriter fails in") {
 
-		it(".close()") {
-			writerShouldFail { close() }
-			writerShouldFail { writeListStart(); close() }
-			writerShouldFail { writeMapStart(); close() }
+		it("terminate()") {
+			writerShouldFail { terminate() }
+			writerShouldFail { writeListStart(); terminate() }
+			writerShouldFail { writeMapStart(); terminate() }
 		}
 
 		it(".withErrorChecking()") {
@@ -69,9 +69,9 @@ internal object StandardWriterRejectSpec : Spek({
 // https://youtrack.jetbrains.com/issue/KT-19796
 
 @Suppress("unused")
-private inline fun TestBody.writerShouldFail(body: JSONWriter.() -> Unit) {
+private inline fun TestBody.writerShouldFail(block: JSONWriter.() -> Unit) {
 	try {
-		StandardWriter(StringWriter()).body()
+		StandardWriter(StringWriter()).block()
 		throw AssertionError("should fail with a JSONException")
 	}
 	catch (e: JSONException) {

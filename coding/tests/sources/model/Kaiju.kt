@@ -1,10 +1,8 @@
 package tests.coding
 
-import java.time.LocalDate
-
 
 internal data class Kaiju(
-	val breachDate: LocalDate,
+	val breachDate: YearMonthDay,
 	val category: Int,
 	val height: Double,
 	val name: String,

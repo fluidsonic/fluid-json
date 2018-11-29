@@ -3,7 +3,12 @@ package com.github.fluidsonic.fluid.json
 
 internal object StandardSerializer : JSONSerializer {
 
-	override fun serializeValue(value: Any?, destination: JSONWriter) {
+	override fun serializeValue(value: Any?, destination: JSONWriter, withTermination: Boolean) {
+		destination.withTermination(withTermination) { serializeValueUnterminated(value, destination) }
+	}
+
+
+	private fun serializeValueUnterminated(value: Any?, destination: JSONWriter) {
 		var currentIterator: Iterator<*>? = null
 		var currentValue: Any? = value
 		var isInMap = false
