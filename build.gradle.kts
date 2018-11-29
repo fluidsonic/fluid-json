@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-description = "A JSON library written in pure Kotlin."
 group = "com.github.fluidsonic"
 version = "0.9.6"
 
