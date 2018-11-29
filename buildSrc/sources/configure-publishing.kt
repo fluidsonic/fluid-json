@@ -12,7 +12,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.signing.SigningPlugin
 
 
-fun Project.configurePublishing(id: String) {
+fun Project.configurePublishing() {
 	apply<MavenPlugin>()
 	apply<MavenPublishPlugin>()
 	apply<PublishingPlugin>()
@@ -29,15 +29,9 @@ fun Project.configurePublishing(id: String) {
 		from(sourceSets["main"].allSource)
 	}
 
-	tasks.withType<Jar> {
-		baseName = id
-	}
-
 	publishing {
 		publications {
 			register("mavenJava", MavenPublication::class) {
-				artifactId = id
-
 				from(components["java"])
 				artifact(sourcesJar)
 			}
@@ -74,11 +68,9 @@ fun Project.configurePublishing(id: String) {
 							}
 
 							pom {
-								artifactId = id
-
 								project {
 									withGroovyBuilder {
-										"name"(id)
+										"name"(project.name)
 										"description"(project.description)
 										"packaging"("jar")
 										"url"("https://github.com/fluidsonic/fluid-json")

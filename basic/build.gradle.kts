@@ -1,6 +1,6 @@
 description = "A JSON library written in pure Kotlin (basic variant)"
 
-configurePublishing(id = "fluid-json-basic")
+configurePublishing()
 
 dependencies {
 	testImplementation(kotlin("reflect"))

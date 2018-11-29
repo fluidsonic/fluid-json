@@ -1,5 +1,5 @@
 configureJDK8()
 
 dependencies {
-	implementation(project(":coding-jdk8"))
+	implementation(project(":fluid-json-coding-jdk8"))
 }
