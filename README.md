@@ -22,13 +22,13 @@ You have to add **one** of the following dependencies to your project depending 
 ```kotlin
 dependencies {
     // parsing/serialization of basic types and streaming
-    implementation("com.github.fluidsonic:fluid-json-basic:0.9.6")
+    implementation("com.github.fluidsonic:fluid-json-basic:0.9.7")
 
     // parsing/serialization of any type using encoders and decoders (Java 7)
-    implementation("com.github.fluidsonic:fluid-json-coding:0.9.6")
+    implementation("com.github.fluidsonic:fluid-json-coding:0.9.7")
 
     // parsing/serialization of any type using encoders and decoders (Java 8 and newer)
-    implementation("com.github.fluidsonic:fluid-json-coding-jdk8:0.9.6")
+    implementation("com.github.fluidsonic:fluid-json-coding-jdk8:0.9.7")
 }
 ```
 

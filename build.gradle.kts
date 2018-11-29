@@ -19,7 +19,7 @@ tasks.withType<Wrapper> {
 
 allprojects {
 	group = "com.github.fluidsonic"
-	version = "0.9.6"
+	version = "0.9.7"
 
 	apply<KotlinPlatformJvmPlugin>()
 	apply<JacocoPlugin>()
