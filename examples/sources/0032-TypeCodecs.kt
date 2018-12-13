@@ -7,7 +7,7 @@ import java.time.Instant
 object CodingExample {
 
 	@JvmStatic
-	fun main(args: Array<String>) {
+	fun main() {
 		// Using a codec for decoding AND encoding specific classes simplifies both, JSON parsing AND serialization :)
 
 		val input = listOf(

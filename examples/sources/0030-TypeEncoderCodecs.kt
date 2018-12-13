@@ -7,7 +7,7 @@ import java.time.Instant
 object EncodingExample {
 
 	@JvmStatic
-	fun main(args: Array<String>) {
+	fun main() {
 		// Using a codec for encoding specific Kotlin types simplifies JSON serialization a lot
 
 		val serializer = JSONCodingSerializer.builder()

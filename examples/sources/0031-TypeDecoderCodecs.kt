@@ -7,7 +7,7 @@ import java.time.Instant
 object DecodingExample {
 
 	@JvmStatic
-	fun main(args: Array<String>) {
+	fun main() {
 		// Using a codec for decoding specific classes simplifies JSON parsing a lot
 
 		val parser = JSONCodingParser.builder()

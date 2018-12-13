@@ -8,7 +8,7 @@ import java.time.Instant
 object CodingAsStreamExample {
 
 	@JvmStatic
-	fun main(args: Array<String>) {
+	fun main() {
 		// Parsing and serialization using codecs is also supported when streaming by using JSONDecoder instead of
 		// JSONReader and JSONEncoder instead of JSONWriter
 

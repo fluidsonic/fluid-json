@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 import java.io.StringWriter
 
 
-fun main(args: Array<String>) {
+fun main() {
 	// You can write values directly to a stream without having to build the temporary map or list
 	val output = StringWriter()
 	JSONWriter.build(output).use { writer ->

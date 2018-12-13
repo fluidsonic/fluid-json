@@ -3,7 +3,7 @@ package examples
 import com.github.fluidsonic.fluid.json.*
 
 
-fun main(args: Array<String>) {
+fun main() {
 	val parser = JSONCodingParser.default
 
 	// You can parse a List of values in a typesafe way

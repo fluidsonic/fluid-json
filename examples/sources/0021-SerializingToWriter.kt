@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 import java.io.StringWriter
 
 
-fun main(args: Array<String>) {
+fun main() {
 	val serializer = JSONSerializer.default
 
 	// You can also let the serializer write to a Writer

@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 import java.io.StringReader
 
 
-fun main(args: Array<String>) {
+fun main() {
 	val parser = JSONParser.default
 
 	// You can also let the parser read from a Reader

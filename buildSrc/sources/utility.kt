@@ -10,16 +10,16 @@ import org.gradle.plugins.signing.SigningExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 
-internal val NamedDomainObjectContainer<Configuration>.`archives`
+internal val NamedDomainObjectContainer<Configuration>.archives
 	get() = named<Configuration>("archives")
 
 
 internal fun Project.java(configuration: JavaPluginConvention.() -> Unit) =
-	configure<JavaPluginConvention>(configuration)
+	configure(configuration)
 
 
 internal fun Project.publishing(configuration: PublishingExtension.() -> Unit) =
-	configure<PublishingExtension>(configuration)
+	configure(configuration)
 
 
 internal val Project.signing
@@ -27,7 +27,7 @@ internal val Project.signing
 
 
 internal fun Project.signing(configuration: SigningExtension.() -> Unit) =
-	configure<SigningExtension>(configuration)
+	configure(configuration)
 
 
 internal val Project.sourceSets

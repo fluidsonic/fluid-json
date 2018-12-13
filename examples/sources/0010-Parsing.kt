@@ -3,7 +3,7 @@ package examples
 import com.github.fluidsonic.fluid.json.*
 
 
-fun main(args: Array<String>) {
+fun main() {
 	val parser = JSONParser.default
 
 	// Given a JSON string you get a value of basic Kotlin types (String, Int, List, Map, etc.)

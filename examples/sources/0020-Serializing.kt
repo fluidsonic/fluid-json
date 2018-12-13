@@ -3,7 +3,7 @@ package examples
 import com.github.fluidsonic.fluid.json.*
 
 
-fun main(args: Array<String>) {
+fun main() {
 	val serializer = JSONSerializer.default
 
 	// Given a value of a basic Kotlin type (String, Int, List, Map, etc.) you can get a JSON string
