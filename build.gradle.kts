@@ -22,6 +22,10 @@ subprojects {
 		toolVersion = "0.8.3"
 	}
 
+	repositories {
+		bintray("fluidsonic/maven")
+	}
+
 	tasks {
 		val check by this
 
@@ -58,4 +62,3 @@ subprojects {
 		testRuntimeOnly("org.junit.platform:junit-platform-runner:1.3.2")
 	}
 }
-
