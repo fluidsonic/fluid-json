@@ -34,6 +34,14 @@ interface JSONReader : Closeable {
 	}
 
 
+	fun readChar(): Char {
+		val value = readString()
+		if (value.length != 1) throw JSONException("Expected value to be a string of exactly one UTF-16 character")
+
+		return value[0]
+	}
+
+
 	fun readFloat() =
 		readDouble().toFloat()
 
@@ -109,6 +117,10 @@ fun JSONReader.readBooleanOrNull() =
 
 fun JSONReader.readByteOrNull() =
 	if (nextToken != JSONToken.nullValue) readByte() else readNull()
+
+
+fun JSONReader.readCharOrNull() =
+	if (nextToken != JSONToken.nullValue) readChar() else readNull()
 
 
 fun JSONReader.readDoubleOrNull() =

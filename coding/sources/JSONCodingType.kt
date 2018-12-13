@@ -3,6 +3,7 @@ package com.github.fluidsonic.fluid.json
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import java.lang.reflect.TypeVariable
 import java.lang.reflect.WildcardType
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
@@ -139,6 +140,13 @@ class JSONCodingType<Type : Any> private constructor(
 		}
 
 
+		private fun TypeVariable<*>.toCodableType(upperBound: KClass<*>?) =
+			Any::class.java.toCodableType(
+				upperBound = upperBound,
+				variance = KVariance.OUT
+			)
+
+
 		private fun WildcardType.toCodableType(upperBound: KClass<*>?) =
 			when {
 				lowerBounds.isNotEmpty() -> lowerBounds.single().toCodableType(
@@ -146,10 +154,20 @@ class JSONCodingType<Type : Any> private constructor(
 					variance = KVariance.IN
 				)
 
-				upperBounds.isNotEmpty() -> upperBounds.single().toCodableType(
-					upperBound = upperBound,
-					variance = KVariance.OUT
-				)
+				upperBounds.isNotEmpty() ->
+					upperBounds.single().let { maximumUpperBound ->
+						if (maximumUpperBound === Any::class.java && upperBound != null)
+							upperBound.java.toCodableType(
+								upperBound = upperBound,
+								variance = KVariance.OUT
+							)
+						else
+							maximumUpperBound.toCodableType(
+								upperBound = upperBound,
+								variance = KVariance.OUT
+							)
+					}
+
 
 				else -> error("impossible")
 			}
@@ -161,6 +179,7 @@ class JSONCodingType<Type : Any> private constructor(
 				is Class<*> -> (this as Class<Any>).toCodableType(upperBound = upperBound, variance = variance)
 				is ParameterizedType -> toCodableType(upperBound = upperBound, variance = variance)
 				is WildcardType -> toCodableType(upperBound = upperBound)
+				is TypeVariable<*> -> toCodableType(upperBound = upperBound)
 				is GenericArrayType -> toCodableType(upperBound = upperBound, variance = variance)
 				else -> error("Unsupported type ${this::class.qualifiedName}: $this")
 			}

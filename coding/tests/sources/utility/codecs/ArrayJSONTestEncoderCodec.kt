@@ -3,7 +3,7 @@ package tests.coding
 import com.github.fluidsonic.fluid.json.*
 
 
-internal object ArrayJSONTestCodec : AbstractJSONEncoderCodec<Array<*>, JSONCodingContext>(
+internal object ArrayJSONTestEncoderCodec : AbstractJSONEncoderCodec<Array<*>, JSONCodingContext>(
 	additionalProviders = listOf(StringJSONCodec)
 ) {
 

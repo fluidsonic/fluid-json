@@ -12,12 +12,14 @@ internal object BasicCodecsSpec : Spek({
 	describe("basic codecs") {
 		listOf(
 			Test("Any", AnyJSONTestDecoderCodec, anyData),
-			Test("Array", ArrayJSONTestCodec, arrayData),
-			Test("Array (non-recursive)", ArrayJSONTestCodec.NonRecursive, arrayData),
+			Test("Array", ArrayJSONTestEncoderCodec, arrayData),
+			Test("Array (non-recursive)", ArrayJSONTestEncoderCodec.NonRecursive, arrayData),
 			Test("Boolean", BooleanJSONCodec, booleanData),
 			Test("BooleanArray", BooleanArrayJSONCodec, booleanArrayData),
 			Test("Byte", ByteJSONCodec, byteData),
 			Test("ByteArray", ByteArrayJSONCodec, byteArrayData),
+			Test("Char", CharJSONCodec, charData),
+			Test("CharArray", CharArrayJSONCodec, charArrayData),
 			Test("Double", DoubleJSONCodec, doubleData),
 			Test("DoubleArray", DoubleArrayJSONCodec, doubleArrayData),
 			Test("Float", FloatJSONCodec, floatData),
@@ -84,8 +86,8 @@ internal object BasicCodecsSpec : Spek({
 	private class Test<Value : Any> private constructor(
 		val name: String,
 		val codec: JSONCodecProvider<JSONCodingContext>,
-		val type: JSONCodingType<Value>,
-		val data: TestData<Value>
+		val data: TestData<Value>,
+		val type: JSONCodingType<Value>
 	) {
 
 		companion object {
@@ -95,7 +97,7 @@ internal object BasicCodecsSpec : Spek({
 				codec: JSONCodecProvider<JSONCodingContext>,
 				data: TestData<Value>
 			) =
-				Test(name = name, codec = codec, type = jsonCodingType(), data = data)
+				Test(name = name, codec = codec, data = data, type = jsonCodingType())
 		}
 	}
 }

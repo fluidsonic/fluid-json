@@ -29,6 +29,10 @@ interface JSONWriter : Closeable, Flushable {
 		writeLong(value.toLong())
 
 
+	fun writeChar(value: Char) =
+		writeString(value.toString())
+
+
 	fun writeFloat(value: Float) =
 		writeDouble(value.toDouble())
 
@@ -63,6 +67,8 @@ interface JSONWriter : Closeable, Flushable {
 			is BooleanArray -> writeList(value)
 			is Byte -> writeByte(value)
 			is ByteArray -> writeList(value)
+			is Char -> writeChar(value)
+			is CharArray -> writeList(value)
 			is DoubleArray -> writeList(value)
 			is Float -> writeFloat(value)
 			is FloatArray -> writeList(value)
@@ -167,6 +173,10 @@ fun JSONWriter.writeByteOrNull(value: Byte?) =
 	if (value != null) writeByte(value) else writeNull()
 
 
+fun JSONWriter.writeCharOrNull(value: Char?) =
+	if (value != null) writeChar(value) else writeNull()
+
+
 fun JSONWriter.writeDoubleOrNull(value: Double?) =
 	if (value != null) writeDouble(value) else writeNull()
 
@@ -207,6 +217,10 @@ fun JSONWriter.writeList(value: BooleanArray) =
 
 fun JSONWriter.writeList(value: ByteArray) =
 	writeListByElement(value) { writeByte(it) }
+
+
+fun JSONWriter.writeList(value: CharArray) =
+	writeListByElement(value) { writeChar(it) }
 
 
 fun JSONWriter.writeList(value: DoubleArray) =
@@ -259,6 +273,21 @@ inline fun <Writer : JSONWriter> Writer.writeListByElement(
 inline fun <Writer : JSONWriter> Writer.writeListByElement(
 	value: ByteArray,
 	writeElement: Writer.(element: Byte) -> Unit
+) {
+	contract {
+		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+	}
+
+	writeIntoList {
+		for (element in value)
+			writeElement(element)
+	}
+}
+
+
+inline fun <Writer : JSONWriter> Writer.writeListByElement(
+	value: CharArray,
+	writeElement: Writer.(element: Char) -> Unit
 ) {
 	contract {
 		callsInPlace(writeElement, InvocationKind.UNKNOWN)
@@ -399,6 +428,10 @@ fun JSONWriter.writeListOrNull(value: ByteArray?) =
 	if (value != null) writeList(value) else writeNull()
 
 
+fun JSONWriter.writeListOrNull(value: CharArray?) =
+	if (value != null) writeList(value) else writeNull()
+
+
 fun JSONWriter.writeListOrNull(value: DoubleArray?) =
 	if (value != null) writeList(value) else writeNull()
 
@@ -446,6 +479,18 @@ inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
 inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
 	value: ByteArray?,
 	writeElement: Writer.(element: Byte) -> Unit
+) {
+	contract {
+		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+	}
+
+	if (value != null) writeListByElement(value, writeElement) else writeNull()
+}
+
+
+inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
+	value: CharArray?,
+	writeElement: Writer.(element: Char) -> Unit
 ) {
 	contract {
 		callsInPlace(writeElement, InvocationKind.UNKNOWN)
@@ -647,6 +692,21 @@ fun JSONWriter.writeMapElement(key: String, byte: Byte?, skipIfNull: Boolean = f
 		Unit
 
 
+fun JSONWriter.writeMapElement(key: String, char: Char) {
+	writeMapKey(key)
+	writeChar(char)
+}
+
+
+fun JSONWriter.writeMapElement(key: String, char: Char?, skipIfNull: Boolean = false) =
+	if (char != null)
+		writeMapElement(key, char)
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
 fun JSONWriter.writeMapElement(key: String, double: Double) {
 	writeMapKey(key)
 	writeDouble(double)
@@ -722,6 +782,17 @@ fun JSONWriter.writeMapElement(key: String, list: BooleanArray?, skipIfNull: Boo
 
 
 fun JSONWriter.writeMapElement(key: String, list: ByteArray?, skipIfNull: Boolean = false) =
+	if (list != null) {
+		writeMapKey(key)
+		writeList(list)
+	}
+	else if (!skipIfNull)
+		writeMapNullElement(key)
+	else
+		Unit
+
+
+fun JSONWriter.writeMapElement(key: String, list: CharArray?, skipIfNull: Boolean = false) =
 	if (list != null) {
 		writeMapKey(key)
 		writeList(list)

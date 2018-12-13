@@ -20,6 +20,10 @@ internal object JSONCodingTypeSpec : Spek({
 			jsonCodingType(Map::class).should.equal(jsonCodingType())
 			jsonCodingType(String::class).should.equal(jsonCodingType())
 		}
+
+		it("supports recursive generics") {
+			jsonCodingType(ClosedRange::class).should.equal(jsonCodingType())
+		}
 	}
 }) {
 

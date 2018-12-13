@@ -13,6 +13,7 @@ object DefaultJSONCodecs {
 			BooleanJSONCodec,
 			ByteArrayJSONCodec,
 			ByteJSONCodec,
+			CharJSONCodec,
 			DoubleArrayJSONCodec,
 			DoubleJSONCodec,
 			FloatArrayJSONCodec,

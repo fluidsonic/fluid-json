@@ -127,6 +127,17 @@ internal object StandardReaderAcceptSpec : Spek({
 			reader("null").readByteOrNull().should.be.`null`
 		}
 
+		it("readChar()") {
+			reader(""""\u0000"""").readChar().should.equal(0.toChar())
+			reader(""""a"""").readChar().should.equal('a')
+		}
+
+		it("readCharOrNull()") {
+			reader(""""\u0000"""").readCharOrNull().should.equal(0.toChar())
+			reader(""""a"""").readCharOrNull().should.equal('a')
+			reader("null").readCharOrNull().should.be.`null`
+		}
+
 		it("readDouble()") {
 			reader("0").readDouble().should.equal(0.0)
 			reader("-0").readDouble().should.equal(-0.0)

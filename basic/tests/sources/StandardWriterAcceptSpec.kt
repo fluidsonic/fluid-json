@@ -57,6 +57,19 @@ internal object StandardWriterAcceptSpec : Spek({
 			write { writeByteOrNull(null) }.should.equal("null")
 		}
 
+		it(".writeChar()") {
+			write { writeChar(Char.MIN_VALUE) }.should.equal(""""\u0000"""")
+			write { writeChar('a') }.should.equal(""""a"""")
+			write { writeChar(Char.MAX_VALUE) }.should.equal("\"\uFFFF\"")
+		}
+
+		it(".writeCharOrNull()") {
+			write { writeCharOrNull(Char.MIN_VALUE) }.should.equal(""""\u0000"""")
+			write { writeCharOrNull('a') }.should.equal(""""a"""")
+			write { writeCharOrNull(Char.MAX_VALUE) }.should.equal("\"\uFFFF\"")
+			write { writeCharOrNull(null) }.should.equal("null")
+		}
+
 		it(".writeDouble()") {
 			write { writeDouble(-1E200) }.should.equal("-1.0E200")
 			write { writeDouble(-100.999) }.should.equal("-100.999")
@@ -157,6 +170,7 @@ internal object StandardWriterAcceptSpec : Spek({
 		it(".writeList()") {
 			write { writeList(booleanArrayOf(false, true)) }.should.equal("[false,true]")
 			write { writeList(byteArrayOf(0, 1)) }.should.equal("[0,1]")
+			write { writeList(charArrayOf(0.toChar(), 'a')) }.should.equal("""["\u0000","a"]""")
 			write { writeList(doubleArrayOf(0.0, 1.0)) }.should.equal("[0.0,1.0]")
 			write { writeList(floatArrayOf(0.0f, 1.0f)) }.should.equal("[0.0,1.0]")
 			write { writeList(intArrayOf(0, 1)) }.should.equal("[0,1]")
@@ -170,6 +184,7 @@ internal object StandardWriterAcceptSpec : Spek({
 		it(".writeListByElement()") {
 			write { writeListByElement(booleanArrayOf(false, true)) { writeValue(it) } }.should.equal("[false,true]")
 			write { writeListByElement(byteArrayOf(0, 1)) { writeValue(it) } }.should.equal("[0,1]")
+			write { writeListByElement(charArrayOf(0.toChar(), 'a')) { writeValue(it) } }.should.equal("""["\u0000","a"]""")
 			write { writeListByElement(doubleArrayOf(0.0, 1.0)) { writeValue(it) } }.should.equal("[0.0,1.0]")
 			write { writeListByElement(floatArrayOf(0.0f, 1.0f)) { writeValue(it) } }.should.equal("[0.0,1.0]")
 			write { writeListByElement(intArrayOf(0, 1)) { writeValue(it) } }.should.equal("[0,1]")
@@ -202,6 +217,7 @@ internal object StandardWriterAcceptSpec : Spek({
 		it(".writeListOrNull()") {
 			write { writeListOrNull(booleanArrayOf(false, true)) }.should.equal("[false,true]")
 			write { writeListOrNull(byteArrayOf(0, 1)) }.should.equal("[0,1]")
+			write { writeListOrNull(charArrayOf(0.toChar(), 'a')) }.should.equal("""["\u0000","a"]""")
 			write { writeListOrNull(doubleArrayOf(0.0, 1.0)) }.should.equal("[0.0,1.0]")
 			write { writeListOrNull(floatArrayOf(0.0f, 1.0f)) }.should.equal("[0.0,1.0]")
 			write { writeListOrNull(intArrayOf(0, 1)) }.should.equal("[0,1]")
@@ -212,6 +228,7 @@ internal object StandardWriterAcceptSpec : Spek({
 			write { writeListOrNull(arrayOf("", "").asSequence()) }.should.equal("""["",""]""")
 			write { writeListOrNull(null as BooleanArray?) }.should.equal("null")
 			write { writeListOrNull(null as ByteArray?) }.should.equal("null")
+			write { writeListOrNull(null as CharArray?) }.should.equal("null")
 			write { writeListOrNull(null as DoubleArray?) }.should.equal("null")
 			write { writeListOrNull(null as FloatArray?) }.should.equal("null")
 			write { writeListOrNull(null as IntArray?) }.should.equal("null")
@@ -225,6 +242,7 @@ internal object StandardWriterAcceptSpec : Spek({
 		it(".writeListOrNullByElement()") {
 			write { writeListOrNullByElement(booleanArrayOf(false, true)) { writeValue(it) } }.should.equal("[false,true]")
 			write { writeListOrNullByElement(byteArrayOf(0, 1)) { writeValue(it) } }.should.equal("[0,1]")
+			write { writeListOrNullByElement(charArrayOf(0.toChar(), 'a')) { writeValue(it) } }.should.equal("""["\u0000","a"]""")
 			write { writeListOrNullByElement(doubleArrayOf(0.0, 1.0)) { writeValue(it) } }.should.equal("[0.0,1.0]")
 			write { writeListOrNullByElement(floatArrayOf(0.0f, 1.0f)) { writeValue(it) } }.should.equal("[0.0,1.0]")
 			write { writeListOrNullByElement(intArrayOf(0, 1)) { writeValue(it) } }.should.equal("[0,1]")
@@ -235,6 +253,7 @@ internal object StandardWriterAcceptSpec : Spek({
 			write { writeListOrNullByElement(arrayOf("", "").asSequence()) { writeValue(it) } }.should.equal("""["",""]""")
 			write { writeListOrNullByElement(null as BooleanArray?) {} }.should.equal("null")
 			write { writeListOrNullByElement(null as ByteArray?) {} }.should.equal("null")
+			write { writeListOrNullByElement(null as CharArray?) {} }.should.equal("null")
 			write { writeListOrNullByElement(null as DoubleArray?) {} }.should.equal("null")
 			write { writeListOrNullByElement(null as FloatArray?) {} }.should.equal("null")
 			write { writeListOrNullByElement(null as IntArray?) {} }.should.equal("null")
@@ -298,6 +317,12 @@ internal object StandardWriterAcceptSpec : Spek({
 					writeMapElement("", byte = null, skipIfNull = false)
 					writeMapElement("", byte = null, skipIfNull = true)
 
+					writeMapElement("", char = 0.toChar())
+					writeMapElement("", char = 0.toChar(), skipIfNull = false)
+					writeMapElement("", char = 0.toChar(), skipIfNull = true)
+					writeMapElement("", char = null, skipIfNull = false)
+					writeMapElement("", char = null, skipIfNull = true)
+
 					writeMapElement("", double = 0.0)
 					writeMapElement("", double = 0.0, skipIfNull = false)
 					writeMapElement("", double = 0.0, skipIfNull = true)
@@ -333,6 +358,12 @@ internal object StandardWriterAcceptSpec : Spek({
 					writeMapElement("", list = byteArrayOf(0), skipIfNull = true)
 					writeMapElement("", list = null as ByteArray?, skipIfNull = false)
 					writeMapElement("", list = null as ByteArray?, skipIfNull = true)
+
+					writeMapElement("", list = charArrayOf(0.toChar()))
+					writeMapElement("", list = charArrayOf(0.toChar()), skipIfNull = false)
+					writeMapElement("", list = charArrayOf(0.toChar()), skipIfNull = true)
+					writeMapElement("", list = null as CharArray?, skipIfNull = false)
+					writeMapElement("", list = null as CharArray?, skipIfNull = true)
 
 					writeMapElement("", list = doubleArrayOf(0.0))
 					writeMapElement("", list = doubleArrayOf(0.0), skipIfNull = false)
@@ -452,6 +483,11 @@ internal object StandardWriterAcceptSpec : Spek({
 					"": 0,
 					"": null,
 
+					"": "\u0000",
+					"": "\u0000",
+					"": "\u0000",
+					"": null,
+
 					"": 0.0,
 					"": 0.0,
 					"": 0.0,
@@ -480,6 +516,11 @@ internal object StandardWriterAcceptSpec : Spek({
 					"": [0],
 					"": [0],
 					"": [0],
+					"": null,
+
+					"": ["\u0000"],
+					"": ["\u0000"],
+					"": ["\u0000"],
 					"": null,
 
 					"": [0.0],
@@ -765,6 +806,8 @@ internal object StandardWriterAcceptSpec : Spek({
 					writeValue(booleanArrayOf(true, true))
 					writeValue(1.toByte())
 					writeValue(byteArrayOf(0, 1))
+					writeValue(0.toChar())
+					writeValue(charArrayOf(0.toChar(), 'a'))
 					writeValue(1.0)
 					writeValue(doubleArrayOf(0.0, 1.0))
 					writeValue(1.0f)
@@ -781,7 +824,7 @@ internal object StandardWriterAcceptSpec : Spek({
 					writeValue("")
 					writeValue(1.toBigDecimal())
 				}
-			}.should.equal("""[["",""],true,[true,true],1,[0,1],1.0,[0.0,1.0],1.0,[0.0,1.0],1,[0,1],[true,true],1,[0,1],{"0":0,"1":1},[true,true],1,[0,1],"",1.0]""")
+			}.should.equal("""[["",""],true,[true,true],1,[0,1],"\u0000",["\u0000","a"],1.0,[0.0,1.0],1.0,[0.0,1.0],1,[0,1],[true,true],1,[0,1],{"0":0,"1":1},[true,true],1,[0,1],"",1.0]""")
 		}
 
 		it(".writeValueOrNull()") {
@@ -792,6 +835,8 @@ internal object StandardWriterAcceptSpec : Spek({
 					writeValueOrNull(booleanArrayOf(true, true))
 					writeValueOrNull(1.toByte())
 					writeValueOrNull(byteArrayOf(0, 1))
+					writeValueOrNull(0.toChar())
+					writeValueOrNull(charArrayOf(0.toChar(), 'a'))
 					writeValueOrNull(1.0)
 					writeValueOrNull(doubleArrayOf(0.0, 1.0))
 					writeValueOrNull(1.0f)
@@ -809,7 +854,7 @@ internal object StandardWriterAcceptSpec : Spek({
 					writeValueOrNull(1.toBigDecimal())
 					writeValueOrNull(null)
 				}
-			}.should.equal("""[["",""],true,[true,true],1,[0,1],1.0,[0.0,1.0],1.0,[0.0,1.0],1,[0,1],[true,true],1,[0,1],{"0":0,"1":1},[true,true],1,[0,1],"",1.0,null]""")
+			}.should.equal("""[["",""],true,[true,true],1,[0,1],"\u0000",["\u0000","a"],1.0,[0.0,1.0],1.0,[0.0,1.0],1,[0,1],[true,true],1,[0,1],{"0":0,"1":1},[true,true],1,[0,1],"",1.0,null]""")
 		}
 
 		it(".writeValue() as map key") {

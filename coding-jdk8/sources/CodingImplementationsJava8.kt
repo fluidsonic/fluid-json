@@ -9,7 +9,7 @@ import com.github.fluidsonic.fluid.json.*
 internal open class CodingImplementationsJava8 : CodingImplementationsJava7() {
 
 	override fun extendedCodecProviders() =
-		listOf(
+		super.extendedCodecProviders() + listOf(
 			DayOfWeekJSONCodec,
 			DurationJSONCodec,
 			InstantJSONCodec,
