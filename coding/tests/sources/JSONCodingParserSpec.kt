@@ -39,6 +39,20 @@ internal object JSONCodingParserSpec : Spek({
 				}
 		}
 
+		it(".builder() doesn't add standard codecs if different base is provided") {
+			try {
+				JSONCodingParser.builder()
+					.decodingWith(base = null)
+					.build()
+					.parseValueOfType<List<*>>("[]")
+
+				throw AssertionError("JSONCodingParser without any codec provided unexpectedly uses codecs")
+			}
+			catch (e: JSONException) {
+				// good
+			}
+		}
+
 		it(".default") {
 			anyData.testDecoding(JSONCodingParser.default::parseValue)
 		}

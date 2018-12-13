@@ -58,7 +58,7 @@ interface JSONCodingParser : JSONParser {
 			) =
 				decodingWith { source, context ->
 					JSONDecoder.builder(context)
-						.codecs(JSONCodecProvider.of(providers = providers, base = base))
+						.codecs(JSONCodecProvider.of(providers = providers, base = base), base = null)
 						.source(source)
 						.build()
 				}
