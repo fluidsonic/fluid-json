@@ -286,18 +286,20 @@ The default implementations of `JSONWriter` and `JSONSerializer` encode Kotlin t
 | `BooleanArray` | `array<boolean>`   |
 | `Byte`         | `number`           |
 | `ByteArray`    | `array<number>`    |
+| `Char`         | `string`           |
+| `CharArray`    | `array<string>`    |
 | `Double`       | `number`           | must be finite
 | `DoubleArray`  | `array<number>`    |
 | `Float`        | `number`           | must be finite
 | `FloatArray`   | `array<number>`    |
 | `Int`          | `number`           |
 | `IntArray`     | `array<number>`    |
-| `Iterable<*>`  | `array<*>`         | unless it's a `Map<*,*>`
+| `Iterable<E>`  | `array<*>`         | unless it's a `Map<*,*>`, using decoder/encoder for `E`
 | `Long`         | `number`           |
 | `LongArray`    | `array<number>`    |
-| `Map<*,*>`     | `object<string,*>` | key must be `String`
+| `Map<K,V>`     | `object<string,*>` | key must be `String`, , using decoders/encoders for `K` and `V`
 | `Number`       | `number`           | unless matched by subclass; encodes as `toDouble()`
-| `Sequence<*>`  | `array<*>`         |
+| `Sequence<E>`  | `array<*>`         | using decoder/encoder for `E`
 | `Short`        | `number`           |
 | `ShortArray`   | `array<number>`    |
 | `String`       | `string`           |
@@ -320,26 +322,31 @@ The default implementations of `JSONReader` and `JSONParser` decode JSON types a
 
 ### Extended Types
 
-The following classes of the `java.time` package can also be decoded and encoded out of the box when using the `-coding-jdk8` library variant:
+The following classes of the can also be decoded and encoded out of the box.  
+For types in the `java.time` package the `-coding-jdk8` library variant must be used.
 
-| Kotlin           | JSON     | Remarks
-| ---------------- | -------- | -------
-| `DayOfWeek`      | `string` | `"monday"`, …, `"friday"`
-| `Duration`       | `string` | using `.parse()` / `.toString()`
-| `Instant`        | `string` | using `.parse()` / `.toString()`
-| `LocalDate`      | `string` | using `.parse()` / `.toString()`
-| `LocalDateTime`  | `string` | using `.parse()` / `.toString()`
-| `LocalTime`      | `string` | using `.parse()` / `.toString()`
-| `MonthDay`       | `string` | using `.parse()` / `.toString()`
-| `Month`          | `string` | `"january"`, …, `"december"`
-| `OffsetDateTime` | `string` | using `.parse()` / `.toString()`
-| `OffsetTime`     | `string` | using `.parse()` / `.toString()`
-| `Period`         | `string` | using `.parse()` / `.toString()`
-| `Year`           | `int`    | using `.value`
-| `YearMonth`      | `string` | using `.parse()` / `.toString()`
-| `ZonedDateTime`  | `string` | using `.parse()` / `.toString()`
-| `ZoneId`         | `string` | using `.of()` / `.id`
-| `ZoneOffset`     | `string` | using `.of()` / `.id`
+| Kotlin           | JSON                                | Remarks
+| ---------------- | ----------------------------------- | -------
+| `CharRange`      | `{ "start": …, "endInclusive": … }` | using `string` value
+| `ClosedRange<C>` | `{ "start": …, "endInclusive": … }` | using decoder/encoder for `C`
+| `DayOfWeek`      | `string`                            | `"monday"`, …, `"friday"`
+| `Duration`       | `string`                            | using `.parse()` / `.toString()`
+| `Instant`        | `string`                            | using `.parse()` / `.toString()`
+| `IntRange`       | `{ "start": …, "endInclusive": … }` | using `number` values
+| `LocalDate`      | `string`                            | using `.parse()` / `.toString()`
+| `LocalDateTime`  | `string`                            | using `.parse()` / `.toString()`
+| `LocalTime`      | `string`                            | using `.parse()` / `.toString()`
+| `LongRange`      | `{ "start": …, "endInclusive": … }` | using `number` values
+| `MonthDay`       | `string`                            | using `.parse()` / `.toString()`
+| `Month`          | `string`                            | `"january"`, …, `"december"`
+| `OffsetDateTime` | `string`                            | using `.parse()` / `.toString()`
+| `OffsetTime`     | `string`                            | using `.parse()` / `.toString()`
+| `Period`         | `string`                            | using `.parse()` / `.toString()`
+| `Year`           | `int`                               | using `.value`
+| `YearMonth`      | `string`                            | using `.parse()` / `.toString()`
+| `ZonedDateTime`  | `string`                            | using `.parse()` / `.toString()`
+| `ZoneId`         | `string`                            | using `.of()` / `.id`
+| `ZoneOffset`     | `string`                            | using `.of()` / `.id`
 
 
 
