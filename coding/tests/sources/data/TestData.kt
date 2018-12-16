@@ -1,7 +1,8 @@
 package tests.coding
 
+import ch.tutteli.atrium.api.cc.en_GB.toBe
+import ch.tutteli.atrium.verbs.assert
 import com.github.fluidsonic.fluid.json.*
-import com.winterbe.expekt.should
 
 
 internal class TestData<out Value : Any>(
@@ -30,7 +31,7 @@ internal class TestData<out Value : Any>(
 	fun testEncoding(encode: (input: Value) -> String) {
 		for ((input, expectedOutput) in symmetric.toList() + encodableOnly.toList())
 			try {
-				encode(input).should.equal(expectedOutput)
+				assert(encode(input)).toBe(expectedOutput)
 			}
 			catch (e: Throwable) {
 				throw AssertionError("${e.message} - when encoding ${input::class}: $input").apply {

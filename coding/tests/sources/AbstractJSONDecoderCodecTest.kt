@@ -1,20 +1,18 @@
 package tests.coding
 
+import ch.tutteli.atrium.api.cc.en_GB.notToBeNullBut
+import ch.tutteli.atrium.verbs.assert
 import com.github.fluidsonic.fluid.json.*
-import com.winterbe.expekt.should
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
+import org.junit.jupiter.api.Test
 
 
-internal object AbstractJSONDecoderCodecSpec : Spek({
+internal object AbstractJSONDecoderCodecTest {
 
-	describe("AbstractJSONDecoderCodec") {
-
-		it("returns nested encoder codecs") {
-			OuterDecoderCodec.encoderCodecForClass(Unit::class).should.equal(InnerEncoderCodec)
-		}
+	@Test
+	fun testEncoderCodecForClassReturnsNested() {
+		assert(OuterDecoderCodec.encoderCodecForClass(Unit::class)).notToBeNullBut(InnerEncoderCodec)
 	}
-}) {
+
 
 	private object InnerEncoderCodec : AbstractJSONEncoderCodec<Unit, JSONCodingContext>() {
 

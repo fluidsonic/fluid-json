@@ -13,6 +13,7 @@ plugins {
 
 tasks.withType<Wrapper> {
 	distributionType = Wrapper.DistributionType.ALL
+	gradleVersion = "5.0"
 }
 
 allprojects {
@@ -53,19 +54,11 @@ allprojects {
 
 			kotlinOptions.freeCompilerArgs = listOf("-Xuse-experimental=kotlin.contracts.ExperimentalContracts")
 			kotlinOptions.jvmTarget = "1.6"
-
-			// Spek 2 needs Java 8+
-			getByName("compileTestKotlin") {
-				sourceCompatibility = "1.8"
-				targetCompatibility = "1.8"
-
-				kotlinOptions.jvmTarget = "1.8"
-			}
 		}
 
 		withType<Test> {
 			useJUnitPlatform {
-				includeEngines("spek2")
+				includeEngines("junit-jupiter")
 			}
 
 			testLogging {
@@ -90,18 +83,19 @@ allprojects {
 	dependencies {
 		api(kotlin("stdlib-jdk7"))
 
-		testImplementation("com.winterbe:expekt:0.5.0") {
+		//testImplementation("com.winterbe:expekt:0.5.0") {
+		//	exclude(group = "org.jetbrains.kotlin")
+		//}
+
+		testImplementation("ch.tutteli.atrium:atrium-cc-en_GB-robstoll:0.7.0") {
 			exclude(group = "org.jetbrains.kotlin")
 		}
-		testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.0-rc.1") {
-			exclude(group = "org.jetbrains.kotlin")
+		testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
+
+		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.2")
+		testRuntimeOnly("org.junit.platform:junit-platform-runner:1.3.2") {
+			exclude(group = "junit")
 		}
-		testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:2.0.0-rc.1") {
-			exclude(group = "org.jetbrains.kotlin")
-			exclude(group = "org.junit.platform")
-		}
-		testRuntimeOnly("org.junit.platform:junit-platform-runner:1.3.2")
-		testRuntimeOnly(kotlin("stdlib-jdk8"))
 	}
 
 	configurations {

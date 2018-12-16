@@ -1,7 +1,8 @@
 package tests.coding
 
+import ch.tutteli.atrium.api.cc.en_GB.toBe
+import ch.tutteli.atrium.verbs.assert
 import com.github.fluidsonic.fluid.json.*
-import com.winterbe.expekt.should
 
 
 internal class ContextCheckingTestEncoderCodec<in Context : JSONCodingContext>(
@@ -9,7 +10,7 @@ internal class ContextCheckingTestEncoderCodec<in Context : JSONCodingContext>(
 ) : JSONEncoderCodec<String, Context> {
 
 	override fun encode(value: String, encoder: JSONEncoder<Context>) {
-		encoder.context.should.equal(expectedContext)
+		assert(encoder.context).toBe(expectedContext)
 
 		StringJSONCodec.encode(value, encoder)
 	}

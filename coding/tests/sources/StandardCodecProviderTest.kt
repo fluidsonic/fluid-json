@@ -1,83 +1,131 @@
 package tests.coding
 
+import ch.tutteli.atrium.api.cc.en_GB.notToBeNullBut
+import ch.tutteli.atrium.api.cc.en_GB.toBe
+import ch.tutteli.atrium.verbs.assert
 import com.github.fluidsonic.fluid.json.*
-import com.winterbe.expekt.should
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.dsl.TestBody
-import org.spekframework.spek2.style.specification.describe
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Test
 import kotlin.reflect.KClass
 
 
-internal object StandardCodecProviderSpec : Spek({
+internal class StandardCodecProviderTest {
 
-	describe("StandardCodecProvider") {
+	@Nested
+	inner class DecodingTest {
 
-		describe("for decoding") {
-
-			it("finds a codec by exact interface type") {
+		@Test
+		fun testMatchesExactInterface() {
+			assert(
 				provider(UnrelatedDecoderCodec, ParentDecoderCodec, ChildDecoderCodec)
 					.decoderCodecForType<Parent, Context>()
-					.should.equal(ParentDecoderCodec)
-			}
+			)
+				.notToBeNullBut(ParentDecoderCodec)
+		}
 
-			it("finds a codec by exact class type") {
+
+		@Test
+		fun testMatchesExactClass() {
+			assert(
 				provider(UnrelatedDecoderCodec, ChildDecoderCodec, ParentDecoderCodec)
 					.decoderCodecForType<Child, Context>()
-					.should.equal(ChildDecoderCodec)
-			}
+			)
+				.notToBeNullBut(ChildDecoderCodec)
+		}
 
-			it("obeys order of codecs") {
+
+		@Test
+		fun testObeysOrderOfCodecs() {
+			assert(
 				provider(UnrelatedDecoderCodec, ChildDecoderCodec2, ChildDecoderCodec)
 					.decoderCodecForType<Child, Context>()
-					.should.equal(ChildDecoderCodec2)
-			}
-		}
-
-
-		describe("for encoding") {
-
-			it("finds a codec by exact interface type") {
-				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
-					.encoderCodecForClass(Parent::class)
-					.should.equal(ParentEncoderCodec)
-			}
-
-			it("finds a codec by exact class type") {
-				provider(UnrelatedEncoderCodec, ChildEncoderCodec, ParentEncoderCodec)
-					.encoderCodecForClass(Child::class)
-					.should.equal(ChildEncoderCodec)
-			}
-
-			it("finds a codec for array type") {
-				provider(ArrayJSONCodec).encoderCodecForClass(Array<Any?>::class).should.equal(ArrayJSONCodec)
-				provider(ArrayJSONCodec).encoderCodecForClass(Array<String>::class).should.equal(ArrayJSONCodec)
-			}
-
-			it("finds a codec for subclasses / implementing classes") {
-				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
-					.encoderCodecForClass(Child::class)
-					.should.equal(ParentEncoderCodec)
-			}
-
-			it("finds no object array codec for primitive array type") {
-				provider(ArrayJSONCodec).encoderCodecForClass(IntArray::class as KClass<*>).should.be.`null`
-			}
-
-			it("obeys order of codecs") {
-				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
-					.encoderCodecForClass(Child::class)
-					.should.equal(ParentEncoderCodec)
-			}
+			)
+				.notToBeNullBut(ChildDecoderCodec2)
 		}
 	}
-}) {
+
+
+	@Nested
+	inner class EncodingTest {
+
+		@Test
+		fun testMatchesExactInterface() {
+			assert(
+				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
+					.encoderCodecForClass(Parent::class)
+			)
+				.notToBeNullBut(ParentEncoderCodec)
+		}
+
+
+		@Test
+		fun testMatchesExactClassType() {
+			assert(
+				provider(UnrelatedEncoderCodec, ChildEncoderCodec, ParentEncoderCodec)
+					.encoderCodecForClass(Child::class)
+			)
+				.notToBeNullBut(ChildEncoderCodec)
+		}
+
+
+		@Test
+		fun testMatchesArrayTypes() {
+			assert(
+				provider(ArrayJSONCodec)
+					.encoderCodecForClass(Array<Any?>::class)
+			)
+				.notToBeNullBut(ArrayJSONCodec)
+
+			assert(
+				provider(ArrayJSONCodec)
+					.encoderCodecForClass(Array<String>::class)
+			)
+				.notToBeNullBut(ArrayJSONCodec)
+		}
+
+
+		@Test
+		fun testMatchesSubclasses() {
+			assert(
+				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
+					.encoderCodecForClass(Child::class)
+			)
+				.notToBeNullBut(ParentEncoderCodec)
+		}
+
+
+		@Test
+		fun testMatchesPrimitiveArrayTypes() {
+			assert(
+				provider(ArrayJSONCodec)
+					.encoderCodecForClass(IntArray::class as KClass<*>)
+			)
+				.toBe(null)
+		}
+
+
+		@Test
+		fun testObeysOrderOfCodecs() {
+			assert(
+				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
+					.encoderCodecForClass(Child::class)
+			)
+				.notToBeNullBut(ParentEncoderCodec)
+		}
+	}
+
+
+	private fun provider(vararg codecs: JSONDecoderCodec<*, StandardCodecProviderTest.Context>) =
+		StandardCodecProvider(codecs.toList())
+
+
+	private fun provider(vararg codecs: JSONEncoderCodec<*, StandardCodecProviderTest.Context>) =
+		StandardCodecProvider(codecs.toList())
+
 
 	interface Parent
-
 	object Child : Parent
-
 	object Context : JSONCodingContext
-
 	interface Unrelated
 
 
@@ -136,16 +184,3 @@ internal object StandardCodecProviderSpec : Spek({
 		override val encodableClass = Unrelated::class
 	}
 }
-
-
-// TODO move the following method inside the object above once KT-19796 is fixed
-// https://youtrack.jetbrains.com/issue/KT-19796
-
-@Suppress("unused")
-private fun TestBody.provider(vararg codecs: JSONDecoderCodec<*, StandardCodecProviderSpec.Context>) =
-	StandardCodecProvider(codecs.toList())
-
-
-@Suppress("unused")
-private fun TestBody.provider(vararg codecs: JSONEncoderCodec<*, StandardCodecProviderSpec.Context>) =
-	StandardCodecProvider(codecs.toList())
