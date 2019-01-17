@@ -78,30 +78,31 @@ allprojects {
 
 			check.dependsOn(this)
 		}
+
+		withType<Wrapper> {
+			distributionType = Wrapper.DistributionType.ALL
+			gradleVersion = "5.1.1"
+		}
 	}
 
 	dependencies {
 		api(kotlin("stdlib-jdk7"))
 
-		//testImplementation("com.winterbe:expekt:0.5.0") {
-		//	exclude(group = "org.jetbrains.kotlin")
-		//}
-
-		testImplementation("ch.tutteli.atrium:atrium-cc-en_GB-robstoll:0.7.0") {
-			exclude(group = "org.jetbrains.kotlin")
-		}
+		testImplementation(kotlin("reflect"))
+		testImplementation("ch.tutteli.atrium:atrium-cc-en_GB-robstoll:0.7.0")
 		testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
 
 		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.2")
-		testRuntimeOnly("org.junit.platform:junit-platform-runner:1.3.2") {
-			exclude(group = "junit")
-		}
+		testRuntimeOnly("org.junit.platform:junit-platform-runner:1.3.2")
 	}
 
 	configurations {
 		all {
-			resolutionStrategy {
-				failOnVersionConflict()
+			resolutionStrategy.eachDependency {
+				if (requested.group == "org.jetbrains.kotlin") {
+					useVersion(embeddedKotlinVersion)
+					because("All Kotlin modules must have the same version.")
+				}
 			}
 		}
 	}
