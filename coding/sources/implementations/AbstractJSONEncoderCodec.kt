@@ -9,7 +9,7 @@ abstract class AbstractJSONEncoderCodec<Value : Any, in Context : JSONCodingCont
 ) : JSONEncoderCodec<Value, Context> {
 
 	@Suppress("LeakingThis")
-	final override val encodableClass = JSONCodingType.of<Value>(this::class.java.genericSuperclass as ParameterizedType).rawClass
+	final override val encodableClass = JSONCodingType.fromGenericSupertype<Value>(this::class.java.genericSuperclass as ParameterizedType).rawClass
 
 
 	override fun <Value : Any> decoderCodecForType(decodableType: JSONCodingType<in Value>): JSONDecoderCodec<out Value, Context>? {

@@ -11,7 +11,7 @@ import kotlin.reflect.KVariance
 
 
 inline fun <reified Type : Any> jsonCodingType() =
-	JSONCodingType.of<Type>(object : JSONCodingTypeReference<Type>() {}::class.java.genericSuperclass as ParameterizedType)
+	JSONCodingType.fromGenericSupertype<Type>(object : JSONCodingTypeReference<Type>() {}::class.java.genericSuperclass as ParameterizedType)
 
 
 fun <Type : Any> jsonCodingType(clazz: KClass<Type>) =
@@ -23,7 +23,7 @@ fun <Type : Any> jsonCodingType(clazz: KClass<out JSONCodingTypeReference<out Ty
 	val javaClass = clazz.java
 	require(javaClass.superclass == JSONCodingTypeReference::class.java) { "An immediate subclass of ${JSONCodingTypeReference::class.simpleName} must be passed" }
 
-	return JSONCodingType.of(javaClass.genericSuperclass as ParameterizedType)
+	return JSONCodingType.fromGenericSupertype(javaClass.genericSuperclass as ParameterizedType)
 }
 
 
@@ -76,22 +76,31 @@ class JSONCodingType<Type : Any> private constructor(
 
 	companion object {
 
-		private val cache = ConcurrentHashMap<ParameterizedType, JSONCodingType<*>>()
+		private val cache = ConcurrentHashMap<Type, JSONCodingType<*>>()
 
 
 		@PublishedApi
 		@Suppress("UNCHECKED_CAST")
-		internal fun <Type : Any> of(parameterizedType: ParameterizedType, typeArgumentIndex: Int = 0) =
-			cache.getOrPut(parameterizedType) {
-				parameterizedType.actualTypeArguments[typeArgumentIndex].toCodableType(
+		internal fun <Type : Any> fromGenericSupertype(parameterizedType: ParameterizedType, typeArgumentIndex: Int = 0) =
+			of(parameterizedType.actualTypeArguments[typeArgumentIndex]) as JSONCodingType<Type>
+
+
+		@PublishedApi
+		@Suppress("UNCHECKED_CAST")
+		internal fun of(type: Type): JSONCodingType<*> =
+			cache.getOrPut(type) {
+				type.toCodableType(
 					upperBound = null,
 					variance = KVariance.INVARIANT
 				)
-			} as JSONCodingType<Type>
+			}
 
 
 		internal fun <Type : Any> of(clazz: KClass<Type>) =
-			clazz.java.toCodableType(upperBound = null, variance = KVariance.INVARIANT)
+			clazz.java.toCodableType(
+				upperBound = null,
+				variance = KVariance.INVARIANT
+			)
 
 
 		private fun <Type : Any> Class<Type>.toCodableType(upperBound: KClass<*>?, variance: KVariance): JSONCodingType<Type> =

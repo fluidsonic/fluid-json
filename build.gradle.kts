@@ -108,6 +108,7 @@ allprojects {
 	}
 
 	repositories {
+		bintray("kotlin/kotlinx")
 		mavenCentral()
 		jcenter()
 	}

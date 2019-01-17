@@ -9,7 +9,7 @@ abstract class AbstractJSONCodec<Value : Any, in Context : JSONCodingContext>(
 ) : JSONCodec<Value, Context> {
 
 	@Suppress("LeakingThis")
-	final override val decodableType = JSONCodingType.of<Value>(this::class.java.genericSuperclass as ParameterizedType)
+	final override val decodableType = JSONCodingType.fromGenericSupertype<Value>(this::class.java.genericSuperclass as ParameterizedType)
 
 	final override val encodableClass = decodableType.rawClass
 

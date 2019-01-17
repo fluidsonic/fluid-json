@@ -254,6 +254,38 @@ separate instance per thread and not share these mutable instances at all.
 
 
 
+Ktor Client
+-----------
+
+You can use this library with [`JsonFeature`](https://ktor.io/clients/http-client/features/json-feature.html) of Ktor Client.
+
+`build.gradle.kts`:
+```kotlin
+dependencies {
+    implementation("com.github.fluidsonic:fluid-json-ktor-client:0.9.8")
+}
+```
+
+Setting up your `HttpClient`:
+```kotlin
+val client = HttpClient(…) {
+    install(JsonFeature) {
+        serializer = FluidJsonSerializer(
+            parser = JSONCodingParser
+                .builder()
+                .decodingWith(…)
+                .build(),
+            serializer = JSONCodingSerializer
+                .builder()
+                .encodingWith(…)
+                .build()
+        )
+    }
+}
+```
+
+
+
 Testing
 -------
 
