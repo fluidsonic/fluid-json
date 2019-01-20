@@ -6,8 +6,8 @@ import java.time.ZoneId
 
 object ZoneIdJSONCodec : AbstractJSONCodec<ZoneId, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in ZoneId>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readString().let { raw ->
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in ZoneId>) =
+		readString().let { raw ->
 			try {
 				ZoneId.of(raw)!!
 			}
@@ -17,6 +17,6 @@ object ZoneIdJSONCodec : AbstractJSONCodec<ZoneId, JSONCodingContext>() {
 		}
 
 
-	override fun encode(value: ZoneId, encoder: JSONEncoder<JSONCodingContext>) =
-		encoder.writeString(value.id)
+	override fun JSONEncoder<JSONCodingContext>.encode(value: ZoneId) =
+		writeString(value.id)
 }

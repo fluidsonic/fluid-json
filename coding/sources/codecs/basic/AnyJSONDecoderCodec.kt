@@ -3,14 +3,14 @@ package com.github.fluidsonic.fluid.json
 
 object AnyJSONDecoderCodec : AbstractJSONDecoderCodec<Any, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in Any>, decoder: JSONDecoder<JSONCodingContext>): Any =
-		when (decoder.nextToken) {
-			JSONToken.booleanValue -> decoder.readValueOfType<Boolean>()
-			JSONToken.listStart -> decoder.readValueOfType<List<*>>()
-			JSONToken.mapKey -> decoder.readValueOfType<String>()
-			JSONToken.mapStart -> decoder.readValueOfType<Map<*, *>>()
-			JSONToken.numberValue -> decoder.readValueOfType<Number>()
-			JSONToken.stringValue -> decoder.readValueOfType<String>()
-			else -> error("impossible token: ${decoder.nextToken}")
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Any>): Any =
+		when (nextToken) {
+			JSONToken.booleanValue -> readValueOfType<Boolean>()
+			JSONToken.listStart -> readValueOfType<List<*>>()
+			JSONToken.mapKey -> readValueOfType<String>()
+			JSONToken.mapStart -> readValueOfType<Map<*, *>>()
+			JSONToken.numberValue -> readValueOfType<Number>()
+			JSONToken.stringValue -> readValueOfType<String>()
+			else -> error("impossible token: $nextToken")
 		}
 }

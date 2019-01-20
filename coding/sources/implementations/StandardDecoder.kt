@@ -13,6 +13,6 @@ internal class StandardDecoder<out Context : JSONCodingContext>(
 
 	override fun <Value : Any> readValueOfType(valueType: JSONCodingType<Value>) =
 		codecProvider.decoderCodecForType(valueType)
-			?.decode(valueType = valueType, decoder = this)
+			?.run { decode(valueType = valueType) }
 			?: throw JSONException("no decoder codec registered for $valueType")
 }

@@ -1,17 +1,22 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.json.AbstractJSONCodec
+import com.github.fluidsonic.fluid.json.JSONCodingContext
+import com.github.fluidsonic.fluid.json.JSONCodingType
+import com.github.fluidsonic.fluid.json.JSONDecoder
+import com.github.fluidsonic.fluid.json.JSONEncoder
+import com.github.fluidsonic.fluid.json.JSONException
 
 
 internal object YearMonthDayCodec : AbstractJSONCodec<YearMonthDay, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in YearMonthDay>, decoder: JSONDecoder<JSONCodingContext>): YearMonthDay {
-		val stringValue = decoder.readString()
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in YearMonthDay>): YearMonthDay {
+		val stringValue = readString()
 		return YearMonthDay.parse(stringValue) ?: throw JSONException("Cannot decode YearMonthDay '$stringValue'")
 	}
 
 
-	override fun encode(value: YearMonthDay, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeString(value.toString())
+	override fun JSONEncoder<JSONCodingContext>.encode(value: YearMonthDay) {
+		writeString(value.toString())
 	}
 }

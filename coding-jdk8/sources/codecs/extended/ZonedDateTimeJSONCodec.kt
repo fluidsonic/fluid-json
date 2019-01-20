@@ -6,8 +6,8 @@ import java.time.ZonedDateTime
 
 object ZonedDateTimeJSONCodec : AbstractJSONCodec<ZonedDateTime, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in ZonedDateTime>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readString().let { raw ->
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in ZonedDateTime>) =
+		readString().let { raw ->
 			try {
 				ZonedDateTime.parse(raw)!!
 			}
@@ -17,6 +17,6 @@ object ZonedDateTimeJSONCodec : AbstractJSONCodec<ZonedDateTime, JSONCodingConte
 		}
 
 
-	override fun encode(value: ZonedDateTime, encoder: JSONEncoder<JSONCodingContext>) =
-		encoder.writeString(value.toString())
+	override fun JSONEncoder<JSONCodingContext>.encode(value: ZonedDateTime) =
+		writeString(value.toString())
 }

@@ -6,8 +6,8 @@ import java.time.Month
 // TODO use Enum codec once implemented
 object MonthJSONCodec : AbstractJSONCodec<Month, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in Month>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readString().let { raw ->
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Month>) =
+		readString().let { raw ->
 			when (raw) {
 				"january" -> Month.JANUARY
 				"february" -> Month.FEBRUARY
@@ -26,8 +26,8 @@ object MonthJSONCodec : AbstractJSONCodec<Month, JSONCodingContext>() {
 		}
 
 
-	override fun encode(value: Month, encoder: JSONEncoder<JSONCodingContext>) =
-		encoder.writeString(when (value) {
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Month) =
+		writeString(when (value) {
 			Month.JANUARY -> "january"
 			Month.FEBRUARY -> "february"
 			Month.MARCH -> "march"

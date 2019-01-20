@@ -3,10 +3,10 @@ package com.github.fluidsonic.fluid.json
 
 object LongJSONCodec : AbstractJSONCodec<Long, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in Long>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readLong()
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Long>) =
+		readLong()
 
 
-	override fun encode(value: Long, encoder: JSONEncoder<JSONCodingContext>) =
-		encoder.writeLong(value)
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Long) =
+		writeLong(value)
 }

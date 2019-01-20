@@ -3,13 +3,13 @@ package com.github.fluidsonic.fluid.json
 
 object CharRangeJSONCodec : AbstractJSONCodec<CharRange, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in CharRange>, decoder: JSONDecoder<JSONCodingContext>): CharRange {
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in CharRange>): CharRange {
 		var endInclusive = 0.toChar()
 		var endInclusiveProvided = false
 		var start = 0.toChar()
 		var startProvided = false
 
-		decoder.readFromMapByElementValue { key ->
+		readFromMapByElementValue { key ->
 			when (key) {
 				Fields.endInclusive -> {
 					endInclusive = readChar()
@@ -30,8 +30,8 @@ object CharRangeJSONCodec : AbstractJSONCodec<CharRange, JSONCodingContext>() {
 	}
 
 
-	override fun encode(value: CharRange, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeIntoMap {
+	override fun JSONEncoder<JSONCodingContext>.encode(value: CharRange) {
+		writeIntoMap {
 			writeMapElement(Fields.start, char = value.first)
 			writeMapElement(Fields.endInclusive, char = value.last)
 		}

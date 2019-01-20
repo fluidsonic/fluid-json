@@ -8,7 +8,7 @@ interface JSONEncoderCodec<Value : Any, in Context : JSONCodingContext> : JSONCo
 	val encodableClass: KClass<Value>
 
 
-	fun encode(value: Value, encoder: JSONEncoder<Context>)
+	fun JSONEncoder<Context>.encode(value: Value)
 
 
 	override fun <Value : Any> decoderCodecForType(decodableType: JSONCodingType<in Value>): JSONDecoderCodec<out Value, Context>? =

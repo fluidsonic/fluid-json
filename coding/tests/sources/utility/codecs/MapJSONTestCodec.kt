@@ -1,29 +1,39 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.json.AbstractJSONCodec
+import com.github.fluidsonic.fluid.json.AnyJSONDecoderCodec
+import com.github.fluidsonic.fluid.json.BooleanJSONCodec
+import com.github.fluidsonic.fluid.json.IntJSONCodec
+import com.github.fluidsonic.fluid.json.JSONCodingContext
+import com.github.fluidsonic.fluid.json.JSONCodingType
+import com.github.fluidsonic.fluid.json.JSONDecoder
+import com.github.fluidsonic.fluid.json.JSONEncoder
+import com.github.fluidsonic.fluid.json.MapJSONCodec
+import com.github.fluidsonic.fluid.json.NumberJSONCodec
+import com.github.fluidsonic.fluid.json.StringJSONCodec
 
 
 internal object MapJSONTestCodec : AbstractJSONCodec<Map<*, *>, JSONCodingContext>(
 	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, NumberJSONCodec, StringJSONCodec, YearMonthDayCodec)
 ) {
 
-	override fun decode(valueType: JSONCodingType<in Map<*, *>>, decoder: JSONDecoder<JSONCodingContext>) =
-		MapJSONCodec.decode(valueType, decoder)
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Map<*, *>>) =
+		MapJSONCodec.run { decode(valueType) }
 
 
-	override fun encode(value: Map<*, *>, encoder: JSONEncoder<JSONCodingContext>) =
-		MapJSONCodec.encode(value, encoder)
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Map<*, *>) =
+		MapJSONCodec.run { encode(value) }
 
 
 	object NonRecursive : AbstractJSONCodec<Map<String, *>, JSONCodingContext>(
 		additionalProviders = listOf(BooleanJSONCodec, IntJSONCodec, StringJSONCodec)
 	) {
 
-		override fun decode(valueType: JSONCodingType<in Map<String, *>>, decoder: JSONDecoder<JSONCodingContext>) =
-			MapJSONCodec.nonRecursive.decode(valueType, decoder)
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Map<String, *>>) =
+			MapJSONCodec.nonRecursive.run { decode(valueType) }
 
 
-		override fun encode(value: Map<String, *>, encoder: JSONEncoder<JSONCodingContext>) =
-			MapJSONCodec.nonRecursive.encode(value, encoder)
+		override fun JSONEncoder<JSONCodingContext>.encode(value: Map<String, *>) =
+			MapJSONCodec.nonRecursive.run { encode(value) }
 	}
 }

@@ -131,7 +131,7 @@ internal class StandardCodecProviderTest {
 
 	object ChildDecoderCodec : JSONDecoderCodec<Child, Context> {
 
-		override fun decode(valueType: JSONCodingType<in Child>, decoder: JSONDecoder<Context>) = error("dummy")
+		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<in Child>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Child>()
 	}
@@ -139,7 +139,7 @@ internal class StandardCodecProviderTest {
 
 	object ChildDecoderCodec2 : JSONDecoderCodec<Child, Context> {
 
-		override fun decode(valueType: JSONCodingType<in Child>, decoder: JSONDecoder<Context>) = error("dummy")
+		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<in Child>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Child>()
 	}
@@ -147,7 +147,7 @@ internal class StandardCodecProviderTest {
 
 	object ChildEncoderCodec : JSONEncoderCodec<Child, Context> {
 
-		override fun encode(value: Child, encoder: JSONEncoder<Context>) = error("dummy")
+		override fun JSONEncoder<Context>.encode(value: Child) = error("dummy")
 
 		override val encodableClass = Child::class
 	}
@@ -155,7 +155,7 @@ internal class StandardCodecProviderTest {
 
 	object ParentDecoderCodec : JSONDecoderCodec<Parent, Context> {
 
-		override fun decode(valueType: JSONCodingType<in Parent>, decoder: JSONDecoder<Context>) = error("dummy")
+		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<in Parent>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Parent>()
 	}
@@ -163,7 +163,7 @@ internal class StandardCodecProviderTest {
 
 	object ParentEncoderCodec : JSONEncoderCodec<Parent, Context> {
 
-		override fun encode(value: Parent, encoder: JSONEncoder<Context>) = error("dummy")
+		override fun JSONEncoder<Context>.encode(value: Parent) = error("dummy")
 
 		override val encodableClass = Parent::class
 	}
@@ -171,7 +171,7 @@ internal class StandardCodecProviderTest {
 
 	object UnrelatedDecoderCodec : JSONDecoderCodec<Unrelated, Context> {
 
-		override fun decode(valueType: JSONCodingType<in Unrelated>, decoder: JSONDecoder<Context>) = error("dummy")
+		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<in Unrelated>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Unrelated>()
 	}
@@ -179,7 +179,7 @@ internal class StandardCodecProviderTest {
 
 	object UnrelatedEncoderCodec : JSONEncoderCodec<Unrelated, Context> {
 
-		override fun encode(value: Unrelated, encoder: JSONEncoder<Context>) = error("dummy")
+		override fun JSONEncoder<Context>.encode(value: Unrelated) = error("dummy")
 
 		override val encodableClass = Unrelated::class
 	}

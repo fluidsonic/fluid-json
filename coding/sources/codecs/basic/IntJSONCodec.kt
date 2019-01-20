@@ -3,10 +3,10 @@ package com.github.fluidsonic.fluid.json
 
 object IntJSONCodec : AbstractJSONCodec<Int, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in Int>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readInt()
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Int>) =
+		readInt()
 
 
-	override fun encode(value: Int, encoder: JSONEncoder<JSONCodingContext>) =
-		encoder.writeInt(value)
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Int) =
+		writeInt(value)
 }

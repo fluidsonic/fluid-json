@@ -1,6 +1,19 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.json.AbstractJSONCodec
+import com.github.fluidsonic.fluid.json.JSONCodingContext
+import com.github.fluidsonic.fluid.json.JSONCodingParser
+import com.github.fluidsonic.fluid.json.JSONCodingSerializer
+import com.github.fluidsonic.fluid.json.JSONCodingType
+import com.github.fluidsonic.fluid.json.JSONDecoder
+import com.github.fluidsonic.fluid.json.JSONEncoder
+import com.github.fluidsonic.fluid.json.JSONException
+import com.github.fluidsonic.fluid.json.parseValueOfType
+import com.github.fluidsonic.fluid.json.readFromMapByElementValue
+import com.github.fluidsonic.fluid.json.readValueOfType
+import com.github.fluidsonic.fluid.json.serializeValue
+import com.github.fluidsonic.fluid.json.writeIntoMap
+import com.github.fluidsonic.fluid.json.writeMapElement
 import java.time.Instant
 
 
@@ -46,12 +59,12 @@ object CodingExample {
 
 	private object EventCodec : AbstractJSONCodec<Event, JSONCodingContext>() {
 
-		override fun decode(valueType: JSONCodingType<in Event>, decoder: JSONDecoder<JSONCodingContext>): Event {
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Event>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null
 
-			decoder.readFromMapByElementValue { key ->
+			readFromMapByElementValue { key ->
 				when (key) {
 					"id" -> id = readInt()
 					"date" -> date = readValueOfType()
@@ -68,8 +81,8 @@ object CodingExample {
 		}
 
 
-		override fun encode(value: Event, encoder: JSONEncoder<JSONCodingContext>) {
-			encoder.writeIntoMap {
+		override fun JSONEncoder<JSONCodingContext>.encode(value: Event) {
+			writeIntoMap {
 				writeMapElement("id", int = value.id)
 				writeMapElement("date", value = value.date, skipIfNull = true)
 				writeMapElement("title", string = value.title)

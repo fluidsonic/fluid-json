@@ -177,7 +177,7 @@ data class MyType(…)
 
 object MyTypeCodec : AbstractJSONEncoderCodec<MyType, JSONCodingContext>() {
 
-    override fun encode(value: MyType, encoder: JSONEncoder<JSONCodingContext>) {
+    override fun JSONEncoder<JSONCodingContext>.encode(value: MyType) {
         // write JSON for `value` directly using `encoder`
     }
 }
@@ -204,7 +204,7 @@ data class MyType(…)
 
 object MyTypeCodec : AbstractJSONDecoderCodec<MyType, JSONCodingContext>() {
 
-    override fun decode(valueType: JSONCodingType<in MyType>, decoder: JSONDecoder<JSONCodingContext>): MyType {
+    override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in MyType>): MyType {
         // read JSON using `decoder` and create an instance of `MyType`
     }
 }

@@ -3,10 +3,10 @@ package com.github.fluidsonic.fluid.json
 
 object ListJSONDecoderCodec : AbstractJSONDecoderCodec<List<*>, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in List<*>>, decoder: JSONDecoder<JSONCodingContext>): List<*> {
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in List<*>>): List<*> {
 		val elementType = valueType.arguments.single()
 
-		return decoder.readListByElement {
+		return readListByElement {
 			readValueOfTypeOrNull(elementType)
 		}
 	}

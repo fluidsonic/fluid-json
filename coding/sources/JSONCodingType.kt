@@ -11,7 +11,7 @@ import kotlin.reflect.KVariance
 
 
 inline fun <reified Type : Any> jsonCodingType() =
-	JSONCodingType.fromGenericSupertype<Type>(object : JSONCodingTypeReference<Type>() {}::class.java.genericSuperclass as ParameterizedType)
+	object : JSONCodingTypeReference<Type>() {}.type
 
 
 fun <Type : Any> jsonCodingType(clazz: KClass<Type>) =
@@ -23,11 +23,11 @@ fun <Type : Any> jsonCodingType(clazz: KClass<out JSONCodingTypeReference<out Ty
 	val javaClass = clazz.java
 	require(javaClass.superclass == JSONCodingTypeReference::class.java) { "An immediate subclass of ${JSONCodingTypeReference::class.simpleName} must be passed" }
 
-	return JSONCodingType.fromGenericSupertype(javaClass.genericSuperclass as ParameterizedType)
+	@Suppress("UNCHECKED_CAST")
+	return JSONCodingType.of((javaClass.genericSuperclass as ParameterizedType).actualTypeArguments.first()!!) as JSONCodingType<Type>
 }
 
 
-@Suppress("unused")
 class JSONCodingType<Type : Any> private constructor(
 	val rawClass: KClass<Type>,
 	val arguments: List<JSONCodingType<*>>,
@@ -77,12 +77,6 @@ class JSONCodingType<Type : Any> private constructor(
 	companion object {
 
 		private val cache = ConcurrentHashMap<Type, JSONCodingType<*>>()
-
-
-		@PublishedApi
-		@Suppress("UNCHECKED_CAST")
-		internal fun <Type : Any> fromGenericSupertype(parameterizedType: ParameterizedType, typeArgumentIndex: Int = 0) =
-			of(parameterizedType.actualTypeArguments[typeArgumentIndex]) as JSONCodingType<Type>
 
 
 		@PublishedApi
@@ -149,6 +143,7 @@ class JSONCodingType<Type : Any> private constructor(
 		}
 
 
+		@Suppress("unused")
 		private fun TypeVariable<*>.toCodableType(upperBound: KClass<*>?) =
 			Any::class.java.toCodableType(
 				upperBound = upperBound,
@@ -205,5 +200,9 @@ class JSONCodingType<Type : Any> private constructor(
 }
 
 
-@Suppress("unused")
-abstract class JSONCodingTypeReference<Type : Any>
+abstract class JSONCodingTypeReference<Type : Any> {
+
+	@Suppress("UNCHECKED_CAST")
+	internal val type = JSONCodingType.of((this::class.java.genericSuperclass as ParameterizedType).actualTypeArguments.first()!!)
+		as JSONCodingType<Type>
+}

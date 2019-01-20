@@ -5,11 +5,13 @@ import kotlin.reflect.KClass
 
 
 abstract class AbstractJSONDecoderCodec<Value : Any, in Context : JSONCodingContext>(
-	private val additionalProviders: List<JSONCodecProvider<Context>> = emptyList()
+	private val additionalProviders: List<JSONCodecProvider<Context>> = emptyList(),
+	decodableType: JSONCodingType<Value>? = null
 ) : JSONDecoderCodec<Value, Context> {
 
-	@Suppress("LeakingThis")
-	final override val decodableType = JSONCodingType.fromGenericSupertype<Value>(this::class.java.genericSuperclass as ParameterizedType)
+	@Suppress("UNCHECKED_CAST")
+	final override val decodableType = decodableType
+		?: JSONCodingType.of((this::class.java.genericSuperclass as ParameterizedType).actualTypeArguments[0]) as JSONCodingType<Value>
 
 
 	override fun <Value : Any> decoderCodecForType(decodableType: JSONCodingType<in Value>): JSONDecoderCodec<out Value, Context>? {

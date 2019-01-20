@@ -3,13 +3,13 @@ package com.github.fluidsonic.fluid.json
 
 object LongRangeJSONCodec : AbstractJSONCodec<LongRange, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in LongRange>, decoder: JSONDecoder<JSONCodingContext>): LongRange {
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in LongRange>): LongRange {
 		var endInclusive = 0L
 		var endInclusiveProvided = false
 		var start = 0L
 		var startProvided = false
 
-		decoder.readFromMapByElementValue { key ->
+		readFromMapByElementValue { key ->
 			when (key) {
 				Fields.endInclusive -> {
 					endInclusive = readLong()
@@ -30,8 +30,8 @@ object LongRangeJSONCodec : AbstractJSONCodec<LongRange, JSONCodingContext>() {
 	}
 
 
-	override fun encode(value: LongRange, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeIntoMap {
+	override fun JSONEncoder<JSONCodingContext>.encode(value: LongRange) {
+		writeIntoMap {
 			writeMapElement(Fields.start, long = value.first)
 			writeMapElement(Fields.endInclusive, long = value.last)
 		}

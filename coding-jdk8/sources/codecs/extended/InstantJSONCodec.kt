@@ -6,8 +6,8 @@ import java.time.Instant
 
 object InstantJSONCodec : AbstractJSONCodec<Instant, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in Instant>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readString().let { raw ->
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Instant>) =
+		readString().let { raw ->
 			try {
 				Instant.parse(raw)!!
 			}
@@ -17,6 +17,6 @@ object InstantJSONCodec : AbstractJSONCodec<Instant, JSONCodingContext>() {
 		}
 
 
-	override fun encode(value: Instant, encoder: JSONEncoder<JSONCodingContext>) =
-		encoder.writeString(value.toString())
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Instant) =
+		writeString(value.toString())
 }

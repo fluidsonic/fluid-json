@@ -6,8 +6,8 @@ import java.time.MonthDay
 
 object MonthDayJSONCodec : AbstractJSONCodec<MonthDay, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in MonthDay>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readString().let { raw ->
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in MonthDay>) =
+		readString().let { raw ->
 			try {
 				MonthDay.parse(raw)!!
 			}
@@ -17,6 +17,6 @@ object MonthDayJSONCodec : AbstractJSONCodec<MonthDay, JSONCodingContext>() {
 		}
 
 
-	override fun encode(value: MonthDay, encoder: JSONEncoder<JSONCodingContext>) =
-		encoder.writeString(value.toString())
+	override fun JSONEncoder<JSONCodingContext>.encode(value: MonthDay) =
+		writeString(value.toString())
 }

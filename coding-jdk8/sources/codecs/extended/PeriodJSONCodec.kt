@@ -6,8 +6,8 @@ import java.time.Period
 
 object PeriodJSONCodec : AbstractJSONCodec<Period, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in Period>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readString().let { raw ->
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Period>) =
+		readString().let { raw ->
 			try {
 				Period.parse(raw)!!
 			}
@@ -17,6 +17,6 @@ object PeriodJSONCodec : AbstractJSONCodec<Period, JSONCodingContext>() {
 		}
 
 
-	override fun encode(value: Period, encoder: JSONEncoder<JSONCodingContext>) =
-		encoder.writeString(value.toString())
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Period) =
+		writeString(value.toString())
 }

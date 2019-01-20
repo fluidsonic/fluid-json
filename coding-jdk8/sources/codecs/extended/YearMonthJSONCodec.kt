@@ -6,8 +6,8 @@ import java.time.YearMonth
 
 object YearMonthJSONCodec : AbstractJSONCodec<YearMonth, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in YearMonth>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readString().let { raw ->
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in YearMonth>) =
+		readString().let { raw ->
 			try {
 				YearMonth.parse(raw)!!
 			}
@@ -17,6 +17,6 @@ object YearMonthJSONCodec : AbstractJSONCodec<YearMonth, JSONCodingContext>() {
 		}
 
 
-	override fun encode(value: YearMonth, encoder: JSONEncoder<JSONCodingContext>) =
-		encoder.writeString(value.toString())
+	override fun JSONEncoder<JSONCodingContext>.encode(value: YearMonth) =
+		writeString(value.toString())
 }

@@ -1,6 +1,12 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.json.AbstractJSONEncoderCodec
+import com.github.fluidsonic.fluid.json.JSONCodingContext
+import com.github.fluidsonic.fluid.json.JSONCodingSerializer
+import com.github.fluidsonic.fluid.json.JSONEncoder
+import com.github.fluidsonic.fluid.json.serializeValue
+import com.github.fluidsonic.fluid.json.writeIntoMap
+import com.github.fluidsonic.fluid.json.writeMapElement
 import java.time.Instant
 
 
@@ -36,8 +42,8 @@ object EncodingExample {
 
 	private object EventCodec : AbstractJSONEncoderCodec<Event, JSONCodingContext>() {
 
-		override fun encode(value: Event, encoder: JSONEncoder<JSONCodingContext>) {
-			encoder.writeIntoMap {
+		override fun JSONEncoder<JSONCodingContext>.encode(value: Event) {
+			writeIntoMap {
 				writeMapElement("id", int = value.id)
 				writeMapElement("date", value = value.date, skipIfNull = true)
 				writeMapElement("title", string = value.title)

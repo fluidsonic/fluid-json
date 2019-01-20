@@ -17,12 +17,12 @@ internal abstract class NonRecursiveJSONDecoderCodec<Value : Any> : AbstractJSON
 
 
 	@Suppress("UNCHECKED_CAST")
-	override fun decode(valueType: JSONCodingType<in Value>, decoder: JSONDecoder<JSONCodingContext>): Value {
-		if (decoder.nextToken != expectedFirstToken) {
-			throw JSONException("Cannot decode ${decoder.nextToken} as $valueType")
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Value>): Value {
+		if (nextToken != expectedFirstToken) {
+			throw JSONException("Cannot decode $nextToken as $valueType")
 		}
 
-		val value = JSONParser.default.parseValueOrNull(decoder, withTermination = false)
+		val value = JSONParser.default.parseValueOrNull(this, withTermination = false)
 
 		return if (valueType.rawClass == Sequence::class)
 			(value as Iterable<*>).asSequence() as Value

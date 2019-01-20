@@ -10,7 +10,7 @@ internal class StandardEncoder<out Context : JSONCodingContext>(
 	override fun writeValue(value: Any) {
 		withErrorChecking {
 			codecProvider.encoderCodecForClass(value::class)
-				?.encode(value = value, encoder = this)
+				?.run { encode(value = value) }
 				?: throw JSONException("no encoder codec registered for ${value::class}: $value")
 		}
 	}

@@ -7,8 +7,8 @@ internal class NonRecursiveJSONEncoderCodec<Value : Any>(
 	override val encodableClass: KClass<Value>
 ) : JSONEncoderCodec<Value, JSONCodingContext> {
 
-	override fun encode(value: Value, encoder: JSONEncoder<JSONCodingContext>) {
-		JSONSerializer.default.serializeValue(value, destination = encoder, withTermination = false)
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Value) {
+		JSONSerializer.default.serializeValue(value, destination = this, withTermination = false)
 	}
 
 

@@ -16,7 +16,7 @@ internal object AbstractJSONDecoderCodecTest {
 
 	private object InnerEncoderCodec : AbstractJSONEncoderCodec<Unit, JSONCodingContext>() {
 
-		override fun encode(value: Unit, encoder: JSONEncoder<JSONCodingContext>) {}
+		override fun JSONEncoder<JSONCodingContext>.encode(value: Unit) {}
 	}
 
 
@@ -24,7 +24,7 @@ internal object AbstractJSONDecoderCodecTest {
 		additionalProviders = listOf(InnerEncoderCodec)
 	) {
 
-		override fun decode(valueType: JSONCodingType<in String>, decoder: JSONDecoder<JSONCodingContext>) =
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in String>) =
 			""
 	}
 }

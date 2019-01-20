@@ -3,28 +3,28 @@ package com.github.fluidsonic.fluid.json
 
 object ClosedRangeJSONCodec : AbstractJSONCodec<ClosedRange<*>, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in ClosedRange<*>>, decoder: JSONDecoder<JSONCodingContext>): ClosedRange<*> {
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in ClosedRange<*>>): ClosedRange<*> {
 		@Suppress("UNCHECKED_CAST")
 		val elementType = valueType.arguments.single() as JSONCodingType<Comparable<Any>>
 
 		return when (elementType.rawClass) {
-			Char::class -> decodeChar(decoder = decoder)
-			Comparable::class -> decodeComparable(decoder = decoder)
-			Double::class -> decodeDouble(decoder = decoder)
-			Float::class -> decodeFloat(decoder = decoder)
-			Int::class -> decodeInt(decoder = decoder)
-			Long::class -> decodeLong(decoder = decoder)
-			else -> decodeOther(elementType = elementType, decoder = decoder)
+			Char::class -> decodeCharRange()
+			Comparable::class -> decodeComparableRange()
+			Double::class -> decodeDoubleRange()
+			Float::class -> decodeFloatRange()
+			Int::class -> decodeIntRange()
+			Long::class -> decodeLongRange()
+			else -> decodeOtherRange(elementType = elementType)
 		}
 	}
 
 
 	@Suppress("UNCHECKED_CAST")
-	private fun decodeComparable(decoder: JSONDecoder<JSONCodingContext>): ClosedRange<*> {
+	private fun JSONDecoder<JSONCodingContext>.decodeComparableRange(): ClosedRange<*> {
 		var endInclusive: Comparable<Any>? = null
 		var start: Comparable<Any>? = null
 
-		decoder.readFromMapByElementValue { key ->
+		readFromMapByElementValue { key ->
 			when (key) {
 				Fields.endInclusive -> endInclusive = readValue() as? Comparable<Any>
 					?: throw JSONException("expected comparable value for '$key'")
@@ -41,17 +41,17 @@ object ClosedRangeJSONCodec : AbstractJSONCodec<ClosedRange<*>, JSONCodingContex
 	}
 
 
-	private fun decodeChar(decoder: JSONDecoder<JSONCodingContext>) =
-		CharRangeJSONCodec.decode(valueType = CharRangeJSONCodec.decodableType, decoder = decoder)
+	private fun JSONDecoder<JSONCodingContext>.decodeCharRange() =
+		CharRangeJSONCodec.run { decode(valueType = CharRangeJSONCodec.decodableType) }
 
 
-	private fun decodeDouble(decoder: JSONDecoder<JSONCodingContext>): ClosedFloatingPointRange<Double> {
+	private fun JSONDecoder<JSONCodingContext>.decodeDoubleRange(): ClosedFloatingPointRange<Double> {
 		var endInclusive = 0.0
 		var endInclusiveProvided = false
 		var start = 0.0
 		var startProvided = false
 
-		decoder.readFromMapByElementValue { key ->
+		readFromMapByElementValue { key ->
 			when (key) {
 				Fields.endInclusive -> {
 					endInclusive = readDouble()
@@ -72,13 +72,13 @@ object ClosedRangeJSONCodec : AbstractJSONCodec<ClosedRange<*>, JSONCodingContex
 	}
 
 
-	private fun decodeFloat(decoder: JSONDecoder<JSONCodingContext>): ClosedFloatingPointRange<Float> {
+	private fun JSONDecoder<JSONCodingContext>.decodeFloatRange(): ClosedFloatingPointRange<Float> {
 		var endInclusive = 0.0f
 		var endInclusiveProvided = false
 		var start = 0.0f
 		var startProvided = false
 
-		decoder.readFromMapByElementValue { key ->
+		readFromMapByElementValue { key ->
 			when (key) {
 				Fields.endInclusive -> {
 					endInclusive = readFloat()
@@ -99,19 +99,19 @@ object ClosedRangeJSONCodec : AbstractJSONCodec<ClosedRange<*>, JSONCodingContex
 	}
 
 
-	private fun decodeInt(decoder: JSONDecoder<JSONCodingContext>) =
-		IntRangeJSONCodec.decode(valueType = IntRangeJSONCodec.decodableType, decoder = decoder)
+	private fun JSONDecoder<JSONCodingContext>.decodeIntRange() =
+		IntRangeJSONCodec.run { decode(valueType = IntRangeJSONCodec.decodableType) }
 
 
-	private fun decodeLong(decoder: JSONDecoder<JSONCodingContext>) =
-		LongRangeJSONCodec.decode(valueType = LongRangeJSONCodec.decodableType, decoder = decoder)
+	private fun JSONDecoder<JSONCodingContext>.decodeLongRange() =
+		LongRangeJSONCodec.run { decode(valueType = LongRangeJSONCodec.decodableType) }
 
 
-	private fun decodeOther(elementType: JSONCodingType<Comparable<Any>>, decoder: JSONDecoder<JSONCodingContext>): ClosedRange<*> {
+	private fun JSONDecoder<JSONCodingContext>.decodeOtherRange(elementType: JSONCodingType<Comparable<Any>>): ClosedRange<*> {
 		var endInclusive: Comparable<Any>? = null
 		var start: Comparable<Any>? = null
 
-		decoder.readFromMapByElementValue { key ->
+		readFromMapByElementValue { key ->
 			when (key) {
 				Fields.endInclusive -> endInclusive = readValueOfType(elementType)
 				Fields.start -> start = readValueOfType(elementType)
@@ -124,8 +124,8 @@ object ClosedRangeJSONCodec : AbstractJSONCodec<ClosedRange<*>, JSONCodingContex
 	}
 
 
-	override fun encode(value: ClosedRange<*>, encoder: JSONEncoder<JSONCodingContext>) {
-		encoder.writeIntoMap {
+	override fun JSONEncoder<JSONCodingContext>.encode(value: ClosedRange<*>) {
+		writeIntoMap {
 			writeMapElement(Fields.start, value = value.start)
 			writeMapElement(Fields.endInclusive, value = value.endInclusive)
 		}

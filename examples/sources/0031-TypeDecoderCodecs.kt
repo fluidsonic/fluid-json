@@ -1,6 +1,14 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.json.AbstractJSONDecoderCodec
+import com.github.fluidsonic.fluid.json.JSONCodingContext
+import com.github.fluidsonic.fluid.json.JSONCodingParser
+import com.github.fluidsonic.fluid.json.JSONCodingType
+import com.github.fluidsonic.fluid.json.JSONDecoder
+import com.github.fluidsonic.fluid.json.JSONException
+import com.github.fluidsonic.fluid.json.parseValueOfType
+import com.github.fluidsonic.fluid.json.readFromMapByElementValue
+import com.github.fluidsonic.fluid.json.readValueOfType
 import java.time.Instant
 
 
@@ -61,12 +69,12 @@ object DecodingExample {
 
 	private object EventCodec : AbstractJSONDecoderCodec<Event, JSONCodingContext>() {
 
-		override fun decode(valueType: JSONCodingType<in Event>, decoder: JSONDecoder<JSONCodingContext>): Event {
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Event>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null
 
-			decoder.readFromMapByElementValue { key ->
+			readFromMapByElementValue { key ->
 				when (key) {
 					"id" -> id = readInt()
 					"date" -> date = readValueOfType()

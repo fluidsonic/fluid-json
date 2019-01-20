@@ -6,8 +6,8 @@ import java.time.Duration
 
 object DurationJSONCodec : AbstractJSONCodec<Duration, JSONCodingContext>() {
 
-	override fun decode(valueType: JSONCodingType<in Duration>, decoder: JSONDecoder<JSONCodingContext>) =
-		decoder.readString().let { raw ->
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Duration>) =
+		readString().let { raw ->
 			try {
 				Duration.parse(raw)!!
 			}
@@ -17,6 +17,6 @@ object DurationJSONCodec : AbstractJSONCodec<Duration, JSONCodingContext>() {
 		}
 
 
-	override fun encode(value: Duration, encoder: JSONEncoder<JSONCodingContext>) =
-		encoder.writeString(value.toString())
+	override fun JSONEncoder<JSONCodingContext>.encode(value: Duration) =
+		writeString(value.toString())
 }

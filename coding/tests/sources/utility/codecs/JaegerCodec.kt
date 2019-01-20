@@ -1,6 +1,14 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.json.AbstractJSONCodec
+import com.github.fluidsonic.fluid.json.JSONCodingType
+import com.github.fluidsonic.fluid.json.JSONDecoder
+import com.github.fluidsonic.fluid.json.JSONEncoder
+import com.github.fluidsonic.fluid.json.JSONException
+import com.github.fluidsonic.fluid.json.readFromMapByElementValue
+import com.github.fluidsonic.fluid.json.readValueOfType
+import com.github.fluidsonic.fluid.json.writeIntoMap
+import com.github.fluidsonic.fluid.json.writeMapElement
 import tests.coding.Jaeger.Status
 
 
@@ -8,7 +16,7 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 	additionalProviders = listOf(StatusCodec)
 ) {
 
-	override fun decode(valueType: JSONCodingType<in Jaeger>, decoder: JSONDecoder<TestCoderContext>): Jaeger {
+	override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<in Jaeger>): Jaeger {
 		var height: Double? = null
 		var launchDate: YearMonthDay? = null
 		var mark: Int? = null
@@ -17,7 +25,7 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 		var status: Status? = null
 		var weight: Double? = null
 
-		decoder.readFromMapByElementValue { key ->
+		readFromMapByElementValue { key ->
 			when (key) {
 				Keys.height -> height = readDouble()
 				Keys.launchDate -> launchDate = readValueOfType()
@@ -42,8 +50,8 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 	}
 
 
-	override fun encode(value: Jaeger, encoder: JSONEncoder<TestCoderContext>) {
-		encoder.writeIntoMap {
+	override fun JSONEncoder<TestCoderContext>.encode(value: Jaeger) {
+		writeIntoMap {
 			writeMapElement(Keys.height, double = value.height)
 			writeMapElement(Keys.launchDate, value = value.launchDate)
 			writeMapElement(Keys.mark, int = value.mark)
@@ -69,8 +77,8 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 
 	object StatusCodec : AbstractJSONCodec<Status, TestCoderContext>() {
 
-		override fun decode(valueType: JSONCodingType<in Status>, decoder: JSONDecoder<TestCoderContext>): Status {
-			val id = decoder.readString()
+		override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<in Status>): Status {
+			val id = readString()
 			return when (id) {
 				"destroyed" -> Status.destroyed
 				else -> throw JSONException("Unknown status: $id")
@@ -78,8 +86,8 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 		}
 
 
-		override fun encode(value: Status, encoder: JSONEncoder<TestCoderContext>) {
-			encoder.writeString(when (value) {
+		override fun JSONEncoder<TestCoderContext>.encode(value: Status) {
+			writeString(when (value) {
 				Status.destroyed -> "destroyed"
 			})
 		}
