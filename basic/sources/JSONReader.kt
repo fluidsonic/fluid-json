@@ -9,8 +9,12 @@ import kotlin.contracts.contract
 
 interface JSONReader : Closeable {
 
+	val isInValueIsolation: Boolean
 	val nextToken: JSONToken?
+	val path: JSONPath
 
+	fun beginValueIsolation()
+	fun endValueIsolation()
 	fun readBoolean(): Boolean
 	fun readDouble(): Double
 	fun readListEnd()
@@ -111,6 +115,19 @@ interface JSONReader : Closeable {
 }
 
 
+inline fun <Reader : JSONReader, Value> Reader.isolateValue(crossinline read: Reader.() -> Value) =
+	if (isInValueIsolation) {
+		read()
+	}
+	else {
+		beginValueIsolation()
+		val value = read()
+		endValueIsolation()
+
+		value
+	}
+
+
 fun JSONReader.readBooleanOrNull() =
 	if (nextToken != JSONToken.nullValue) readBoolean() else readNull()
 
@@ -127,7 +144,7 @@ fun JSONReader.readDoubleOrNull() =
 	if (nextToken != JSONToken.nullValue) readDouble() else readNull()
 
 
-inline fun <Reader : JSONReader> Reader.readElementsFromMap(readElement: Reader.(key: String) -> Unit) {
+inline fun <Reader : JSONReader> Reader.readElementsFromMap(crossinline readElement: Reader.(key: String) -> Unit) {
 	contract {
 		callsInPlace(readElement, InvocationKind.UNKNOWN)
 	}
@@ -146,7 +163,7 @@ fun JSONReader.readIntOrNull() =
 	if (nextToken != JSONToken.nullValue) readInt() else readNull()
 
 
-inline fun <Reader : JSONReader, Value> Reader.readFromList(readContent: Reader.() -> Value): Value {
+inline fun <Reader : JSONReader, Value> Reader.readFromList(crossinline readContent: Reader.() -> Value): Value {
 	contract {
 		callsInPlace(readContent, InvocationKind.EXACTLY_ONCE)
 	}
@@ -159,7 +176,7 @@ inline fun <Reader : JSONReader, Value> Reader.readFromList(readContent: Reader.
 }
 
 
-inline fun <Reader : JSONReader, Value> Reader.readFromMap(readContent: Reader.() -> Value): Value {
+inline fun <Reader : JSONReader, Value> Reader.readFromMap(crossinline readContent: Reader.() -> Value): Value {
 	contract {
 		callsInPlace(readContent, InvocationKind.EXACTLY_ONCE)
 	}
@@ -172,9 +189,7 @@ inline fun <Reader : JSONReader, Value> Reader.readFromMap(readContent: Reader.(
 }
 
 
-inline fun <Reader : JSONReader> Reader.readFromListByElement(
-	readElement: Reader.() -> Unit
-) {
+inline fun <Reader : JSONReader> Reader.readFromListByElement(crossinline readElement: Reader.() -> Unit) {
 	contract {
 		callsInPlace(readElement, InvocationKind.UNKNOWN)
 	}
@@ -186,9 +201,7 @@ inline fun <Reader : JSONReader> Reader.readFromListByElement(
 }
 
 
-inline fun <Reader : JSONReader> Reader.readFromMapByElement(
-	readElement: Reader.() -> Unit
-) {
+inline fun <Reader : JSONReader> Reader.readFromMapByElement(crossinline readElement: Reader.() -> Unit) {
 	contract {
 		callsInPlace(readElement, InvocationKind.UNKNOWN)
 	}
@@ -200,9 +213,7 @@ inline fun <Reader : JSONReader> Reader.readFromMapByElement(
 }
 
 
-inline fun <Reader : JSONReader> Reader.readFromMapByElementValue(
-	readElementValue: Reader.(key: String) -> Unit
-) {
+inline fun <Reader : JSONReader> Reader.readFromMapByElementValue(crossinline readElementValue: Reader.(key: String) -> Unit) {
 	contract {
 		callsInPlace(readElementValue, InvocationKind.UNKNOWN)
 	}
@@ -218,7 +229,7 @@ fun JSONReader.readList() =
 	readListByElement { readValueOrNull() }
 
 
-inline fun <Reader : JSONReader, Value> Reader.readListByElement(readElement: Reader.() -> Value): List<Value> {
+inline fun <Reader : JSONReader, Value> Reader.readListByElement(crossinline readElement: Reader.() -> Value): List<Value> {
 	contract {
 		callsInPlace(readElement, InvocationKind.UNKNOWN)
 	}
@@ -235,7 +246,7 @@ fun JSONReader.readListOrNull() =
 	if (nextToken != JSONToken.nullValue) readList() else readNull()
 
 
-inline fun <Reader : JSONReader, Value> Reader.readListOrNullByElement(readElement: Reader.() -> Value): List<Value>? {
+inline fun <Reader : JSONReader, Value> Reader.readListOrNullByElement(crossinline readElement: Reader.() -> Value): List<Value>? {
 	contract {
 		callsInPlace(readElement, InvocationKind.UNKNOWN)
 	}
@@ -253,7 +264,7 @@ fun JSONReader.readMap() =
 
 
 inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapByElement(
-	readElement: Reader.() -> Pair<ElementKey, ElementValue>
+	crossinline readElement: Reader.() -> Pair<ElementKey, ElementValue>
 ): Map<ElementKey, ElementValue> {
 	contract {
 		callsInPlace(readElement, InvocationKind.UNKNOWN)
@@ -268,7 +279,7 @@ inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapByEleme
 
 
 inline fun <Reader : JSONReader, ElementValue> Reader.readMapByElementValue(
-	readElementValue: Reader.(key: String) -> ElementValue
+	crossinline readElementValue: Reader.(key: String) -> ElementValue
 ): Map<String, ElementValue> {
 	contract {
 		callsInPlace(readElementValue, InvocationKind.UNKNOWN)
@@ -287,7 +298,7 @@ fun JSONReader.readMapOrNull() =
 
 
 inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapOrNullByElement(
-	readElement: Reader.() -> Pair<ElementKey, ElementValue>
+	crossinline readElement: Reader.() -> Pair<ElementKey, ElementValue>
 ): Map<ElementKey, ElementValue>? {
 	contract {
 		callsInPlace(readElement, InvocationKind.UNKNOWN)
@@ -298,7 +309,7 @@ inline fun <Reader : JSONReader, ElementKey, ElementValue> Reader.readMapOrNullB
 
 
 inline fun <Reader : JSONReader, ElementValue> Reader.readMapOrNullByElementValue(
-	readElementValue: Reader.(key: String) -> ElementValue
+	crossinline readElementValue: Reader.(key: String) -> ElementValue
 ): Map<String, ElementValue>? {
 	contract {
 		callsInPlace(readElementValue, InvocationKind.UNKNOWN)

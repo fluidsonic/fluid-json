@@ -6,42 +6,85 @@ import java.io.IOException
 internal class StandardReader(private val source: TextInput) : JSONReader {
 
 	private val buffer = StringBuilder()
+	private var isClosed = false
 	private var peekedToken: JSONToken? = null
 	private var peekedTokenIndex = -1
-	private var state = State.initial
-	private val stateStack = mutableListOf<State>()
+	private var state = State()
+	private val statePool: MutableList<State> = mutableListOf()
+	private val stateStack: MutableList<State> = mutableListOf(state)
 
 
-	private fun assertNotClosed() {
-		if (state == State.closed) {
-			throw IOException("Cannot operate on a closed reader")
-		}
+	override fun beginValueIsolation() {
+		ensureNotClosed()
+		check(!isInValueIsolation) { "Value isolation cannot begin multiple times" }
+		check(state.tokenLocation.isBeforeValue) { "Value isolation can only begin right before a value" }
+
+		state.isInValueIsolation = true
 	}
 
 
 	override fun close() {
-		if (state == State.closed) return
+		if (isClosed) return
 
-		state = State.closed
+		isClosed = true
 		source.close()
 	}
 
 
-	private fun finishValue() {
-		val nextCharacter = source.peekCharacter()
-		if (!JSONCharacter.isValueBoundary(nextCharacter)) {
-			throw unexpectedCharacter(
-				nextCharacter,
-				expected = "end of value",
-				characterIndex = source.sourceIndex
-			)
+	private fun didReadValue() {
+		state.tokenLocation = state.tokenLocation.afterValue
+			?: error("Internal inconsistency - unexpected token location '${state.tokenLocation}'")
+
+		if (state.isInValueIsolation) {
+			state.hasReadIsolatedValue = true
 		}
+	}
+
+
+	override fun endValueIsolation() {
+		ensureNotClosed()
+		check(isInValueIsolation) { "Value isolation cannot end as it has not begun" }
+		check(state.hasReadIsolatedValue) { "No value has been read but exactly one has been expected" }
+
+		state.hasReadIsolatedValue = false
+		state.isInValueIsolation = false
+	}
+
+
+	private fun ensureNotClosed() {
+		if (isClosed) throw IOException("Cannot operate on a closed JSON reader")
+	}
+
+
+	override val isInValueIsolation
+		get() = state.isInValueIsolation
+
+
+	private inline fun <Value> isolatedValueRead(checkBoundary: Boolean, crossinline read: () -> Value): Value {
+		willReadValue()
+
+		val value = read()
+
+		if (checkBoundary) {
+			val nextCharacter = source.peekCharacter()
+			if (!JSONCharacter.isValueBoundary(nextCharacter)) {
+				throw JSONException.forUnexpectedCharacter(
+					nextCharacter,
+					expected = "end of value",
+					characterIndex = source.sourceIndex
+				)
+			}
+		}
+
+		didReadValue()
+
+		return value
 	}
 
 
 	override val nextToken: JSONToken?
 		get() {
-			assertNotClosed()
+			ensureNotClosed()
 
 			if (peekedTokenIndex >= 0) {
 				return peekedToken
@@ -55,6 +98,21 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 		}
 
 
+	override val path: JSONPath
+		get() {
+			if (isClosed) return JSONPath.root
+
+			when (state.tokenLocation) {
+				TokenLocation.afterRootValue,
+				TokenLocation.beforeRootValue ->
+					return JSONPath.root
+
+				else ->
+					return JSONPath(elements = stateStack.mapNotNull { it.toPathElement() })
+			}
+		}
+
+
 	private fun peekToken(): JSONToken? {
 		val source = source
 
@@ -63,107 +121,109 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 
 			val character = source.peekCharacter()
 
-			@Suppress("NON_EXHAUSTIVE_WHEN")
-			when (state) {
-				State.afterListElement ->
+			when (state.tokenLocation) {
+				TokenLocation.afterListElement ->
 					when (character) {
 						JSONCharacter.Symbol.comma -> {
-							state = State.afterListElementSeparator
 							source.readCharacter()
+
+							state.currentValueListIndex += 1
+							state.tokenLocation = TokenLocation.afterListElementSeparator
 						}
 
 						JSONCharacter.Symbol.rightSquareBracket -> {
-							restoreState()
+							popState()
+
 							return JSONToken.listEnd
 						}
 
-						else -> throw unexpectedCharacter(character, expected = "',' or ']'")
+						else ->
+							throw JSONException.forUnexpectedCharacter(character, expected = "',' or ']'")
 					}
 
-				State.afterListElementSeparator -> {
-					state = State.afterListElement
+				TokenLocation.afterListElementSeparator ->
 					return peekValueToken(expected = "a value")
-				}
 
-				State.afterListStart ->
+				TokenLocation.afterListStart ->
 					when (character) {
 						JSONCharacter.Symbol.rightSquareBracket -> {
-							restoreState()
+							popState()
+
 							return JSONToken.listEnd
 						}
-						else -> {
-							state = State.afterListElement
+						else ->
 							return peekValueToken(expected = "a value or ']'")
-						}
 					}
 
-				State.afterMapElement ->
+				TokenLocation.afterMapElement ->
 					when (character) {
 						JSONCharacter.Symbol.comma -> {
-							state = State.afterMapElementSeparator
 							source.readCharacter()
+
+							state.currentValueMapKey = null
+							state.tokenLocation = TokenLocation.afterMapElementSeparator
 						}
 
 						JSONCharacter.Symbol.rightCurlyBracket -> {
-							restoreState()
+							popState()
+
 							return JSONToken.mapEnd
 						}
 
-						else -> throw unexpectedCharacter(character, expected = "',' or '}'")
+						else ->
+							throw JSONException.forUnexpectedCharacter(character, expected = "',' or '}'")
 					}
 
-				State.afterMapElementSeparator ->
+				TokenLocation.afterMapElementSeparator ->
 					when (character) {
-						JSONCharacter.Symbol.quotationMark -> {
-							state = State.afterMapKey
+						JSONCharacter.Symbol.quotationMark ->
 							return JSONToken.mapKey
-						}
 
-						else -> throw unexpectedCharacter(character, expected = "'\"'")
+						else ->
+							throw JSONException.forUnexpectedCharacter(character, expected = "'\"'")
 					}
 
-				State.afterMapKey ->
+				TokenLocation.afterMapKey ->
 					when (character) {
 						JSONCharacter.Symbol.colon -> {
-							state = State.afterMapKeySeparator
 							source.readCharacter()
+
+							state.tokenLocation = TokenLocation.afterMapKeySeparator
 						}
 
-						else -> throw unexpectedCharacter(character, expected = "':'")
+						else ->
+							throw JSONException.forUnexpectedCharacter(character, expected = "':'")
 					}
 
-				State.afterMapKeySeparator -> {
-					state = State.afterMapElement
+				TokenLocation.afterMapKeySeparator ->
 					return peekValueToken(expected = "a value")
-				}
 
-				State.afterMapStart ->
+				TokenLocation.afterMapStart ->
 					when (character) {
-						JSONCharacter.Symbol.quotationMark -> {
-							state = State.afterMapKey
+						JSONCharacter.Symbol.quotationMark ->
 							return JSONToken.mapKey
-						}
 
 						JSONCharacter.Symbol.rightCurlyBracket -> {
-							restoreState()
+							popState()
+
 							return JSONToken.mapEnd
 						}
 
-						else -> throw unexpectedCharacter(character, expected = "'\"' or '}'")
+						else ->
+							throw JSONException.forUnexpectedCharacter(character, expected = "'\"' or '}'")
 					}
 
-				State.end ->
+				TokenLocation.afterRootValue ->
 					when (character) {
 						JSONCharacter.end ->
 							return null
 
-						else -> throw unexpectedCharacter(character, expected = "end of input")
+						else ->
+							throw JSONException.forUnexpectedCharacter(character, expected = "end of input")
 					}
 
-				State.initial -> {
-					state = State.end
+				TokenLocation.beforeRootValue ->
 					return peekValueToken(expected = "a value")
-				}
 			}
 		}
 	}
@@ -196,46 +256,61 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 				JSONToken.nullValue
 
 			JSONCharacter.Symbol.leftCurlyBracket -> {
-				saveState()
-				state = State.afterMapStart
+				pushNewState(TokenLocation.afterMapStart)
 
 				JSONToken.mapStart
 			}
 
 			JSONCharacter.Symbol.leftSquareBracket -> {
-				saveState()
-				state = State.afterListStart
+				pushNewState(TokenLocation.afterListStart)
 
 				JSONToken.listStart
 			}
 
-			else -> throw unexpectedCharacter(character, expected = expected)
+			else ->
+				throw JSONException.forUnexpectedCharacter(character, expected = expected)
 		}
+	}
+
+
+	private fun popState() {
+		statePool += stateStack.removeAt(stateStack.size - 1)
+		state = stateStack.last()
+	}
+
+
+	private fun pushNewState(tokenLocation: TokenLocation) {
+		val newState = statePool.getOrElse(statePool.size - 1) { State() }
+		newState.reset(tokenLocation = tokenLocation)
+
+		state = newState
+		stateStack += newState
 	}
 
 
 	override fun readBoolean(): Boolean {
 		readToken(JSONToken.booleanValue)
 
-		val source = source
-		if (source.peekCharacter() == JSONCharacter.Letter.t) {
-			source.readCharacter(JSONCharacter.Letter.t)
-			source.readCharacter(JSONCharacter.Letter.r)
-			source.readCharacter(JSONCharacter.Letter.u)
-			source.readCharacter(JSONCharacter.Letter.e)
-			finishValue()
+		return isolatedValueRead(checkBoundary = true) {
+			source.run {
+				if (peekCharacter() == JSONCharacter.Letter.t) {
+					readCharacter(JSONCharacter.Letter.t)
+					readCharacter(JSONCharacter.Letter.r)
+					readCharacter(JSONCharacter.Letter.u)
+					readCharacter(JSONCharacter.Letter.e)
 
-			return true
-		}
-		else {
-			source.readCharacter(JSONCharacter.Letter.f)
-			source.readCharacter(JSONCharacter.Letter.a)
-			source.readCharacter(JSONCharacter.Letter.l)
-			source.readCharacter(JSONCharacter.Letter.s)
-			source.readCharacter(JSONCharacter.Letter.e)
-			finishValue()
+					true
+				}
+				else {
+					readCharacter(JSONCharacter.Letter.f)
+					readCharacter(JSONCharacter.Letter.a)
+					readCharacter(JSONCharacter.Letter.l)
+					readCharacter(JSONCharacter.Letter.s)
+					readCharacter(JSONCharacter.Letter.e)
 
-			return false
+					false
+				}
+			}
 		}
 	}
 
@@ -258,116 +333,124 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 		readToken(JSONToken.listEnd)
 
 		source.readCharacter(JSONCharacter.Symbol.rightSquareBracket)
+
+		didReadValue()
 	}
 
 
 	override fun readListStart() {
 		readToken(JSONToken.listStart)
 
+		willReadValue()
+
 		source.readCharacter(JSONCharacter.Symbol.leftSquareBracket)
+
+		state.currentValueListIndex = 0
 	}
 
 
 	override fun readLong(): Long {
 		readToken(JSONToken.numberValue)
 
-		return source.locked {
-			readLongLocked()
-		}
+		return source.locked { readLongLocked() }
 	}
 
 
-	private fun readLongLocked(): Long {
-		val startIndex = source.index
+	private fun readLongLocked(): Long =
+		isolatedValueRead(checkBoundary = true) {
+			val startIndex = source.index
 
-		val isNegative: Boolean
-		val negativeLimit: Long
+			val isNegative: Boolean
+			val negativeLimit: Long
 
-		val source = source
-		var character = source.readCharacter()
-		if (character == JSONCharacter.Symbol.hyphenMinus) {
-			isNegative = true
-			character = source.readCharacter(required = JSONCharacter::isDigit) { "a digit" }
-			negativeLimit = Long.MIN_VALUE
-		}
-		else {
-			isNegative = false
-			negativeLimit = -Long.MAX_VALUE
-		}
-
-		val minimumBeforeMultiplication = negativeLimit / 10
-		var value = 0L
-
-		if (character == JSONCharacter.Digit.zero) {
-			character = source.readCharacter(required = { !JSONCharacter.isDigit(it) }) {
-				JSONCharacter.toString(
-					JSONCharacter.Symbol.fullStop,
-					JSONCharacter.Letter.e,
-					JSONCharacter.Letter.E
-				) + " or end of number after a leading '0'"
+			val source = source
+			var character = source.readCharacter()
+			if (character == JSONCharacter.Symbol.hyphenMinus) {
+				isNegative = true
+				character = source.readCharacter(required = JSONCharacter::isDigit) { "a digit" }
+				negativeLimit = Long.MIN_VALUE
 			}
-		}
-		else {
-			do {
-				val digit = character - JSONCharacter.Digit.zero
-				if (value < minimumBeforeMultiplication) {
-					value = negativeLimit
+			else {
+				isNegative = false
+				negativeLimit = -Long.MAX_VALUE
+			}
 
-					do character = source.readCharacter()
-					while (JSONCharacter.isDigit(character))
-					break
+			val minimumBeforeMultiplication = negativeLimit / 10
+			var value = 0L
+
+			if (character == JSONCharacter.Digit.zero) {
+				character = source.readCharacter(required = { !JSONCharacter.isDigit(it) }) {
+					JSONCharacter.toString(
+						JSONCharacter.Symbol.fullStop,
+						JSONCharacter.Letter.e,
+						JSONCharacter.Letter.E
+					) + " or end of number after a leading '0'"
 				}
+			}
+			else {
+				do {
+					val digit = character - JSONCharacter.Digit.zero
+					if (value < minimumBeforeMultiplication) {
+						value = negativeLimit
 
-				value *= 10
+						do character = source.readCharacter()
+						while (JSONCharacter.isDigit(character))
+						break
+					}
 
-				if (value < negativeLimit + digit) {
-					value = negativeLimit
+					value *= 10
 
-					do character = source.readCharacter()
-					while (JSONCharacter.isDigit(character))
-					break
+					if (value < negativeLimit + digit) {
+						value = negativeLimit
+
+						do character = source.readCharacter()
+						while (JSONCharacter.isDigit(character))
+						break
+					}
+
+					value -= digit
+					character = source.readCharacter()
 				}
+				while (JSONCharacter.isDigit(character))
 
-				value -= digit
-				character = source.readCharacter()
+				if (!isNegative) {
+					value *= -1
+				}
 			}
-			while (JSONCharacter.isDigit(character))
 
-			if (!isNegative) {
-				value *= -1
+			if (character == JSONCharacter.Symbol.fullStop) { // truncate decimal value
+				source.readCharacter(required = JSONCharacter::isDigit) { "a digit in decimal value of number" }
+
+				do character = source.readCharacter()
+				while (JSONCharacter.isDigit(character))
 			}
+
+			if (character == JSONCharacter.Letter.e || character == JSONCharacter.Letter.E) { // oh no, an exponent!
+				source.seekTo(startIndex)
+				unreadToken(JSONToken.numberValue)
+
+				return@isolatedValueRead readDouble().toLong()
+			}
+
+			source.seekBackOneCharacter()
+
+			return@isolatedValueRead value
 		}
-
-		if (character == JSONCharacter.Symbol.fullStop) { // truncate decimal value
-			source.readCharacter(required = JSONCharacter::isDigit) { "a digit in decimal value of number" }
-
-			do character = source.readCharacter()
-			while (JSONCharacter.isDigit(character))
-		}
-
-		if (character == JSONCharacter.Letter.e || character == JSONCharacter.Letter.E) { // oh no, an exponent!
-			source.seekTo(startIndex)
-			unreadToken(JSONToken.numberValue)
-
-			return readDouble().toLong()
-		}
-
-		source.seekBackOneCharacter()
-		finishValue()
-
-		return value
-	}
 
 
 	override fun readMapEnd() {
 		readToken(JSONToken.mapEnd)
 
 		source.readCharacter(JSONCharacter.Symbol.rightCurlyBracket)
+
+		didReadValue()
 	}
 
 
 	override fun readMapStart() {
 		readToken(JSONToken.mapStart)
+
+		willReadValue()
 
 		source.readCharacter(JSONCharacter.Symbol.leftCurlyBracket)
 	}
@@ -376,14 +459,16 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 	override fun readNull(): Nothing? {
 		readToken(JSONToken.nullValue)
 
-		val source = source
-		source.readCharacter(JSONCharacter.Letter.n)
-		source.readCharacter(JSONCharacter.Letter.u)
-		source.readCharacter(JSONCharacter.Letter.l)
-		source.readCharacter(JSONCharacter.Letter.l)
-		finishValue()
+		return isolatedValueRead(checkBoundary = true) {
+			source.run {
+				readCharacter(JSONCharacter.Letter.n)
+				readCharacter(JSONCharacter.Letter.u)
+				readCharacter(JSONCharacter.Letter.l)
+				readCharacter(JSONCharacter.Letter.l)
 
-		return null
+				null
+			}
+		}
 	}
 
 
@@ -405,101 +490,110 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 	private fun readNumberIntoBuffer(): Boolean {
 		readToken(JSONToken.numberValue)
 
-		val buffer = buffer
-		buffer.setLength(0)
+		return isolatedValueRead(checkBoundary = true) {
+			val buffer = buffer
+			buffer.setLength(0)
 
-		var shouldParseAsFloatingPoint = false
-		val source = source
-		var character = source.readCharacter()
+			var shouldParseAsFloatingPoint = false
+			val source = source
+			var character = source.readCharacter()
 
-		// consume optional minus sign
-		if (character == JSONCharacter.Symbol.hyphenMinus) {
-			buffer.append('-')
-			character = source.readCharacter()
-		}
-
-		// consume integer value
-		when (character) {
-			JSONCharacter.Digit.zero -> {
-				buffer.append('0')
-				character = source.readCharacter(required = { !JSONCharacter.isDigit(it) }) {
-					JSONCharacter.toString(
-						JSONCharacter.Symbol.fullStop,
-						JSONCharacter.Letter.e,
-						JSONCharacter.Letter.E
-					) + " or end of number after a leading '0'"
-				}
+			// consume optional minus sign
+			if (character == JSONCharacter.Symbol.hyphenMinus) {
+				buffer.append('-')
+				character = source.readCharacter()
 			}
 
-			JSONCharacter.Digit.one,
-			JSONCharacter.Digit.two,
-			JSONCharacter.Digit.three,
-			JSONCharacter.Digit.four,
-			JSONCharacter.Digit.five,
-			JSONCharacter.Digit.six,
-			JSONCharacter.Digit.seven,
-			JSONCharacter.Digit.eight,
-			JSONCharacter.Digit.nine ->
+			// consume integer value
+			when (character) {
+				JSONCharacter.Digit.zero -> {
+					buffer.append('0')
+					character = source.readCharacter(required = { !JSONCharacter.isDigit(it) }) {
+						JSONCharacter.toString(
+							JSONCharacter.Symbol.fullStop,
+							JSONCharacter.Letter.e,
+							JSONCharacter.Letter.E
+						) + " or end of number after a leading '0'"
+					}
+				}
+
+				JSONCharacter.Digit.one,
+				JSONCharacter.Digit.two,
+				JSONCharacter.Digit.three,
+				JSONCharacter.Digit.four,
+				JSONCharacter.Digit.five,
+				JSONCharacter.Digit.six,
+				JSONCharacter.Digit.seven,
+				JSONCharacter.Digit.eight,
+				JSONCharacter.Digit.nine ->
+					do {
+						buffer.append(character.toChar())
+						character = source.readCharacter()
+					}
+					while (JSONCharacter.isDigit(character))
+
+				else ->
+					throw JSONException.forUnexpectedCharacter(
+						character,
+						expected = "a digit in integer value of number",
+						characterIndex = source.sourceIndex - 1
+					)
+			}
+
+			// consume optional decimal separator and value
+			if (character == JSONCharacter.Symbol.fullStop) {
+				shouldParseAsFloatingPoint = true
+
+				buffer.append('.')
+				character = source.readCharacter(required = JSONCharacter::isDigit) { "a digit in decimal value of number" }
+
 				do {
 					buffer.append(character.toChar())
 					character = source.readCharacter()
 				}
 				while (JSONCharacter.isDigit(character))
-
-			else ->
-				throw unexpectedCharacter(
-					character,
-					expected = "a digit in integer value of number",
-					characterIndex = source.sourceIndex - 1
-				)
-		}
-
-		// consume optional decimal separator and value
-		if (character == JSONCharacter.Symbol.fullStop) {
-			shouldParseAsFloatingPoint = true
-
-			buffer.append('.')
-			character = source.readCharacter(required = JSONCharacter::isDigit) { "a digit in decimal value of number" }
-
-			do {
-				buffer.append(character.toChar())
-				character = source.readCharacter()
-			}
-			while (JSONCharacter.isDigit(character))
-		}
-
-		// consume optional exponent separator and value
-		if (character == JSONCharacter.Letter.e || character == JSONCharacter.Letter.E) {
-			shouldParseAsFloatingPoint = true
-
-			buffer.append(character.toChar())
-
-			character = source.peekCharacter()
-			if (character == JSONCharacter.Symbol.plusSign || character == JSONCharacter.Symbol.hyphenMinus) {
-				buffer.append(character.toChar())
-				source.readCharacter()
 			}
 
-			character = source.readCharacter(required = JSONCharacter::isDigit) { "a digit in exponent value of number" }
+			// consume optional exponent separator and value
+			if (character == JSONCharacter.Letter.e || character == JSONCharacter.Letter.E) {
+				shouldParseAsFloatingPoint = true
 
-			do {
 				buffer.append(character.toChar())
-				character = source.readCharacter()
+
+				character = source.peekCharacter()
+				if (character == JSONCharacter.Symbol.plusSign || character == JSONCharacter.Symbol.hyphenMinus) {
+					buffer.append(character.toChar())
+					source.readCharacter()
+				}
+
+				character = source.readCharacter(required = JSONCharacter::isDigit) { "a digit in exponent value of number" }
+
+				do {
+					buffer.append(character.toChar())
+					character = source.readCharacter()
+				}
+				while (JSONCharacter.isDigit(character))
 			}
-			while (JSONCharacter.isDigit(character))
+
+			source.seekBackOneCharacter()
+
+			return@isolatedValueRead shouldParseAsFloatingPoint
 		}
-
-		source.seekBackOneCharacter()
-		finishValue()
-
-		return shouldParseAsFloatingPoint
 	}
 
 
 	override fun readString(): String {
-		readToken(JSONToken.stringValue, JSONToken.mapKey)
+		val token = readToken(JSONToken.stringValue, alternative = JSONToken.mapKey)
 
-		return source.locked { readStringLocked() }
+		return isolatedValueRead(checkBoundary = false) {
+			val string = source.locked { readStringLocked() }
+
+			if (token == JSONToken.mapKey) {
+				state.currentValueMapKey = string
+			}
+
+			return@isolatedValueRead string
+		}
 	}
 
 
@@ -550,7 +644,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 
 							buffer.append(decodedCharacter.toChar())
 						}
-						else -> throw unexpectedCharacter(character, "an escape sequence starting with '\\', '/', '\"', 'b', 'f', 'n', 'r', 't' or 'u'")
+						else -> throw  JSONException.forUnexpectedCharacter(character, "an escape sequence starting with '\\', '/', '\"', 'b', 'f', 'n', 'r', 't' or 'u'")
 					}
 
 					startIndex = source.index
@@ -558,7 +652,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 
 				0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F,
 				0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F ->
-					throw unexpectedCharacter(character, "an escape sequence")
+					throw JSONException.forUnexpectedCharacter(character, "an escape sequence")
 
 				JSONCharacter.Symbol.quotationMark ->
 					Unit
@@ -581,7 +675,7 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 	private fun readToken(required: JSONToken) {
 		val token = nextToken
 		if (token != required) {
-			throw JSONException.unexpectedToken(
+			throw JSONException.forUnexpectedToken(
 				token,
 				expected = "'$required'",
 				characterIndex = peekedTokenIndex
@@ -593,10 +687,11 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 	}
 
 
-	private fun readToken(required: JSONToken, alternative: JSONToken) {
+	@Suppress("SameParameterValue")
+	private fun <Token : JSONToken?> readToken(required: Token, alternative: Token): Token {
 		val token = nextToken
 		if (token != required && token != alternative) {
-			throw JSONException.unexpectedToken(
+			throw JSONException.forUnexpectedToken(
 				token,
 				expected = "'$required' or '$alternative'",
 				characterIndex = peekedTokenIndex
@@ -605,21 +700,14 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 
 		peekedToken = null
 		peekedTokenIndex = -1
-	}
 
-
-	private fun restoreState() {
-		state = stateStack.removeAt(stateStack.size - 1)
-	}
-
-
-	private fun saveState() {
-		stateStack.add(state)
+		@Suppress("UNCHECKED_CAST")
+		return token as Token
 	}
 
 
 	override fun terminate() {
-		assertNotClosed()
+		ensureNotClosed()
 		val nextToken = nextToken
 
 		close()
@@ -629,28 +717,110 @@ internal class StandardReader(private val source: TextInput) : JSONReader {
 	}
 
 
-	private fun unexpectedCharacter(character: Int, expected: String, characterIndex: Int = source.sourceIndex) =
-		JSONException.unexpectedCharacter(character, expected = expected, characterIndex = characterIndex)
-
-
+	@Suppress("SameParameterValue")
 	private fun unreadToken(token: JSONToken) {
 		peekedToken = token
 		peekedTokenIndex = source.sourceIndex
 	}
 
 
-	private enum class State {
+	private fun willReadValue() {
+		check(!state.isInValueIsolation || !state.hasReadIsolatedValue) { "Cannot read more than one value in the current value isolation context" }
+	}
 
-		afterListElementSeparator,
+
+	private fun JSONException.Companion.forUnexpectedCharacter(character: Int, expected: String, characterIndex: Int = source.sourceIndex) =
+		JSONException(
+			if (characterIndex == 0 && character == JSONCharacter.end)
+				"Cannot parse empty JSON data"
+			else
+				"(UTF-16 offset $characterIndex, in $path) unexpected ${JSONCharacter.toString(character)}, expected $expected"
+		)
+
+
+	private fun JSONException.Companion.forUnexpectedToken(token: JSONToken?, expected: String, characterIndex: Int = source.sourceIndex): JSONException {
+		val tokenString = if (token != null) "'$token'" else "<end of input>"
+		return JSONException("(UTF-16 offset $characterIndex, in $path) unexpected token $tokenString, expected $expected")
+	}
+
+
+	private fun TextInput.readCharacter(required: Int) =
+		readCharacter(required) { JSONCharacter.toString(required) }
+
+
+	private inline fun TextInput.readCharacter(required: Int, crossinline expected: () -> String): Int {
+		// contract {
+		// 	callsInPlace(expected, InvocationKind.AT_MOST_ONCE)
+		// }
+
+		return readCharacter(required = { it == required }, expected = expected)
+	}
+
+
+	private inline fun TextInput.readCharacter(required: (character: Int) -> Boolean, crossinline expected: () -> String): Int {
+		// contract {
+		// 	callsInPlace(expected, InvocationKind.AT_MOST_ONCE)
+		// 	callsInPlace(required, InvocationKind.EXACTLY_ONCE)
+		// }
+
+		val character = readCharacter()
+		if (!required(character)) {
+			throw JSONException.forUnexpectedCharacter(
+				character,
+				expected = expected(),
+				characterIndex = index - 1
+			)
+		}
+
+		return character
+	}
+
+
+	private class State {
+
+		var currentValueListIndex = -1
+		var currentValueMapKey: String? = null
+		var hasReadIsolatedValue = false
+		var isInValueIsolation = false
+		var tokenLocation = TokenLocation.beforeRootValue
+
+
+		fun reset(tokenLocation: TokenLocation) {
+			this.tokenLocation = tokenLocation
+
+			currentValueListIndex = -1
+			currentValueMapKey = null
+			hasReadIsolatedValue = false
+			isInValueIsolation = false
+		}
+
+
+		fun toPathElement(): JSONPath.Element? {
+			if (currentValueListIndex >= 0) return JSONPath.Element.ListIndex(currentValueListIndex)
+			currentValueMapKey?.let { return JSONPath.Element.MapKey(it) }
+
+			return null
+		}
+	}
+
+
+	private enum class TokenLocation(
+		val afterValue: TokenLocation? = null
+	) {
+
 		afterListElement,
-		afterListStart,
+		afterListElementSeparator(afterValue = afterListElement),
+		afterListStart(afterValue = afterListElement),
 		afterMapElement,
-		afterMapElementSeparator,
 		afterMapKey,
-		afterMapKeySeparator,
-		afterMapStart,
-		closed,
-		end,
-		initial,
+		afterMapElementSeparator(afterValue = afterMapKey),
+		afterMapKeySeparator(afterValue = afterMapElement),
+		afterMapStart(afterValue = afterMapKey),
+		afterRootValue,
+		beforeRootValue(afterValue = afterRootValue);
+
+
+		val isBeforeValue
+			get() = (afterValue != null)
 	}
 }

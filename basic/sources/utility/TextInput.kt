@@ -202,36 +202,3 @@ internal fun <ReturnValue> TextInput.locked(block: () -> ReturnValue): ReturnVal
 		unlockBuffer()
 	}
 }
-
-
-internal fun TextInput.readCharacter(required: Int) =
-	readCharacter(required) { JSONCharacter.toString(required) }
-
-
-@Suppress("MemberVisibilityCanBePrivate")
-internal inline fun TextInput.readCharacter(required: Int, expected: () -> String): Int {
-	contract {
-		callsInPlace(expected, InvocationKind.AT_MOST_ONCE)
-	}
-
-	return readCharacter(required = { it == required }, expected = expected)
-}
-
-
-internal inline fun TextInput.readCharacter(required: (character: Int) -> Boolean, expected: () -> String): Int {
-	contract {
-		callsInPlace(expected, InvocationKind.AT_MOST_ONCE)
-		callsInPlace(required, InvocationKind.EXACTLY_ONCE)
-	}
-
-	val character = readCharacter()
-	if (!required(character)) {
-		throw JSONException.unexpectedCharacter(
-			character,
-			expected = expected(),
-			characterIndex = index - 1
-		)
-	}
-
-	return character
-}

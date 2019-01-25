@@ -100,7 +100,7 @@ allprojects {
 		all {
 			resolutionStrategy.eachDependency {
 				if (requested.group == "org.jetbrains.kotlin") {
-					useVersion(embeddedKotlinVersion)
+					useVersion("1.3.20")
 					because("All Kotlin modules must have the same version.")
 				}
 			}
