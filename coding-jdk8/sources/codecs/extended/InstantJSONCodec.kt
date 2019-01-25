@@ -12,7 +12,7 @@ object InstantJSONCodec : AbstractJSONCodec<Instant, JSONCodingContext>() {
 				Instant.parse(raw)!!
 			}
 			catch (e: DateTimeException) {
-				throw JSONException("Cannot parse Instant value: $raw")
+				invalidValueError("date, time and time zone in ISO-8601 format expected, got '$raw'")
 			}
 		}
 

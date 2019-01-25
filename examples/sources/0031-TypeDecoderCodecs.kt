@@ -1,28 +1,19 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.AbstractJSONDecoderCodec
-import com.github.fluidsonic.fluid.json.JSONCodingContext
-import com.github.fluidsonic.fluid.json.JSONCodingParser
-import com.github.fluidsonic.fluid.json.JSONCodingType
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.parseValueOfType
-import com.github.fluidsonic.fluid.json.readFromMapByElementValue
-import com.github.fluidsonic.fluid.json.readValueOfType
+import com.github.fluidsonic.fluid.json.*
+import examples.DecodingExample.Event
+import examples.DecodingExample.EventCodec
 import java.time.Instant
 
 
-object DecodingExample {
+fun main() {
+	// Using a codec for decoding specific classes simplifies JSON parsing a lot
 
-	@JvmStatic
-	fun main() {
-		// Using a codec for decoding specific classes simplifies JSON parsing a lot
+	val parser = JSONCodingParser.builder()
+		.decodingWith(EventCodec)
+		.build()
 
-		val parser = JSONCodingParser.builder()
-			.decodingWith(EventCodec)
-			.build()
-
-		val json = parser.parseValueOfType<List<Event>>("""
+	val events = parser.parseValueOfType<List<Event>>("""
 			[
 			   {
 			      "id":1,
@@ -56,18 +47,20 @@ object DecodingExample {
 			]
 		""")
 
-		println(json)
-	}
+	println(events)
+}
 
 
-	private data class Event(
+private object DecodingExample {
+
+	data class Event(
 		val id: Int,
 		val date: Instant? = null,
 		val title: String
 	)
 
 
-	private object EventCodec : AbstractJSONDecoderCodec<Event, JSONCodingContext>() {
+	object EventCodec : AbstractJSONDecoderCodec<Event, JSONCodingContext>() {
 
 		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Event>): Event {
 			var id: Int? = null
@@ -84,9 +77,9 @@ object DecodingExample {
 			}
 
 			return Event(
-				id = id ?: throw JSONException("missing id"),
+				id = id ?: missingPropertyError("id"),
 				date = date,
-				title = title ?: throw JSONException("missing title")
+				title = title ?: missingPropertyError("title")
 			)
 		}
 	}

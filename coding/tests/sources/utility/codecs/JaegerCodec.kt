@@ -1,14 +1,6 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.AbstractJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCodingType
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.readFromMapByElementValue
-import com.github.fluidsonic.fluid.json.readValueOfType
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeMapElement
+import com.github.fluidsonic.fluid.json.*
 import tests.coding.Jaeger.Status
 
 
@@ -39,13 +31,13 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 		}
 
 		return Jaeger(
-			height = height ?: throw JSONException("height missing"),
-			launchDate = launchDate ?: throw JSONException("launchDate missing"),
-			mark = mark ?: throw JSONException("mark missing"),
-			name = name ?: throw JSONException("name missing"),
-			origin = origin ?: throw JSONException("origin missing"),
-			status = status ?: throw JSONException("status missing"),
-			weight = weight ?: throw JSONException("weight missing")
+			height = height ?: missingPropertyError("height"),
+			launchDate = launchDate ?: missingPropertyError("launchDate"),
+			mark = mark ?: missingPropertyError("mark"),
+			name = name ?: missingPropertyError("name"),
+			origin = origin ?: missingPropertyError("origin"),
+			status = status ?: missingPropertyError("status"),
+			weight = weight ?: missingPropertyError("weight")
 		)
 	}
 
@@ -81,7 +73,7 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 			val id = readString()
 			return when (id) {
 				"destroyed" -> Status.destroyed
-				else -> throw JSONException("Unknown status: $id")
+				else -> invalidValueError("unknown Jäger status: $id")
 			}
 		}
 

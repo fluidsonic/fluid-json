@@ -172,22 +172,6 @@ internal class StandardReaderAcceptTest {
 
 
 	@Test
-	fun testReadElementsFromMap() {
-		val map = mutableMapOf<String, Any?>()
-
-		reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").readElementsFromMap { key ->
-			map[key] = readValueOrNull()
-		}
-
-		assert(map).toBe(mapOf(
-			"key0" to true,
-			"key1" to "hey",
-			"key2" to null
-		))
-	}
-
-
-	@Test
 	fun testReadFloat() {
 		assert(reader("0").readFloat()).toBe(0.0f)
 		assert(reader("-0").readFloat()).toBe(-0.0f)

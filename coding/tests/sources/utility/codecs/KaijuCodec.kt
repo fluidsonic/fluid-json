@@ -1,14 +1,6 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.AbstractJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCodingType
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.readFromMapByElementValue
-import com.github.fluidsonic.fluid.json.readValueOfType
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeMapElement
+import com.github.fluidsonic.fluid.json.*
 import tests.coding.Kaiju.Status
 
 
@@ -39,13 +31,13 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 		}
 
 		return Kaiju(
-			breachDate = breachDate ?: throw JSONException("breachDate missing"),
-			category = category ?: throw JSONException("category missing"),
-			height = height ?: throw JSONException("height missing"),
-			name = name ?: throw JSONException("name missing"),
-			origin = origin ?: throw JSONException("origin missing"),
-			status = status ?: throw JSONException("status missing"),
-			weight = weight ?: throw JSONException("weight missing")
+			breachDate = breachDate ?: missingPropertyError("breachDate"),
+			category = category ?: missingPropertyError("category"),
+			height = height ?: missingPropertyError("height"),
+			name = name ?: missingPropertyError("name"),
+			origin = origin ?: missingPropertyError("origin"),
+			status = status ?: missingPropertyError("status"),
+			weight = weight ?: missingPropertyError("weight")
 		)
 	}
 
@@ -81,7 +73,7 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 			val id = readString()
 			return when (id) {
 				"deceased" -> Status.deceased
-				else -> throw JSONException("Unknown status: $id")
+				else -> invalidValueError("unknown Kaiju status: $id")
 			}
 		}
 

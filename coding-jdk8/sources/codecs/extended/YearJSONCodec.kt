@@ -12,7 +12,7 @@ object YearJSONCodec : AbstractJSONCodec<Year, JSONCodingContext>() {
 				Year.of(raw)!!
 			}
 			catch (e: DateTimeException) {
-				throw JSONException("Invalid Year value: $raw")
+				invalidValueError("year in ISO-8601 format expected, got '$raw'")
 			}
 		}
 

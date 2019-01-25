@@ -12,7 +12,7 @@ object OffsetDateTimeJSONCodec : AbstractJSONCodec<OffsetDateTime, JSONCodingCon
 				OffsetDateTime.parse(raw)!!
 			}
 			catch (e: DateTimeException) {
-				throw JSONException("Cannot parse OffsetDateTime value: $raw")
+				invalidValueError("date, time and time zone in ISO-8601 format expected, got '$raw'")
 			}
 		}
 

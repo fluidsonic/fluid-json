@@ -12,7 +12,7 @@ object MonthDayJSONCodec : AbstractJSONCodec<MonthDay, JSONCodingContext>() {
 				MonthDay.parse(raw)!!
 			}
 			catch (e: DateTimeException) {
-				throw JSONException("Cannot parse MonthDay value: $raw")
+				invalidValueError("date without year in ISO-8601 format expected, got '$raw'")
 			}
 		}
 

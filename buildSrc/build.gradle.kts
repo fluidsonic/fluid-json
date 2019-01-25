@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 
 plugins {
+	kotlin("jvm") version "1.3.20"
 	`kotlin-dsl`
 }
 

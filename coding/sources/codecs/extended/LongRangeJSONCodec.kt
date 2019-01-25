@@ -23,8 +23,8 @@ object LongRangeJSONCodec : AbstractJSONCodec<LongRange, JSONCodingContext>() {
 			}
 		}
 
-		if (!startProvided) throw JSONException("missing '${Fields.start}'")
-		if (!endInclusiveProvided) throw JSONException("missing '${Fields.endInclusive}'")
+		if (!startProvided) missingPropertyError(Fields.start)
+		if (!endInclusiveProvided) missingPropertyError(Fields.endInclusive)
 
 		return start .. endInclusive
 	}

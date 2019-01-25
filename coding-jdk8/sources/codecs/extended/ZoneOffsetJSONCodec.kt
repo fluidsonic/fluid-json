@@ -12,7 +12,7 @@ object ZoneOffsetJSONCodec : AbstractJSONCodec<ZoneOffset, JSONCodingContext>() 
 				ZoneOffset.of(raw)!!
 			}
 			catch (e: DateTimeException) {
-				throw JSONException("Cannot parse ZoneOffset value: $raw")
+				invalidValueError("time offset in ISO-8601 format expected, got '$raw'")
 			}
 		}
 

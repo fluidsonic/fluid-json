@@ -94,3 +94,10 @@ interface JSONEncoder<out Context : JSONCodingContext> : JSONWriter {
 		}
 	}
 }
+
+
+fun JSONEncoder<*>.serializationError(message: String): Nothing =
+	throw JSONException.Serialization(
+		message = message,
+		path = path
+	)

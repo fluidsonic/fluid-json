@@ -27,17 +27,16 @@ object ClosedRangeJSONCodec : AbstractJSONCodec<ClosedRange<*>, JSONCodingContex
 		readFromMapByElementValue { key ->
 			when (key) {
 				Fields.endInclusive -> endInclusive = readValue() as? Comparable<Any>
-					?: throw JSONException("expected comparable value for '$key'")
+					?: invalidPropertyError(key, details = "expected a comparable value")
 
 				Fields.start -> start = readValue() as? Comparable<Any>
-					?: throw JSONException("expected comparable value for '$key'")
+					?: invalidPropertyError(key, details = "expected a comparable value")
 
 				else -> skipValue()
 			}
 		}
 
-		return (start ?: throw JSONException("missing '${Fields.start}'")) ..
-			(endInclusive ?: throw JSONException("missing '${Fields.endInclusive}'"))
+		return (start ?: missingPropertyError(Fields.start)) .. (endInclusive ?: missingPropertyError(Fields.endInclusive))
 	}
 
 
@@ -65,8 +64,8 @@ object ClosedRangeJSONCodec : AbstractJSONCodec<ClosedRange<*>, JSONCodingContex
 			}
 		}
 
-		if (!startProvided) throw JSONException("missing '${Fields.start}'")
-		if (!endInclusiveProvided) throw JSONException("missing '${Fields.endInclusive}'")
+		if (!startProvided) missingPropertyError(Fields.start)
+		if (!endInclusiveProvided) missingPropertyError(Fields.endInclusive)
 
 		return start .. endInclusive
 	}
@@ -92,8 +91,8 @@ object ClosedRangeJSONCodec : AbstractJSONCodec<ClosedRange<*>, JSONCodingContex
 			}
 		}
 
-		if (!startProvided) throw JSONException("missing '${Fields.start}'")
-		if (!endInclusiveProvided) throw JSONException("missing '${Fields.endInclusive}'")
+		if (!startProvided) missingPropertyError(Fields.start)
+		if (!endInclusiveProvided) missingPropertyError(Fields.endInclusive)
 
 		return start .. endInclusive
 	}
@@ -119,8 +118,7 @@ object ClosedRangeJSONCodec : AbstractJSONCodec<ClosedRange<*>, JSONCodingContex
 			}
 		}
 
-		return (start ?: throw JSONException("missing '${Fields.start}'")) ..
-			(endInclusive ?: throw JSONException("missing '${Fields.endInclusive}'"))
+		return (start ?: missingPropertyError(Fields.start)) .. (endInclusive ?: missingPropertyError(Fields.endInclusive))
 	}
 
 

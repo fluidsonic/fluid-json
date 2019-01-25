@@ -12,7 +12,7 @@ object DurationJSONCodec : AbstractJSONCodec<Duration, JSONCodingContext>() {
 				Duration.parse(raw)!!
 			}
 			catch (e: DateTimeException) {
-				throw JSONException("Cannot parse Duration value: $raw")
+				invalidValueError("duration in ISO-8601 format expected, got '$raw'")
 			}
 		}
 

@@ -99,7 +99,12 @@ interface JSONCodingParser : JSONParser {
 
 
 fun JSONCodingParser.parseValue(source: JSONReader, withTermination: Boolean = true) =
-	parseValueOrNull(source, withTermination = withTermination) ?: throw JSONException("Unexpected null value at top-level")
+	parseValueOrNull(source, withTermination = withTermination)
+		?: throw JSONException.Schema(
+			message = "Unexpected null value at top-level",
+			offset = source.offset,
+			path = source.path
+		)
 
 
 fun JSONCodingParser.parseValue(source: Reader, withTermination: Boolean = true) =
@@ -123,7 +128,12 @@ inline fun <reified Value : Any> JSONCodingParser.parseValueOfType(source: Strin
 
 
 fun <Value : Any> JSONCodingParser.parseValueOfType(source: JSONReader, valueType: JSONCodingType<Value>, withTermination: Boolean = true) =
-	parseValueOfTypeOrNull(source, valueType = valueType, withTermination = withTermination) ?: throw JSONException("Unexpected null value at top-level")
+	parseValueOfTypeOrNull(source, valueType = valueType, withTermination = withTermination)
+		?: throw JSONException.Schema(
+			message = "Unexpected null value at top-level",
+			offset = source.offset,
+			path = source.path
+		)
 
 
 fun <Value : Any> JSONCodingParser.parseValueOfType(source: Reader, valueType: JSONCodingType<Value>, withTermination: Boolean = true) =

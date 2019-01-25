@@ -21,7 +21,7 @@ object MonthJSONCodec : AbstractJSONCodec<Month, JSONCodingContext>() {
 				"october" -> Month.OCTOBER
 				"november" -> Month.NOVEMBER
 				"december" -> Month.DECEMBER
-				else -> throw JSONException("Invalid Month value: $raw")
+				else -> invalidValueError("month name of 'january' through 'december' expected, got '$raw'")
 			}
 		}
 

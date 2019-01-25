@@ -2,7 +2,6 @@ package tests.basic
 
 import com.github.fluidsonic.fluid.json.*
 import org.junit.jupiter.api.Test
-import java.io.IOException
 import java.io.StringWriter
 
 
@@ -87,9 +86,6 @@ internal object StandardWriterRejectTest {
 			throw AssertionError("should fail with a JSONException")
 		}
 		catch (e: JSONException) {
-			// good
-		}
-		catch (e: IOException) {
 			// good
 		}
 	}

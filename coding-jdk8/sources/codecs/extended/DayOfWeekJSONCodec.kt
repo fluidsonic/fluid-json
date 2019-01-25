@@ -16,7 +16,7 @@ object DayOfWeekJSONCodec : AbstractJSONCodec<DayOfWeek, JSONCodingContext>() {
 				"friday" -> DayOfWeek.FRIDAY
 				"saturday" -> DayOfWeek.SATURDAY
 				"sunday" -> DayOfWeek.SUNDAY
-				else -> throw  JSONException("Invalid DayOfWeek value: $raw")
+				else -> invalidValueError("weekday name of 'monday' through 'sunday' expected, got '$raw'")
 			}
 		}
 

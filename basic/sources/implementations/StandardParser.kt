@@ -30,8 +30,20 @@ internal object StandardParser : JSONParser {
 
 		when (expectedType) {
 			ExpectedType.any -> Unit
-			ExpectedType.list -> source.nextToken == JSONToken.listStart || throw JSONException("expected a list, got ${source.nextToken}")
-			ExpectedType.map -> source.nextToken == JSONToken.mapStart || throw JSONException("expected a map, got ${source.nextToken}")
+
+			ExpectedType.list -> source.nextToken == JSONToken.listStart ||
+				throw JSONException.Schema(
+					message = "Expected a list, got ${source.nextToken}",
+					offset = source.offset,
+					path = source.path
+				)
+
+			ExpectedType.map -> source.nextToken == JSONToken.mapStart ||
+				throw JSONException.Schema(
+					message = "Expected a map, got ${source.nextToken}",
+					offset = source.offset,
+					path = source.path
+				)
 		}
 
 		loop@ while (true) {

@@ -168,7 +168,7 @@ internal object JSONCharacter {
 		when {
 			character == end -> "end of input"
 			isControl(character) -> "control character $character"
-			else -> """'${Character.toString(character.toChar())}'"""
+			else -> "character '${Character.toString(character.toChar())}'"
 		}
 
 

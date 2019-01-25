@@ -12,7 +12,7 @@ object ZoneIdJSONCodec : AbstractJSONCodec<ZoneId, JSONCodingContext>() {
 				ZoneId.of(raw)!!
 			}
 			catch (e: DateTimeException) {
-				throw JSONException("Cannot parse ZoneId value: $raw")
+				invalidValueError("IANA time zone name expected, got '$raw'")
 			}
 		}
 

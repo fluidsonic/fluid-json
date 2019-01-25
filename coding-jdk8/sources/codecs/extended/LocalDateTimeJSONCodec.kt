@@ -12,7 +12,7 @@ object LocalDateTimeJSONCodec : AbstractJSONCodec<LocalDateTime, JSONCodingConte
 				LocalDateTime.parse(raw)!!
 			}
 			catch (e: DateTimeException) {
-				throw JSONException("Cannot parse LocalDateTime value: $raw")
+				invalidValueError("date and time in ISO-8601 format expected, got '$raw'")
 			}
 		}
 

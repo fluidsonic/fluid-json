@@ -12,7 +12,7 @@ object ZonedDateTimeJSONCodec : AbstractJSONCodec<ZonedDateTime, JSONCodingConte
 				ZonedDateTime.parse(raw)!!
 			}
 			catch (e: DateTimeException) {
-				throw JSONException("Cannot parse ZonedDateTime value: $raw")
+				invalidValueError("date, time and time zone in ISO-8601 format expected, got '$raw'")
 			}
 		}
 

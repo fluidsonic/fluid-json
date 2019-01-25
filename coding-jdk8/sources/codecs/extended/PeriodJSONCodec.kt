@@ -12,7 +12,7 @@ object PeriodJSONCodec : AbstractJSONCodec<Period, JSONCodingContext>() {
 				Period.parse(raw)!!
 			}
 			catch (e: DateTimeException) {
-				throw JSONException("Cannot parse Period value: $raw")
+				invalidValueError("period in ISO-8601 format expected, got '$raw'")
 			}
 		}
 

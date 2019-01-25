@@ -16,6 +16,10 @@ internal object StandardSerializer : JSONSerializer {
 		val isInMapStack = mutableListOf<Boolean>()
 		var isInMapElementValue = false
 
+		fun serializationError(message: String): Nothing =
+			throw JSONException.Serialization(message = message, path = destination.path)
+
+
 		loop@ do {
 			if (!isInMapElementValue && currentIterator != null) {
 				if (currentIterator.hasNext()) {
@@ -70,13 +74,13 @@ internal object StandardSerializer : JSONSerializer {
 				is Double ->
 					when {
 						currentValue.isFinite() -> destination.writeDouble(currentValue)
-						else -> throw JSONException("Cannot serialize double value '$currentValue'")
+						else -> serializationError("Cannot serialize double value '$currentValue'")
 					}
 
 				is Float ->
 					when {
 						currentValue.isFinite() -> destination.writeFloat(currentValue)
-						else -> throw JSONException("Cannot serialize float value '$currentValue'")
+						else -> serializationError("Cannot serialize float value '$currentValue'")
 					}
 
 				is Int ->
@@ -120,7 +124,7 @@ internal object StandardSerializer : JSONSerializer {
 						val (elementKey, elementValue) = currentValue
 						when (elementKey) {
 							is String -> destination.writeMapKey(elementKey)
-							else -> throw JSONException("Cannot serialize non-String key of ${currentValue::class}: $currentValue")
+							else -> serializationError("Cannot serialize non-String key of ${currentValue::class}: $currentValue")
 						}
 
 						currentValue = elementValue
@@ -128,13 +132,13 @@ internal object StandardSerializer : JSONSerializer {
 						continue@loop
 					}
 					else
-						throw JSONException("Cannot serialize value of ${currentValue::class}: $currentValue")
+						serializationError("Cannot serialize value of ${currentValue::class}: $currentValue")
 
 				is Number -> // after subclasses
 					destination.writeNumber(currentValue)
 
 				else ->
-					throw JSONException("Cannot serialize value of ${currentValue::class}: $currentValue")
+					serializationError("Cannot serialize value of ${currentValue::class}: $currentValue")
 			}
 
 			isInMapElementValue = false

@@ -1,46 +1,41 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.AbstractJSONEncoderCodec
-import com.github.fluidsonic.fluid.json.JSONCodingContext
-import com.github.fluidsonic.fluid.json.JSONCodingSerializer
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.serializeValue
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeMapElement
+import com.github.fluidsonic.fluid.json.*
+import examples.EncodingExample.Event
+import examples.EncodingExample.EventCodec
 import java.time.Instant
 
 
-object EncodingExample {
+fun main() {
+	// Using a codec for encoding specific Kotlin types simplifies JSON serialization a lot
 
-	@JvmStatic
-	fun main() {
-		// Using a codec for encoding specific Kotlin types simplifies JSON serialization a lot
+	val serializer = JSONCodingSerializer.builder()
+		.encodingWith(EventCodec)
+		.build()
 
-		val serializer = JSONCodingSerializer.builder()
-			.encodingWith(EventCodec)
-			.build()
+	val json = serializer.serializeValue(listOf(
+		Event(id = 1, date = Instant.ofEpochSecond(1000000000), title = "One"),
+		Event(id = 2, date = Instant.ofEpochSecond(2000000000), title = "Two"),
+		Event(id = 3, date = Instant.ofEpochSecond(3000000000), title = "Three"),
+		Event(id = 4, date = Instant.ofEpochSecond(4000000000), title = "Four"),
+		Event(id = 5, date = Instant.ofEpochSecond(5000000000), title = "Five"),
+		Event(id = 6, title = "Six")
+	))
 
-		val json = serializer.serializeValue(listOf(
-			Event(id = 1, date = Instant.ofEpochSecond(1000000000), title = "One"),
-			Event(id = 2, date = Instant.ofEpochSecond(2000000000), title = "Two"),
-			Event(id = 3, date = Instant.ofEpochSecond(3000000000), title = "Three"),
-			Event(id = 4, date = Instant.ofEpochSecond(4000000000), title = "Four"),
-			Event(id = 5, date = Instant.ofEpochSecond(5000000000), title = "Five"),
-			Event(id = 6, title = "Six")
-		))
-
-		println(json)
-	}
+	println(json)
+}
 
 
-	private data class Event(
+private object EncodingExample {
+
+	data class Event(
 		val id: Int,
 		val date: Instant? = null,
 		val title: String
 	)
 
 
-	private object EventCodec : AbstractJSONEncoderCodec<Event, JSONCodingContext>() {
+	object EventCodec : AbstractJSONEncoderCodec<Event, JSONCodingContext>() {
 
 		override fun JSONEncoder<JSONCodingContext>.encode(value: Event) {
 			writeIntoMap {

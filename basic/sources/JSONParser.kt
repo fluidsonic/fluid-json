@@ -16,7 +16,11 @@ interface JSONParser {
 	private inline fun <reified ReturnValue> parseValueAsType(source: JSONReader, withTermination: Boolean): ReturnValue {
 		val value = parseValueOrNull(source, withTermination = withTermination)
 		return value as? ReturnValue
-			?: throw JSONException("cannot parse ${ReturnValue::class}, got " + value?.let { "${value::class}: $value" })
+			?: throw JSONException.Schema(
+				message = "Cannot parse ${ReturnValue::class}, got " + value?.let { "${value::class}: $value" },
+				offset = source.offset,
+				path = source.path
+			)
 	}
 
 
@@ -47,7 +51,7 @@ fun JSONParser.parseMap(source: String) =
 
 
 fun JSONParser.parseValue(source: JSONReader, withTermination: Boolean = true) =
-	parseValueOrNull(source, withTermination = withTermination) ?: throw JSONException("Unexpected null value at top-level")
+	parseValueOrNull(source, withTermination = withTermination) ?: throw JSONException.Schema("Unexpected null value at top-level")
 
 
 fun JSONParser.parseValue(source: Reader, withTermination: Boolean = true) =

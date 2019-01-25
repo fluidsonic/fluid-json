@@ -2,227 +2,343 @@ package com.github.fluidsonic.fluid.json
 
 import java.io.Closeable
 import java.io.Flushable
-import java.io.IOException
 import java.io.Writer
 
 
 internal class StandardWriter(private val destination: Writer)
 	: JSONWriter, Closeable, Flushable by destination {
 
-	private var state = State.initial
-	private val stateStack = mutableListOf<State>()
+	private var isClosed = false
+	private var state = State()
+	private val stateCache: MutableList<State> = mutableListOf()
+	private val stateStack: MutableList<State> = mutableListOf(state)
 
 	override var isErrored = false
 		private set
 
 
 	override fun close() {
-		if (state == State.closed) return
+		if (isClosed) return
 
-		state = State.closed
+		isClosed = true
 		destination.close()
 	}
 
 
+	override fun beginValueIsolation(): JSONDepth {
+		ensureNotClosed()
+
+		valueIsolationCheck(state.tokenLocation != TokenLocation.afterRootValue) { "the root value has already been written" }
+		valueIsolationCheck(!state.isInValueIsolation || !state.hasWrittenIsolatedValue) { "cannot begin before previous one has ended" }
+
+		state.valueIsolationCount += 1
+
+		return depth
+	}
+
+
+	override val depth
+		get() = JSONDepth(stateStack.size - 1)
+
+
+	private fun didWriteValue() {
+		state.tokenLocation = state.tokenLocation.afterValue
+			?: serializationError("Internal inconsistency: unexpected token location '${state.tokenLocation}' after writing value")
+
+		@Suppress("NON_EXHAUSTIVE_WHEN")
+		when (state.tokenLocation) {
+			TokenLocation.afterListElement ->
+				state.currentValueListIndex += 1
+
+			TokenLocation.afterMapElement ->
+				state.currentValueMapKey = null
+		}
+
+		if (state.isInValueIsolation) {
+			state.hasWrittenIsolatedValue = true
+		}
+	}
+
+
+	override fun endValueIsolation(depth: JSONDepth) {
+		ensureNotClosed()
+
+		valueIsolationCheck(depth <= this.depth) { "lists or maps have been ended prematurely" }
+		valueIsolationCheck(this.depth <= depth) { "lists or maps have not been ended properly" }
+		valueIsolationCheck(isInValueIsolation) { "cannot end isolation - it either hasn't begun or been ended already" }
+		valueIsolationCheck(state.hasWrittenIsolatedValue) { "exactly one value has been expected but none was written" }
+
+		val valueIsolationCount = state.valueIsolationCount - 1
+		state.valueIsolationCount = valueIsolationCount
+
+		if (valueIsolationCount == 0) {
+			state.hasWrittenIsolatedValue = false
+		}
+	}
+
+
+	private fun ensureNotClosed() {
+		serializationCheck(!isClosed) { "Cannot operate on a closed JSONWriter" }
+	}
+
+
+	override val isInValueIsolation
+		get() = state.isInValueIsolation
+
+
 	override fun markAsErrored() {
-		if (state == State.closed) return
+		if (isClosed) return
 
 		isErrored = true
 	}
 
 
-	private fun startValue(isString: Boolean) {
-		when (state) {
-			State.afterListElement ->
-				destination.write(JSONCharacter.Symbol.comma)
+	override val path: JSONPath
+		get() {
+			if (isClosed) return JSONPath.root
 
-			State.afterListStart ->
-				state = State.afterListElement
+			return when (state.tokenLocation) {
+				TokenLocation.afterRootValue,
+				TokenLocation.beforeRootValue ->
+					JSONPath.root
 
-			State.afterMapElement ->
-				if (isString) {
-					destination.write(JSONCharacter.Symbol.comma)
-					state = State.afterMapKey
-				}
-				else {
-					throw JSONException("Expected a string as map key")
-				}
-
-			State.afterMapKey -> {
-				destination.write(JSONCharacter.Symbol.colon)
-				state = State.afterMapElement
+				else ->
+					JSONPath(elements = stateStack.mapNotNull { it.toPathElement() })
 			}
+		}
 
-			State.afterMapStart ->
-				if (isString) {
-					state = State.afterMapKey
-				}
-				else {
-					throw JSONException("Expected a string as map key")
-				}
 
-			State.closed ->
-				throw IOException("Cannot operate on a closed writer")
+	private fun popState() {
+		valueIsolationCheck(!state.isInValueIsolation || state.hasWrittenIsolatedValue) { "cannot end a list or map since a value is still being expected" }
+		valueIsolationCheck(!state.isInValueIsolation || !state.hasWrittenIsolatedValue) { "list or map is being ended prematurely" }
 
-			State.end ->
-				throw JSONException("Cannot write more than one value a the JSON root")
+		stateCache += stateStack.removeAt(stateStack.size - 1)
+		state = stateStack.last()
+	}
 
-			State.initial ->
-				state = State.end
+
+	private fun pushState(tokenLocation: TokenLocation) {
+		serializationCheck(tokenLocation.isBeforeValue) { "Internal inconsistency: cannot push state except at the beginning of a value" }
+
+		val newState = if (stateCache.isNotEmpty()) stateCache.removeAt(stateCache.size - 1) else State()
+		newState.reset(tokenLocation = tokenLocation)
+
+		state = newState
+		stateStack += newState
+	}
+
+
+	private inline fun serializationCheck(value: Boolean, lazyMessage: () -> String) {
+		// contract {
+		//  returns() implies value
+		// }
+
+		if (!value) serializationError(lazyMessage())
+	}
+
+
+	private fun serializationError(message: String): Nothing =
+		throw JSONException.Serialization(message = message, path = path)
+
+
+	override fun terminate() {
+		ensureNotClosed()
+		close()
+
+		withErrorChecking {
+			if (state.tokenLocation != TokenLocation.afterRootValue)
+				serializationError("JSONWriter was terminated without writing a complete value")
 		}
 	}
 
 
-	override fun terminate() {
-		val state = state
-		if (state == State.closed)
-			throw IOException("Cannot operate on a closed writer")
+	private inline fun valueIsolationCheck(value: Boolean, lazyMessage: () -> String) {
+		// contract {
+		//  returns() implies value
+		// }
 
-		close()
+		if (!value) valueIsolationError(lazyMessage())
+	}
 
-		withErrorChecking {
-			if (state != State.end)
-				throw JSONException("JSONWriter was not terminated with a complete JSON value")
+
+	private fun valueIsolationError(message: String): Nothing {
+		throw JSONException.Serialization(
+			message = "Value isolation failed: $message",
+			path = path
+		)
+	}
+
+
+	private fun willWriteValue(isString: Boolean) {
+		ensureNotClosed()
+
+		valueIsolationCheck(!state.isInValueIsolation || !state.hasWrittenIsolatedValue) { "cannot write more than one value in a context where only one is expected" }
+
+		when (state.tokenLocation) {
+			TokenLocation.afterListElement ->
+				destination.write(JSONCharacter.Symbol.comma)
+
+			TokenLocation.afterListStart ->
+				Unit
+
+			TokenLocation.afterMapElement -> {
+				serializationCheck(isString) { "Expected a string as map key" }
+
+				destination.write(JSONCharacter.Symbol.comma)
+			}
+
+			TokenLocation.afterMapKey ->
+				destination.write(JSONCharacter.Symbol.colon)
+
+			TokenLocation.afterMapStart ->
+				serializationCheck(isString) { "Expected a string as map key" }
+
+			TokenLocation.afterRootValue ->
+				serializationError("Cannot write more than one value a the JSON root")
+
+			TokenLocation.beforeRootValue ->
+				Unit
 		}
 	}
 
 
 	override fun writeBoolean(value: Boolean) {
-		withErrorChecking {
-			startValue(isString = false)
-
+		writeValue(isString = false) {
 			destination.write(if (value) "true" else "false")
 		}
 	}
 
 
 	override fun writeByte(value: Byte) {
-		withErrorChecking {
-			startValue(isString = false)
-
+		writeValue(isString = false) {
 			destination.write(value.toString())
 		}
 	}
 
 
 	override fun writeDouble(value: Double) {
-		withErrorChecking {
-			startValue(isString = false)
+		serializationCheck(value.isFinite()) { "Cannot write double value '$value'" }
 
-			if (!value.isFinite()) {
-				throw JSONException("Cannot write double value '$value'")
-			}
-
+		writeValue(isString = false) {
 			destination.write(value.toString())
 		}
 	}
 
 
 	override fun writeFloat(value: Float) {
-		withErrorChecking {
-			startValue(isString = false)
+		serializationCheck(value.isFinite()) { "Cannot write float value '$value'" }
 
-			if (!value.isFinite()) {
-				throw JSONException("Cannot write float value '$value'")
-			}
-
+		writeValue(isString = false) {
 			destination.write(value.toString())
 		}
 	}
 
 
 	override fun writeInt(value: Int) {
-		withErrorChecking {
-			startValue(isString = false)
-
+		writeValue(isString = false) {
 			destination.write(value.toString())
 		}
 	}
 
 
 	override fun writeLong(value: Long) {
-		withErrorChecking {
-			startValue(isString = false)
-
+		writeValue(isString = false) {
 			destination.write(value.toString())
 		}
 	}
 
 
 	override fun writeListEnd() {
+		ensureNotClosed()
+
 		withErrorChecking {
-			when (state) {
-				State.afterListStart, State.afterListElement -> Unit
-				State.closed -> throw IOException("Cannot operate on a closed writer")
-				else -> throw JSONException("Cannot write end of list when not in a list")
+			when (state.tokenLocation) {
+				TokenLocation.afterListStart,
+				TokenLocation.afterListElement ->
+					Unit
+
+				else ->
+					serializationError("Cannot write end of list when not in a list")
 			}
 
 			destination.write(JSONCharacter.Symbol.rightSquareBracket)
-			state = stateStack.removeAt(stateStack.size - 1)
+
+			popState()
+			didWriteValue()
 		}
 	}
 
 
 	override fun writeListStart() {
 		withErrorChecking {
-			startValue(isString = false)
+			willWriteValue(isString = false)
 
 			destination.write(JSONCharacter.Symbol.leftSquareBracket)
 
-			stateStack += state
-			state = State.afterListStart
+			pushState(tokenLocation = TokenLocation.afterListStart)
+
+			state.currentValueListIndex = 0
 		}
 	}
 
 
 	override fun writeMapEnd() {
+		ensureNotClosed()
+
 		withErrorChecking {
-			when (state) {
-				State.afterMapStart, State.afterMapElement -> Unit
-				State.afterMapKey -> throw JSONException("Cannot write end of map right after a key, value expected instead")
-				State.closed -> throw IOException("Cannot operate on a closed writer")
-				else -> throw JSONException("Cannot write end of map when not in a map")
+			when (state.tokenLocation) {
+				TokenLocation.afterMapStart,
+				TokenLocation.afterMapElement ->
+					Unit
+
+				TokenLocation.afterMapKey ->
+					serializationError("Cannot write end of map right after a key, value expected instead")
+
+				else ->
+					serializationError("Cannot write end of map when not in a map")
 			}
 
 			destination.write(JSONCharacter.Symbol.rightCurlyBracket)
-			state = stateStack.removeAt(stateStack.size - 1)
+
+			popState()
+			didWriteValue()
 		}
 	}
 
 
 	override fun writeMapStart() {
 		withErrorChecking {
-			startValue(isString = false)
+			willWriteValue(isString = false)
 
 			destination.write(JSONCharacter.Symbol.leftCurlyBracket)
 
-			stateStack += state
-			state = State.afterMapStart
+			pushState(tokenLocation = TokenLocation.afterMapStart)
 		}
 	}
 
 
 	override fun writeNull() {
-		withErrorChecking {
-			startValue(isString = false)
-
+		writeValue(isString = false) {
 			destination.write("null")
 		}
 	}
 
 
 	override fun writeShort(value: Short) {
-		withErrorChecking {
-			startValue(isString = false)
-
+		writeValue(isString = false) {
 			destination.write(value.toString())
 		}
 	}
 
 
 	override fun writeString(value: String) {
-		withErrorChecking {
-			startValue(isString = true)
+		writeValue(isString = true) {
+			@Suppress("NON_EXHAUSTIVE_WHEN")
+			when (state.tokenLocation) {
+				TokenLocation.afterMapElement,
+				TokenLocation.afterMapStart ->
+					state.currentValueMapKey = value
+			}
 
 			// TODO optimize
 			destination.write(JSONCharacter.Symbol.quotationMark)
@@ -288,21 +404,80 @@ internal class StandardWriter(private val destination: Writer)
 	}
 
 
+	private inline fun writeValue(isString: Boolean, crossinline write: () -> Unit) {
+		withErrorChecking {
+			willWriteValue(isString = isString)
+			write()
+			didWriteValue()
+		}
+	}
+
+
 	private companion object {
 
 		val hexCharacters = charArrayOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F')
 	}
 
 
-	private enum class State {
+	private class State {
 
-		afterListElement,
-		afterListStart,
-		afterMapElement,
-		afterMapKey,
-		afterMapStart,
-		closed,
-		end,
-		initial
+		var currentValueListIndex = -1
+		var currentValueMapKey: String? = null
+		var hasWrittenIsolatedValue = false
+		var tokenLocation = TokenLocation.beforeRootValue
+		var valueIsolationCount = 0
+
+
+		val isInValueIsolation
+			get() = valueIsolationCount > 0
+
+
+		fun reset(tokenLocation: TokenLocation) {
+			this.tokenLocation = tokenLocation
+
+			currentValueListIndex = -1
+			currentValueMapKey = null
+			hasWrittenIsolatedValue = false
+			valueIsolationCount = 0
+		}
+
+
+		fun toPathElement(): JSONPath.Element? {
+			if (currentValueListIndex >= 0) return JSONPath.Element.ListIndex(currentValueListIndex)
+			currentValueMapKey?.let { return JSONPath.Element.MapKey(it) }
+
+			return null
+		}
+	}
+
+
+	private enum class TokenLocation {
+
+		afterListElement {
+			override val afterValue get() = afterListElement
+		},
+		afterListStart {
+			override val afterValue get() = afterListElement
+		},
+		afterMapElement {
+			override val afterValue get() = afterMapKey
+		},
+		afterMapKey {
+			override val afterValue get() = afterMapElement
+		},
+		afterMapStart {
+			override val afterValue get() = afterMapKey
+		},
+		afterRootValue,
+		beforeRootValue {
+			override val afterValue get() = afterRootValue
+		};
+
+
+		open val afterValue: TokenLocation? get() = null
+
+
+		val isBeforeValue
+			get() = (afterValue != null)
 	}
 }

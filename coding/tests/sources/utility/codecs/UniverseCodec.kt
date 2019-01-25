@@ -1,14 +1,6 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.AbstractJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCodingType
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.JSONException
-import com.github.fluidsonic.fluid.json.readFromMapByElementValue
-import com.github.fluidsonic.fluid.json.readValueOfType
-import com.github.fluidsonic.fluid.json.writeIntoMap
-import com.github.fluidsonic.fluid.json.writeMapElement
+import com.github.fluidsonic.fluid.json.*
 
 
 internal object UniverseCodec : AbstractJSONCodec<Universe, TestCoderContext>() {
@@ -26,8 +18,8 @@ internal object UniverseCodec : AbstractJSONCodec<Universe, TestCoderContext>() 
 		}
 
 		return Universe(
-			jaegers = jaegers ?: throw JSONException("jaegers missing"),
-			kaijus = kaijus ?: throw JSONException("kaijus missing")
+			jaegers = jaegers ?: missingPropertyError("jaegers"),
+			kaijus = kaijus ?: missingPropertyError("kaijus")
 		)
 	}
 

@@ -108,6 +108,26 @@ interface JSONDecoder<out Context : JSONCodingContext> : JSONReader {
 }
 
 
+fun JSONDecoder<*>.invalidPropertyError(property: String, details: String): Nothing =
+	schemaError("Invalid value for property '$property': $details")
+
+
+fun JSONDecoder<*>.invalidValueError(details: String): Nothing =
+	schemaError("Invalid value: $details")
+
+
+fun JSONDecoder<*>.missingPropertyError(property: String): Nothing =
+	schemaError("Missing value for property '$property'")
+
+
+fun JSONDecoder<*>.parsingError(message: String): Nothing =
+	throw JSONException.Parsing(
+		message = message,
+		offset = offset,
+		path = path
+	)
+
+
 fun JSONDecoder<*>.readValueOrNull() =
 	if (nextToken != JSONToken.nullValue) readValue() else readNull()
 
@@ -121,4 +141,12 @@ inline fun <reified Value : Any> JSONDecoder<*>.readValueOfTypeOrNull() =
 
 
 fun <Value : Any> JSONDecoder<*>.readValueOfTypeOrNull(valueType: JSONCodingType<Value>) =
-	if (nextToken != JSONToken.nullValue) readValueOfType(valueType) else readNull()
+	readOrNull { readValueOfType(valueType) }
+
+
+fun JSONDecoder<*>.schemaError(message: String): Nothing =
+	throw JSONException.Schema(
+		message = message,
+		offset = offset,
+		path = path
+	)

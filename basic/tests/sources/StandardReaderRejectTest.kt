@@ -2,7 +2,6 @@ package tests.basic
 
 import com.github.fluidsonic.fluid.json.*
 import org.junit.jupiter.api.Test
-import java.io.IOException
 import java.io.StringReader
 
 
@@ -194,30 +193,6 @@ internal object StandardReaderRejectTest {
 
 
 	@Test
-	fun testReadElementsFromMap() {
-		readerShouldFail("") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"x") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"x\"") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"x\":") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"x\":1") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"x\":1,") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{true \"key\": 1}") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"key\" true: 1}") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"key\": 1 true}") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"key\"::1}") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"key\":1:}") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"key\":1,}") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{,\"key\":1}") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{\"key0\":0,,\"key1\":1}") { readElementsFromMap { skipValue() } }
-		readerShouldFail("null") { readElementsFromMap { skipValue() } }
-		readerShouldFail("{}") { readElementsFromMap { skipValue() }; readElementsFromMap { skipValue() } }
-		readerShouldFail("{}") { close(); readElementsFromMap { skipValue() } }
-	}
-
-
-	@Test
 	fun testReadFloat() {
 		readerShouldFail("") { readFloat() }
 		readerShouldFail("0b0") { readFloat() }
@@ -291,6 +266,30 @@ internal object StandardReaderRejectTest {
 		readerShouldFail("null") { readFromList {} }
 		readerShouldFail("[]") { readFromList {}; readFromList {} }
 		readerShouldFail("[]") { close(); readFromList {} }
+	}
+
+
+	@Test
+	fun testReadFromMapByElementValue() {
+		readerShouldFail("") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"x") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"x\"") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"x\":") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"x\":1") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"x\":1,") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{true \"key\": 1}") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"key\" true: 1}") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"key\": 1 true}") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"key\"::1}") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"key\":1:}") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"key\":1,}") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{,\"key\":1}") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{\"key0\":0,,\"key1\":1}") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("null") { readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{}") { readFromMapByElementValue { skipValue() }; readFromMapByElementValue { skipValue() } }
+		readerShouldFail("{}") { close(); readFromMapByElementValue { skipValue() } }
 	}
 
 
@@ -813,13 +812,13 @@ internal object StandardReaderRejectTest {
 	private inline fun readerShouldFail(string: String, block: JSONReader.() -> Unit) {
 		try {
 			StandardReader(TextInput(StringReader(string))).block()
-			throw AssertionError("should fail with a JSONException")
+			throw AssertionError("should fail with a JSONException for JSON: $string")
 		}
 		catch (e: JSONException) {
 			// good
 		}
-		catch (e: IOException) {
-			// good
+		catch (e: Throwable) {
+			throw AssertionError("should fail with a JSONException for JSON: $string", e)
 		}
 	}
 }

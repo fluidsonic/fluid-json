@@ -5,7 +5,6 @@ import ch.tutteli.atrium.api.cc.en_GB.toBe
 import ch.tutteli.atrium.verbs.assert
 import com.github.fluidsonic.fluid.json.*
 import org.junit.jupiter.api.Test
-import java.io.IOException
 import java.io.StringWriter
 
 
@@ -30,7 +29,7 @@ internal object JSONWriterTest {
 			writer.withErrorChecking { }
 			throw AssertionError(".withErrorChecking() throw when errored")
 		}
-		catch (e: IOException) {
+		catch (e: JSONException) {
 			assert(writer.isErrored).toBe(true)
 		}
 	}

@@ -1,17 +1,83 @@
 package com.github.fluidsonic.fluid.json
 
 
-class JSONException(message: String, cause: Throwable? = null) : RuntimeException(message, cause) {
+abstract class JSONException(
+	message: String,
+	val offset: Int = -1,
+	val path: JSONPath? = null,
+	cause: Throwable? = null
+) : RuntimeException(message, cause) {
+
+	override val message // FIXME on CTOR if path stays val
+		get() = buildMessage(
+			message = super.message ?: "",
+			offset = offset,
+			path = path
+		)
+
 
 	companion object {
 
-		internal fun unexpectedCharacter(character: Int, expected: String, characterIndex: Int) =
-			JSONException("(UTF-16 offset $characterIndex) unexpected ${JSONCharacter.toString(character)}, expected $expected")
+		private fun buildMessage(
+			message: String,
+			offset: Int,
+			path: JSONPath?
+		) = buildString {
+			if (path != null) {
+				append("at ")
+				append(path.toString())
+				append(": ")
+			}
 
+			append(message)
 
-		internal fun unexpectedToken(token: JSONToken?, expected: String, characterIndex: Int): JSONException {
-			val tokenString = if (token != null) "'$token'" else "<end of input>"
-			return JSONException("(UTF-16 offset $characterIndex) unexpected token $tokenString, expected $expected")
+			if (offset >= 0) {
+				append(" - at position ")
+				append(offset)
+			}
 		}
+	}
+
+
+	class Parsing(
+		message: String,
+		offset: Int = -1,
+		path: JSONPath? = null,
+		cause: Throwable? = null
+	) : JSONException(message = message, offset = offset, path = path, cause = cause) {
+
+		companion object
+	}
+
+
+	class Schema(
+		message: String,
+		offset: Int = -1,
+		path: JSONPath? = null,
+		cause: Throwable? = null
+	) : JSONException(message = message, offset = offset, path = path, cause = cause) {
+
+		companion object
+	}
+
+
+	class Serialization(
+		message: String,
+		path: JSONPath? = null,
+		cause: Throwable? = null
+	) : JSONException(message = message, path = path, cause = cause) {
+
+		companion object
+	}
+
+
+	class Syntax(
+		message: String,
+		offset: Int = -1,
+		path: JSONPath? = null,
+		cause: Throwable? = null
+	) : JSONException(message = message, offset = offset, path = path, cause = cause) {
+
+		companion object
 	}
 }
