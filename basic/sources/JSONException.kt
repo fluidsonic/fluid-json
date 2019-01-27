@@ -8,7 +8,7 @@ abstract class JSONException(
 	cause: Throwable? = null
 ) : RuntimeException(message, cause) {
 
-	override val message // FIXME on CTOR if path stays val
+	override val message
 		get() = buildMessage(
 			message = super.message ?: "",
 			offset = offset,
