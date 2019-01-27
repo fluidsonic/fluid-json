@@ -16,6 +16,7 @@ Table of Contents
 - [Installation](#installation)
 - [Examples](#examples)
 - [Usage](#usage)
+- [Error Handling](#error-handling)
 - [Ktor Client](#ktor-client)
 - [Testing](#testing)
 - [Type Mapping](#type-mapping)
@@ -247,15 +248,6 @@ streaming-based encoding and decoding using `JSONEncoder` and `JSONDecoder`.
 [Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0033-CodingAsStream.kt)
 
 
-### Error Handling
-
-Errors occuring during I/O operations in the underlying `Reader` or `Writer` cause an `IOException`.  
-Errors occuring due to unsupported or mismatching types, malformed JSON or misused API cause a `JSONException`.
-
-Since in Kotlin every method can throw any kind of exception it's recommended to simply catch `Exception` when encoding or decoding JSON - unless handling
-errors explicitly is not needed in your use-case. This is especially important if you parse JSON data from an unsafe source like a public API.
-
-
 ### Thread Safety
 
 All implementations of `JSONParser`, `JSONSerializer`, `JSONCodecProvider` as well as all codecs provided by this library are thread-safe and can be used from
@@ -263,6 +255,26 @@ multiple threads without synchronization. It's strongly advised, though not requ
 
 All other classes and interfaces are not thread-safe and must be used with approriate synchronization in place. It's recommended however to simply use a
 separate instance per thread and not share these mutable instances at all.
+
+
+
+Error Handling
+--------------
+
+Errors occuring during I/O operations in the underlying `Reader` or `Writer` cause an `IOException`.  
+Errors occuring due to unsupported or mismatching types, malformed JSON or misused API cause a subclass of `JSONException` being thrown.
+
+Since in Kotlin every method can throw any kind of exception it's recommended to simply catch `Exception` when encoding or decoding JSON - unless handling
+errors explicitly is not needed in your use-case. This is especially important if you parse JSON data from an unsafe source like a public API.
+
+### Default `JSONException` subclasses
+
+| Exception                     | Usage
+| ----------------------------- | -----
+| `JSONException.Parsing`       | Thrown when a `JSONReader` was used improperly, i.e. it's a development error.
+| `JSONException.Serialization` | Thrown when a `JSONWriter` is used inproperly, e.g. if it would result in malformed JSON.
+| `JSONException.Schema`        | Thrown when a `JSONReader` or `JSONDecoder` reads data in an unexpected format, i.e. them schema of the JSON data is wrong.
+| `JSONException.Syntax`        | Thrown when a `JSONReader` reads data which is not properly formatted JSON.
 
 
 
@@ -304,9 +316,9 @@ Testing
 This library is tested automatically using [extensive](https://github.com/fluidsonic/fluid-json/tree/master/basic/tests/sources)
 [unit](https://github.com/fluidsonic/fluid-json/tree/master/coding/tests/sources)
 [tests](https://github.com/fluidsonic/fluid-json/tree/master/coding-jdk8/tests/sources). Some parser tests are imported directly from
-[JSONTestSuite](https://github.com/nst/JSONTestSuite) (kudos to [Nicolas Seriot](https://github.com/nst) for that).
+[JSONTestSuite](https://github.com/nst/JSONTestSuite) (kudos to [Nicolas Seriot](https://github.com/nst) for that suite).
 
-You can run the tests manually using `Test` run configuration in IntelliJ IDEA or from the command line by using:
+You can run the tests manually using `Tests` run configuration in IntelliJ IDEA or from the command line by using:
 
 ```bash
 ./gradlew check
@@ -457,7 +469,7 @@ non-basic types.
 | `JSONDecoderCodec`         | Interface for decoding a value of a specific Kotlin type using a `JSONDecoder`.
 | `JSONEncoder`              | Interface which extends `JSONWriter` to enable writing values of any Kotlin type as JSON using `JSONCodecProvider`s for type mapping.
 | `JSONEncoderCodec`         | Interface for encoding a value of a specific Kotlin type using a `JSONEncoder`.
-| `JSONException`            | Exception which is thrown whenever JSON cannot be written or read for non-IO reasons (e.g. malformed JSON, wrong state in reader/writer, missing type mapping).
+| `JSONException`            | Exception base class which is thrown whenever JSON cannot be written or read for non-IO reasons (e.g. malformed JSON, wrong state in reader/writer, missing type mapping).
 | `JSONParser`               | Interface for high-level reusable JSON parsers which support only basic types.
 | `JSONReader`               | Interface for low-level JSON parsing on a token-by-token basis.
 | `JSONSerializer`           | Interface for high-level reusable JSON serializers which support only basic types.
@@ -480,8 +492,6 @@ This is on the backlog for later consideration, in no specific order:
 - [Improve performance by operating on `InputStream`/`OutputStream`](https://github.com/fluidsonic/fluid-json/issues/9)
 - [Add standard decoders for array types](https://github.com/fluidsonic/fluid-json/issues/23)
 - [Add a codec for enums](https://github.com/fluidsonic/fluid-json/issues/24)
-- [Wrap (some) other throwables in JSONException](https://github.com/fluidsonic/fluid-json/issues/25)
-- [Ensure that codecs operate solely on value boundaries](https://github.com/fluidsonic/fluid-json/issues/26)
 
 
 
