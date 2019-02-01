@@ -1,7 +1,5 @@
-description = "A JSON library written in pure Kotlin (basic variant)"
+import com.github.fluidsonic.fluid.library.*
 
-configurePublishing()
-
-dependencies {
-	testImplementation(kotlin("reflect"))
+fluidLibraryVariant {
+	description = "A JSON library written in pure Kotlin (basic variant)"
 }

@@ -1,6 +1,8 @@
-description = "A JSON library written in pure Kotlin (Ktor Client extension)"
+import com.github.fluidsonic.fluid.library.*
 
-configurePublishing()
+fluidLibraryVariant {
+	description = "A JSON library written in pure Kotlin (Ktor Client extension)"
+}
 
 dependencies {
 	api(project(":fluid-json-coding"))

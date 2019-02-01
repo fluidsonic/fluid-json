@@ -1,3 +1,10 @@
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+		maven("https://dl.bintray.com/fluidsonic/maven")
+	}
+}
+
 rootProject.name = "fluid-json"
 
 include("basic", "coding", "coding-jdk8", "examples", "ktor-client")

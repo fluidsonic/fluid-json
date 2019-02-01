@@ -1,7 +1,9 @@
-description = "A JSON library written in pure Kotlin (JDK8+ coding extension)"
+import com.github.fluidsonic.fluid.library.*
 
-configureJDK8()
-configurePublishing()
+fluidLibraryVariant {
+	description = "A JSON library written in pure Kotlin (JDK8+ coding extension)"
+	jdk = JDK.v1_8
+}
 
 dependencies {
 	api(project(":fluid-json-coding"))
