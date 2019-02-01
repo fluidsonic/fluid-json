@@ -498,4 +498,4 @@ This is on the backlog for later consideration, in no specific order:
 License
 -------
 
-MIT
+Apache 2.0
