@@ -3,23 +3,23 @@ package com.github.fluidsonic.fluid.json
 import kotlin.reflect.KClass
 
 
-interface JSONDecoderCodec<Value : Any, in Context : JSONCodingContext> : JSONCodecProvider<Context> {
+interface JSONDecoderCodec<out Value : Any, in Context : JSONCodingContext> : JSONCodecProvider<Context> {
 
-	val decodableType: JSONCodingType<Value>
+	val decodableType: JSONCodingType<out Value>
 
 
 	fun JSONDecoder<Context>.decode(valueType: JSONCodingType<in Value>): Value
 
 
 	@Suppress("UNCHECKED_CAST")
-	override fun <Value : Any> decoderCodecForType(decodableType: JSONCodingType<in Value>): JSONDecoderCodec<out Value, Context>? =
+	override fun <ActualValue : Any> decoderCodecForType(decodableType: JSONCodingType<ActualValue>): JSONDecoderCodec<ActualValue, Context>? =
 		if (this.decodableType.satisfiesType(decodableType))
-			this as JSONDecoderCodec<out Value, Context>
+			this as JSONDecoderCodec<ActualValue, Context>
 		else
 			null
 
 
-	override fun <Value : Any> encoderCodecForClass(encodableClass: KClass<out Value>): JSONEncoderCodec<in Value, Context>? =
+	override fun <ActualValue : Any> encoderCodecForClass(encodableClass: KClass<ActualValue>): JSONEncoderCodec<ActualValue, Context>? =
 		null
 
 

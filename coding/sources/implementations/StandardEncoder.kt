@@ -7,9 +7,10 @@ internal class StandardEncoder<out Context : JSONCodingContext>(
 	private val destination: JSONWriter
 ) : JSONEncoder<Context>, JSONWriter by destination {
 
+	@Suppress("UNCHECKED_CAST")
 	override fun writeValue(value: Any) {
 		withErrorChecking {
-			codecProvider.encoderCodecForClass(value::class)
+			(codecProvider.encoderCodecForClass(value::class) as JSONEncoderCodec<Any, Context>?)
 				?.run {
 					try {
 						isolateValueWrite {

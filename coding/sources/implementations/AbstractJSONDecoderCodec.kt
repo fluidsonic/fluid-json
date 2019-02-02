@@ -14,7 +14,7 @@ abstract class AbstractJSONDecoderCodec<Value : Any, in Context : JSONCodingCont
 		?: JSONCodingType.of((this::class.java.genericSuperclass as ParameterizedType).actualTypeArguments[0]) as JSONCodingType<Value>
 
 
-	override fun <Value : Any> decoderCodecForType(decodableType: JSONCodingType<in Value>): JSONDecoderCodec<out Value, Context>? {
+	override fun <ActualValue : Any> decoderCodecForType(decodableType: JSONCodingType<ActualValue>): JSONDecoderCodec<ActualValue, Context>? {
 		var codec = super.decoderCodecForType(decodableType)
 		if (codec != null) {
 			return codec
@@ -31,7 +31,7 @@ abstract class AbstractJSONDecoderCodec<Value : Any, in Context : JSONCodingCont
 	}
 
 
-	override fun <Value : Any> encoderCodecForClass(encodableClass: KClass<out Value>): JSONEncoderCodec<in Value, Context>? {
+	override fun <ActualValue : Any> encoderCodecForClass(encodableClass: KClass<ActualValue>): JSONEncoderCodec<ActualValue, Context>? {
 		for (provider in additionalProviders) {
 			val codec = provider.encoderCodecForClass(encodableClass)
 			if (codec != null) {

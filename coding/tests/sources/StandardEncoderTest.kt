@@ -41,11 +41,12 @@ internal object StandardEncoderTest {
 		val expectedOutput = """{"jaegers":[{"height":76.2,"launchDate":"2019-11-02","mark":5,"name":"Striker Eureka","origin":"Australia","status":"destroyed","weight":1850.0}],"kaijus":[{"breachDate":"2025-01-12","category":5,"height":181.7,"name":"Slattern","origin":"Anteverse","status":"deceased","weight":6750.0}]}"""
 
 		val output = encode(
-			codecProvider = JSONCodecProvider.of(
+			codecProvider = JSONCodecProvider(
 				JaegerCodec,
 				KaijuCodec,
 				YearMonthDayCodec,
-				UniverseCodec
+				UniverseCodec,
+				JSONCodecProvider.basic
 			)
 		) {
 			writeValue(input)
@@ -74,19 +75,19 @@ internal object StandardEncoderTest {
 		val context = TestCoderContext()
 
 		encode(
-			codecProvider = JSONCodecProvider.of(ContextCheckingTestCodec(context)),
+			codecProvider = JSONCodecProvider(ContextCheckingTestCodec(context)),
 			context = context
 		) { writeValue("test") }
 
 		encode(
-			codecProvider = JSONCodecProvider.of(ContextCheckingTestEncoderCodec(context)),
+			codecProvider = JSONCodecProvider(ContextCheckingTestEncoderCodec(context)),
 			context = context
 		) { writeValue("test") }
 	}
 
 
 	private inline fun encode(
-		codecProvider: JSONCodecProvider<TestCoderContext> = JSONCodecProvider.of(),
+		codecProvider: JSONCodecProvider<TestCoderContext> = JSONCodecProvider(),
 		context: TestCoderContext = TestCoderContext(),
 		block: JSONEncoder<TestCoderContext>.() -> Unit
 	): String {

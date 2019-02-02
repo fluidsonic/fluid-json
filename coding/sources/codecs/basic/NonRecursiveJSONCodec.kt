@@ -15,11 +15,11 @@ internal abstract class NonRecursiveJSONCodec<Value : Any> private constructor(
 		get() = encoder.encodableClass
 
 
-	override fun <Value : Any> decoderCodecForType(decodableType: JSONCodingType<in Value>) =
+	override fun <ActualValue : Any> decoderCodecForType(decodableType: JSONCodingType<ActualValue>) =
 		super<NonRecursiveJSONDecoderCodec>.decoderCodecForType(decodableType)
 
 
-	override fun <Value : Any> encoderCodecForClass(encodableClass: KClass<out Value>) =
+	override fun <ActualValue : Any> encoderCodecForClass(encodableClass: KClass<ActualValue>) =
 		encoder.encoderCodecForClass(encodableClass)
 
 

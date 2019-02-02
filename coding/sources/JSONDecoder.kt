@@ -52,7 +52,7 @@ interface JSONDecoder<out Context : JSONCodingContext> : JSONReader {
 			) =
 				BuilderForSourceImpl(
 					context = context,
-					codecProvider = JSONCodecProvider.of(providers = providers, base = base)
+					codecProvider = JSONCodecProvider(base?.let { providers + it } ?: providers)
 				)
 		}
 

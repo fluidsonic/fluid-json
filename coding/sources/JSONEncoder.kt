@@ -44,7 +44,7 @@ interface JSONEncoder<out Context : JSONCodingContext> : JSONWriter {
 			) =
 				BuilderForDestinationImpl(
 					context = context,
-					codecProvider = JSONCodecProvider.of(providers = providers, base = base)
+					codecProvider = JSONCodecProvider(base?.let { providers + it } ?: providers)
 				)
 		}
 

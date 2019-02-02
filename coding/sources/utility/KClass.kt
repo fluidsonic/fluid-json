@@ -40,3 +40,11 @@ internal fun KClass<*>.isAssignableOrBoxableTo(otherClass: KClass<*>) =
 
 internal fun KClass<*>.isAssignableOrBoxableFrom(otherClass: KClass<*>) =
 	boxed.java.isAssignableFrom(otherClass.boxed.java)
+
+
+internal fun <T : Any, U : Any> KClass<T>.takeIfSubclassOf(superclass: KClass<U>) =
+	takeIf { isAssignableOrBoxableTo(superclass) }
+
+
+internal fun <T : Any, U : Any> KClass<T>.takeIfSuperclassOf(subclass: KClass<U>) =
+	takeIf { subclass.isAssignableOrBoxableTo(this) }

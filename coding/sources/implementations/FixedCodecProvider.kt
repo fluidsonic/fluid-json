@@ -4,7 +4,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
 
 
-internal class StandardCodecProvider<in Context : JSONCodingContext>(
+internal class FixedCodecProvider<in Context : JSONCodingContext>(
 	providers: Iterable<JSONCodecProvider<Context>>
 ) : JSONCodecProvider<Context> {
 
@@ -15,7 +15,7 @@ internal class StandardCodecProvider<in Context : JSONCodingContext>(
 
 
 	@Suppress("LoopToCallChain", "UNCHECKED_CAST")
-	override fun <Value : Any> decoderCodecForType(decodableType: JSONCodingType<in Value>): JSONDecoderCodec<out Value, Context>? {
+	override fun <ActualValue : Any> decoderCodecForType(decodableType: JSONCodingType<ActualValue>): JSONDecoderCodec<ActualValue, Context>? {
 		return decoderCodecByType.getOrPut(decodableType) {
 			for (provider in providers) {
 				val decoder = provider.decoderCodecForType(decodableType)
@@ -25,12 +25,12 @@ internal class StandardCodecProvider<in Context : JSONCodingContext>(
 			}
 
 			return null
-		} as JSONDecoderCodec<out Value, Context>
+		} as JSONDecoderCodec<ActualValue, Context>
 	}
 
 
 	@Suppress("LoopToCallChain", "UNCHECKED_CAST")
-	override fun <Value : Any> encoderCodecForClass(encodableClass: KClass<out Value>): JSONEncoderCodec<in Value, Context>? {
+	override fun <ActualValue : Any> encoderCodecForClass(encodableClass: KClass<ActualValue>): JSONEncoderCodec<ActualValue, Context>? {
 		return encoderCodecByClass.getOrPut(encodableClass) {
 			for (provider in providers) {
 				val encoder = provider.encoderCodecForClass(encodableClass)
@@ -40,6 +40,20 @@ internal class StandardCodecProvider<in Context : JSONCodingContext>(
 			}
 
 			return null
-		} as JSONEncoderCodec<in Value, Context>
+		} as JSONEncoderCodec<ActualValue, Context>
 	}
 }
+
+
+@Suppress("FunctionName")
+fun <Context : JSONCodingContext> JSONCodecProvider(
+	vararg providers: JSONCodecProvider<Context>
+) =
+	JSONCodecProvider(providers.asIterable())
+
+
+@Suppress("FunctionName")
+fun <Context : JSONCodingContext> JSONCodecProvider(
+	providers: Iterable<JSONCodecProvider<Context>>
+): JSONCodecProvider<Context> =
+	FixedCodecProvider(providers = providers)

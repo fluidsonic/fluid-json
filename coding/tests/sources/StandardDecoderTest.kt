@@ -66,11 +66,12 @@ internal object StandardDecoderTest {
 
 		val output = decode(
 			input = input,
-			codecProvider = JSONCodecProvider.of(
+			codecProvider = JSONCodecProvider(
 				JaegerCodec,
 				KaijuCodec,
 				YearMonthDayCodec,
-				UniverseCodec
+				UniverseCodec,
+				JSONCodecProvider.basic
 			)
 		) { readValueOfType<Universe>() }
 
@@ -100,13 +101,13 @@ internal object StandardDecoderTest {
 
 		decode(
 			input = "\"test\"",
-			codecProvider = JSONCodecProvider.of(ContextCheckingTestCodec(context)),
+			codecProvider = JSONCodecProvider(ContextCheckingTestCodec(context)),
 			context = context
 		) { readValueOfType<String>() }
 
 		decode(
 			input = "\"test\"",
-			codecProvider = JSONCodecProvider.of(ContextCheckingTestDecoderCodec(context)),
+			codecProvider = JSONCodecProvider(ContextCheckingTestDecoderCodec(context)),
 			context = context
 		) { readValueOfType<String>() }
 	}
@@ -114,7 +115,7 @@ internal object StandardDecoderTest {
 
 	private inline fun <ReturnValue> decode(
 		input: String,
-		codecProvider: JSONCodecProvider<TestCoderContext> = JSONCodecProvider.of(),
+		codecProvider: JSONCodecProvider<TestCoderContext> = JSONCodecProvider(),
 		context: TestCoderContext = TestCoderContext(),
 		block: JSONDecoder<TestCoderContext>.() -> ReturnValue
 	) =

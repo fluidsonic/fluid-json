@@ -5,35 +5,40 @@ import kotlin.reflect.KClass
 
 interface JSONCodecProvider<in Context : JSONCodingContext> {
 
-	fun <Value : Any> decoderCodecForType(decodableType: JSONCodingType<in Value>): JSONDecoderCodec<out Value, Context>?
-	fun <Value : Any> encoderCodecForClass(encodableClass: KClass<out Value>): JSONEncoderCodec<in Value, Context>?
+	fun <ActualValue : Any> decoderCodecForType(decodableType: JSONCodingType<ActualValue>): JSONDecoderCodec<ActualValue, Context>?
+	fun <ActualValue : Any> encoderCodecForClass(encodableClass: KClass<ActualValue>): JSONEncoderCodec<ActualValue, Context>?
 
 
 	companion object {
 
-		val basic = of(DefaultJSONCodecs.basic + DefaultJSONCodecs.nonRecursive)
-		val extended = of(DefaultJSONCodecs.extended + DefaultJSONCodecs.basic + DefaultJSONCodecs.nonRecursive)
+		val basic = JSONCodecProvider(DefaultJSONCodecs.basic + DefaultJSONCodecs.nonRecursive)
+		val extended = JSONCodecProvider(DefaultJSONCodecs.extended + DefaultJSONCodecs.basic + DefaultJSONCodecs.nonRecursive)
 
 
+		@Deprecated(message = "replaced by JSONCodecProvider(…), but be careful because that one no longer adds base providers automatically")
+		@Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
 		fun <Context : JSONCodingContext> of(
 			vararg providers: JSONCodecProvider<Context>,
-			base: JSONCodecProvider<JSONCodingContext>? = extended
+			base: JSONCodecProvider<JSONCodingContext>? = JSONCodecProvider.extended
 		) =
 			of(providers.asIterable(), base = base)
 
 
+		@Deprecated(message = "replaced by JSONCodecProvider(…), but be careful because that one no longer adds base providers automatically")
+		@Suppress("DeprecatedCallableAddReplaceWith")
 		fun <Context : JSONCodingContext> of(
 			providers: Iterable<JSONCodecProvider<Context>>,
-			base: JSONCodecProvider<JSONCodingContext>? = extended
+			base: JSONCodecProvider<JSONCodingContext>? = JSONCodecProvider.extended
 		): JSONCodecProvider<Context> =
-			StandardCodecProvider(providers = base?.let { providers + it } ?: providers)
+			FixedCodecProvider(providers = base?.let { providers + it } ?: providers)
+
 	}
 }
 
 
-inline fun <reified Value : Any, Context : JSONCodingContext> JSONCodecProvider<Context>.decoderCodecForType() =
-	decoderCodecForType(jsonCodingType<Value>())
+inline fun <reified ActualValue : Any, Context : JSONCodingContext> JSONCodecProvider<Context>.decoderCodecForType() =
+	decoderCodecForType(jsonCodingType<ActualValue>())
 
 
-inline fun <reified Value : Any, Context : JSONCodingContext> JSONCodecProvider<Context>.encoderCodecForClass() =
-	encoderCodecForClass(Value::class)
+inline fun <reified ActualValue : Any, Context : JSONCodingContext> JSONCodecProvider<Context>.encoderCodecForClass() =
+	encoderCodecForClass(ActualValue::class)

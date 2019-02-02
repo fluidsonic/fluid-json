@@ -88,7 +88,7 @@ internal object ExtendedCodecsTest {
 
 	@TestFactory
 	fun testDefaultCodecs(): List<DynamicTest> {
-		val provider = JSONCodecProvider.of(DefaultJSONCodecs.extended)
+		val provider = JSONCodecProvider(DefaultJSONCodecs.extended)
 
 		return listOf(
 			DayOfWeek::class,

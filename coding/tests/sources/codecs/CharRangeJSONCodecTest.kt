@@ -9,10 +9,9 @@ import org.junit.jupiter.api.Test
 @Suppress("UNCHECKED_CAST")
 internal object CharRangeJSONCodecTest {
 
-	val codecs = JSONCodecProvider.of(
+	val codecs = JSONCodecProvider(
 		CharJSONCodec,
-		CharRangeJSONCodec,
-		base = null
+		CharRangeJSONCodec
 	)
 
 	val parser = JSONCodingParser.builder()

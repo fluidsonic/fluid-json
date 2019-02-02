@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test
 import kotlin.reflect.KClass
 
 
-internal class StandardCodecProviderTest {
+internal class FixedCodecProviderTest {
 
 	@Nested
 	inner class DecodingTest {
@@ -115,12 +115,12 @@ internal class StandardCodecProviderTest {
 	}
 
 
-	private fun provider(vararg codecs: JSONDecoderCodec<*, StandardCodecProviderTest.Context>) =
-		StandardCodecProvider(codecs.toList())
+	private fun provider(vararg codecs: JSONDecoderCodec<*, FixedCodecProviderTest.Context>) =
+		FixedCodecProvider(codecs.toList())
 
 
-	private fun provider(vararg codecs: JSONEncoderCodec<*, StandardCodecProviderTest.Context>) =
-		StandardCodecProvider(codecs.toList())
+	private fun provider(vararg codecs: JSONEncoderCodec<*, FixedCodecProviderTest.Context>) =
+		FixedCodecProvider(codecs.toList())
 
 
 	interface Parent

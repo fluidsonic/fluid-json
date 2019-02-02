@@ -44,7 +44,7 @@ interface JSONCodingSerializer : JSONSerializer {
 			) =
 				encodingWith { destination, context ->
 					JSONEncoder.builder(context)
-						.codecs(JSONCodecProvider.of(providers = providers, base = base), base = null)
+						.codecs(JSONCodecProvider(providers), base = base)
 						.destination(destination)
 						.build()
 				}
