@@ -11,6 +11,9 @@ internal open class CodingImplementationsJava7 : CodingImplementationsJava {
 			CharRangeJSONCodec,
 			IntRangeJSONCodec,
 			LongRangeJSONCodec,
-			ClosedRangeJSONCodec
+			ClosedRangeJSONCodec,
+			EnumJSONCodecProvider(
+				transformation = EnumJSONTransformation.ToString(case = EnumJSONTransformation.Case.lowerCamelCase)
+			)
 		)
 }
