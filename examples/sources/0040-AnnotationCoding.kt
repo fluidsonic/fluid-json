@@ -10,10 +10,7 @@ fun main() {
 	// Run './gradlew :fluid-json-examples:kaptKotlin' prior to running this example in order to run kapt.
 
 	val parser = JSONCodingParser.builder()
-		.decodingWith(
-			ExampleJSONCodecProvider(), // generated based on annotations
-			KaijuStatusJSONCodec // note that annotation-based enum coding is not yet supported
-		)
+		.decodingWith(ExampleJSONCodecProvider())
 		.build()
 
 	val kaiju = parser.parseValueOfType<Kaiju>("""
@@ -30,10 +27,7 @@ fun main() {
 	println(kaiju)
 
 	val serializer = JSONCodingSerializer.builder()
-		.encodingWith(
-			ExampleJSONCodecProvider(),
-			KaijuStatusJSONCodec
-		)
+		.encodingWith(ExampleJSONCodecProvider())
 		.build()
 
 	println(serializer.serializeValue(kaiju))
@@ -64,22 +58,3 @@ data class YearMonthDay(
 	val month: Int,
 	val day: Int
 )
-
-
-internal object KaijuStatusJSONCodec : AbstractJSONCodec<Kaiju.Status, JSONCodingContext>() {
-
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Kaiju.Status>) =
-		readString().let { id ->
-			when (id) {
-				"deceased" -> Kaiju.Status.deceased
-				else -> invalidValueError("unknown Kaiju status: $id")
-			}
-		}
-
-
-	override fun JSONEncoder<JSONCodingContext>.encode(value: Kaiju.Status) {
-		writeString(when (value) {
-			Kaiju.Status.deceased -> "deceased"
-		})
-	}
-}
