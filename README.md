@@ -385,6 +385,7 @@ For types in the `java.time` package the `-coding-jdk8` library variant must be 
 | ---------------- | ----------------------------------- | -------
 | `CharRange`      | `{ "start": …, "endInclusive": … }` | using `string` value
 | `ClosedRange<C>` | `{ "start": …, "endInclusive": … }` | using decoder/encoder for `C`
+| `Enum`           | `string`                            | uses `.toString()` and converts to `lowerCamelCase` (can be configured)
 | `DayOfWeek`      | `string`                            | `"monday"`, …, `"friday"`
 | `Duration`       | `string`                            | using `.parse()` / `.toString()`
 | `Instant`        | `string`                            | using `.parse()` / `.toString()`
@@ -491,7 +492,6 @@ This is on the backlog for later consideration, in no specific order:
 - [Add pretty serialization](https://github.com/fluidsonic/fluid-json/issues/15)
 - [Improve performance by operating on `InputStream`/`OutputStream`](https://github.com/fluidsonic/fluid-json/issues/9)
 - [Add standard decoders for array types](https://github.com/fluidsonic/fluid-json/issues/23)
-- [Add a codec for enums](https://github.com/fluidsonic/fluid-json/issues/24)
 
 
 
