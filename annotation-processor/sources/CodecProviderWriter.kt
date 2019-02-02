@@ -22,7 +22,7 @@ internal class CodecProviderWriter(
 				.applyIf(!configuration.isPublic) { addModifiers(KModifier.INTERNAL) }
 				.addSuperinterface(
 					codecProviderType,
-					CodeBlock.of("JSONCodecProvider.of(${codecNames.sortedBy { it.kotlinInternal }.joinToString()})")
+					CodeBlock.of("JSONCodecProvider(${codecNames.sortedBy { it.kotlinInternal }.joinToString()})")
 				)
 				.build()
 			)
