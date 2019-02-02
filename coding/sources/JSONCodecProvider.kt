@@ -11,10 +11,6 @@ interface JSONCodecProvider<in Context : JSONCodingContext> {
 
 	companion object {
 
-		val basic = JSONCodecProvider(DefaultJSONCodecs.basic + DefaultJSONCodecs.nonRecursive)
-		val extended = JSONCodecProvider(DefaultJSONCodecs.extended + DefaultJSONCodecs.basic + DefaultJSONCodecs.nonRecursive)
-
-
 		@Deprecated(message = "replaced by JSONCodecProvider(…), but be careful because that one no longer adds base providers automatically")
 		@Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
 		fun <Context : JSONCodingContext> of(
@@ -34,6 +30,18 @@ interface JSONCodecProvider<in Context : JSONCodingContext> {
 
 	}
 }
+
+
+private val basicProvider = JSONCodecProvider(DefaultJSONCodecs.basic + DefaultJSONCodecs.nonRecursive)
+private val extendedProvider = JSONCodecProvider(DefaultJSONCodecs.extended + DefaultJSONCodecs.basic + DefaultJSONCodecs.nonRecursive)
+
+
+val JSONCodecProvider.Companion.basic
+	get() = basicProvider
+
+
+val JSONCodecProvider.Companion.extended
+	get() = extendedProvider
 
 
 inline fun <reified ActualValue : Any, Context : JSONCodingContext> JSONCodecProvider<Context>.decoderCodecForType() =
