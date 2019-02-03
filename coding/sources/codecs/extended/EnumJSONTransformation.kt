@@ -14,13 +14,13 @@ sealed class EnumJSONTransformation {
 	enum class Case {
 
 		lowerCamelCase,
-		lowercase,
 		lower_snake_case,
-		`lower space case`,
+		lowercase,
+		`lowercase words`,
 		UpperCamelCase,
-		UPPERCASE,
 		UPPER_SNAKE_CASE,
-		`UPPER SPACE CASE`
+		UPPERCASE,
+		`UPPERCASE WORDS`
 	}
 }
 
@@ -36,13 +36,13 @@ internal fun Case?.convert(string: String) =
 	when (this) {
 		null -> string
 		Case.lowerCamelCase -> string.words().mapIndexed(::wordToLowerCamelCase).joinToString(separator = "")
-		Case.lowercase -> string.toLowerCase()
 		Case.lower_snake_case -> string.words().joinToString(separator = "_").toLowerCase()
-		Case.`lower space case` -> string.words().joinToString(separator = " ").toLowerCase()
+		Case.lowercase -> string.toLowerCase()
+		Case.`lowercase words` -> string.words().joinToString(separator = " ").toLowerCase()
 		Case.UpperCamelCase -> string.words().joinToString(separator = "") { it.camelize() }
-		Case.UPPERCASE -> string.toUpperCase()
 		Case.UPPER_SNAKE_CASE -> string.words().joinToString(separator = "_").toUpperCase()
-		Case.`UPPER SPACE CASE` -> string.words().joinToString(separator = " ").toUpperCase()
+		Case.UPPERCASE -> string.toUpperCase()
+		Case.`UPPERCASE WORDS` -> string.words().joinToString(separator = " ").toUpperCase()
 	}
 
 
@@ -61,6 +61,7 @@ private fun String.words(): List<String> {
 	var currentWordStart = -1
 	var currentWordEndsWithDigit = false
 	var currentWordEndsWithLowerCase = false
+	var currentWordEndsWithUpperCase = false
 
 	for ((index, character) in withIndex()) {
 		val isLetter = character.isLetter()
@@ -68,14 +69,29 @@ private fun String.words(): List<String> {
 
 		if (isLetter || isDigit) {
 			val isLowerCase = character.isLowerCase()
+			val isUpperCase = character.isUpperCase()
 
 			if (isInWord) {
-				if (currentWordEndsWithLowerCase && character.isUpperCase()) {
-					if (currentWordStart >= 0) {
+				when {
+					!currentWordEndsWithDigit && isDigit -> {
 						words += substring(startIndex = currentWordStart, endIndex = index)
+
+						currentWordStart = index
 					}
 
-					currentWordStart = index
+					currentWordEndsWithLowerCase && isUpperCase -> {
+						words += substring(startIndex = currentWordStart, endIndex = index)
+
+						currentWordStart = index
+					}
+
+					currentWordEndsWithUpperCase && isLowerCase -> {
+						if (currentWordStart < index - 1) {
+							words += substring(startIndex = currentWordStart, endIndex = index - 1)
+						}
+
+						currentWordStart = index - 1
+					}
 				}
 			}
 			else {
@@ -92,6 +108,7 @@ private fun String.words(): List<String> {
 
 			currentWordEndsWithDigit = isDigit
 			currentWordEndsWithLowerCase = isLowerCase
+			currentWordEndsWithUpperCase = isUpperCase
 		}
 		else if (isInWord) {
 			currentWordEnd = index
