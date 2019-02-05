@@ -35,13 +35,13 @@ You have to add **one** of the following dependencies to your project depending 
 ```kotlin
 dependencies {
     // parsing/serialization of basic types and streaming
-    implementation("com.github.fluidsonic:fluid-json-basic:0.9.11")
+    implementation("com.github.fluidsonic:fluid-json-basic:0.9.12")
 
     // parsing/serialization of any type using encoders and decoders (Java 7)
-    implementation("com.github.fluidsonic:fluid-json-coding:0.9.11")
+    implementation("com.github.fluidsonic:fluid-json-coding:0.9.12")
 
     // parsing/serialization of any type using encoders and decoders (Java 8 and newer)
-    implementation("com.github.fluidsonic:fluid-json-coding-jdk8:0.9.11")
+    implementation("com.github.fluidsonic:fluid-json-coding-jdk8:0.9.12")
 }
 ```
 
@@ -286,7 +286,7 @@ You can use this library with [`JsonFeature`](https://ktor.io/clients/http-clien
 `build.gradle.kts`:
 ```kotlin
 dependencies {
-    implementation("com.github.fluidsonic:fluid-json-ktor-client:0.9.11")
+    implementation("com.github.fluidsonic:fluid-json-ktor-client:0.9.12")
 }
 ```
 
