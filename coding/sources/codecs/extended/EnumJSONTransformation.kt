@@ -14,10 +14,12 @@ sealed class EnumJSONTransformation {
 	enum class Case {
 
 		lowerCamelCase,
+		`lower-kebab-case`,
 		lower_snake_case,
 		lowercase,
 		`lowercase words`,
 		UpperCamelCase,
+		`UPPER-KEBAB-CASE`,
 		UPPER_SNAKE_CASE,
 		UPPERCASE,
 		`UPPERCASE WORDS`
@@ -36,10 +38,12 @@ internal fun Case?.convert(string: String) =
 	when (this) {
 		null -> string
 		Case.lowerCamelCase -> string.words().mapIndexed(::wordToLowerCamelCase).joinToString(separator = "")
+		Case.`lower-kebab-case` -> string.words().joinToString(separator = "-").toLowerCase()
 		Case.lower_snake_case -> string.words().joinToString(separator = "_").toLowerCase()
 		Case.lowercase -> string.toLowerCase()
 		Case.`lowercase words` -> string.words().joinToString(separator = " ").toLowerCase()
 		Case.UpperCamelCase -> string.words().joinToString(separator = "") { it.camelize() }
+		Case.`UPPER-KEBAB-CASE` -> string.words().joinToString(separator = "-").toUpperCase()
 		Case.UPPER_SNAKE_CASE -> string.words().joinToString(separator = "_").toUpperCase()
 		Case.UPPERCASE -> string.toUpperCase()
 		Case.`UPPERCASE WORDS` -> string.words().joinToString(separator = " ").toUpperCase()
