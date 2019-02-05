@@ -3,8 +3,10 @@ package com.github.fluidsonic.fluid.json
 import java.io.Closeable
 import java.io.Flushable
 import java.io.Writer
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
+
+// FIXME re-enable contracts once fixed:
+// - https://youtrack.jetbrains.com/issue/KT-29510
+// - https://youtrack.jetbrains.com/issue/KT-29614
 
 
 interface JSONWriter : Closeable, Flushable {
@@ -103,8 +105,7 @@ interface JSONWriter : Closeable, Flushable {
 }
 
 
-// FIXME make crossinline once https://youtrack.jetbrains.com/issue/KT-29510 is fixed
-inline fun <Writer : JSONWriter> Writer.isolateValueWrite(/* crossinline */ write: Writer.() -> Unit) {
+inline fun <Writer : JSONWriter> Writer.isolateValueWrite(crossinline write: Writer.() -> Unit) {
 	val depth = beginValueIsolation()
 	val value = write()
 	endValueIsolation(depth = depth)
@@ -114,9 +115,9 @@ inline fun <Writer : JSONWriter> Writer.isolateValueWrite(/* crossinline */ writ
 
 
 inline fun <Writer : JSONWriter?, Result> Writer.use(withTermination: Boolean = true, block: (Writer) -> Result): Result {
-	contract {
-		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-	}
+//	contract {
+//		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+//	}
 
 	var exception: Throwable? = null
 	try {
@@ -152,9 +153,9 @@ inline fun <Writer : JSONWriter?, Result> Writer.use(withTermination: Boolean = 
 
 
 inline fun <Writer : JSONWriter, Result> Writer.withTermination(withTermination: Boolean = true, block: Writer.() -> Result): Result {
-	contract {
-		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-	}
+//	contract {
+//		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+//	}
 
 	return if (withTermination)
 		use { it.block() }
@@ -164,9 +165,9 @@ inline fun <Writer : JSONWriter, Result> Writer.withTermination(withTermination:
 
 
 inline fun <Writer : JSONWriter, ReturnValue> Writer.withErrorChecking(block: Writer.() -> ReturnValue): ReturnValue {
-	contract {
-		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
-	}
+//	contract {
+//		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+//	}
 
 	if (isErrored) {
 		throw JSONException.Serialization(
@@ -209,11 +210,10 @@ fun JSONWriter.writeIntOrNull(value: Int?) =
 	writeOrNull(value, JSONWriter::writeInt)
 
 
-// FIXME make crossinline once https://youtrack.jetbrains.com/issue/KT-29510 is fixed
-inline fun <Writer : JSONWriter> Writer.writeIntoList(/* crossinline */ writeContent: Writer.() -> Unit) {
-	contract {
-		callsInPlace(writeContent, InvocationKind.EXACTLY_ONCE)
-	}
+inline fun <Writer : JSONWriter> Writer.writeIntoList(crossinline writeContent: Writer.() -> Unit) {
+//	contract {
+//		callsInPlace(writeContent, InvocationKind.EXACTLY_ONCE)
+//	}
 
 	isolateValueWrite {
 		writeListStart()
@@ -223,11 +223,10 @@ inline fun <Writer : JSONWriter> Writer.writeIntoList(/* crossinline */ writeCon
 }
 
 
-// FIXME make crossinline once https://youtrack.jetbrains.com/issue/KT-29510 is fixed
-inline fun <Writer : JSONWriter> Writer.writeIntoMap(/* crossinline */ writeContent: Writer.() -> Unit) {
-	contract {
-		callsInPlace(writeContent, InvocationKind.EXACTLY_ONCE)
-	}
+inline fun <Writer : JSONWriter> Writer.writeIntoMap(crossinline writeContent: Writer.() -> Unit) {
+//	contract {
+//		callsInPlace(writeContent, InvocationKind.EXACTLY_ONCE)
+//	}
 
 	isolateValueWrite {
 		writeMapStart()
@@ -285,9 +284,9 @@ inline fun <Writer : JSONWriter> Writer.writeListByElement(
 	value: BooleanArray,
 	crossinline writeElement: Writer.(element: Boolean) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -303,9 +302,9 @@ inline fun <Writer : JSONWriter> Writer.writeListByElement(
 	value: ByteArray,
 	crossinline writeElement: Writer.(element: Byte) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -321,9 +320,9 @@ inline fun <Writer : JSONWriter> Writer.writeListByElement(
 	value: CharArray,
 	crossinline writeElement: Writer.(element: Char) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -339,9 +338,9 @@ inline fun <Writer : JSONWriter> Writer.writeListByElement(
 	value: DoubleArray,
 	crossinline writeElement: Writer.(element: Double) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -357,9 +356,9 @@ inline fun <Writer : JSONWriter> Writer.writeListByElement(
 	value: FloatArray,
 	crossinline writeElement: Writer.(element: Float) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -375,9 +374,9 @@ inline fun <Writer : JSONWriter> Writer.writeListByElement(
 	value: IntArray,
 	crossinline writeElement: Writer.(element: Int) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -393,9 +392,9 @@ inline fun <Writer : JSONWriter> Writer.writeListByElement(
 	value: LongArray,
 	crossinline writeElement: Writer.(element: Long) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -411,9 +410,9 @@ inline fun <Writer : JSONWriter> Writer.writeListByElement(
 	value: ShortArray,
 	crossinline writeElement: Writer.(element: Short) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -429,9 +428,9 @@ inline fun <Writer : JSONWriter, Element> Writer.writeListByElement(
 	value: Array<Element>,
 	crossinline writeElement: Writer.(element: Element) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -447,9 +446,9 @@ inline fun <Writer : JSONWriter, Element> Writer.writeListByElement(
 	value: Iterable<Element>,
 	crossinline writeElement: Writer.(element: Element) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -465,9 +464,9 @@ inline fun <Writer : JSONWriter, Element> Writer.writeListByElement(
 	value: Sequence<Element>,
 	crossinline writeElement: Writer.(element: Element) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoList {
 		for (element in value) {
@@ -527,9 +526,9 @@ inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
 	value: BooleanArray?,
 	crossinline writeElement: Writer.(element: Boolean) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -539,9 +538,9 @@ inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
 	value: ByteArray?,
 	crossinline writeElement: Writer.(element: Byte) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -551,9 +550,9 @@ inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
 	value: CharArray?,
 	crossinline writeElement: Writer.(element: Char) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -563,9 +562,9 @@ inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
 	value: DoubleArray?,
 	crossinline writeElement: Writer.(element: Double) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -575,9 +574,9 @@ inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
 	value: FloatArray?,
 	crossinline writeElement: Writer.(element: Float) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -587,9 +586,9 @@ inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
 	value: IntArray?,
 	crossinline writeElement: Writer.(element: Int) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -599,9 +598,9 @@ inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
 	value: LongArray?,
 	crossinline writeElement: Writer.(element: Long) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -611,9 +610,9 @@ inline fun <Writer : JSONWriter> Writer.writeListOrNullByElement(
 	value: ShortArray?,
 	crossinline writeElement: Writer.(element: Short) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -623,9 +622,9 @@ inline fun <Writer : JSONWriter, Element> Writer.writeListOrNullByElement(
 	value: Array<Element>?,
 	crossinline writeElement: Writer.(element: Element) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -635,9 +634,9 @@ inline fun <Writer : JSONWriter, Element> Writer.writeListOrNullByElement(
 	value: Iterable<Element>?,
 	crossinline writeElement: Writer.(element: Element) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -647,9 +646,9 @@ inline fun <Writer : JSONWriter, Element> Writer.writeListOrNullByElement(
 	value: Sequence<Element>?,
 	crossinline writeElement: Writer.(element: Element) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeListByElement(it, writeElement) }
 }
@@ -667,9 +666,9 @@ inline fun <Writer : JSONWriter, ElementKey, ElementValue> Writer.writeMapByElem
 	value: Map<ElementKey, ElementValue>,
 	crossinline writeElement: Writer.(key: ElementKey, value: ElementValue) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeIntoMap {
 		for ((elementKey, elementValue) in value)
@@ -682,9 +681,9 @@ inline fun <Writer : JSONWriter, ElementValue> Writer.writeMapByElementValue(
 	value: Map<*, ElementValue>,
 	crossinline writeElementValue: Writer.(value: ElementValue) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElementValue, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElementValue, InvocationKind.UNKNOWN)
+//	}
 
 	writeMapByElement(value) { elementKey, elementValue ->
 		writeValueOrNull(elementKey)
@@ -703,9 +702,9 @@ inline fun <Writer : JSONWriter, ElementKey, ElementValue> Writer.writeMapOrNull
 	value: Map<ElementKey, ElementValue>?,
 	crossinline writeElement: Writer.(key: ElementKey, value: ElementValue) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeMapByElement(it, writeElement) }
 }
@@ -715,9 +714,9 @@ inline fun <Writer : JSONWriter, ElementValue> Writer.writeMapOrNullByElementVal
 	value: Map<*, ElementValue>?,
 	crossinline writeElementValue: Writer.(value: ElementValue) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElementValue, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElementValue, InvocationKind.UNKNOWN)
+//	}
 
 	writeOrNull(value) { writeMapByElementValue(it, writeElementValue) }
 }
@@ -823,9 +822,9 @@ inline fun <Writer : JSONWriter, Element> Writer.writeMapElement(
 	skipIfNull: Boolean = false,
 	crossinline writeElement: Writer.(element: Element) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	if (list != null) {
 		writeMapKey(key)
@@ -912,9 +911,9 @@ inline fun <Writer : JSONWriter, Element> Writer.writeMapElement(
 	skipIfNull: Boolean = false,
 	crossinline writeElement: Writer.(element: Element) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	if (list != null) {
 		writeMapKey(key)
@@ -946,9 +945,9 @@ inline fun <Writer : JSONWriter, Element> Writer.writeMapElement(
 	skipIfNull: Boolean = false,
 	crossinline writeElement: Writer.(element: Element) -> Unit
 ) {
-	contract {
-		callsInPlace(writeElement, InvocationKind.UNKNOWN)
-	}
+//	contract {
+//		callsInPlace(writeElement, InvocationKind.UNKNOWN)
+//	}
 
 	if (list != null) {
 		writeMapKey(key)
@@ -1052,9 +1051,9 @@ inline fun <Writer : JSONWriter, Value : Any> Writer.writeMapElement(
 	skipIfNull: Boolean = false,
 	crossinline writeCustomValue: Writer.(value: Value) -> Unit
 ) {
-	contract {
-		callsInPlace(writeCustomValue, InvocationKind.AT_MOST_ONCE)
-	}
+//	contract {
+//		callsInPlace(writeCustomValue, InvocationKind.AT_MOST_ONCE)
+//	}
 
 	if (value != null) {
 		writeMapKey(key)
@@ -1071,9 +1070,9 @@ inline fun <Writer : JSONWriter> Writer.writeMapElement(
 	key: String,
 	crossinline writeValue: Writer.() -> Unit
 ) {
-	contract {
-		callsInPlace(writeValue, InvocationKind.EXACTLY_ONCE)
-	}
+//	contract {
+//		callsInPlace(writeValue, InvocationKind.EXACTLY_ONCE)
+//	}
 
 	writeMapKey(key)
 	isolateValueWrite {
@@ -1093,9 +1092,9 @@ fun JSONWriter.writeNumberOrNull(value: Number?) =
 
 
 inline fun <Writer : JSONWriter, Value : Any> Writer.writeOrNull(value: Value?, crossinline write: Writer.(value: Value) -> Unit) {
-	contract {
-		callsInPlace(write, InvocationKind.AT_MOST_ONCE)
-	}
+//	contract {
+//		callsInPlace(write, InvocationKind.AT_MOST_ONCE)
+//	}
 
 	if (value != null)
 		isolateValueWrite { write(value) }
