@@ -26,36 +26,112 @@ internal class CodecWriter(
 	private val outputDirectory: File
 ) {
 
+	private fun methodNameForReadingValueOfType(type: TypeName, nullable: Boolean) =
+		when (type) {
+			BOOLEAN -> "readBoolean"
+			BYTE -> "readByte"
+			CHAR -> "readChar"
+			DOUBLE -> "readDouble"
+			FLOAT -> "readFloat"
+			INT -> "readInt"
+			LONG -> "readLong"
+			SHORT -> "readShort"
+			STRING -> "readString"
+			else -> "readValueOfType"
+		}
+			.let { if (nullable) "${it}OrNull" else it }
+
+
+	private fun methodNameForWritingValueOfType(type: TypeName, nullable: Boolean) =
+		when (type) {
+			BOOLEAN -> "writeBoolean"
+			BYTE -> "writeByte"
+			CHAR -> "writeChar"
+			DOUBLE -> "writeDouble"
+			FLOAT -> "writeFloat"
+			INT -> "writeInt"
+			LONG -> "writeLong"
+			SHORT -> "writeShort"
+			STRING -> "writeString"
+			else -> "writeValue"
+		}
+			.let { if (nullable) "${it}OrNull" else it }
+
+
 	fun write(configuration: CodecConfiguration) {
-		FileSpec.builder(configuration.name.packageName.kotlin, configuration.name.withoutPackage().kotlin)
+		if (configuration.isObject)
+			writeForObject(configuration)
+		else
+			writeForInline(configuration)
+	}
+
+
+	private fun writeForInline(configuration: CodecConfiguration) {
+		val typeName = configuration.name.withoutPackage().kotlin.replace('.', '_')
+		val valueQualifiedTypeName = configuration.valueTypeName.forKotlinPoet()
+
+		val decodableProperty = configuration.decodableProperties.singleOrNull()
+		val encodableProperty = configuration.encodableProperties.singleOrNull()
+
+		val decoderType = JSONDecoder::class.asTypeName().parameterizedBy(configuration.contextType.forKotlinPoet())
+		val encoderType = JSONEncoder::class.asTypeName().parameterizedBy(configuration.contextType.forKotlinPoet())
+
+		FileSpec.builder(configuration.name.packageName.kotlin, typeName)
 			.indent("\t")
-			.applyIf(configuration.decodableProperties.isNotEmpty()) {
-				addImport("com.github.fluidsonic.fluid.json",
-					"missingPropertyError",
-					"readFromMapByElementValue",
-					"readValueOfType"
-				)
+			.addImport("com.github.fluidsonic.fluid.json",
+				"readBooleanOrNull",
+				"readByteOrNull",
+				"readCharOrNull",
+				"readDoubleOrNull",
+				"readFloatOrNull",
+				"readIntOrNull",
+				"readLongOrNull",
+				"readShortOrNull",
+				"readStringOrNull",
+				"readValueOfType",
+				"readValueOfTypeOrNull"
+			)
+			.apply {
+				if (encodableProperty != null) {
+					encodableProperty.importPackageName?.let { addImport(it.kotlin, encodableProperty.name.toString()) }
+				}
 			}
-			.applyIf(configuration.encodableProperties.isNotEmpty()) {
-				addImport("com.github.fluidsonic.fluid.json",
-					"writeIntoMap",
-					"writeMapElement"
-				)
-			}
-			.addType(TypeSpec.objectBuilder(configuration.name.withoutPackage().kotlin)
+			.addType(TypeSpec.objectBuilder(typeName)
 				.applyIf(!configuration.isPublic) { addModifiers(KModifier.INTERNAL) }
 				.superclass(
 					when {
-						configuration.decodableProperties.isEmpty() -> AbstractJSONEncoderCodec::class
-						configuration.encodableProperties.isEmpty() -> AbstractJSONDecoderCodec::class
+						decodableProperty == null -> AbstractJSONEncoderCodec::class
+						encodableProperty == null -> AbstractJSONDecoderCodec::class
 						else -> AbstractJSONCodec::class
-					}.asTypeName().parameterizedBy(configuration.typeName, contextType)
+					}.asTypeName().parameterizedBy(valueQualifiedTypeName, configuration.contextType.forKotlinPoet())
 				)
-				.applyIf(configuration.decodableProperties.isNotEmpty()) {
-					writeDecode(configuration = configuration)
+				.apply {
+					if (decodableProperty != null)
+						addFunction(FunSpec.builder("decode")
+							.addModifiers(KModifier.OVERRIDE)
+							.receiver(decoderType)
+							.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(valueQualifiedTypeName)))
+							.returns(valueQualifiedTypeName)
+							.addCode(
+								"return %1T(%2N = %3N())",
+								valueQualifiedTypeName,
+								decodableProperty.name.toString(),
+								methodNameForReadingValueOfType(decodableProperty.type, nullable = decodableProperty.isNullable)
+							)
+							.build())
 				}
-				.applyIf(configuration.encodableProperties.isNotEmpty()) {
-					writeEncode(configuration = configuration)
+				.apply {
+					if (encodableProperty != null)
+						addFunction(FunSpec.builder("encode")
+							.addModifiers(KModifier.OVERRIDE)
+							.receiver(encoderType)
+							.addParameter("value", valueQualifiedTypeName)
+							.addCode(
+								"%1N(value.%2N)\n",
+								methodNameForWritingValueOfType(encodableProperty.type, nullable = encodableProperty.isNullable),
+								encodableProperty.name.toString()
+							)
+							.build())
 				}
 				.build()
 			)
@@ -64,27 +140,105 @@ internal class CodecWriter(
 	}
 
 
-	private fun TypeSpec.Builder.writeDecode(configuration: CodecConfiguration) =
-		addFunction(FunSpec.builder("decode")
+	private fun writeForObject(configuration: CodecConfiguration) {
+		val typeName = configuration.name.withoutPackage().kotlin.replace('.', '_')
+		val valueQualifiedTypeName = configuration.valueTypeName.forKotlinPoet()
+
+		FileSpec.builder(configuration.name.packageName.kotlin, typeName)
+			.indent("\t")
+			.applyIf(configuration.isDecodable) {
+				addImport("com.github.fluidsonic.fluid.json",
+					"missingPropertyError",
+					"readBooleanOrNull",
+					"readByteOrNull",
+					"readCharOrNull",
+					"readDoubleOrNull",
+					"readFloatOrNull",
+					"readFromMapByElementValue",
+					"readIntOrNull",
+					"readLongOrNull",
+					"readShortOrNull",
+					"readStringOrNull",
+					"readValueOfType",
+					"readValueOfTypeOrNull"
+				)
+			}
+			.applyIf(configuration.isEncodable) {
+				addImport("com.github.fluidsonic.fluid.json",
+					"writeIntoMap",
+					"writeBooleanOrNull",
+					"writeByteOrNull",
+					"writeCharOrNull",
+					"writeDoubleOrNull",
+					"writeFloatOrNull",
+					"writeIntOrNull",
+					"writeLongOrNull",
+					"writeShortOrNull",
+					"writeStringOrNull",
+					"writeValueOrNull",
+					"writeMapElement"
+				)
+
+				configuration.encodableProperties
+					.mapNotNull { property ->
+						property.importPackageName?.let { property.name to it }
+					}
+					.forEach { (name, packageName) ->
+						addImport(packageName.kotlin, name.toString())
+					}
+
+				configuration.customPropertyMethods
+					.forEach { (packageName, name) ->
+						addImport(packageName.kotlin, name.toString())
+					}
+			}
+			.addType(TypeSpec.objectBuilder(typeName)
+				.applyIf(!configuration.isPublic) { addModifiers(KModifier.INTERNAL) }
+				.superclass(
+					when {
+						configuration.decodableProperties.isEmpty() -> AbstractJSONEncoderCodec::class
+						configuration.encodableProperties.isEmpty() -> AbstractJSONDecoderCodec::class
+						else -> AbstractJSONCodec::class
+					}.asTypeName().parameterizedBy(valueQualifiedTypeName, configuration.contextType.forKotlinPoet())
+				)
+				.applyIf(configuration.isDecodable) {
+					writeDecode(configuration = configuration, valueQualifiedTypeName = valueQualifiedTypeName)
+				}
+				.applyIf(configuration.isEncodable) {
+					writeEncode(configuration = configuration, valueQualifiedTypeName = valueQualifiedTypeName)
+				}
+				.build()
+			)
+			.build()
+			.writeTo(outputDirectory)
+	}
+
+
+	private fun TypeSpec.Builder.writeDecode(configuration: CodecConfiguration, valueQualifiedTypeName: ClassName): TypeSpec.Builder {
+		val decoderType = JSONDecoder::class.asTypeName().parameterizedBy(configuration.contextType.forKotlinPoet())
+
+		return addFunction(FunSpec.builder("decode")
 			.addModifiers(KModifier.OVERRIDE)
 			.receiver(decoderType)
-			.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(configuration.typeName)))
+			.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(valueQualifiedTypeName)))
+			.returns(valueQualifiedTypeName)
 			.apply {
 				for (property in configuration.decodableProperties) {
+					val propertyType = property.type
 					val defaultValue: Any? = when {
-						property.type.isNullable || !property.type.isPrimitive -> null
-						property.type == BOOLEAN -> false
-						property.type == CHAR -> 0.toChar()
-						property.type == DOUBLE -> 0.0
-						property.type == FLOAT -> 0.0f
-						else -> 0
+						propertyType.isNullable || !propertyType.isPrimitive -> null
+						propertyType == BOOLEAN -> false
+						propertyType == CHAR -> 0.toChar()
+						propertyType == DOUBLE -> 0.0
+						propertyType == FLOAT -> 0.0f
+						else -> 0 // FIXME what about other types
 					}
 
 					when {
 						defaultValue is Char -> addStatement("var %1N = %2L.toChar()", "_${property.name}", defaultValue.toInt())
 						defaultValue != null -> addStatement("var %1N = %2L", "_${property.name}", defaultValue)
-						property.type.isNullable -> addStatement("var %1N: %2T = null", "_${property.name}", property.type)
-						else -> addStatement("var %1N: %2T? = null", "_${property.name}", property.type)
+						propertyType.isNullable -> addStatement("var %1N: %2T = null", "_${property.name}", propertyType)
+						else -> addStatement("var %1N: %2T? = null", "_${property.name}", propertyType)
 					}
 
 					if (property.presenceRequired) {
@@ -97,18 +251,7 @@ internal class CodecWriter(
 			.beginControlFlow("when (%N)", "key")
 			.apply {
 				for (property in configuration.decodableProperties) {
-					val functionName = when (property.type.copy(nullable = false)) {
-						BOOLEAN -> "readBool"
-						BYTE -> "readByte"
-						CHAR -> "readChar"
-						DOUBLE -> "readDouble"
-						FLOAT -> "readFloat"
-						INT -> "readInt"
-						LONG -> "readLong"
-						SHORT -> "readShort"
-						STRING -> "readString"
-						else -> "readValueOfType"
-					}
+					val functionName = methodNameForReadingValueOfType(property.type, nullable = property.isNullable)
 
 					if (property.presenceRequired) {
 						beginControlFlow("%S -> ", property.serializedName)
@@ -134,11 +277,12 @@ internal class CodecWriter(
 						addCode("\n")
 					}
 			}
-			.addCode("return %T(\n⇥", configuration.typeName)
+			.addCode("return %T(\n⇥", valueQualifiedTypeName)
 			.apply {
 				val size = configuration.decodableProperties.size
 				for ((index, property) in configuration.decodableProperties.withIndex()) {
-					if (property.type.isNullable || property.type.isPrimitive) {
+					val propertyType = property.type
+					if (propertyType.isNullable || propertyType.isPrimitive) {
 						addCode("%1N = %2N", property.name.toString(), "_${property.name}")
 					}
 					else {
@@ -151,21 +295,23 @@ internal class CodecWriter(
 				}
 			}
 			.addCode("⇤)\n")
-			.returns(configuration.typeName)
 			.build()
 		)
+	}
 
 
-	private fun TypeSpec.Builder.writeEncode(configuration: CodecConfiguration) =
-		addFunction(FunSpec.builder("encode")
+	private fun TypeSpec.Builder.writeEncode(configuration: CodecConfiguration, valueQualifiedTypeName: ClassName): TypeSpec.Builder {
+		val encoderType = JSONEncoder::class.asTypeName().parameterizedBy(configuration.contextType.forKotlinPoet())
+
+		return addFunction(FunSpec.builder("encode")
 			.addModifiers(KModifier.OVERRIDE)
 			.receiver(encoderType)
-			.addParameter("value", configuration.typeName)
+			.addParameter("value", valueQualifiedTypeName)
 			.beginControlFlow("writeIntoMap")
 			.apply {
 				for (property in configuration.encodableProperties) {
 					val overload = when (property.type) {
-						BOOLEAN -> "bool"
+						BOOLEAN -> "boolean"
 						BYTE -> "byte"
 						CHAR -> "char"
 						DOUBLE -> "double"
@@ -179,10 +325,15 @@ internal class CodecWriter(
 
 					addStatement("writeMapElement(%1S, %2N = value.%3N)", property.serializedName, overload, property.name.toString())
 				}
+
+				for ((_, functionName) in configuration.customPropertyMethods) {
+					addStatement("%N(value)", functionName.toString())
+				}
 			}
 			.endControlFlow()
 			.build()
 		)
+	}
 
 
 	private val TypeName.isPrimitive
@@ -192,9 +343,6 @@ internal class CodecWriter(
 	companion object {
 
 		private val codingType = JSONCodingType::class.asTypeName()
-		private val contextType = JSONCodingContext::class.asTypeName()
-		private val decoderType = JSONDecoder::class.asTypeName().parameterizedBy(contextType)
-		private val encoderType = JSONEncoder::class.asTypeName().parameterizedBy(contextType)
 
 		private val STRING = ClassName("kotlin", "String")
 	}

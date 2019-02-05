@@ -40,13 +40,17 @@ val JSONCodecProvider.Companion.basic
 	get() = basicProvider
 
 
-val JSONCodecProvider.Companion.extended
-	get() = extendedProvider
-
-
 inline fun <reified ActualValue : Any, Context : JSONCodingContext> JSONCodecProvider<Context>.decoderCodecForType() =
 	decoderCodecForType(jsonCodingType<ActualValue>())
 
 
 inline fun <reified ActualValue : Any, Context : JSONCodingContext> JSONCodecProvider<Context>.encoderCodecForClass() =
 	encoderCodecForClass(ActualValue::class)
+
+
+val JSONCodecProvider.Companion.extended
+	get() = extendedProvider
+
+
+fun <CodecProvider : JSONCodecProvider<*>> JSONCodecProvider.Companion.generated(interfaceClass: KClass<CodecProvider>): CodecProvider =
+	error("Cannot find annotation-based codec provider. Either $interfaceClass hasn't been annotated with @JSON.CodecProvider or kapt hasn't been run.")

@@ -1,8 +1,8 @@
-@file:JSON.CodecProvider(name = "ExampleJSONCodecProvider")
-
 package examples
 
 import com.github.fluidsonic.fluid.json.*
+import examples.AnnotationCodingExample.ExampleJSONCodecProvider
+import examples.AnnotationCodingExample.Kaiju
 
 
 fun main() {
@@ -10,7 +10,7 @@ fun main() {
 	// Run './gradlew :fluid-json-examples:kaptKotlin' prior to running this example in order to run kapt.
 
 	val parser = JSONCodingParser.builder()
-		.decodingWith(ExampleJSONCodecProvider())
+		.decodingWith(JSONCodecProvider.generated(ExampleJSONCodecProvider::class))
 		.build()
 
 	val kaiju = parser.parseValueOfType<Kaiju>("""
@@ -27,34 +27,41 @@ fun main() {
 	println(kaiju)
 
 	val serializer = JSONCodingSerializer.builder()
-		.encodingWith(ExampleJSONCodecProvider())
+		.encodingWith(JSONCodecProvider.generated(ExampleJSONCodecProvider::class))
 		.build()
 
 	println(serializer.serializeValue(kaiju))
 }
 
 
-@JSON.Codec
-data class Kaiju(
-	val breachDate: YearMonthDay,
-	val category: Int,
-	val height: Double,
-	val name: String,
-	val origin: String?,
-	val status: Status,
-	val weight: Double
-) {
+object AnnotationCodingExample {
 
-	enum class Status {
+	@JSON
+	data class Kaiju(
+		val breachDate: YearMonthDay,
+		val category: Int,
+		val height: Double,
+		val name: String,
+		val origin: String?,
+		val status: Status,
+		val weight: Double
+	) {
 
-		deceased
+		enum class Status {
+
+			deceased
+		}
 	}
+
+
+	@JSON
+	data class YearMonthDay(
+		val year: Int,
+		val month: Int,
+		val day: Int
+	)
+
+
+	@JSON.CodecProvider
+	interface ExampleJSONCodecProvider : JSONCodecProvider<JSONCodingContext>
 }
-
-
-@JSON.Codec
-data class YearMonthDay(
-	val year: Int,
-	val month: Int,
-	val day: Int
-)

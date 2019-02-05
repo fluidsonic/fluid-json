@@ -3,7 +3,7 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-	id("com.github.fluidsonic.fluid-library") version "0.9.0"
+	id("com.github.fluidsonic.fluid-library") version "0.9.1"
 	jacoco
 }
 
@@ -20,10 +20,6 @@ subprojects {
 
 	jacoco {
 		toolVersion = "0.8.3"
-	}
-
-	repositories {
-		bintray("fluidsonic/maven")
 	}
 
 	tasks {
