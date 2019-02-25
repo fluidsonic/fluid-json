@@ -52,9 +52,9 @@ subprojects {
 	dependencies {
 		testImplementation(kotlin("reflect"))
 		testImplementation("ch.tutteli.atrium:atrium-cc-en_GB-robstoll:0.7.0")
-		testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
+		testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.0")
 
-		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.2")
-		testRuntimeOnly("org.junit.platform:junit-platform-runner:1.3.2")
+		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.0")
+		testRuntimeOnly("org.junit.platform:junit-platform-runner:1.4.0")
 	}
 }
