@@ -12,8 +12,8 @@ import kotlin.reflect.KClass
  * - it must not be `abstract`, `sealed` or `inner`
  * - it must not be generic
  */
-@Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.CLASS)
 annotation class JSON(
 	/**
 	 * Name of the generated codec class.
@@ -37,9 +37,9 @@ annotation class JSON(
 	/**
 	 * Visibility of the generated codec class.
 	 *
-	 * By default the visibility will be determined [automatically][Visibility.automatic].
+	 * By default the visibility will be [internal][Visibility.internal].
 	 */
-	val codecVisibility: Visibility = Visibility.automatic,
+	val codecVisibility: Visibility = Visibility.internal,
 
 	/**
 	 * Defines how to create an instance of the annotated class when decoding it from JSON.
@@ -67,8 +67,8 @@ annotation class JSON(
 	 * [@JSON.decoding][JSON.decoding] would exclude them by default or if there would be multiple constructors and a decision needs to be made. This does not
 	 * apply if [@JSON.decoding][JSON.decoding] is set to [none][Decoding.none] in which case an error will be raised.
 	 */
-	@Target(AnnotationTarget.CONSTRUCTOR)
 	@Retention(AnnotationRetention.SOURCE)
+	@Target(AnnotationTarget.CONSTRUCTOR)
 	annotation class Constructor
 
 
@@ -88,13 +88,13 @@ annotation class JSON(
 	 * val provider = JSONCodecProvider.generated(ExampleJSONCodecProvider::class)
 	 * ```
 	 */
-	@Target(AnnotationTarget.CLASS)
 	@Retention(AnnotationRetention.SOURCE)
+	@Target(AnnotationTarget.CLASS)
 	annotation class CodecProvider(
 		/**
 		 * Defines additional types for which codecs should be generated but which are not part of the same module as the annotated interface.
 		 */
-		val externalTypes: Array<JSON.External> = []
+		val externalTypes: Array<JSON.ExternalType> = []
 	)
 
 
@@ -102,42 +102,63 @@ annotation class JSON(
 	 * By annotating an extension function with this annotation additional code can be executed as part of the encoding of a [@JSON][JSON]-annotated class.
 	 *
 	 * This functionality requires the use of [@JSON.CodecProvider][CodecProvider] within the same module. The extension function must use [JSONEncoder] as
-	 * receiver type with the same context type as the [@JSON.CodecProvider][CodecProvider]-annotated interface or a supertype of that context type. It must
-	 * take exactly one parameter which is the class annotated with [@JSON][JSON]. It must be defined at file-level, not within any other type.
+	 * receiver type with the same context type as the [@JSON.CodecProvider][CodecProvider]-annotated interface or a supertype of that context type.
 	 *
-	 * Note that the extension function can have any name and its return value is ignored.
+	 * The annotated extension function must either be a member of the [@JSON][JSON]-annotated class or be defined at file-level and take exactly one value
+	 * parameter of the [@JSON][JSON]-annotated class.
 	 *
-	 * ### Example:
+	 * Note that the function can have any name, its return value is ignored, it must have `internal` or `public` visibility and it must not be generic.
+	 *
+	 * ### Example
+	 *
+	 * #### Class member
+	 *
+	 * ```
+	 * class User(
+	 *     // …
+	 *     val emailAddress: String
+	 * ) {
+	 *     @JSON.CustomProperties
+	 *     fun JSONEncoder<AuthenticationAwareContext>.writeCustomProperties() {
+	 *         if (this == context.authenticatedUser) {
+	 *             writeMapElement("emailAddress", emailAddress)
+	 *         }
+	 *     }
+	 * }
+	 * ```
+	 *
+	 * #### File-level extension function
 	 *
 	 * ```
 	 * @JSON.CustomProperties
 	 * fun JSONEncoder<AuthenticationAwareContext>.writeCustomProperties(user: User) {
 	 *     if (user == context.authenticatedUser) {
 	 *         writeMapElement("emailAddress", user.emailAddress)
-	 *         writeMapElement("anotherSensitiveProperty", user.anotherSensitiveValue)
 	 *     }
 	 * }
 	 * ```
 	 */
-	@Target(AnnotationTarget.FUNCTION)
 	@Retention(AnnotationRetention.SOURCE)
+	@Target(AnnotationTarget.FUNCTION)
 	annotation class CustomProperties
 
 
 	/**
-	 * Properties and constructors of a class annotated with [@JSON][JSON] will be ignored when encoding or decoding instances of that class.
+	 * In a class annotated with [@JSON][JSON]
+	 * - properties having this annotation will be ignored when encoding instances of that class and
+	 * - constructors having this annotation will be ignored when decoding instances of that class.
 	 */
-	@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY)
 	@Retention(AnnotationRetention.SOURCE)
+	@Target(AnnotationTarget.CONSTRUCTOR, AnnotationTarget.PROPERTY)
 	annotation class Excluded
 
 
 	/**
 	 * Creates a [JSONCodec] for a class which is not part of the same module and which thus cannot be annotated with [@JSON][JSON].
 	 */
-	@Target()
 	@Retention(AnnotationRetention.SOURCE)
-	annotation class External(
+	@Target()
+	annotation class ExternalType(
 		/**
 		 * The class for which a [JSONCodec] should be created.
 		 */
@@ -158,8 +179,8 @@ annotation class JSON(
 	 *
 	 * This annotation can also be used to further configure how a specific property is being decoded and encoded.
 	 */
-	@Target(AnnotationTarget.PROPERTY)
 	@Retention(AnnotationRetention.SOURCE)
+	@Target(AnnotationTarget.PROPERTY) // TODO add & support AnnotationTarget.VALUE_PARAMETER once fixed: https://youtrack.jetbrains.com/issue/KT-30063
 	annotation class Property(
 		/**
 		 * Defines the value of the JSON object key when decoding or encoding this property.
@@ -178,16 +199,17 @@ annotation class JSON(
 		/**
 		 * The constructor annotated with [@JSON.Constructor][Constructor] will be used for decoding and creating instances.
 		 *
-		 * If multiple constructors or no constructors are annotated with [@JSON.Constructor][Constructor] then an error will be raised.
+		 * If multiple constructors are or no constructor is annotated with [@JSON.Constructor][Constructor] then an error will be raised.
 		 */
 		annotatedConstructor,
 
 		/**
 		 * The annotation processor will try to find the best way to decode the [@JSON][JSON]-annotated class using the following approaches, in order:
 		 *
-		 * 1. the singleton instance of an `object`
-		 * 2. the primary constructor if present, accessible and not annotated with [@JSON.Excluded][Excluded]
-		 * 3. a secondary constructor if there is only one accessible and not annotated with [@JSON.Excluded][Excluded]
+		 * 1. `none` for any `object`
+		 * 2. the constructor annotated with [@JSON.Constructor][Constructor] if present
+		 * 3. the primary constructor if present, accessible and not annotated with [@JSON.Excluded][Excluded]
+		 * 4. a secondary constructor if there is only one accessible and not annotated with [@JSON.Excluded][Excluded]
 		 *
 		 * Accessible in this case means having `internal` or `public` visibility.
 		 *
@@ -208,7 +230,8 @@ annotation class JSON(
 		/**
 		 * The class' primary constructor will be used for decoding.
 		 *
-		 * If there is no primary constructor, the constructor is not accessible, uses `vararg` or is annotated with [@JSON.Excluded][Excluded] then an error will be raised.
+		 * If there is no primary constructor, the constructor is not accessible, uses `vararg` or is annotated with [@JSON.Excluded][Excluded] then an error
+		 * will be raised.
 		 *
 		 * Accessible in this case means having `internal` or `public` visibility.
 		 */
@@ -222,23 +245,32 @@ annotation class JSON(
 	enum class Encoding {
 
 		/**
-		 * All properties defined in the class (not extension properties) will be encoded unless they have been excluded explicitly by
-		 * [@JSON.Excluded][Excluded].
+		 * All properties defined in the class will be encoded unless either of the following is true:
+		 *
+		 * - property has been excluded using [@JSON.Excluded][Excluded]
+		 * - property is not accessible
+		 * - property is synthetic
+		 * - property has a receiver parameter
+		 *
+		 * Accessible in this case means having `internal` or `public` visibility.
+		 *
+		 * File-level extension properties will also be included if annotated with [@JSON.Property][Property].
+		 *
+		 * If no properties are found then the class will be encoded as an empty object.
 		 */
 		allProperties,
 
 		/**
 		 * Only properties explicitly annotated with [@JSON.Property][Property] will be encoded.
+		 *
+		 * If no properties are found then the class will be encoded as an empty object.
 		 */
 		annotatedProperties,
 
 		/**
 		 * The annotation processor will try to find the best way to encode the [@JSON][JSON]-annotated class.
-
-		 * All properties defined by the class (not extension properties) which are accessible, don't have a custom getter and are not annotated with
-		 * [@JSON.Excluded][Excluded] will be encoded.
 		 *
-		 * Accessible in this case means having `internal` or `public` visibility.
+		 * This behaves like [allProperties] with the only difference being that properties who have a non-default getter are excluded by default.
 		 */
 		automatic,
 
@@ -257,14 +289,15 @@ annotation class JSON(
 	enum class Representation {
 
 		/**
-		 * Classes will be represented [structured] except `inline` classes which will be represented as [singleValue].
+		 * Classes will be represented [structured], except `inline` classes which will be represented as [singleValue].
 		 */
 		automatic,
 
 		/**
 		 * The annotated class will be represented directly as a single JSON value without wrapping that value in a JSON object.
 		 *
-		 * If the annotated class has more than one encodable or decodable property an error will be raised.
+		 * If the annotated class has zero or more than one encodable (if the class is encodable) or decodable (if the class is decodable) properties an error
+		 * will be raised.
 		 */
 		singleValue,
 
@@ -281,7 +314,7 @@ annotation class JSON(
 	enum class Visibility {
 
 		/**
-		 * The visibility is derived automatically from the minimum visibility of the annotated class as well as its enclosing classes.
+		 * The visibility is derived automatically from the visibility of the annotated class as well as its enclosing classes.
 		 */
 		automatic,
 

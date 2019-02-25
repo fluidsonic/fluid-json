@@ -4,7 +4,7 @@ import java.io.Closeable
 import java.io.Flushable
 import java.io.Writer
 
-// FIXME re-enable contracts once fixed:
+// TODO re-enable contracts once fixed:
 // - https://youtrack.jetbrains.com/issue/KT-29510
 // - https://youtrack.jetbrains.com/issue/KT-29614
 

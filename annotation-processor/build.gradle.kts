@@ -14,7 +14,7 @@ dependencies {
 	implementation(project(":fluid-json-coding"))
 
 	implementation(kotlin("reflect"))
-	implementation(fluid("meta-jvm", "0.9.2"))
+	implementation(fluid("meta-jvm", "0.9.4"))
 	implementation(fluid("stdlib-jdk8", "0.9.1"))
 	implementation("com.google.auto:auto-common:0.10")
 	implementation("com.google.auto.service:auto-service:1.0-rc4")

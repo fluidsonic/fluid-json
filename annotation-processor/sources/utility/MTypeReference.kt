@@ -8,27 +8,29 @@ import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.WildcardTypeName
 
 
-internal fun MClassReference.forKotlinPoet(): TypeName {
+internal fun MTypeReference.Class.forKotlinPoet(): TypeName {
 	val typeNames = name.withoutPackage().kotlin.split('.')
 
-	val c: ClassName = ClassName(
+	return ClassName(
 		packageName = name.packageName.kotlin,
 		simpleName = typeNames.first(),
 		simpleNames = *typeNames.drop(1).toTypedArray()
 	)
+		.let { className ->
+			if (this.arguments.isNotEmpty()) {
+				className.parameterizedBy(*arguments.map { it.forKotlinPoet() }.toTypedArray())
+			}
+			else
+				className
+		}
 		.copy(nullable = isNullable)
-
-	if (this.arguments.isNotEmpty()) {
-		return c.parameterizedBy(*arguments.map { it.forKotlinPoet() }.toTypedArray())
-	}
-	else
-		return c
 }
+
 
 internal fun MTypeReference.forKotlinPoet() =
 	when (this) {
-		is MClassReference -> forKotlinPoet()
-		else -> error("not yet supported") // FIXME
+		is MTypeReference.Class -> forKotlinPoet()
+		else -> error("not supported")
 	}
 
 

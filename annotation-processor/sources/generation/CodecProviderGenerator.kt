@@ -16,14 +16,14 @@ import java.io.File
 import kotlin.reflect.KClass
 
 
-internal class CodecProviderWriter(
+internal class CodecProviderGenerator(
 	private val outputDirectory: File
 ) {
 
-	fun write(configuration: CodecProviderConfiguration, codecNames: List<MQualifiedTypeName>) {
-		val typeName = configuration.name.withoutPackage().kotlin.replace('.', '_')
+	fun generate(codecProvider: ProcessingResult.CodecProvider, codecNames: Collection<MQualifiedTypeName>) {
+		val typeName = codecProvider.name.withoutPackage().kotlin.replace('.', '_')
 
-		val qualifiedTypeName = configuration.name.forKotlinPoet()
+		val qualifiedTypeName = codecProvider.name.forKotlinPoet()
 		val generatedQualifiedTypeName = ClassName(
 			packageName = qualifiedTypeName.packageName,
 			simpleName = "Generated" + typeName.replace('.', '_')
@@ -31,11 +31,11 @@ internal class CodecProviderWriter(
 
 		FileSpec.builder(qualifiedTypeName.packageName, generatedQualifiedTypeName.simpleName)
 			.indent("\t")
-			.addType(TypeSpec.classBuilder(generatedQualifiedTypeName) // FIXME objectBuilder
+			.addType(TypeSpec.classBuilder(generatedQualifiedTypeName) // TODO use TypeSpec.objectBuilder once KotlinPoet > 1.0.1 is released
 				.addModifiers(KModifier.PRIVATE)
 				.addSuperinterface(qualifiedTypeName)
 				.addSuperinterface(
-					configuration.interfaceType,
+					codecProvider.interfaceType.forKotlinPoet(),
 					CodeBlock.of("JSONCodecProvider(${codecNames.sortedBy { it.kotlinInternal }.joinToString()})")
 				)
 				.build()
@@ -46,7 +46,7 @@ internal class CodecProviderWriter(
 				.build()
 			)
 			.addFunction(FunSpec.builder("generated")
-				.applyIf(!configuration.isPublic) { addModifiers(KModifier.INTERNAL) }
+				.applyIf(!codecProvider.isPublic) { addModifiers(KModifier.INTERNAL) }
 				.addAnnotation(AnnotationSpec.builder(Suppress::class)
 					.addMember("%S", "UNUSED_PARAMETER")
 					.build()

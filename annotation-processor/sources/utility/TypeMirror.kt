@@ -79,13 +79,5 @@ private fun StringBuilder.appendJvmTypeSignature(type: TypeMirror): StringBuilde
 }
 
 
-internal fun jvmMethodNameSignature(name: String) =
-	name
-
-
 internal fun jvmMethodSignature(name: String, parameterTypes: List<TypeMirror>, returnType: TypeMirror) =
 	StringBuilder().appendJvmMethodSignature(name = name, parameterTypes = parameterTypes, returnType = returnType).toString()
-
-
-internal fun jvmMethodTypeSignature(parameterTypes: List<TypeMirror>, returnType: TypeMirror) =
-	StringBuilder().appendJvmMethodTypeSignature(parameterTypes = parameterTypes, returnType = returnType).toString()
