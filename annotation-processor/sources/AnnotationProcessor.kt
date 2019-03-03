@@ -24,7 +24,7 @@ class AnnotationProcessor : AbstractProcessor(), ErrorLogger, TypeResolver {
 
 
 	override fun getSupportedSourceVersion(): SourceVersion =
-		SourceVersion.RELEASE_8
+		SourceVersion.latestSupported()
 
 
 	override fun logError(message: String) {

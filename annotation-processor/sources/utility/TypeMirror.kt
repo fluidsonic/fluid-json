@@ -36,8 +36,10 @@ private fun StringBuilder.appendJvmTypeNameSignature(type: DeclaredType) = apply
 
 	var enclosingElement = element.enclosingElement
 	while (enclosingElement != null) {
-		if (enclosingElement is PackageElement)
+		if (enclosingElement is PackageElement) {
 			packageName = enclosingElement.qualifiedName.toString()
+			break
+		}
 		else
 			enclosingClassNames += enclosingElement.simpleName.toString()
 
