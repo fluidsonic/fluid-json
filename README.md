@@ -28,7 +28,7 @@ Table of Contents
 Installation
 ------------
 
-This library is available in different variants and is [available in Maven Central](https://search.maven.org/search?q=g:com.github.fluidsonic%20a:fluid-json*).
+This library is available in different variants and is [available in Maven Central](https://search.maven.org/search?q=g:com.github.fluidsonic%20a:fluid-json*) and [Bintray](https://bintray.com/fluidsonic/maven/fluid-json).
 
 You have to add **one** of the following dependencies to your project depending on the functionality you need.
 
