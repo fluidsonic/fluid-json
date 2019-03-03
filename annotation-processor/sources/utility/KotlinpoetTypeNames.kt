@@ -1,11 +1,13 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
+import com.squareup.kotlinpoet.ANY
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.TypeName
 
 
 internal object KotlinpoetTypeNames {
 
+	val any = ANY
 	val boolean = ClassName("kotlin", "Boolean")
 	val byte = ClassName("kotlin", "Byte")
 	val char = ClassName("kotlin", "Char")
@@ -15,6 +17,8 @@ internal object KotlinpoetTypeNames {
 	val long = ClassName("kotlin", "Long")
 	val short = ClassName("kotlin", "Short")
 	val string = ClassName("kotlin", "String")
+
+	val nullableAny = any.copy(nullable = true)
 
 	val basic = setOf(
 		boolean,

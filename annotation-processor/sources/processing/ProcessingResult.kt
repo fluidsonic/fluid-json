@@ -16,14 +16,15 @@ internal data class ProcessingResult(
 		val isPublic: Boolean,
 		val isSingleValue: Boolean,
 		val name: MQualifiedTypeName,
-		val valueTypeName: MQualifiedTypeName
+		val valueType: TypeName
 	) {
 
 		data class DecodableProperty(
 			val name: MVariableName,
 			val presenceRequired: Boolean,
 			val serializedName: String,
-			val type: TypeName
+			val type: TypeName,
+			val typeParameterIndex: Int
 		)
 
 

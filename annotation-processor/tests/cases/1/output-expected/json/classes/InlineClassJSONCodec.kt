@@ -16,6 +16,7 @@ import com.github.fluidsonic.fluid.json.readShortOrNull
 import com.github.fluidsonic.fluid.json.readStringOrNull
 import com.github.fluidsonic.fluid.json.readValueOfType
 import com.github.fluidsonic.fluid.json.readValueOfTypeOrNull
+import com.github.fluidsonic.fluid.json.writeValueOrNull
 
 internal object InlineClassJSONCodec : AbstractJSONCodec<InlineClass, CustomCodingContext>() {
 	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in InlineClass>):

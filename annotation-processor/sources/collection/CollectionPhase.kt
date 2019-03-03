@@ -71,14 +71,14 @@ internal class CollectionPhase(
 			fail("must be a Kotlin class")
 
 		if (meta is MClass) {
-			if (meta.inheritanceRestriction == MInheritanceRestriction.ABSTRACT || meta.specialization is MClass.Specialization.Sealed)
+			if (meta.inheritanceRestriction == MInheritanceRestriction.ABSTRACT || meta.isSealed)
 				fail("must not be abstract or sealed")
 
-			if (meta.specialization == MClass.Specialization.Inner)
+			if (meta.isInner)
 				fail("must not be an inner class")
 
-			if (meta.typeParameters.isNotEmpty())
-				fail("must not be generic")
+			if (meta.typeParameters.any { it.upperBounds.size > 1 })
+				fail("must not have type arguments with multiple upper bounds")
 		}
 
 		when (val visibility = meta.visibility) {

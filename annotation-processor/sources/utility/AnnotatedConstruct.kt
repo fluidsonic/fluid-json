@@ -5,6 +5,6 @@ import javax.lang.model.AnnotatedConstruct
 
 
 internal fun AnnotatedConstruct.getAnnotationMirror(typeName: MQualifiedTypeName) =
-	typeName.jvmInternal.let { jvmTypeName ->
+	typeName.kotlin.let { jvmTypeName ->
 		annotationMirrors.firstOrNull { it.annotationType.toString() == jvmTypeName }
 	}

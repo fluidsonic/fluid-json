@@ -2,6 +2,8 @@ package com.github.fluidsonic.fluid.json.annotationprocessor
 
 import com.github.fluidsonic.fluid.json.*
 import com.github.fluidsonic.fluid.meta.*
+import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.STAR
 import javax.lang.model.element.Element
 
 
@@ -17,6 +19,8 @@ internal class ProcessingPhase(
 
 
 	private fun decodingStrategyForType(type: CollectionResult.Type): ProcessingResult.Codec.DecodingStrategy? {
+		val typeParameters = (type.meta as? MGeneralizable)?.typeParameters.orEmpty()
+
 		fun decodablePropertiesForConstructor(meta: MConstructor) =
 			meta.valueParameters
 				.map { parameter ->
@@ -27,7 +31,16 @@ internal class ProcessingPhase(
 
 					val annotation = type.decodableProperties[parameterName]
 					val encodingAnnotation = type.properties[parameterName]
-					val parameterKotlinpoetType = parameterType.forKotlinPoet()
+					val (parameterKotlinpoetType, typeParameterIndex) = when (parameterType) {
+						is MTypeReference.Class -> parameterType.forKotlinPoet(typeParameters = typeParameters) to -1
+						is MTypeReference.TypeParameter -> typeParameters.first { it.id == parameterType.id }.let { typeParameter ->
+							val upperBound = typeParameter.upperBounds.firstOrNull()?.forKotlinPoet(typeParameters = emptyList())
+								?: KotlinpoetTypeNames.nullableAny
+
+							upperBound to typeParameters.indexOfFirst { it.id == parameterType.id }
+						}
+						else -> error("not possible")
+					}
 
 					ProcessingResult.Codec.DecodableProperty(
 						name = parameterName,
@@ -35,7 +48,8 @@ internal class ProcessingPhase(
 						serializedName = annotation?.annotation?.serializedName?.takeIf { it != "<automatic>" }
 							?: encodingAnnotation?.annotation?.serializedName?.takeIf { it != "<automatic>" }
 							?: parameterName.toString(),
-						type = parameterKotlinpoetType
+						type = parameterKotlinpoetType,
+						typeParameterIndex = typeParameterIndex
 					)
 				}
 				.also { properties ->
@@ -126,6 +140,8 @@ internal class ProcessingPhase(
 
 
 	private fun encodingStrategyForType(type: CollectionResult.Type, decodingStrategy: ProcessingResult.Codec.DecodingStrategy?): ProcessingResult.Codec.EncodingStrategy? {
+		val typeParameters = (type.meta as? MGeneralizable)?.typeParameters.orEmpty()
+
 		fun encodingStrategyForProperties(properties: Collection<MProperty>) = ProcessingResult.Codec.EncodingStrategy(
 			customPropertyMethods = type.customProperties.map { it.extensionPackageName to it.functionMeta.name },
 			properties = properties
@@ -142,7 +158,7 @@ internal class ProcessingPhase(
 						serializedName = annotation?.annotation?.serializedName?.takeIf { it != "<automatic>" }
 							?: decodingAnnotation?.annotation?.serializedName?.takeIf { it != "<automatic>" }
 							?: property.name.toString(),
-						type = property.getter.returnType.forKotlinPoet()
+						type = property.getter.returnType.forKotlinPoet(typeParameters = typeParameters)
 					) to property
 				}
 				.let { propertiesAndMeta ->
@@ -318,7 +334,10 @@ internal class ProcessingPhase(
 					.takeIf { it != "<automatic>" }
 					?: meta.name.withoutPackage().kotlin.replace('.', '_') + "JSONCodec"
 			),
-			valueTypeName = meta.name
+			valueType = meta.name.forKotlinPoet().let {
+				if (meta is MGeneralizable && meta.typeParameters.isNotEmpty()) it.parameterizedBy(*Array(meta.typeParameters.size) { STAR })
+				else it
+			}
 		)
 	}
 

@@ -2,13 +2,15 @@ package com.github.fluidsonic.fluid.json.annotationprocessor
 
 import com.github.fluidsonic.fluid.meta.*
 import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STAR
 import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.TypeVariableName
 import com.squareup.kotlinpoet.WildcardTypeName
 
 
-internal fun MTypeReference.Class.forKotlinPoet(): TypeName {
+internal fun MTypeReference.Class.forKotlinPoet(typeParameters: List<MTypeParameter>): TypeName {
 	val typeNames = name.withoutPackage().kotlin.split('.')
 
 	return ClassName(
@@ -18,7 +20,7 @@ internal fun MTypeReference.Class.forKotlinPoet(): TypeName {
 	)
 		.let { className ->
 			if (this.arguments.isNotEmpty()) {
-				className.parameterizedBy(*arguments.map { it.forKotlinPoet() }.toTypedArray())
+				className.parameterizedBy(*arguments.map { it.forKotlinPoet(typeParameters = typeParameters) }.toTypedArray())
 			}
 			else
 				className
@@ -27,21 +29,43 @@ internal fun MTypeReference.Class.forKotlinPoet(): TypeName {
 }
 
 
-internal fun MTypeReference.forKotlinPoet() =
+internal fun MTypeReference.TypeParameter.forKotlinPoet(typeParameters: List<MTypeParameter>): TypeName =
+	typeParameters.first { it.id == id }.let { typeParameter ->
+		TypeVariableName(
+			name = typeParameter.name.kotlin,
+			bounds = *typeParameter.upperBounds
+				.map { it.forKotlinPoet(typeParameters = typeParameters) }
+				.ifEmpty { listOf(KotlinpoetTypeNames.nullableAny) }
+				.toTypedArray(),
+			variance = typeParameter.variance.kModifier
+		).copy(nullable = isNullable || typeParameter.upperBounds.all { it.isNullable })
+	}
+
+
+internal fun MTypeReference.forKotlinPoet(typeParameters: List<MTypeParameter>): TypeName =
 	when (this) {
-		is MTypeReference.Class -> forKotlinPoet()
+		is MTypeReference.Class -> forKotlinPoet(typeParameters = typeParameters)
+		is MTypeReference.TypeParameter -> forKotlinPoet(typeParameters = typeParameters)
 		else -> error("not supported")
 	}
 
 
-internal fun MTypeArgument.forKotlinPoet(): TypeName =
+internal fun MTypeArgument.forKotlinPoet(typeParameters: List<MTypeParameter>): TypeName =
 	when (this) {
 		is MTypeArgument.StarProjection -> STAR
 		is MTypeArgument.Type -> {
 			when (variance) {
-				MVariance.IN -> WildcardTypeName.consumerOf(forKotlinPoet())
-				MVariance.OUT -> WildcardTypeName.producerOf(forKotlinPoet())
-				MVariance.INVARIANT -> type.forKotlinPoet()
+				MVariance.IN -> WildcardTypeName.consumerOf(forKotlinPoet(typeParameters = typeParameters))
+				MVariance.OUT -> WildcardTypeName.producerOf(forKotlinPoet(typeParameters = typeParameters))
+				MVariance.INVARIANT -> type.forKotlinPoet(typeParameters = typeParameters)
 			}
 		}
+	}
+
+
+private val MVariance.kModifier
+	get() = when (this) {
+		MVariance.INVARIANT -> null
+		MVariance.IN -> KModifier.IN
+		MVariance.OUT -> KModifier.OUT
 	}

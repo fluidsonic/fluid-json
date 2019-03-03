@@ -30,11 +30,17 @@ internal class CodecProviderGenerator(
 
 		FileSpec.builder(qualifiedTypeName.packageName, generatedQualifiedTypeName.simpleName)
 			.indent("\t")
+			.apply {
+				// TODO remove once fixed: https://github.com/square/kotlinpoet/pull/636
+				codecNames.forEach { codecName ->
+					if (codecName.packageName.isRoot) addImport("", codecName.withoutPackage().kotlin)
+				}
+			}
 			.addType(TypeSpec.objectBuilder(generatedQualifiedTypeName)
 				.addModifiers(KModifier.PRIVATE)
 				.addSuperinterface(qualifiedTypeName)
 				.addSuperinterface(
-					codecProvider.interfaceType.forKotlinPoet(),
+					codecProvider.interfaceType.forKotlinPoet(typeParameters = emptyList()),
 					CodeBlock.of("JSONCodecProvider(${codecNames.sortedBy { it.kotlinInternal }.joinToString()})")
 				)
 				.build()

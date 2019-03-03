@@ -2,10 +2,10 @@ package com.github.fluidsonic.fluid.json.annotationprocessor
 
 import com.github.fluidsonic.fluid.json.*
 import com.github.fluidsonic.fluid.meta.*
-import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
@@ -28,7 +28,6 @@ internal class CodecGenerator(
 
 	private fun generateForSingleValueRepresentation(codec: ProcessingResult.Codec) {
 		val typeName = codec.name.withoutPackage().kotlin.replace('.', '_')
-		val valueQualifiedTypeName = codec.valueTypeName.forKotlinPoet()
 
 		val decodableProperty = codec.decodingStrategy?.properties?.singleOrNull()
 		val encodableProperty = codec.encodingStrategy?.properties?.singleOrNull()
@@ -55,6 +54,9 @@ internal class CodecGenerator(
 					)
 				}
 				if (encodableProperty != null) {
+					addImport("com.github.fluidsonic.fluid.json",
+						"writeValueOrNull"
+					)
 					encodableProperty.importPackageName?.let { addImport(it.kotlin, encodableProperty.name.kotlin) }
 				}
 			}
@@ -65,21 +67,47 @@ internal class CodecGenerator(
 						decodableProperty == null -> AbstractJSONEncoderCodec::class
 						encodableProperty == null -> AbstractJSONDecoderCodec::class
 						else -> AbstractJSONCodec::class
-					}.asTypeName().parameterizedBy(valueQualifiedTypeName, codec.contextType.forKotlinPoet())
+					}.asTypeName().parameterizedBy(codec.valueType, codec.contextType.forKotlinPoet())
 				)
 				.apply {
 					if (decodableProperty != null)
 						addFunction(FunSpec.builder("decode")
 							.addModifiers(KModifier.OVERRIDE)
 							.receiver(decoderType)
-							.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(valueQualifiedTypeName)))
-							.returns(valueQualifiedTypeName)
-							.addCode(
-								"return %1T(%2N = %3N())",
-								valueQualifiedTypeName,
-								decodableProperty.name.toString(),
-								methodNameForReadingValueOfType(decodableProperty.type)
-							)
+							.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(codec.valueType)))
+							.returns(codec.valueType)
+							.apply {
+								val rawValueType = (codec.valueType as? ParameterizedTypeName)?.rawType ?: codec.valueType
+
+								when {
+									decodableProperty.typeParameterIndex >= 0 ->
+										if (decodableProperty.type == KotlinpoetTypeNames.any || decodableProperty.type == KotlinpoetTypeNames.nullableAny)
+											addCode(
+												"return %1T(%2N = %3N(valueType.arguments[%4L]))",
+												rawValueType,
+												decodableProperty.name.toString(),
+												methodNameForReadingValueOfType(decodableProperty.type),
+												decodableProperty.typeParameterIndex
+											)
+										else
+											addCode(
+												"return %1T(%2N = %3N(valueType.arguments[%4L]) as %5T)",
+												rawValueType,
+												decodableProperty.name.toString(),
+												methodNameForReadingValueOfType(decodableProperty.type),
+												decodableProperty.typeParameterIndex,
+												decodableProperty.type
+											)
+
+									else ->
+										addCode(
+											"return %1T(%2N = %3N())",
+											rawValueType,
+											decodableProperty.name.toString(),
+											methodNameForReadingValueOfType(decodableProperty.type)
+										)
+								}
+							}
 							.build())
 				}
 				.apply {
@@ -87,7 +115,7 @@ internal class CodecGenerator(
 						addFunction(FunSpec.builder("encode")
 							.addModifiers(KModifier.OVERRIDE)
 							.receiver(encoderType)
-							.addParameter("value", valueQualifiedTypeName)
+							.addParameter("value", codec.valueType)
 							.addCode(
 								"%1N(value.%2N)\n",
 								methodNameForWritingValueOfType(encodableProperty.type),
@@ -104,7 +132,6 @@ internal class CodecGenerator(
 
 	private fun generateForStructuredRepresentation(codec: ProcessingResult.Codec) {
 		val typeName = codec.name.withoutPackage().kotlin.replace('.', '_')
-		val valueQualifiedTypeName = codec.valueTypeName.forKotlinPoet()
 
 		FileSpec.builder(codec.name.packageName.kotlin, typeName)
 			.indent("\t")
@@ -162,14 +189,14 @@ internal class CodecGenerator(
 						codec.decodingStrategy == null -> AbstractJSONEncoderCodec::class
 						codec.encodingStrategy == null -> AbstractJSONDecoderCodec::class
 						else -> AbstractJSONCodec::class
-					}.asTypeName().parameterizedBy(valueQualifiedTypeName, codec.contextType.forKotlinPoet())
+					}.asTypeName().parameterizedBy(codec.valueType, codec.contextType.forKotlinPoet())
 				)
 				.apply {
 					if (codec.decodingStrategy != null) {
-						generateDecode(codec = codec, strategy = codec.decodingStrategy, valueQualifiedTypeName = valueQualifiedTypeName)
+						generateDecode(codec = codec, strategy = codec.decodingStrategy, valueType = codec.valueType)
 					}
 					if (codec.encodingStrategy != null) {
-						generateEncode(codec = codec, strategy = codec.encodingStrategy, valueQualifiedTypeName = valueQualifiedTypeName)
+						generateEncode(codec = codec, strategy = codec.encodingStrategy, valueType = codec.valueType)
 					}
 				}
 				.build()
@@ -182,7 +209,7 @@ internal class CodecGenerator(
 	private fun TypeSpec.Builder.generateDecode(
 		codec: ProcessingResult.Codec,
 		strategy: ProcessingResult.Codec.DecodingStrategy,
-		valueQualifiedTypeName: ClassName
+		valueType: TypeName
 	): TypeSpec.Builder {
 		val decoderType = JSONDecoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
 		val properties = strategy.properties.sortedBy { it.serializedName }
@@ -190,8 +217,8 @@ internal class CodecGenerator(
 		return addFunction(FunSpec.builder("decode")
 			.addModifiers(KModifier.OVERRIDE)
 			.receiver(decoderType)
-			.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(valueQualifiedTypeName)))
-			.returns(valueQualifiedTypeName)
+			.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(valueType)))
+			.returns(valueType)
 			.apply {
 				for (property in properties) {
 					val localVariableName = "_${property.name}"
@@ -222,14 +249,40 @@ internal class CodecGenerator(
 				for (property in properties) {
 					val functionName = methodNameForReadingValueOfType(property.type)
 
-					if (property.presenceRequired) {
-						beginControlFlow("%S -> ", property.serializedName)
-						addStatement("%1N = %2N()", "_${property.name}", functionName)
-						addStatement("%N = true", "${property.name}_isPresent")
-						endControlFlow()
-					}
-					else {
-						addStatement("%1S -> %2N = %3N()", property.serializedName, "_${property.name}", functionName)
+					when {
+						property.presenceRequired -> {
+							beginControlFlow("%S -> ", property.serializedName)
+							addStatement("%1N = %2N()", "_${property.name}", functionName)
+							addStatement("%N = true", "${property.name}_isPresent")
+							endControlFlow()
+						}
+
+						property.typeParameterIndex >= 0 ->
+							if (property.type == KotlinpoetTypeNames.any || property.type == KotlinpoetTypeNames.nullableAny)
+								addStatement(
+									"%1S -> %2N = %3N(valueType.arguments[%4L])",
+									property.serializedName,
+									"_${property.name}",
+									functionName,
+									property.typeParameterIndex
+								)
+							else
+								addStatement(
+									"%1S -> %2N = %3N(valueType.arguments[%4L]) as %5T",
+									property.serializedName,
+									"_${property.name}",
+									functionName,
+									property.typeParameterIndex,
+									property.type
+								)
+
+						else ->
+							addStatement(
+								"%1S -> %2N = %3N()",
+								property.serializedName,
+								"_${property.name}",
+								functionName
+							)
 					}
 				}
 				addStatement("else -> skipValue()")
@@ -246,7 +299,7 @@ internal class CodecGenerator(
 						addCode("\n")
 					}
 			}
-			.addCode("return %T(\n⇥", valueQualifiedTypeName)
+			.addCode("return %T(\n⇥", (valueType as? ParameterizedTypeName)?.rawType ?: valueType)
 			.apply {
 				val size = properties.size
 				for ((index, property) in properties.withIndex()) {
@@ -272,7 +325,7 @@ internal class CodecGenerator(
 	private fun TypeSpec.Builder.generateEncode(
 		codec: ProcessingResult.Codec,
 		strategy: ProcessingResult.Codec.EncodingStrategy,
-		valueQualifiedTypeName: ClassName
+		valueType: TypeName
 	): TypeSpec.Builder {
 		val encoderType = JSONEncoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
 
@@ -282,7 +335,7 @@ internal class CodecGenerator(
 		return addFunction(FunSpec.builder("encode")
 			.addModifiers(KModifier.OVERRIDE)
 			.receiver(encoderType)
-			.addParameter("value", valueQualifiedTypeName)
+			.addParameter("value", valueType)
 			.beginControlFlow("writeIntoMap")
 			.apply {
 				for (property in properties)

@@ -1,14 +1,18 @@
 package codecProvider
 
+import AutomaticRootJSONCodec
+import CustomRootJSONCodec
+import DefaultRootJSONCodec
 import com.github.fluidsonic.fluid.json.JSONCodecProvider
 import kotlin.Suppress
 import kotlin.reflect.KClass
 
 private object GeneratedCustomContextCodecProvider : CustomContextCodecProvider,
-		JSONCodecProvider<CustomCodingContext> by JSONCodecProvider(.AutomaticRootJSONCodec,
-		.CustomRootJSONCodec, .DefaultRootJSONCodec, customProperties.CustomContextJSONCodec,
+		JSONCodecProvider<CustomCodingContext> by JSONCodecProvider(AutomaticRootJSONCodec,
+		CustomRootJSONCodec, DefaultRootJSONCodec, customProperties.CustomContextJSONCodec,
 		customProperties.DifferentPackageJSONCodec, customProperties.SamePackageJSONCodec,
-		json.classes.ClassJSONCodec, json.classes.DataClassJSONCodec, json.classes.InlineClassJSONCodec,
+		externalType.ExternalPairCodec, json.classes.ClassJSONCodec, json.classes.DataClassJSONCodec,
+		json.classes.GenericClassJSONCodec, json.classes.InlineClassJSONCodec,
 		json.classes.ObjectJSONCodec, json.codecName.AutomaticJSONCodec,
 		json.codecName.CustomizedJSONCodec, json.codecName.DefaultJSONCodec,
 		json.codecPackageName.AutomaticJSONCodec, json.codecPackageName.DefaultJSONCodec,
@@ -32,9 +36,11 @@ private object GeneratedCustomContextCodecProvider : CustomContextCodecProvider,
 		json.encoding.DefaultJSONCodec, json.encoding.NoneJSONCodec,
 		json.representation.AutomaticSingleValueJSONCodec,
 		json.representation.AutomaticStructuredJSONCodec, json.representation.DefaultSingleValueJSONCodec,
-		json.representation.DefaultStructuredJSONCodec, json.representation.SingleValueJSONCodec,
-		json.representation.StructuredJSONCodec, property.serializedName.AutomaticJSONCodec,
-		property.serializedName.CustomJSONCodec, property.serializedName.DefaultJSONCodec)
+		json.representation.DefaultStructuredJSONCodec, json.representation.SingleValueGenericJSONCodec,
+		json.representation.SingleValueJSONCodec, json.representation.SingleValueNullableJSONCodec,
+		json.representation.StructuredJSONCodec, json.representation.StructuredValueGenericJSONCodec,
+		property.serializedName.AutomaticJSONCodec, property.serializedName.CustomJSONCodec,
+		property.serializedName.DefaultJSONCodec)
 
 @Suppress("UNUSED_PARAMETER")
 fun JSONCodecProvider.Companion.generated(interfaceClass: KClass<CustomContextCodecProvider>):
