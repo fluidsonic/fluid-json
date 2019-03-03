@@ -1,8 +1,9 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Tests" type="CompoundRunConfigurationType">
-    <toRun name="Coding JDK8 Tests" type="JUnit" />
     <toRun name="Basic Tests" type="JUnit" />
     <toRun name="Coding Tests" type="JUnit" />
+    <toRun name="Annotation Processor" type="JUnit" />
+    <toRun name="Coding JDK8 Tests" type="JUnit" />
     <method v="2" />
   </configuration>
 </component>
