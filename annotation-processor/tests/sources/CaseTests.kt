@@ -16,6 +16,11 @@ internal object CaseTests {
 			val expectedOutputPath = case.resolve("output-expected")
 
 			val result = KotlinCompiler()
+				.arguments {
+					// TODO remove once fixed: https://youtrack.jetbrains.com/issue/KT-28011
+					compileJava = false
+					useJavac = false
+				}
 				.includesCurrentClasspath()
 				.jvmTarget(KotlinJvmTarget.v1_8)
 				.kaptOptions {
