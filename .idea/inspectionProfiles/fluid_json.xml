@@ -25,6 +25,7 @@
     <inspection_tool class="BashUnusedFunction" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BashUnusedFunctionParams" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="BashWrapFunction" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="DirectUseOfResultType" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="Duplicates" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="EnumEntryName" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="namePattern" value="[a-z]([A-Za-z\d]*|[A-Z_\d]*)" />
@@ -67,6 +68,9 @@
     <inspection_tool class="MemberVisibilityCanBePrivate" enabled="false" level="INFO" enabled_by_default="false" />
     <inspection_tool class="MemberVisibilityCanPrivate" enabled="false" level="INFO" enabled_by_default="false" />
     <inspection_tool class="PackageDirectoryMismatch" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="PublicApiImplicitType" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
+    <inspection_tool class="RedundantNotNullExtensionReceiverOfInline" enabled="true" level="INFORMATION" enabled_by_default="true" />
+    <inspection_tool class="Reformat" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="SecurityAdvisoriesInspection" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="optionConfiguration">
         <list>
@@ -119,5 +123,6 @@
       </option>
     </inspection_tool>
     <inspection_tool class="UnusedProperty" enabled="false" level="WARNING" enabled_by_default="false" />
+    <inspection_tool class="UnusedSymbol" enabled="false" level="WARNING" enabled_by_default="false" />
   </profile>
 </component>

@@ -25,14 +25,14 @@ annotation class JSON(
 	 * - `@JSON class Foo` -> `FooJSONCodec`
 	 * - `class Foo { @JSON class Bar }` -> `Foo_BarJSONCodec`
 	 */
-	val codecName: String = "<automatic>",
+	val codecName: String = automatic,
 
 	/**
 	 * Package name of the generated codec class.
 	 *
 	 * By default it will be located in the same package as the annotated class.
 	 */
-	val codecPackageName: String = "<automatic>",
+	val codecPackageName: String = automatic,
 
 	/**
 	 * Visibility of the generated codec class.
@@ -187,8 +187,14 @@ annotation class JSON(
 		 *
 		 * By default this is the same as the property name in Kotlin.
 		 */
-		val serializedName: String = "<automatic>"
+		val serializedName: String = automatic
 	)
+
+
+	companion object {
+
+		const val automatic: String = "<automatic>"
+	}
 
 
 	/**
@@ -328,6 +334,6 @@ annotation class JSON(
 		 *
 		 * Note that this raises an error if the annotated class or one of its enclosing classes isn't `public`.
 		 */
-		public
+		publicRequired
 	}
 }

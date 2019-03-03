@@ -23,7 +23,7 @@ class AnnotationProcessor : AbstractProcessor(), ErrorLogger, TypeResolver {
 		collectionPhase.annotationClasses.mapTo(mutableSetOf()) { it.java.canonicalName }
 
 
-	override fun getSupportedSourceVersion() =
+	override fun getSupportedSourceVersion(): SourceVersion =
 		SourceVersion.RELEASE_8
 
 

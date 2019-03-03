@@ -198,14 +198,14 @@ internal class CodecGenerator(
 
 					val propertyType = property.type
 					when {
-						propertyType == TypeNames.boolean -> addStatement("var %N = false", localVariableName)
-						propertyType == TypeNames.byte -> addStatement("var %N = 0.toByte()", localVariableName)
-						propertyType == TypeNames.char -> addStatement("var %N = 0.toChar()", localVariableName)
-						propertyType == TypeNames.double -> addStatement("var %N = 0.0", localVariableName)
-						propertyType == TypeNames.float -> addStatement("var %N = 0.0f", localVariableName)
-						propertyType == TypeNames.int -> addStatement("var %N = 0", localVariableName)
-						propertyType == TypeNames.long -> addStatement("var %N = 0L", localVariableName)
-						propertyType == TypeNames.short -> addStatement("var %N = 0.toShort()", localVariableName)
+						propertyType == KotlinpoetTypeNames.boolean -> addStatement("var %N = false", localVariableName)
+						propertyType == KotlinpoetTypeNames.byte -> addStatement("var %N = 0.toByte()", localVariableName)
+						propertyType == KotlinpoetTypeNames.char -> addStatement("var %N = 0.toChar()", localVariableName)
+						propertyType == KotlinpoetTypeNames.double -> addStatement("var %N = 0.0", localVariableName)
+						propertyType == KotlinpoetTypeNames.float -> addStatement("var %N = 0.0f", localVariableName)
+						propertyType == KotlinpoetTypeNames.int -> addStatement("var %N = 0", localVariableName)
+						propertyType == KotlinpoetTypeNames.long -> addStatement("var %N = 0L", localVariableName)
+						propertyType == KotlinpoetTypeNames.short -> addStatement("var %N = 0.toShort()", localVariableName)
 						propertyType.isNullable -> addStatement("var %1N: %2T = null", localVariableName, propertyType)
 						else -> addStatement("var %1N: %2T? = null", localVariableName, propertyType)
 					}
@@ -306,15 +306,15 @@ internal class CodecGenerator(
 
 	private fun methodNameForReadingValueOfType(type: TypeName) =
 		when (type) {
-			TypeNames.boolean -> "readBoolean"
-			TypeNames.byte -> "readByte"
-			TypeNames.char -> "readChar"
-			TypeNames.double -> "readDouble"
-			TypeNames.float -> "readFloat"
-			TypeNames.int -> "readInt"
-			TypeNames.long -> "readLong"
-			TypeNames.short -> "readShort"
-			TypeNames.string -> "readString"
+			KotlinpoetTypeNames.boolean -> "readBoolean"
+			KotlinpoetTypeNames.byte -> "readByte"
+			KotlinpoetTypeNames.char -> "readChar"
+			KotlinpoetTypeNames.double -> "readDouble"
+			KotlinpoetTypeNames.float -> "readFloat"
+			KotlinpoetTypeNames.int -> "readInt"
+			KotlinpoetTypeNames.long -> "readLong"
+			KotlinpoetTypeNames.short -> "readShort"
+			KotlinpoetTypeNames.string -> "readString"
 			else -> "readValueOfType"
 		}
 			.let { if (type.isNullable) "${it}OrNull" else it }
@@ -322,15 +322,15 @@ internal class CodecGenerator(
 
 	private fun methodNameForWritingValueOfType(type: TypeName) =
 		when (type) {
-			TypeNames.boolean -> "writeBoolean"
-			TypeNames.byte -> "writeByte"
-			TypeNames.char -> "writeChar"
-			TypeNames.double -> "writeDouble"
-			TypeNames.float -> "writeFloat"
-			TypeNames.int -> "writeInt"
-			TypeNames.long -> "writeLong"
-			TypeNames.short -> "writeShort"
-			TypeNames.string -> "writeString"
+			KotlinpoetTypeNames.boolean -> "writeBoolean"
+			KotlinpoetTypeNames.byte -> "writeByte"
+			KotlinpoetTypeNames.char -> "writeChar"
+			KotlinpoetTypeNames.double -> "writeDouble"
+			KotlinpoetTypeNames.float -> "writeFloat"
+			KotlinpoetTypeNames.int -> "writeInt"
+			KotlinpoetTypeNames.long -> "writeLong"
+			KotlinpoetTypeNames.short -> "writeShort"
+			KotlinpoetTypeNames.string -> "writeString"
 			else -> "writeValue"
 		}
 			.let { if (type.isNullable) "${it}OrNull" else it }
@@ -338,50 +338,21 @@ internal class CodecGenerator(
 
 	private fun parameterNameForWritingValueOfType(type: TypeName) =
 		when (type) {
-			TypeNames.boolean -> "boolean"
-			TypeNames.byte -> "byte"
-			TypeNames.char -> "char"
-			TypeNames.double -> "double"
-			TypeNames.float -> "float"
-			TypeNames.int -> "int"
-			TypeNames.long -> "long"
-			TypeNames.short -> "short"
-			TypeNames.string -> "string"
+			KotlinpoetTypeNames.boolean -> "boolean"
+			KotlinpoetTypeNames.byte -> "byte"
+			KotlinpoetTypeNames.char -> "char"
+			KotlinpoetTypeNames.double -> "double"
+			KotlinpoetTypeNames.float -> "float"
+			KotlinpoetTypeNames.int -> "int"
+			KotlinpoetTypeNames.long -> "long"
+			KotlinpoetTypeNames.short -> "short"
+			KotlinpoetTypeNames.string -> "string"
 			else -> "value"
 		}
-
-
-	private val TypeName.isPrimitive
-		get() = TypeNames.basic.contains(this)
 
 
 	companion object {
 
 		private val codingType = JSONCodingType::class.asTypeName()
-	}
-
-
-	private object TypeNames {
-
-		val boolean = ClassName("kotlin", "Boolean")
-		val byte = ClassName("kotlin", "Byte")
-		val char = ClassName("kotlin", "Char")
-		val double = ClassName("kotlin", "Double")
-		val float = ClassName("kotlin", "Float")
-		val int = ClassName("kotlin", "Int")
-		val long = ClassName("kotlin", "Long")
-		val short = ClassName("kotlin", "Short")
-		val string = ClassName("kotlin", "String")
-
-		val basic = setOf(
-			boolean,
-			byte,
-			char,
-			double,
-			float,
-			int,
-			long,
-			short
-		)
 	}
 }

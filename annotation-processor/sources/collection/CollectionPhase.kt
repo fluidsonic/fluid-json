@@ -83,7 +83,7 @@ internal class CollectionPhase(
 
 		when (val visibility = meta.visibility) {
 			MVisibility.INTERNAL ->
-				if (annotation.codecVisibility == JSON.Visibility.public)
+				if (annotation.codecVisibility == JSON.Visibility.publicRequired)
 					fail("must be public if codec is supposed to be public")
 
 			MVisibility.PUBLIC ->
@@ -102,7 +102,7 @@ internal class CollectionPhase(
 
 			when (val visibility = enclosingType.visibility) {
 				MVisibility.INTERNAL -> {
-					if (annotation.codecVisibility == JSON.Visibility.public)
+					if (annotation.codecVisibility == JSON.Visibility.publicRequired)
 						fail("must only be nested in public types if codec is supposed to be public but '$enclosingElement' is $visibility")
 
 					actualVisibility = visibility
@@ -490,7 +490,7 @@ internal class CollectionPhase(
 			},
 
 			constructorExclusions = type.constructorExclusions.also { exclusions ->
-				if (exclusions.isNotEmpty())
+				if (exclusions.isNotEmpty() && type.constructors.isNotEmpty())
 					fail("using @JSON.Excluded on constructors of type $typeName isn't allowed if explicitly selecting a constructor with @JSON.Constructor")
 			},
 

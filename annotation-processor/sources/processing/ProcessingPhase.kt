@@ -27,14 +27,15 @@ internal class ProcessingPhase(
 
 					val annotation = type.decodableProperties[parameterName]
 					val encodingAnnotation = type.properties[parameterName]
+					val parameterKotlinpoetType = parameterType.forKotlinPoet()
 
 					ProcessingResult.Codec.DecodableProperty(
 						name = parameterName,
-						presenceRequired = false, // not yet supported
+						presenceRequired = parameterKotlinpoetType.isPrimitive, // not yet supported for non-primitive types
 						serializedName = annotation?.annotation?.serializedName?.takeIf { it != "<automatic>" }
 							?: encodingAnnotation?.annotation?.serializedName?.takeIf { it != "<automatic>" }
 							?: parameterName.toString(),
-						type = parameterType.forKotlinPoet()
+						type = parameterKotlinpoetType
 					)
 				}
 				.also { properties ->
@@ -299,7 +300,7 @@ internal class ProcessingPhase(
 		val isPublic = when (annotation.codecVisibility) {
 			JSON.Visibility.automatic -> type.actualVisibility == MVisibility.PUBLIC
 			JSON.Visibility.internal -> false
-			JSON.Visibility.public -> true
+			JSON.Visibility.publicRequired -> true
 		}
 
 		codecs += ProcessingResult.Codec(

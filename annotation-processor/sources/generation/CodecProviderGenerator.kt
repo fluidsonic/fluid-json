@@ -9,7 +9,6 @@ import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.asTypeName
 import java.io.File
@@ -31,18 +30,13 @@ internal class CodecProviderGenerator(
 
 		FileSpec.builder(qualifiedTypeName.packageName, generatedQualifiedTypeName.simpleName)
 			.indent("\t")
-			.addType(TypeSpec.classBuilder(generatedQualifiedTypeName) // TODO use TypeSpec.objectBuilder once KotlinPoet > 1.0.1 is released
+			.addType(TypeSpec.objectBuilder(generatedQualifiedTypeName)
 				.addModifiers(KModifier.PRIVATE)
 				.addSuperinterface(qualifiedTypeName)
 				.addSuperinterface(
 					codecProvider.interfaceType.forKotlinPoet(),
 					CodeBlock.of("JSONCodecProvider(${codecNames.sortedBy { it.kotlinInternal }.joinToString()})")
 				)
-				.build()
-			)
-			.addProperty(PropertySpec.builder("instance", generatedQualifiedTypeName)
-				.addModifiers(KModifier.PRIVATE)
-				.initializer("%T()", generatedQualifiedTypeName)
 				.build()
 			)
 			.addFunction(FunSpec.builder("generated")
@@ -54,7 +48,7 @@ internal class CodecProviderGenerator(
 				.receiver(JSONCodecProvider.Companion::class)
 				.addParameter(name = "interfaceClass", type = KClass::class.asTypeName().parameterizedBy(qualifiedTypeName))
 				.returns(qualifiedTypeName)
-				.addCode("return instance\n")
+				.addCode("return %T\n", generatedQualifiedTypeName)
 				.build()
 			)
 			.build()
