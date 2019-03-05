@@ -28,6 +28,7 @@ object DefaultJSONCodecs {
 			ShortArrayJSONCodec,
 			ShortJSONCodec,
 			StringJSONCodec,
+			CollectionJSONCodec, // after subclasses
 			IterableJSONEncoderCodec, // after subclasses
 			NumberJSONCodec // after subclasses
 		)
@@ -43,6 +44,7 @@ object DefaultJSONCodecs {
 			ListJSONDecoderCodec.nonRecursive,
 			MapJSONCodec.nonRecursive,
 			SequenceJSONCodec.nonRecursive,
+			CollectionJSONCodec.nonRecursive, // after subclasses
 			IterableJSONEncoderCodec.nonRecursive // after subclasses
 		)
 }

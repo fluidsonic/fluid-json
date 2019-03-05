@@ -4,6 +4,6 @@ import com.github.fluidsonic.fluid.json.*
 
 
 @JSON(
-	codecVisibility = JSON.Visibility.automatic
+	codecVisibility = JSON.CodecVisibility.automatic
 )
 class AutomaticPublic(val value: String)

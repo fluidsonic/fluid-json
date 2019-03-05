@@ -4,6 +4,6 @@ import com.github.fluidsonic.fluid.json.*
 
 
 @JSON(
-	codecVisibility = JSON.Visibility.internal
+	codecVisibility = JSON.CodecVisibility.internal
 )
 class Internal(val value: String)

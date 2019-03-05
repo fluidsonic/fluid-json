@@ -5,7 +5,7 @@ import kotlin.reflect.KClass
 
 
 /**
- * Creates a [JSONCodec] for the annotated class.
+ * Creates a [JSONCodec] fo)r the annotated class.
  *
  * Note that there are several limitations which classes can be annotated:
  * - it and all enclosing classes must have `internal` or `public` visibility
@@ -37,9 +37,9 @@ annotation class JSON(
 	/**
 	 * Visibility of the generated codec class.
 	 *
-	 * By default the visibility will be [internal][Visibility.internal].
+	 * By default the visibility will be [internal][CodecVisibility.internal].
 	 */
-	val codecVisibility: Visibility = Visibility.internal,
+	val codecVisibility: CodecVisibility = CodecVisibility.internal,
 
 	/**
 	 * Defines how to create an instance of the annotated class when decoding it from JSON.
@@ -161,6 +161,8 @@ annotation class JSON(
 	annotation class ExternalType(
 		/**
 		 * The class for which a [JSONCodec] should be created.
+		 *
+		 * **You must also specify [targetName] if the class you reference is an inline class.**
 		 */
 		@Suppress("unused") // used through AnnotationMirror
 		val target: KClass<*>,
@@ -168,7 +170,16 @@ annotation class JSON(
 		/**
 		 * The [@JSON][JSON] annotation as if the [target] class was annotated directly.
 		 */
-		val configuration: JSON = JSON()
+		val configuration: JSON = JSON(),
+
+		/**
+		 * The fully qualified name of the class for which a [JSONCodec] should be created.
+		 *
+		 * **You must specify this property when using this annotation for inline classes.**
+		 *
+		 * This is a workaround for [KT-30280](https://youtrack.jetbrains.com/issue/KT-30280).
+		 */
+		val targetName: String = ""
 	)
 
 
@@ -194,6 +205,30 @@ annotation class JSON(
 	companion object {
 
 		const val automatic: String = "<automatic>"
+	}
+
+
+	/**
+	 * Visibility of a created codec
+	 */
+	enum class CodecVisibility {
+
+		/**
+		 * The visibility is derived automatically from the visibility of the annotated class as well as its enclosing classes.
+		 */
+		automatic,
+
+		/**
+		 * The visibility is always `internal`.
+		 */
+		internal,
+
+		/**
+		 * The visibility is always `public`.
+		 *
+		 * Note that this raises an error if the annotated class or one of its enclosing classes isn't `public`.
+		 */
+		publicRequired
 	}
 
 
@@ -311,29 +346,5 @@ annotation class JSON(
 		 * The annotated class will be represented as a JSON object and its properties being used as keys and value respectively.
 		 */
 		structured
-	}
-
-
-	/**
-	 * Visibility of a created codec
-	 */
-	enum class Visibility {
-
-		/**
-		 * The visibility is derived automatically from the visibility of the annotated class as well as its enclosing classes.
-		 */
-		automatic,
-
-		/**
-		 * The visibility is always `internal`.
-		 */
-		internal,
-
-		/**
-		 * The visibility is always `public`.
-		 *
-		 * Note that this raises an error if the annotated class or one of its enclosing classes isn't `public`.
-		 */
-		publicRequired
 	}
 }

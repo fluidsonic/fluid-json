@@ -22,6 +22,8 @@ internal object BasicCodecsTest {
 		TestCase("ByteArray", ByteArrayJSONCodec, byteArrayData),
 		TestCase("Char", CharJSONCodec, charData),
 		TestCase("CharArray", CharArrayJSONCodec, charArrayData),
+		TestCase("Collection", CollectionJSONTestCodec, collectionData),
+		TestCase("Collection (non-recursive)", CollectionJSONTestCodec.NonRecursive, collectionData),
 		TestCase("Double", DoubleJSONCodec, doubleData),
 		TestCase("DoubleArray", DoubleArrayJSONCodec, doubleArrayData),
 		TestCase("Float", FloatJSONCodec, floatData),

@@ -5,6 +5,7 @@ fluidLibraryVariant {
 }
 
 dependencies {
+	api(project(":fluid-json-annotations"))
 	api(project(":fluid-json-basic"))
 
 	api(kotlin("reflect"))

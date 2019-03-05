@@ -314,9 +314,9 @@ internal class ProcessingPhase(
 		}
 
 		val isPublic = when (annotation.codecVisibility) {
-			JSON.Visibility.automatic -> type.actualVisibility == MVisibility.PUBLIC
-			JSON.Visibility.internal -> false
-			JSON.Visibility.publicRequired -> true
+			JSON.CodecVisibility.automatic -> type.actualVisibility == MVisibility.PUBLIC
+			JSON.CodecVisibility.internal -> false
+			JSON.CodecVisibility.publicRequired -> true
 		}
 
 		codecs += ProcessingResult.Codec(
@@ -347,7 +347,7 @@ internal class ProcessingPhase(
 			block()
 		}
 		catch (e: Fail) {
-			errorLogger.logError("@$annotation on ${element.fullyQualifiedName}: ${e.message}")
+			errorLogger.logError("@$annotation on ${element.debugName}: ${e.message}")
 		}
 	}
 

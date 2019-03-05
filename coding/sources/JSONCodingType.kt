@@ -10,12 +10,12 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KVariance
 
 
-inline fun <reified Type : Any> jsonCodingType() =
+inline fun <reified Type : Any> jsonCodingType(): JSONCodingType<Type> =
 	object : JSONCodingTypeReference<Type>() {}.type
 
 
-fun <Type : Any> jsonCodingType(clazz: KClass<Type>) =
-	JSONCodingType.of(clazz)
+fun <Type : Any> jsonCodingType(clazz: KClass<Type>, vararg arguments: KClass<*>): JSONCodingType<Type> =
+	JSONCodingType.of(clazz, arguments = * arguments)
 
 
 @JvmName("jsonCodingTypeOfReference")
@@ -56,7 +56,7 @@ class JSONCodingType<Type : Any> private constructor(
 	}
 
 
-	override fun hashCode() =
+	override fun hashCode(): Int =
 		hashCode
 
 
@@ -90,25 +90,56 @@ class JSONCodingType<Type : Any> private constructor(
 			}
 
 
-		internal fun <Type : Any> of(clazz: KClass<Type>) =
+		internal fun <Type : Any> of(clazz: KClass<Type>, vararg arguments: KClass<*>) =
 			clazz.java.toCodableType(
 				upperBound = null,
-				variance = KVariance.INVARIANT
+				variance = KVariance.INVARIANT,
+				explicitArguments = arguments.ifEmpty { null }?.toList()
 			)
 
 
-		private fun <Type : Any> Class<Type>.toCodableType(upperBound: KClass<*>?, variance: KVariance): JSONCodingType<Type> =
+		private fun <Type : Any> Class<Type>.toCodableType(
+			upperBound: KClass<*>?,
+			variance: KVariance,
+			explicitArguments: List<KClass<*>>? = null
+		): JSONCodingType<Type> =
 			if (isArray && !componentType.isPrimitive)
 				JSONCodingType(
 					rawClass = kotlin,
-					arguments = listOf(componentType.toCodableType(upperBound = Any::class, variance = KVariance.INVARIANT)),
+					arguments =
+					explicitArguments?.let { arguments ->
+						check(arguments.size == 1) { "expecting exactly one type arguments for $this, got ${arguments.size}" }
+						arguments.map { it.java.toCodableType(upperBound = Any::class, variance = KVariance.INVARIANT) }
+					} ?: listOf(componentType.toCodableType(upperBound = Any::class, variance = KVariance.INVARIANT)),
 					upperBoundInGenericContext = upperBound,
 					varianceInGenericContext = variance
 				)
 			else
 				JSONCodingType(
 					rawClass = kotlin,
-					arguments = typeParameters.map { it.bounds.first().toCodableType(upperBound = null, variance = KVariance.INVARIANT) },
+					arguments = explicitArguments
+						?.let { arguments ->
+							check(arguments.size == typeParameters.size) { "expecting exactly ${typeParameters.size} type arguments for $this, got ${arguments.size}" }
+
+							arguments.mapIndexed { index, argument ->
+								val typeParameter = typeParameters[index]
+
+								check(typeParameter.bounds.all { it.toRawClass().kotlin.isAssignableOrBoxableFrom(argument) }) {
+									"type parameter 2 ($argument) is not within its bounds for $this"
+								}
+
+								argument.java.toCodableType(
+									upperBound = typeParameter.bounds.first().toRawClass().kotlin,
+									variance = KVariance.INVARIANT
+								)
+							}
+						}
+						?: typeParameters.map {
+							it.bounds.first().toCodableType(
+								upperBound = it.bounds.first().toRawClass().kotlin,
+								variance = KVariance.INVARIANT
+							)
+						},
 					upperBoundInGenericContext = upperBound,
 					varianceInGenericContext = variance
 				)

@@ -18,7 +18,9 @@ internal object JSONCodingTypeTest {
 	fun testKClassBasedCreation() {
 		assert(jsonCodingType(List::class)).toBe(jsonCodingType())
 		assert(jsonCodingType(Array<Any>::class)).toBe(jsonCodingType())
+		assert(jsonCodingType(Array<String>::class, String::class)).toBe(jsonCodingType())
 		assert(jsonCodingType(Map::class)).toBe(jsonCodingType())
+		assert(jsonCodingType(Map::class, String::class, Int::class)).toBe(jsonCodingType<Map<String, Int>>())
 		assert(jsonCodingType(String::class)).toBe(jsonCodingType())
 	}
 

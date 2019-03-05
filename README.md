@@ -11,40 +11,348 @@ fluid-json
 A JSON library written in pure Kotlin.
 
 
+
 Table of Contents
 -----------------
 
 - [Installation](#installation)
+- [Basic Usage](#basic-usage)
+- [Annotation Customization](#annotation-customization)
 - [Examples](#examples)
-- [Usage](#usage)
+- [Manual Coding](#manual-coding)
 - [Error Handling](#error-handling)
 - [Ktor Client](#ktor-client)
+- [Modules](#modules)
 - [Testing](#testing)
 - [Type Mapping](#type-mapping)
 - [Architecture](#architecture)
 - [Future Planning](#future-planning)
 
 
+
 Installation
 ------------
 
-This library is available in different variants and is available in [Maven Central](https://search.maven.org/search?q=g:com.github.fluidsonic%20a:fluid-json*) and [Bintray](https://bintray.com/fluidsonic/maven/fluid-json).
-
-You have to add **one** of the following dependencies to your project depending on the functionality you need.
-
 `build.gradle.kts`:
 ```kotlin
+plugins {
+    kotlin("kapt")
+}
+
 dependencies {
-    // parsing/serialization of basic types and streaming
-    implementation("com.github.fluidsonic:fluid-json-basic:0.9.12")
-
-    // parsing/serialization of any type using encoders and decoders (Java 7)
-    implementation("com.github.fluidsonic:fluid-json-coding:0.9.12")
-
-    // parsing/serialization of any type using encoders and decoders (Java 8 and newer)
+    kapt("com.github.fluidsonic:fluid-json-annotation-processor:0.9.12")
     implementation("com.github.fluidsonic:fluid-json-coding-jdk8:0.9.12")
 }
 ```
+
+If you cannot use Java 8, e.g. when supporting Android API 25 or below, replace `fluid-json-coding-jdk8` with `fluid-json-coding`.
+
+If you're using IntelliJ IDEA (not Android Studio) then you have to manually enable the following project setting in order to use annotation processing directly
+within the IDE (this is an [open issue](https://youtrack.jetbrains.com/issue/KT-15040) in IntelliJ IDEA):  
+_Preferences > Build, Execution, Deployment > Build Tools > Gradle > Runner > Delegate IDE build/run actions to gradle_
+
+
+
+Basic Usage
+-----------
+
+`fluid-json` uses `@JSON`-annotations for automatically generating codec classes at compile-time which are responsible for decoding and encoding from and to
+JSON.  
+You can also [create these codecs on your own](#manual-coding) instead of relying on annotation processing.
+
+
+```kotlin
+import com.github.fluidsonic.fluid.json.*
+
+@JSON
+data class Event(
+    val attendees: Collection<Attendee>,
+    val description: String,
+    val end: Instant,
+    val id: Int,
+    val start: Instant,
+    val title: String
+)
+
+@JSON
+data class Attendee(
+    val emailAddress: String,
+    val firstName: String,
+    val lastName: String,
+    val rsvp: RSVP?
+)
+
+enum class RSVP {
+    notGoing,
+    going
+}
+```
+
+Then create a parser and a serializer which make use of the generated codecs:
+
+```kotlin
+import com.github.fluidsonic.fluid.json.*
+
+fun main() {
+    val data = Event(
+       attendees = listOf(
+           Attendee(emailAddress = "marc@knaup.io", firstName = "Marc", lastName = "Knaup", rsvp = RSVP.going),
+           Attendee(emailAddress = "john@doe.com", firstName = "John", lastName = "Doe", rsvp = null)
+       ),
+       description = "Discussing the fluid-json library.",
+       end = Instant.now() + Duration.ofHours(2),
+       id = 1,
+       start = Instant.now(),
+       title = "fluid-json MeetUp"
+   )
+
+    val serializer = JSONCodingSerializer.builder()
+        .encodingWith(EventJSONCodec, AttendeeJSONCodec)
+        .build()
+
+    val serialized = serializer.serializeValue(data)
+    println("serialized: $serialized")
+
+    val parser = JSONCodingParser.builder()
+        .decodingWith(EventJSONCodec, AttendeeJSONCodec)
+        .build()
+
+    val parsed = parser.parseValueOfType<Event>(serialized)
+    println("parsed: $parsed")
+}
+```
+
+Prints this:
+```
+serialized: {"attendees":[{"emailAddress":"marc@knaup.io","firstName":"Marc","lastName":"Knaup","rsvp":"going"},{"emailAddress":"john@doe.com","firstName":"John","lastName":"Doe","rsvp":null}],"description":"Discussing the fluid-json library.","end":"2019-03-05T00:45:08.335Z","id":1,"start":"2019-03-04T22:45:08.339Z","title":"fluid-json MeetUp"}
+
+parsed: Event(attendees=[Attendee(emailAddress=marc@knaup.io, firstName=Marc, lastName=Knaup, rsvp=going), Attendee(emailAddress=john@doe.com, firstName=John, lastName=Doe, rsvp=null)], description=Discussing the fluid-json library., end=2019-03-05T00:45:08.335Z, id=1, start=2019-03-04T22:45:08.339Z, title=fluid-json MeetUp)
+```
+(nope, no [pretty serialization](https://github.com/fluidsonic/fluid-json/issues/15) yet)
+
+
+
+Annotation Customization
+------------------------
+
+In this section are a few examples on how JSON codec generation can be customized.
+
+The full documentation on all annotations and properties controlling the JSON codec generation can be found in the
+[KDoc for `@JSON`](https://github.com/fluidsonic/fluid-json/blob/master/annotations/sources/JSON.kt).
+
+### Collect all generated codecs in one codec provider
+
+All codecs in your module generated by annotation processing can automatically be added to a single codec provider which makes using these codecs much simpler.
+It also frees
+
+```kotlin
+@JSON.CodecProvider
+interface MyCodecProvider: JSONCodecProvider<JSONCodingContext>
+
+fun main() {
+    val parser = JSONCodingParser.builder()
+        .decodingWith(JSONCodecProvider.generated(MyCodecProvider::class))
+        .build()
+    // …
+}
+```
+
+### Customize the generated codec
+
+```kotlin
+@JSON(
+    codecName        = "MyCoordinateCodec",            // customize the JSONCodec's name
+    codecPackageName = "some.other.location",          // customize the JSONCodec's package
+    codecVisibility  = JSON.CodecVisibility.publicRequired  // customize the JSONCodec's visibility
+)
+data class GeoCoordinate2(
+    val latitude: Double,
+    val longitude: Double
+)
+```
+
+### Customize what constructor is used for decoding
+
+```kotlin
+@JSON(
+    decoding = JSON.Decoding.annotatedConstructor  // require one constructor to be annotated explicitly
+)
+data class GeoCoordinate3(
+    val altitude: Double,
+    val latitude: Double,
+    val longitude: Double
+) {
+
+    @JSON.Constructor
+    constructor(latitude: Double, longitude: Double) : this(
+        altitude = -1.0,
+        latitude = latitude,
+        longitude = longitude
+    )
+}
+
+// input:  {"latitude":50.051961,"longitude":14.431521}
+// output: {"altitude":-1.0,"latitude":50.051961,"longitude":14.431521}
+```
+
+### Customize what properties are used for encoding (opt-in)
+
+```kotlin
+@JSON(
+    encoding = JSON.Encoding.annotatedProperties  // only encode properties annotated explicitly
+)
+data class User(
+    @JSON.Property val id: String,
+    @JSON.Property val name: String,
+    val passwordHash: String
+)
+
+// input:  {"id":1,"name":"Some User","password":"123456"}
+// output: {"id":1,"name":"Some User"}
+```
+
+### Customize what properties are used for encoding (opt-out)
+
+```kotlin
+@JSON
+data class User(
+    val id: String,
+    val name: String,
+    @JSON.Excluded val passwordHash: String
+)
+
+// input:  {"id":1,"name":"Some User","password":"123456"}
+// output: {"id":1,"name":"Some User"}
+```
+
+### Encode extension properties
+
+```kotlin
+@JSON
+data class Person(
+    val firstName: String,
+    val lastName: String
+)
+
+val Person.name get() = "$firstName $lastName"
+
+// input:  {"firstName":"Marc","lastName":"Knaup"}
+// output: {"firstName":"Marc","lastName":"Knaup","name":"Marc Knaup"}
+```
+
+### Customize JSON property names
+
+Some prefer it that way ¯\_(ツ)_/¯.
+
+```kotlin
+@JSON
+data class Person(
+    @JSON.Property("first_name") val firstName: String,
+    @JSON.Property("last_name") val lastName: String
+)
+
+// input/input: {"first_name":"John","last_name":"Doe"}
+```
+
+### Inline a single value
+
+```kotlin
+@JSON(
+    representation = JSON.Representation.singleValue  // no need to wrap in a structured JSON object
+)
+class EmailAddress(val value: String)
+
+// input:  "e@mail.com"
+// output: "e@mail.com"
+```
+
+### Prevent encoding completely
+
+```kotlin
+@JSON(
+    encoding       = JSON.Encoding.none,              // prevent encoding altogether
+    representation = JSON.Representation.singleValue  // no need to wrap in a structured JSON object
+)
+class Password(val secret: String)
+
+// input:  "123456"
+// output: not possible
+```
+
+### Prevent decoding completely
+
+```kotlin
+@JSON(
+    decoding = JSON.Decoding.none  // prevent decoding altogether
+)
+class Response<Result>(val result: result)
+
+// input:  not possible
+// output: {"result":…}
+```
+
+### Add properties depending on the context
+
+```kotlin
+@JSON(
+    decoding = JSON.Decoding.none,                // prevent decoding altogether
+    encoding = JSON.Encoding.annotatedProperties  // only encode properties annotated explicitly
+)
+data class User(
+    @JSON.Property val id: String,
+    @JSON.Property val name: String,
+    val emailAddress: String
+)
+
+
+@JSON.CustomProperties  // function will be called during encoding
+fun JSONEncoder<MyContext>.writeCustomProperties(value: User) {
+    if (context.authenticatedUserId == value.id)
+        writeMapElement("emailAddress", value = value.emailAddress)
+}
+
+
+@JSON.CodecProvider
+interface MyCodecProvider: JSONCodecProvider<MyContext>
+
+
+data class MyContext(
+    val authenticatedUserId: String?
+): JSONCodingContext
+
+
+fun main() {
+    val serializer = JSONCodingSerializer
+        .builder(MyContext(authenticatedUserId = "5678"))
+        .encodingWith(JSONCodecProvider.generated(MyCodecProvider::class))
+        .build()
+
+    println(serializer.serializeValue(listOf(
+        User(id = "1234", name = "Some Other User", emailAddress = "email@hidden.com"),
+        User(id = "5678", name = "Authenticated User", emailAddress = "own@email.com")
+    )))
+}
+
+// input:  not possible
+// output: [{"id":"1234","name":"Some Other User"},{"id":"5678","name":"Authenticated User","emailAddress":"own@email.com"}]
+```
+
+### Annotate types without having the source code
+
+If a type is not part of your module you can still annotate it indirectly in order to automatically generate a codec for it.
+Note that this currently does not work correctly if the type has internal properties or an internal primary constructor.
+
+```kotlin
+@JSON.CodecProvider(
+    externalTypes = [
+        JSON.ExternalType(Triple::class, JSON(
+            codecVisibility = JSON.CodecVisibility.publicRequired
+        ))
+    ]
+)
+interface MyCodecProvider: JSONCodecProvider<JSONCodingContext>
+```
+
 
 
 Examples
@@ -55,8 +363,12 @@ you can run them directly from within [IntelliJ IDEA](https://www.jetbrains.com/
 
 
 
-Usage
------
+Manual Coding
+-------------
+
+Instead of using annotations to generate codecs, JSON can be written either directly using low-level APIs or by manually creating codecs to decode and encode
+classes from and to JSON. 
+
 
 ### Simple Parsing
 
@@ -311,6 +623,20 @@ val client = HttpClient(…) {
 
 
 
+Modules
+-------
+
+| Module                            | Usage
+| --------------------------------- | -----
+| `fluid-json-annotation-processor` | `@JSON`-based `JSONCodec` creation using `kapt`
+| `fluid-json-annotations`          | contains `@JSON` annotations
+| `fluid-json-basic`                | low-level API with `JSONReader`/`JSONParser` and `JSONWriter`/`JSONSerializer`
+| `fluid-json-coding`               | `JSONCodec`-based parsing and serialization using `JSONDecoder`/`JSONCodingParser` and `JSONEncoder`/`JSONCodingSerializer`
+| `fluid-json-coding-jdk8`          | additional `JSONCodec`s for commonly used Java 8 types on top of `fluid-json-coding`
+| `fluid-json-ktor-client`          | plugs in `JSONCodingParser`/`JSONCodingSerializer` to `ktor-client` using its `JsonSerializer`
+
+
+
 Testing
 -------
 
@@ -336,31 +662,32 @@ Type Mapping
 
 The default implementations of `JSONWriter` and `JSONSerializer` encode Kotlin types as follows:
 
-| Kotlin         | JSON               | Remarks
-| -------------- | ------------------ | -------
-| `Array<*>`     | `array<*>`         |
-| `Boolean`      | `boolean`          |
-| `BooleanArray` | `array<boolean>`   |
-| `Byte`         | `number`           |
-| `ByteArray`    | `array<number>`    |
-| `Char`         | `string`           |
-| `CharArray`    | `array<string>`    |
-| `Double`       | `number`           | must be finite
-| `DoubleArray`  | `array<number>`    |
-| `Float`        | `number`           | must be finite
-| `FloatArray`   | `array<number>`    |
-| `Int`          | `number`           |
-| `IntArray`     | `array<number>`    |
-| `Iterable<E>`  | `array<*>`         | unless it's a `Map<*,*>`, using decoder/encoder for `E`
-| `Long`         | `number`           |
-| `LongArray`    | `array<number>`    |
-| `Map<K,V>`     | `object<string,*>` | key must be `String`, , using decoders/encoders for `K` and `V`
-| `Number`       | `number`           | unless matched by subclass; encodes as `toDouble()`
-| `Sequence<E>`  | `array<*>`         | using decoder/encoder for `E`
-| `Short`        | `number`           |
-| `ShortArray`   | `array<number>`    |
-| `String`       | `string`           |
-| `null`         | `null`             |
+| Kotlin          | JSON               | Remarks
+| --------------- | ------------------ | -------
+| `Array<*>`      | `array<*>`         |
+| `Boolean`       | `boolean`          |
+| `BooleanArray`  | `array<boolean>`   |
+| `Byte`          | `number`           |
+| `ByteArray`     | `array<number>`    |
+| `Char`          | `string`           |
+| `CharArray`     | `array<string>`    |
+| `Collection<E>` | `array<*>`         | using decoder/encoder for `E`
+| `Double`        | `number`           | must be finite
+| `DoubleArray`   | `array<number>`    |
+| `Float`         | `number`           | must be finite
+| `FloatArray`    | `array<number>`    |
+| `Int`           | `number`           |
+| `IntArray`      | `array<number>`    |
+| `Iterable<E>`   | `array<*>`         | using decoder/encoder for `E`
+| `Long`          | `number`           |
+| `LongArray`     | `array<number>`    |
+| `Map<K,V>`      | `object<string,*>` | key must be `String`, using decoders/encoders for `K` and `V`
+| `Number`        | `number`           | unless matched by subclass; encodes as `toDouble()`
+| `Sequence<E>`   | `array<*>`         | using decoder/encoder for `E`
+| `Short`         | `number`           |
+| `ShortArray`    | `array<number>`    |
+| `String`        | `string`           |
+| `null`          | `null`             |
 
 #### Decoding
 
@@ -487,12 +814,9 @@ Future Planning
 This is on the backlog for later consideration, in no specific order:
 
 - [Add KDoc to all public API](https://github.com/fluidsonic/fluid-json/issues/28)
-- [Add annotation-based preprocessor for automatic create codecs](https://github.com/fluidsonic/fluid-json/issues/16)
 - [Add performance testing](https://github.com/fluidsonic/fluid-json/issues/4)
 - [Add low-level support for `BigDecimal` / `BigInteger`](https://github.com/fluidsonic/fluid-json/issues/18)
 - [Add pretty serialization](https://github.com/fluidsonic/fluid-json/issues/15)
-- [Improve performance by operating on `InputStream`/`OutputStream`](https://github.com/fluidsonic/fluid-json/issues/9)
-- [Add standard decoders for array types](https://github.com/fluidsonic/fluid-json/issues/23)
 
 
 

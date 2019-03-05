@@ -83,7 +83,7 @@ internal class CollectionPhase(
 
 		when (val visibility = meta.visibility) {
 			MVisibility.INTERNAL ->
-				if (annotation.codecVisibility == JSON.Visibility.publicRequired)
+				if (annotation.codecVisibility == JSON.CodecVisibility.publicRequired)
 					fail("must be public if codec is supposed to be public")
 
 			MVisibility.PUBLIC ->
@@ -102,7 +102,7 @@ internal class CollectionPhase(
 
 			when (val visibility = enclosingType.visibility) {
 				MVisibility.INTERNAL -> {
-					if (annotation.codecVisibility == JSON.Visibility.publicRequired)
+					if (annotation.codecVisibility == JSON.CodecVisibility.publicRequired)
 						fail("must only be nested in public types if codec is supposed to be public but '$enclosingElement' is $visibility")
 
 					actualVisibility = visibility
@@ -180,8 +180,9 @@ internal class CollectionPhase(
 				val externalType = externalTypeAnnotationMirror.getValue<DeclaredType>("target")
 					?: error("cannot properly parse external type annotation mirror: $externalTypeAnnotationMirror")
 
-				val externalTypeElement = typeResolver.resolveType(externalType.toString())
-					?: error("cannot find external type element: $externalType")
+				val externalTypeName = externalTypeAnnotation.targetName.ifEmpty { externalType.toString() }
+				val externalTypeElement = typeResolver.resolveType(externalTypeName)
+					?: error("cannot find external type element for '$externalTypeName'")
 
 				withFailureHandling(annotationClass = JSON.ExternalType::class, element = externalTypeElement) {
 					collect(
@@ -562,7 +563,7 @@ internal class CollectionPhase(
 			block()
 		}
 		catch (e: Fail) {
-			errorLogger.logError("@${MTypeName.of(annotationClass)} on ${element.fullyQualifiedName}: ${e.message}")
+			errorLogger.logError("@${MTypeName.of(annotationClass)} on ${element.debugName}: ${e.message}")
 		}
 	}
 

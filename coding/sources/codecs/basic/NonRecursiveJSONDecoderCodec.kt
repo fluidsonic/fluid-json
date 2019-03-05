@@ -4,6 +4,7 @@ package com.github.fluidsonic.fluid.json
 internal abstract class NonRecursiveJSONDecoderCodec<Value : Any> : AbstractJSONDecoderCodec<Value, JSONCodingContext>() {
 
 	private val expectedFirstToken = when (decodableType.rawClass) {
+		Collection::class,
 		Iterable::class,
 		List::class,
 		Sequence::class ->

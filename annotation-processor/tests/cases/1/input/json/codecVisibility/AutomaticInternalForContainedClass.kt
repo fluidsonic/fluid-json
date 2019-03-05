@@ -6,7 +6,7 @@ import com.github.fluidsonic.fluid.json.*
 internal class AutomaticInternalForContainedClass {
 
 	@JSON(
-		codecVisibility = JSON.Visibility.automatic
+		codecVisibility = JSON.CodecVisibility.automatic
 	)
 	class ContainedClass(val value: String)
 }
