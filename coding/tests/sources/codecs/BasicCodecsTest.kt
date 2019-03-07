@@ -42,6 +42,8 @@ internal object BasicCodecsTest {
 		TestCase("Number", NumberJSONCodec, numberData),
 		TestCase("Sequence", SequenceJSONTestCodec, sequenceData),
 		TestCase("Sequence (non-recursive)", SequenceJSONTestCodec.NonRecursive, sequenceData),
+		TestCase("Set", SetJSONTestDecoderCodec, setData),
+		TestCase("Set (non-recursive)", SetJSONTestDecoderCodec.NonRecursive, setData),
 		TestCase("Short", ShortJSONCodec, shortData),
 		TestCase("ShortArray", ShortArrayJSONCodec, shortArrayData),
 		TestCase("String", StringJSONCodec, stringData)

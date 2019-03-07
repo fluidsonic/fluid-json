@@ -7,7 +7,8 @@ internal abstract class NonRecursiveJSONDecoderCodec<Value : Any> : AbstractJSON
 		Collection::class,
 		Iterable::class,
 		List::class,
-		Sequence::class ->
+		Sequence::class,
+		Set::class ->
 			JSONToken.listStart
 
 		Map::class ->
@@ -29,10 +30,11 @@ internal abstract class NonRecursiveJSONDecoderCodec<Value : Any> : AbstractJSON
 
 		val value = JSONParser.default.parseValueOrNull(this, withTermination = false)
 
-		return if (valueType.rawClass == Sequence::class)
-			(value as Iterable<*>).asSequence() as Value
-		else
-			value as Value
+		return when {
+			Sequence::class.java.isAssignableFrom(valueType.rawClass.java) -> (value as Iterable<*>).asSequence() as Value
+			Set::class.java.isAssignableFrom(valueType.rawClass.java) -> (value as Iterable<*>).toSet() as Value
+			else -> value as Value
+		}
 	}
 
 

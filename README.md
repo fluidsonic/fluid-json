@@ -679,11 +679,13 @@ The default implementations of `JSONWriter` and `JSONSerializer` encode Kotlin t
 | `Int`           | `number`           |
 | `IntArray`      | `array<number>`    |
 | `Iterable<E>`   | `array<*>`         | using decoder/encoder for `E`
+| `List<E>`       | `array<*>`         | using decoder/encoder for `E`
 | `Long`          | `number`           |
 | `LongArray`     | `array<number>`    |
 | `Map<K,V>`      | `object<string,*>` | key must be `String`, using decoders/encoders for `K` and `V`
 | `Number`        | `number`           | unless matched by subclass; encodes as `toDouble()`
 | `Sequence<E>`   | `array<*>`         | using decoder/encoder for `E`
+| `Set<E>`        | `array<*>`         | using decoder/encoder for `E`
 | `Short`         | `number`           |
 | `ShortArray`    | `array<number>`    |
 | `String`        | `string`           |
