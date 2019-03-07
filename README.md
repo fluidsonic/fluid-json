@@ -3,7 +3,6 @@ fluid-json
 
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.3.21-blue.svg)](http://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.fluidsonic/fluid-json-basic.svg)](https://search.maven.org/search?q=g:com.github.fluidsonic%20a:fluid-json*)
-[![Bintray](https://img.shields.io/bintray/v/fluidsonic/maven/fluid-json.svg)](https://bintray.com/fluidsonic/maven/fluid-json)
 [![Build Status](https://travis-ci.org/fluidsonic/fluid-json.svg?branch=master)](https://travis-ci.org/fluidsonic/fluid-json)
 [![#fluid-libraries Slack Channel](https://img.shields.io/badge/slack-%23fluid--libraries-543951.svg)](https://kotlinlang.slack.com/messages/C7UDFSVT2/)
 [![Awesome Kotlin](https://kotlin.link/awesome-kotlin.svg)](https://github.com/KotlinBy/awesome-kotlin)
@@ -207,7 +206,7 @@ data class User(
     val passwordHash: String
 )
 
-// input:  {"id":1,"name":"Some User","password":"123456"}
+// input:  {"id":1,"name":"Some User","passwordHash":"123456"}
 // output: {"id":1,"name":"Some User"}
 ```
 
@@ -221,7 +220,7 @@ data class User(
     @JSON.Excluded val passwordHash: String
 )
 
-// input:  {"id":1,"name":"Some User","password":"123456"}
+// input:  {"id":1,"name":"Some User","passwordHash":"123456"}
 // output: {"id":1,"name":"Some User"}
 ```
 
@@ -234,6 +233,7 @@ data class Person(
     val lastName: String
 )
 
+@JSON.Property
 val Person.name get() = "$firstName $lastName"
 
 // input:  {"firstName":"Marc","lastName":"Knaup"}
