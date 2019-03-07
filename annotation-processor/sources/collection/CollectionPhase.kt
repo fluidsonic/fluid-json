@@ -14,7 +14,7 @@ import javax.lang.model.type.TypeMirror
 import kotlin.reflect.KClass
 
 
-// TODO disallow INTERNAL visibility for external types
+// TODO disallow INTERNAL visibility for external types of different module
 internal class CollectionPhase(
 	private val errorLogger: ErrorLogger,
 	private val typeResolver: TypeResolver
