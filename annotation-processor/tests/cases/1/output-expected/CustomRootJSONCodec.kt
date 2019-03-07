@@ -32,7 +32,7 @@ import json.codecPackageName.CustomRoot
 import kotlin.String
 
 internal object CustomRootJSONCodec : AbstractJSONCodec<CustomRoot, CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in CustomRoot>):
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<CustomRoot>):
 			CustomRoot {
 		var _value: String? = null
 

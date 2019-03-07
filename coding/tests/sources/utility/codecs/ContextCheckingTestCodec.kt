@@ -15,7 +15,7 @@ internal class ContextCheckingTestCodec<in Context : JSONCodingContext>(
 	private val expectedContext: Context
 ) : JSONCodec<String, Context> {
 
-	override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<in String>): String {
+	override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<String>): String {
 		assert(context).toBe(expectedContext)
 
 		return StringJSONCodec.run { decode(valueType) }

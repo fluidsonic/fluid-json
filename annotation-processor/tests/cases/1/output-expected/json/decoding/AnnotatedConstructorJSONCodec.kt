@@ -33,8 +33,9 @@ import com.github.fluidsonic.fluid.json.writeValueOrNull
 
 internal object AnnotatedConstructorJSONCodec : AbstractJSONCodec<AnnotatedConstructor,
 		CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in
-			AnnotatedConstructor>): AnnotatedConstructor {
+	override
+			fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<AnnotatedConstructor>):
+			AnnotatedConstructor {
 		var _value = 0L
 		var value_isPresent = false
 

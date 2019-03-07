@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object NumberJSONCodec : AbstractJSONCodec<Number, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Number>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Number>) =
 		readNumber()
 
 

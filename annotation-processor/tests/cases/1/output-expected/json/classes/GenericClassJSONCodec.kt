@@ -34,8 +34,8 @@ import kotlin.Any
 
 internal object GenericClassJSONCodec : AbstractJSONCodec<GenericClass<*, *, *>,
 		CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in GenericClass<*,
-			*, *>>): GenericClass<*, *, *> {
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<GenericClass<*, *,
+			*>>): GenericClass<*, *, *> {
 		var _a: Any? = null
 		var _b: GenericClass.Bound? = null
 		var _c: Any? = null

@@ -35,8 +35,9 @@ import kotlin.String
 
 internal object AnnotatedPropertiesJSONCodec : AbstractJSONCodec<AnnotatedProperties,
 		CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in
-			AnnotatedProperties>): AnnotatedProperties {
+	override
+			fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<AnnotatedProperties>):
+			AnnotatedProperties {
 		var _value1: String? = null
 
 		readFromMapByElementValue { key ->

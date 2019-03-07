@@ -6,7 +6,7 @@ import java.time.Month
 // TODO use Enum codec once implemented
 object MonthJSONCodec : AbstractJSONCodec<Month, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Month>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Month>) =
 		readString().let { raw ->
 			when (raw) {
 				"january" -> Month.JANUARY

@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object ShortJSONCodec : AbstractJSONCodec<Short, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Short>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Short>) =
 		readShort()
 
 

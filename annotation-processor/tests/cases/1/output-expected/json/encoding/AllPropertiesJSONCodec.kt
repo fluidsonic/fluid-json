@@ -34,7 +34,7 @@ import json.encoding.value9
 import kotlin.String
 
 internal object AllPropertiesJSONCodec : AbstractJSONCodec<AllProperties, CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in AllProperties>):
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<AllProperties>):
 			AllProperties {
 		var _value1: String? = null
 

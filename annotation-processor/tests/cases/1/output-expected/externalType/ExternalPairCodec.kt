@@ -34,7 +34,7 @@ import kotlin.Any
 import kotlin.Pair
 
 object ExternalPairCodec : AbstractJSONCodec<Pair<*, *>, CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in Pair<*, *>>):
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<Pair<*, *>>):
 			Pair<*, *> {
 		var _first: Any? = null
 		var _second: Any? = null

@@ -6,7 +6,7 @@ import java.time.OffsetTime
 
 object OffsetTimeJSONCodec : AbstractJSONCodec<OffsetTime, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in OffsetTime>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<OffsetTime>) =
 		readString().let { raw ->
 			try {
 				OffsetTime.parse(raw)!!

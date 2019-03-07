@@ -34,8 +34,9 @@ import kotlin.Any
 
 internal object StructuredValueGenericJSONCodec : AbstractJSONCodec<StructuredValueGeneric<*>,
 		CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in
-			StructuredValueGeneric<*>>): StructuredValueGeneric<*> {
+	override
+			fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<StructuredValueGeneric<*>>):
+			StructuredValueGeneric<*> {
 		var _value: Any? = null
 
 		readFromMapByElementValue { key ->

@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object CharRangeJSONCodec : AbstractJSONCodec<CharRange, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in CharRange>): CharRange {
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<CharRange>): CharRange {
 		var endInclusive = 0.toChar()
 		var endInclusiveProvided = false
 		var start = 0.toChar()

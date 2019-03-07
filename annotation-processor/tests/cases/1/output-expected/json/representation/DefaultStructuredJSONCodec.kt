@@ -34,8 +34,8 @@ import kotlin.String
 
 internal object DefaultStructuredJSONCodec : AbstractJSONCodec<DefaultStructured,
 		CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in
-			DefaultStructured>): DefaultStructured {
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<DefaultStructured>):
+			DefaultStructured {
 		var _value: String? = null
 
 		readFromMapByElementValue { key ->

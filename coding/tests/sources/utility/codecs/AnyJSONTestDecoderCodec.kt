@@ -16,6 +16,6 @@ internal object AnyJSONTestDecoderCodec : AbstractJSONDecoderCodec<Any, JSONCodi
 	additionalProviders = listOf(BooleanJSONCodec, ListJSONDecoderCodec, MapJSONCodec, NumberJSONCodec, StringJSONCodec)
 ) {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Any>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Any>) =
 		AnyJSONDecoderCodec.run { decode(valueType) }
 }

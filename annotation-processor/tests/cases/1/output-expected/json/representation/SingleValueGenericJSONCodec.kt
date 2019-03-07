@@ -20,9 +20,10 @@ import com.github.fluidsonic.fluid.json.writeValueOrNull
 
 internal object SingleValueGenericJSONCodec : AbstractJSONCodec<SingleValueGeneric<*>,
 		CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in
-			SingleValueGeneric<*>>): SingleValueGeneric<*> = SingleValueGeneric(value =
-			readValueOfTypeOrNull(valueType.arguments[0]) as SingleValueGeneric.Bound?)
+	override
+			fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<SingleValueGeneric<*>>):
+			SingleValueGeneric<*> = SingleValueGeneric(value = readValueOfTypeOrNull(valueType.arguments[0])
+			as SingleValueGeneric.Bound?)
 	override fun JSONEncoder<CustomCodingContext>.encode(value: SingleValueGeneric<*>) {
 		writeValueOrNull(value.value)
 	}

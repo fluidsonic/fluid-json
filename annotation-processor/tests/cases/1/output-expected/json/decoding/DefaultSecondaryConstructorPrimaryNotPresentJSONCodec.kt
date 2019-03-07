@@ -33,8 +33,9 @@ import com.github.fluidsonic.fluid.json.writeValueOrNull
 
 internal object DefaultSecondaryConstructorPrimaryNotPresentJSONCodec :
 		AbstractJSONCodec<DefaultSecondaryConstructorPrimaryNotPresent, CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in
-			DefaultSecondaryConstructorPrimaryNotPresent>): DefaultSecondaryConstructorPrimaryNotPresent {
+	override
+			fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<DefaultSecondaryConstructorPrimaryNotPresent>):
+			DefaultSecondaryConstructorPrimaryNotPresent {
 		var _value = 0
 		var value_isPresent = false
 

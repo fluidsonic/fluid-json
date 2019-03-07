@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object CharJSONCodec : AbstractJSONCodec<Char, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Char>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Char>) =
 		readChar()
 
 

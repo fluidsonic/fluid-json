@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object LongRangeJSONCodec : AbstractJSONCodec<LongRange, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in LongRange>): LongRange {
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<LongRange>): LongRange {
 		var endInclusive = 0L
 		var endInclusiveProvided = false
 		var start = 0L

@@ -19,7 +19,7 @@ internal abstract class NonRecursiveJSONDecoderCodec<Value : Any> : AbstractJSON
 
 
 	@Suppress("UNCHECKED_CAST")
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Value>): Value {
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Value>): Value {
 		if (nextToken != expectedFirstToken) {
 			throw JSONException.Schema(
 				message = "Cannot decode $nextToken as $valueType",

@@ -33,7 +33,7 @@ import com.github.fluidsonic.fluid.json.writeValueOrNull
 import kotlin.String
 
 internal object ClassJSONCodec : AbstractJSONCodec<Class, CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in Class>): Class {
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<Class>): Class {
 		var _value: String? = null
 
 		readFromMapByElementValue { key ->

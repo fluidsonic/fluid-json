@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object ClosedRangeJSONCodec : AbstractJSONCodec<ClosedRange<*>, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in ClosedRange<*>>): ClosedRange<*> {
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<ClosedRange<*>>): ClosedRange<*> {
 		@Suppress("UNCHECKED_CAST")
 		val elementType = valueType.arguments.single() as JSONCodingType<Comparable<Any>>
 

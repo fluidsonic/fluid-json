@@ -20,8 +20,8 @@ import com.github.fluidsonic.fluid.json.readValueOfTypeOrNull
 import com.github.fluidsonic.fluid.json.writeValueOrNull
 
 internal object KT30280JSONCodec : AbstractJSONCodec<KT30280, CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in KT30280>):
-			KT30280 = KT30280(value = readString())
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<KT30280>): KT30280 =
+			KT30280(value = readString())
 	override fun JSONEncoder<CustomCodingContext>.encode(value: KT30280) {
 		writeString(value.value)
 	}

@@ -34,8 +34,8 @@ import kotlin.String
 
 internal object AutomaticInternalForContainedClass_ContainedClassJSONCodec :
 		AbstractJSONCodec<AutomaticInternalForContainedClass.ContainedClass, CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in
-			AutomaticInternalForContainedClass.ContainedClass>):
+	override
+			fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<AutomaticInternalForContainedClass.ContainedClass>):
 			AutomaticInternalForContainedClass.ContainedClass {
 		var _value: String? = null
 

@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 object LocalDateTimeJSONCodec : AbstractJSONCodec<LocalDateTime, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in LocalDateTime>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<LocalDateTime>) =
 		readString().let { raw ->
 			try {
 				LocalDateTime.parse(raw)!!

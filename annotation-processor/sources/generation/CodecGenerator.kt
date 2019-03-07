@@ -12,7 +12,6 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
-import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.asTypeName
 import java.io.File
 import kotlin.reflect.KFunction
@@ -79,7 +78,7 @@ internal class CodecGenerator(
 						addFunction(FunSpec.builder("decode")
 							.addModifiers(KModifier.OVERRIDE)
 							.receiver(decoderType)
-							.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(codec.valueType)))
+							.addParameter("valueType", codingType.parameterizedBy(codec.valueType))
 							.returns(codec.valueType)
 							.apply {
 								val rawValueType = (codec.valueType as? ParameterizedTypeName)?.rawType ?: codec.valueType
@@ -280,7 +279,7 @@ internal class CodecGenerator(
 		return addFunction(FunSpec.builder("decode")
 			.addModifiers(KModifier.OVERRIDE)
 			.receiver(decoderType)
-			.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(valueType)))
+			.addParameter("valueType", codingType.parameterizedBy(valueType))
 			.returns(valueType)
 			.addCode("val arguments = hashMapOf<KParameter, Any?>()\n")
 			.addCode("readFromMapByElementValue { %N ->\n⇥", "key")
@@ -372,7 +371,7 @@ internal class CodecGenerator(
 		return addFunction(FunSpec.builder("decode")
 			.addModifiers(KModifier.OVERRIDE)
 			.receiver(decoderType)
-			.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(valueType)))
+			.addParameter("valueType", codingType.parameterizedBy(valueType))
 			.returns(valueType)
 			.apply {
 				for (property in properties) {

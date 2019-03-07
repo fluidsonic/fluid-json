@@ -20,8 +20,9 @@ import com.github.fluidsonic.fluid.json.writeValueOrNull
 
 internal object SingleValueNullableJSONCodec : AbstractJSONCodec<SingleValueNullable,
 		CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in
-			SingleValueNullable>): SingleValueNullable = SingleValueNullable(value = readValueOfTypeOrNull())
+	override
+			fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<SingleValueNullable>):
+			SingleValueNullable = SingleValueNullable(value = readValueOfTypeOrNull())
 	override fun JSONEncoder<CustomCodingContext>.encode(value: SingleValueNullable) {
 		writeValueOrNull(value.value)
 	}

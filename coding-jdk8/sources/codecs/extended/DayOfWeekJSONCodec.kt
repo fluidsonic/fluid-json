@@ -6,7 +6,7 @@ import java.time.DayOfWeek
 // TODO use Enum codec once implemented
 object DayOfWeekJSONCodec : AbstractJSONCodec<DayOfWeek, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in DayOfWeek>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<DayOfWeek>) =
 		readString().let { raw ->
 			when (raw) {
 				"monday" -> DayOfWeek.MONDAY

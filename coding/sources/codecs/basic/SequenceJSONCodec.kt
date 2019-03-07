@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object SequenceJSONCodec : AbstractJSONCodec<Sequence<*>, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Sequence<*>>): Sequence<*> {
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Sequence<*>>): Sequence<*> {
 		val elementType = valueType.arguments.single()
 
 		return readListByElement {

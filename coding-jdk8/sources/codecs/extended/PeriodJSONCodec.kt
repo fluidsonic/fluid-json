@@ -6,7 +6,7 @@ import java.time.Period
 
 object PeriodJSONCodec : AbstractJSONCodec<Period, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Period>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Period>) =
 		readString().let { raw ->
 			try {
 				Period.parse(raw)!!

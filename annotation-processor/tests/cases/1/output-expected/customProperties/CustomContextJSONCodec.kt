@@ -34,7 +34,7 @@ import customProperties.writeCustomProperties2
 import kotlin.String
 
 internal object CustomContextJSONCodec : AbstractJSONCodec<CustomContext, CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in CustomContext>):
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<CustomContext>):
 			CustomContext {
 		var _value: String? = null
 

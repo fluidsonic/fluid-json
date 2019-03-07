@@ -6,7 +6,7 @@ import java.time.Duration
 
 object DurationJSONCodec : AbstractJSONCodec<Duration, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Duration>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Duration>) =
 		readString().let { raw ->
 			try {
 				Duration.parse(raw)!!

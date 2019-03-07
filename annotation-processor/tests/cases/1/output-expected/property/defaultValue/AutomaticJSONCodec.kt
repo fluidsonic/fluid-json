@@ -93,7 +93,7 @@ internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingCo
 
 	private val parameter_value9: KParameter = constructor.parameters.first { it.name == "value9" }
 
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in Automatic>):
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<Automatic>):
 			Automatic {
 		val arguments = hashMapOf<KParameter, Any?>()
 		readFromMapByElementValue { key ->

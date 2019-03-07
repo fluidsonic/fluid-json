@@ -17,7 +17,7 @@ internal object MapJSONTestCodec : AbstractJSONCodec<Map<*, *>, JSONCodingContex
 	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, NumberJSONCodec, StringJSONCodec, YearMonthDayCodec)
 ) {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Map<*, *>>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Map<*, *>>) =
 		MapJSONCodec.run { decode(valueType) }
 
 
@@ -29,7 +29,7 @@ internal object MapJSONTestCodec : AbstractJSONCodec<Map<*, *>, JSONCodingContex
 		additionalProviders = listOf(BooleanJSONCodec, IntJSONCodec, StringJSONCodec)
 	) {
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Map<String, *>>) =
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Map<String, *>>) =
 			MapJSONCodec.nonRecursive.run { decode(valueType) }
 
 

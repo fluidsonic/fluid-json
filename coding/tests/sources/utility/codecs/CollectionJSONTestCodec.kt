@@ -7,7 +7,7 @@ internal object CollectionJSONTestCodec : AbstractJSONCodec<Collection<*>, JSONC
 	additionalProviders = listOf(StringJSONCodec)
 ) {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Collection<*>>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Collection<*>>) =
 		CollectionJSONCodec.run { decode(valueType) }
 
 
@@ -19,7 +19,7 @@ internal object CollectionJSONTestCodec : AbstractJSONCodec<Collection<*>, JSONC
 		additionalProviders = listOf(StringJSONCodec)
 	) {
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Collection<*>>) =
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Collection<*>>) =
 			CollectionJSONCodec.nonRecursive.run { decode(valueType) }
 
 

@@ -6,7 +6,7 @@ import java.time.Year
 
 object YearJSONCodec : AbstractJSONCodec<Year, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Year>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Year>) =
 		readInt().let { raw ->
 			try {
 				Year.of(raw)!!

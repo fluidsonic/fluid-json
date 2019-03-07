@@ -31,7 +31,7 @@ import com.github.fluidsonic.fluid.json.writeValueOrNull
 import kotlin.String
 
 internal object AutomaticRootJSONCodec : AbstractJSONCodec<AutomaticRoot, CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in AutomaticRoot>):
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<AutomaticRoot>):
 			AutomaticRoot {
 		var _value: String? = null
 

@@ -6,7 +6,7 @@ import java.time.ZoneOffset
 
 object ZoneOffsetJSONCodec : AbstractJSONCodec<ZoneOffset, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in ZoneOffset>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<ZoneOffset>) =
 		readString().let { raw ->
 			try {
 				ZoneOffset.of(raw)!!

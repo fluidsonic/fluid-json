@@ -7,7 +7,7 @@ internal object SetJSONTestDecoderCodec : AbstractJSONDecoderCodec<Set<*>, JSONC
 	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, ListJSONDecoderCodec, NumberJSONCodec, StringJSONCodec)
 ) {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Set<*>>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Set<*>>) =
 		SetJSONDecoderCodec.run { decode(valueType) }
 
 
@@ -15,7 +15,7 @@ internal object SetJSONTestDecoderCodec : AbstractJSONDecoderCodec<Set<*>, JSONC
 		additionalProviders = listOf(BooleanJSONCodec, NumberJSONCodec, StringJSONCodec)
 	) {
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Set<*>>) =
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Set<*>>) =
 			SetJSONDecoderCodec.nonRecursive.run { decode(valueType) }
 	}
 }

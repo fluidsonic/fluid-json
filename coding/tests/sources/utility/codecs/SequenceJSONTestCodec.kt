@@ -19,7 +19,7 @@ internal object SequenceJSONTestCodec : AbstractJSONCodec<Sequence<*>, JSONCodin
 	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, IterableJSONEncoderCodec, ListJSONDecoderCodec, NumberJSONCodec, StringJSONCodec)
 ) {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Sequence<*>>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Sequence<*>>) =
 		SequenceJSONCodec.run { decode(valueType) }
 
 
@@ -31,7 +31,7 @@ internal object SequenceJSONTestCodec : AbstractJSONCodec<Sequence<*>, JSONCodin
 		additionalProviders = listOf(BooleanJSONCodec, IntJSONCodec, IterableJSONEncoderCodec, StringJSONCodec)
 	) {
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Sequence<*>>) =
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Sequence<*>>) =
 			SequenceJSONCodec.nonRecursive.run { decode(valueType) }
 
 

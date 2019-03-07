@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object DoubleJSONCodec : AbstractJSONCodec<Double, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Double>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Double>) =
 		readDouble()
 
 

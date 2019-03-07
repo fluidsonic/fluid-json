@@ -16,7 +16,7 @@ internal object ListJSONTestDecoderCodec : AbstractJSONDecoderCodec<List<*>, JSO
 	additionalProviders = listOf(AnyJSONDecoderCodec, BooleanJSONCodec, NumberJSONCodec, StringJSONCodec)
 ) {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in List<*>>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<List<*>>) =
 		ListJSONDecoderCodec.run { decode(valueType) }
 
 
@@ -24,7 +24,7 @@ internal object ListJSONTestDecoderCodec : AbstractJSONDecoderCodec<List<*>, JSO
 		additionalProviders = listOf(BooleanJSONCodec, IntJSONCodec, StringJSONCodec)
 	) {
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in List<*>>) =
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<List<*>>) =
 			ListJSONDecoderCodec.nonRecursive.run { decode(valueType) }
 	}
 }

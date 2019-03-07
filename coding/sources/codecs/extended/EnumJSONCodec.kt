@@ -11,7 +11,7 @@ sealed class EnumJSONCodec<Value : Enum<*>>(enumClass: KClass<Value>) : Abstract
 		enumClass: KClass<Value>
 	) : EnumJSONCodec<Value>(enumClass = enumClass) {
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Value>): Value {
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Value>): Value {
 			@Suppress("UNCHECKED_CAST")
 			val values = valueType.rawClass.java.enumConstants as Array<out Value>
 
@@ -48,7 +48,7 @@ sealed class EnumJSONCodec<Value : Enum<*>>(enumClass: KClass<Value>) : Abstract
 		}
 
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Value>) =
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Value>) =
 			readString().let { name ->
 				values.firstOrNull { it.second == name }?.first
 					?: invalidValueError("expected one of: ${values.joinToString { "\"${it.second}\"" }}")

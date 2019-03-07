@@ -6,7 +6,7 @@ import java.time.Instant
 
 object InstantJSONCodec : AbstractJSONCodec<Instant, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Instant>) =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Instant>) =
 		readString().let { raw ->
 			try {
 				Instant.parse(raw)!!

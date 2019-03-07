@@ -58,7 +58,7 @@ private object CodingExample {
 
 	object EventCodec : AbstractJSONCodec<Event, JSONCodingContext>() {
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Event>): Event {
+		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Event>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null

@@ -34,8 +34,7 @@ import json.codecPackageName.Custom
 import kotlin.String
 
 internal object CustomJSONCodec : AbstractJSONCodec<Custom, CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in Custom>):
-			Custom {
+	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<Custom>): Custom {
 		var _value: String? = null
 
 		readFromMapByElementValue { key ->

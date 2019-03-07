@@ -34,8 +34,9 @@ import kotlin.String
 
 internal object PrimaryConstructorJSONCodec : AbstractJSONCodec<PrimaryConstructor,
 		CustomCodingContext>() {
-	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in
-			PrimaryConstructor>): PrimaryConstructor {
+	override
+			fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<PrimaryConstructor>):
+			PrimaryConstructor {
 		var _value: String? = null
 
 		readFromMapByElementValue { key ->

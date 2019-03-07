@@ -131,7 +131,7 @@ internal class FixedCodecProviderTest {
 
 	object ChildDecoderCodec : JSONDecoderCodec<Child, Context> {
 
-		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<in Child>) = error("dummy")
+		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<Child>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Child>()
 	}
@@ -139,7 +139,7 @@ internal class FixedCodecProviderTest {
 
 	object ChildDecoderCodec2 : JSONDecoderCodec<Child, Context> {
 
-		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<in Child>) = error("dummy")
+		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<Child>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Child>()
 	}
@@ -155,7 +155,7 @@ internal class FixedCodecProviderTest {
 
 	object ParentDecoderCodec : JSONDecoderCodec<Parent, Context> {
 
-		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<in Parent>) = error("dummy")
+		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<Parent>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Parent>()
 	}
@@ -171,7 +171,7 @@ internal class FixedCodecProviderTest {
 
 	object UnrelatedDecoderCodec : JSONDecoderCodec<Unrelated, Context> {
 
-		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<in Unrelated>) = error("dummy")
+		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<Unrelated>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Unrelated>()
 	}

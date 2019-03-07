@@ -3,7 +3,7 @@ package com.github.fluidsonic.fluid.json
 
 object CollectionJSONCodec : AbstractJSONCodec<Collection<*>, JSONCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<in Collection<*>>): Collection<*> =
+	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Collection<*>>): Collection<*> =
 		ListJSONDecoderCodec.run { decode(valueType) }
 
 

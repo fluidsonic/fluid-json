@@ -8,7 +8,7 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 	additionalProviders = listOf(StatusCodec)
 ) {
 
-	override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<in Kaiju>): Kaiju {
+	override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<Kaiju>): Kaiju {
 		var breachDate: YearMonthDay? = null
 		var category: Int? = null
 		var height: Double? = null
@@ -69,7 +69,7 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 
 	object StatusCodec : AbstractJSONCodec<Status, TestCoderContext>() {
 
-		override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<in Status>): Status {
+		override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<Status>): Status {
 			val id = readString()
 			return when (id) {
 				"deceased" -> Status.deceased
