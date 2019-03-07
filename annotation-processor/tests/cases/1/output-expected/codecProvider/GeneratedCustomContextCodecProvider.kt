@@ -40,8 +40,8 @@ private object GeneratedCustomContextCodecProvider : CustomContextCodecProvider,
 		json.representation.DefaultStructuredJSONCodec, json.representation.SingleValueGenericJSONCodec,
 		json.representation.SingleValueJSONCodec, json.representation.SingleValueNullableJSONCodec,
 		json.representation.StructuredJSONCodec, json.representation.StructuredValueGenericJSONCodec,
-		property.serializedName.AutomaticJSONCodec, property.serializedName.CustomJSONCodec,
-		property.serializedName.DefaultJSONCodec)
+		property.defaultValue.AutomaticJSONCodec, property.serializedName.AutomaticJSONCodec,
+		property.serializedName.CustomJSONCodec, property.serializedName.DefaultJSONCodec)
 
 @Suppress("UNUSED_PARAMETER")
 fun JSONCodecProvider.Companion.generated(interfaceClass: KClass<CustomContextCodecProvider>):

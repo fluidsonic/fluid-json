@@ -1,6 +1,7 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
 import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.json.annotationprocessor.ProcessingResult.Codec.*
 import com.github.fluidsonic.fluid.meta.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.STAR
@@ -18,7 +19,7 @@ internal class ProcessingPhase(
 	private var isProcessed = false
 
 
-	private fun decodingStrategyForType(type: CollectionResult.Type): ProcessingResult.Codec.DecodingStrategy? {
+	private fun decodingStrategyForType(type: CollectionResult.Type): DecodingStrategy? {
 		val typeParameters = (type.meta as? MGeneralizable)?.typeParameters.orEmpty()
 
 		fun decodablePropertiesForConstructor(meta: MConstructor) =
@@ -42,9 +43,15 @@ internal class ProcessingPhase(
 						else -> error("not possible")
 					}
 
-					ProcessingResult.Codec.DecodableProperty(
+					val defaultValue = when {
+						parameter.declaresDefaultValue -> DecodableProperty.DefaultValue.defaultArgument
+						parameterKotlinpoetType.isPrimitive || !parameterKotlinpoetType.isNullable -> DecodableProperty.DefaultValue.none
+						else -> DecodableProperty.DefaultValue.nullReference
+					}
+
+					DecodableProperty(
+						defaultValue = defaultValue,
 						name = parameterName,
-						presenceRequired = parameterKotlinpoetType.isPrimitive, // not yet supported for non-primitive types
 						serializedName = annotation?.annotation?.serializedName?.takeIf { it != "<automatic>" }
 							?: encodingAnnotation?.annotation?.serializedName?.takeIf { it != "<automatic>" }
 							?: parameterName.toString(),
@@ -64,7 +71,7 @@ internal class ProcessingPhase(
 
 
 		fun decodingStrategyForConstructor(meta: MConstructor) =
-			ProcessingResult.Codec.DecodingStrategy(
+			DecodingStrategy(
 				meta = meta,
 				properties = decodablePropertiesForConstructor(meta)
 			)
@@ -139,10 +146,10 @@ internal class ProcessingPhase(
 	}
 
 
-	private fun encodingStrategyForType(type: CollectionResult.Type, decodingStrategy: ProcessingResult.Codec.DecodingStrategy?): ProcessingResult.Codec.EncodingStrategy? {
+	private fun encodingStrategyForType(type: CollectionResult.Type, decodingStrategy: DecodingStrategy?): EncodingStrategy? {
 		val typeParameters = (type.meta as? MGeneralizable)?.typeParameters.orEmpty()
 
-		fun encodingStrategyForProperties(properties: Collection<MProperty>) = ProcessingResult.Codec.EncodingStrategy(
+		fun encodingStrategyForProperties(properties: Collection<MProperty>) = EncodingStrategy(
 			customPropertyMethods = type.customProperties.map { it.extensionPackageName to it.functionMeta.name },
 			properties = properties
 				.filterNot { type.propertyExclusions.containsKey(it.name) }
@@ -152,7 +159,7 @@ internal class ProcessingPhase(
 					val annotation = type.properties[property.name]
 					val decodingAnnotation = type.decodableProperties[property.name]
 
-					ProcessingResult.Codec.EncodableProperty(
+					EncodableProperty(
 						importPackageName = annotation?.extensionPackageName,
 						name = property.name,
 						serializedName = annotation?.annotation?.serializedName?.takeIf { it != "<automatic>" }

@@ -20,12 +20,20 @@ internal data class ProcessingResult(
 	) {
 
 		data class DecodableProperty(
+			val defaultValue: DefaultValue,
 			val name: MVariableName,
-			val presenceRequired: Boolean,
 			val serializedName: String,
 			val type: TypeName,
 			val typeParameterIndex: Int
-		)
+		) {
+
+			enum class DefaultValue {
+
+				defaultArgument,
+				none,
+				nullReference
+			}
+		}
 
 
 		data class DecodingStrategy(

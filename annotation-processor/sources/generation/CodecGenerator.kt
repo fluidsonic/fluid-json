@@ -1,17 +1,22 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
 import com.github.fluidsonic.fluid.json.*
+import com.github.fluidsonic.fluid.json.annotationprocessor.ProcessingResult.Codec.*
 import com.github.fluidsonic.fluid.meta.*
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.ParameterizedTypeName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.TypeName
 import com.squareup.kotlinpoet.TypeSpec
 import com.squareup.kotlinpoet.WildcardTypeName
 import com.squareup.kotlinpoet.asTypeName
 import java.io.File
+import kotlin.reflect.KFunction
+import kotlin.reflect.KParameter
 
 
 internal class CodecGenerator(
@@ -152,6 +157,9 @@ internal class CodecGenerator(
 						"readValueOfType",
 						"readValueOfTypeOrNull"
 					)
+
+					if (codec.decodingStrategy.properties.any { it.defaultValue == DecodableProperty.DefaultValue.defaultArgument })
+						addImport("kotlin.reflect", "KClass")
 				}
 				if (codec.encodingStrategy != null) {
 					addImport("com.github.fluidsonic.fluid.json",
@@ -208,7 +216,143 @@ internal class CodecGenerator(
 
 	private fun TypeSpec.Builder.generateDecode(
 		codec: ProcessingResult.Codec,
-		strategy: ProcessingResult.Codec.DecodingStrategy,
+		strategy: DecodingStrategy,
+		valueType: TypeName
+	) =
+		if (strategy.properties.any { it.defaultValue == DecodableProperty.DefaultValue.defaultArgument })
+			generateDecodeWithReflection(codec = codec, strategy = strategy, valueType = valueType)
+		else
+			generateDecodeWithoutReflection(codec = codec, strategy = strategy, valueType = valueType)
+
+
+	private fun TypeSpec.Builder.generateDecodeWithReflection(
+		codec: ProcessingResult.Codec,
+		strategy: DecodingStrategy,
+		valueType: TypeName
+	): TypeSpec.Builder {
+		val decoderType = JSONDecoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
+		val properties = strategy.properties.sortedBy { it.serializedName }
+		val rawValueType = (valueType as? ParameterizedTypeName)?.rawType ?: valueType
+
+		addProperty(PropertySpec.builder("constructor", KFunction::class.asTypeName().parameterizedBy(rawValueType))
+			.addModifiers(KModifier.PRIVATE)
+			.initializer(CodeBlock.builder()
+				.beginControlFlow("%T::class.constructors.single { constructor ->", rawValueType)
+				.addStatement("if (constructor.parameters.size != %L) return@single false\n", properties.size)
+				.run {
+					beginControlFlow("constructor.parameters.forEach { parameter ->")
+					run {
+						beginControlFlow("when (parameter.name) {")
+						run {
+							properties.forEachIndexed { index, property ->
+								addStatement(
+									"%1S -> if (parameter.index != %2L || parameter.isVararg || (parameter.type.classifier as? KClass<*>) != %3T::class) return@single false",
+									property.name,
+									index,
+									property.type.copy(nullable = false)
+								)
+							}
+							addStatement("else -> return@single false")
+						}
+						endControlFlow()
+					}
+					endControlFlow()
+
+					add("\n")
+					addStatement("return@single true")
+				}
+				.endControlFlow()
+				.build()
+			)
+			.build()
+		)
+
+		properties.forEach { property ->
+			addProperty(PropertySpec.builder("parameter_${property.name}", KParameter::class)
+				.addModifiers(KModifier.PRIVATE)
+				.initializer("constructor.parameters.first { it.name == %S }", property.name)
+				.build()
+			)
+		}
+
+		return addFunction(FunSpec.builder("decode")
+			.addModifiers(KModifier.OVERRIDE)
+			.receiver(decoderType)
+			.addParameter("valueType", codingType.parameterizedBy(WildcardTypeName.consumerOf(valueType)))
+			.returns(valueType)
+			.addCode("val arguments = hashMapOf<KParameter, Any?>()\n")
+			.addCode("readFromMapByElementValue { %N ->\n⇥", "key")
+			.beginControlFlow("when (%N)", "key")
+			.apply {
+				for (property in properties) {
+					val functionName = methodNameForReadingValueOfType(property.type)
+
+					when {
+						property.typeParameterIndex >= 0 ->
+							if (property.type == KotlinpoetTypeNames.any || property.type == KotlinpoetTypeNames.nullableAny)
+								addStatement(
+									"%1S -> arguments[%2N] = %3N(valueType.arguments[%4L])",
+									property.serializedName,
+									"parameter_${property.name}",
+									functionName,
+									property.typeParameterIndex
+								)
+							else
+								addStatement(
+									"%1S -> arguments[%2N] = %3N(valueType.arguments[%4L]) as %5T",
+									property.serializedName,
+									"parameter_${property.name}",
+									functionName,
+									property.typeParameterIndex,
+									property.type
+								)
+
+						else ->
+							addStatement(
+								"%1S -> arguments[%2N] = %3N()",
+								property.serializedName,
+								"parameter_${property.name}",
+								functionName
+							)
+					}
+				}
+				addStatement("else -> skipValue()")
+			}
+			.endControlFlow()
+			.addCode("⇤}\n")
+			.addCode("\n")
+			.apply {
+				var hasChecks = false
+				properties.forEach { property ->
+					when (property.defaultValue) {
+						DecodableProperty.DefaultValue.nullReference -> {
+							addStatement("if (!arguments.containsKey(%1N)) arguments[%1N] = null", "parameter_${property.name}")
+							hasChecks = true
+						}
+
+						DecodableProperty.DefaultValue.none -> {
+							addStatement("if (!arguments.containsKey(%1N)) missingPropertyError(%2S)", "parameter_${property.name}", property.serializedName)
+							hasChecks = true
+						}
+
+						DecodableProperty.DefaultValue.defaultArgument ->
+							Unit
+					}
+				}
+
+				if (hasChecks)
+					addCode("\n")
+
+				addStatement("return constructor.callBy(arguments)")
+			}
+			.build()
+		)
+	}
+
+
+	private fun TypeSpec.Builder.generateDecodeWithoutReflection(
+		codec: ProcessingResult.Codec,
+		strategy: DecodingStrategy,
 		valueType: TypeName
 	): TypeSpec.Builder {
 		val decoderType = JSONDecoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
@@ -237,9 +381,8 @@ internal class CodecGenerator(
 						else -> addStatement("var %1N: %2T? = null", localVariableName, propertyType)
 					}
 
-					if (property.presenceRequired) {
+					if (property.type.isPrimitive)
 						addStatement("var %1N = false", "${property.name}_isPresent")
-					}
 				}
 			}
 			.addCode("\n")
@@ -250,7 +393,7 @@ internal class CodecGenerator(
 					val functionName = methodNameForReadingValueOfType(property.type)
 
 					when {
-						property.presenceRequired -> {
+						property.type.isPrimitive -> {
 							beginControlFlow("%S -> ", property.serializedName)
 							addStatement("%1N = %2N()", "_${property.name}", functionName)
 							addStatement("%N = true", "${property.name}_isPresent")
@@ -292,15 +435,14 @@ internal class CodecGenerator(
 			.addCode("\n")
 			.apply {
 				properties
-					.filter { it.presenceRequired }
+					.filter { it.type.isPrimitive }
 					.ifEmpty { null }
 					?.apply {
 						forEach { addStatement("%N || missingPropertyError(%S)", "${it.name}_isPresent", it.serializedName) }
 						addCode("\n")
 					}
-			}
-			.addCode("return %T(\n⇥", (valueType as? ParameterizedTypeName)?.rawType ?: valueType)
-			.apply {
+
+				addCode("return %T(\n⇥", (valueType as? ParameterizedTypeName)?.rawType ?: valueType)
 				val size = properties.size
 				for ((index, property) in properties.withIndex()) {
 					val propertyType = property.type
@@ -315,8 +457,8 @@ internal class CodecGenerator(
 					}
 					addCode("\n")
 				}
+				addCode("⇤)\n")
 			}
-			.addCode("⇤)\n")
 			.build()
 		)
 	}
@@ -324,7 +466,7 @@ internal class CodecGenerator(
 
 	private fun TypeSpec.Builder.generateEncode(
 		codec: ProcessingResult.Codec,
-		strategy: ProcessingResult.Codec.EncodingStrategy,
+		strategy: EncodingStrategy,
 		valueType: TypeName
 	): TypeSpec.Builder {
 		val encoderType = JSONEncoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
