@@ -12,5 +12,7 @@ class Automatic(
 	val value5: Double,
 	val value6: Double = 1.2,
 	val value7: Double?,
-	val value8: Double? = 1.2
+	val value8: Double? = 1.2,
+	val value9: List<Int>,
+	val value10: List<Int> = emptyList()
 )

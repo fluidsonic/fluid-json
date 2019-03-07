@@ -245,11 +245,13 @@ internal class CodecGenerator(
 						beginControlFlow("when (parameter.name) {")
 						run {
 							properties.forEachIndexed { index, property ->
+								val rawType = (property.type as? ParameterizedTypeName)?.rawType ?: property.type
+
 								addStatement(
 									"%1S -> if (parameter.index != %2L || parameter.isVararg || (parameter.type.classifier as? KClass<*>) != %3T::class) return@single false",
 									property.name,
 									index,
-									property.type.copy(nullable = false)
+									rawType.copy(nullable = false)
 								)
 							}
 							addStatement("else -> return@single false")

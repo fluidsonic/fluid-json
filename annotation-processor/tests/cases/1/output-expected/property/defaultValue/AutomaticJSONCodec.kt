@@ -31,7 +31,9 @@ import com.github.fluidsonic.fluid.json.writeShortOrNull
 import com.github.fluidsonic.fluid.json.writeStringOrNull
 import com.github.fluidsonic.fluid.json.writeValueOrNull
 import kotlin.Double
+import kotlin.Int
 import kotlin.String
+import kotlin.collections.List
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
@@ -39,26 +41,30 @@ import kotlin.reflect.KParameter
 internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingContext>() {
 	private val constructor: KFunction<Automatic> = Automatic::class.constructors.single {
 			constructor ->
-		if (constructor.parameters.size != 8) return@single false
+		if (constructor.parameters.size != 10) return@single false
 
 		constructor.parameters.forEach { parameter ->
 			when (parameter.name) {
 				"value1" -> if (parameter.index != 0 || parameter.isVararg || (parameter.type.classifier as?
 						KClass<*>) != String::class) return@single false
-				"value2" -> if (parameter.index != 1 || parameter.isVararg || (parameter.type.classifier as?
+				"value10" -> if (parameter.index != 1 || parameter.isVararg || (parameter.type.classifier as?
+						KClass<*>) != List::class) return@single false
+				"value2" -> if (parameter.index != 2 || parameter.isVararg || (parameter.type.classifier as?
 						KClass<*>) != String::class) return@single false
-				"value3" -> if (parameter.index != 2 || parameter.isVararg || (parameter.type.classifier as?
+				"value3" -> if (parameter.index != 3 || parameter.isVararg || (parameter.type.classifier as?
 						KClass<*>) != String::class) return@single false
-				"value4" -> if (parameter.index != 3 || parameter.isVararg || (parameter.type.classifier as?
+				"value4" -> if (parameter.index != 4 || parameter.isVararg || (parameter.type.classifier as?
 						KClass<*>) != String::class) return@single false
-				"value5" -> if (parameter.index != 4 || parameter.isVararg || (parameter.type.classifier as?
+				"value5" -> if (parameter.index != 5 || parameter.isVararg || (parameter.type.classifier as?
 						KClass<*>) != Double::class) return@single false
-				"value6" -> if (parameter.index != 5 || parameter.isVararg || (parameter.type.classifier as?
+				"value6" -> if (parameter.index != 6 || parameter.isVararg || (parameter.type.classifier as?
 						KClass<*>) != Double::class) return@single false
-				"value7" -> if (parameter.index != 6 || parameter.isVararg || (parameter.type.classifier as?
+				"value7" -> if (parameter.index != 7 || parameter.isVararg || (parameter.type.classifier as?
 						KClass<*>) != Double::class) return@single false
-				"value8" -> if (parameter.index != 7 || parameter.isVararg || (parameter.type.classifier as?
+				"value8" -> if (parameter.index != 8 || parameter.isVararg || (parameter.type.classifier as?
 						KClass<*>) != Double::class) return@single false
+				"value9" -> if (parameter.index != 9 || parameter.isVararg || (parameter.type.classifier as?
+						KClass<*>) != List::class) return@single false
 				else -> return@single false
 			}
 		}
@@ -68,6 +74,8 @@ internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingCo
 
 
 	private val parameter_value1: KParameter = constructor.parameters.first { it.name == "value1" }
+
+	private val parameter_value10: KParameter = constructor.parameters.first { it.name == "value10" }
 
 	private val parameter_value2: KParameter = constructor.parameters.first { it.name == "value2" }
 
@@ -83,12 +91,15 @@ internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingCo
 
 	private val parameter_value8: KParameter = constructor.parameters.first { it.name == "value8" }
 
+	private val parameter_value9: KParameter = constructor.parameters.first { it.name == "value9" }
+
 	override fun JSONDecoder<CustomCodingContext>.decode(valueType: JSONCodingType<in Automatic>):
 			Automatic {
 		val arguments = hashMapOf<KParameter, Any?>()
 		readFromMapByElementValue { key ->
 			when (key) {
 				"value1" -> arguments[parameter_value1] = readString()
+				"value10" -> arguments[parameter_value10] = readValueOfType<List<Int>>()
 				"value2" -> arguments[parameter_value2] = readString()
 				"value3" -> arguments[parameter_value3] = readValueOfTypeOrNull<String>()
 				"value4" -> arguments[parameter_value4] = readValueOfTypeOrNull<String>()
@@ -96,6 +107,7 @@ internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingCo
 				"value6" -> arguments[parameter_value6] = readDouble()
 				"value7" -> arguments[parameter_value7] = readValueOfTypeOrNull<Double>()
 				"value8" -> arguments[parameter_value8] = readValueOfTypeOrNull<Double>()
+				"value9" -> arguments[parameter_value9] = readValueOfType<List<Int>>()
 				else -> skipValue()
 			}
 		}
@@ -104,6 +116,7 @@ internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingCo
 		if (!arguments.containsKey(parameter_value3)) arguments[parameter_value3] = null
 		if (!arguments.containsKey(parameter_value5)) missingPropertyError("value5")
 		if (!arguments.containsKey(parameter_value7)) arguments[parameter_value7] = null
+		if (!arguments.containsKey(parameter_value9)) missingPropertyError("value9")
 
 		return constructor.callBy(arguments)
 	}
@@ -111,6 +124,7 @@ internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingCo
 	override fun JSONEncoder<CustomCodingContext>.encode(value: Automatic) {
 		writeIntoMap {
 			writeMapElement("value1", string = value.value1)
+			writeMapElement("value10", value = value.value10)
 			writeMapElement("value2", string = value.value2)
 			writeMapElement("value3", value = value.value3)
 			writeMapElement("value4", value = value.value4)
@@ -118,6 +132,7 @@ internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingCo
 			writeMapElement("value6", double = value.value6)
 			writeMapElement("value7", value = value.value7)
 			writeMapElement("value8", value = value.value8)
+			writeMapElement("value9", value = value.value9)
 		}
 	}
 }
