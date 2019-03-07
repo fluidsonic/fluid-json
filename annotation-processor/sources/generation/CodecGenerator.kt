@@ -307,6 +307,15 @@ internal class CodecGenerator(
 									property.type
 								)
 
+						functionName.startsWith("readValueOfType") -> // TODO refactor
+							addStatement(
+								"%1S -> arguments[%2N] = %3N<%4T>()",
+								property.serializedName,
+								"parameter_${property.name}",
+								functionName,
+								property.type.copy(nullable = false)
+							)
+
 						else ->
 							addStatement(
 								"%1S -> arguments[%2N] = %3N()",

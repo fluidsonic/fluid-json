@@ -90,12 +90,12 @@ internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingCo
 			when (key) {
 				"value1" -> arguments[parameter_value1] = readString()
 				"value2" -> arguments[parameter_value2] = readString()
-				"value3" -> arguments[parameter_value3] = readValueOfTypeOrNull()
-				"value4" -> arguments[parameter_value4] = readValueOfTypeOrNull()
+				"value3" -> arguments[parameter_value3] = readValueOfTypeOrNull<String>()
+				"value4" -> arguments[parameter_value4] = readValueOfTypeOrNull<String>()
 				"value5" -> arguments[parameter_value5] = readDouble()
 				"value6" -> arguments[parameter_value6] = readDouble()
-				"value7" -> arguments[parameter_value7] = readValueOfTypeOrNull()
-				"value8" -> arguments[parameter_value8] = readValueOfTypeOrNull()
+				"value7" -> arguments[parameter_value7] = readValueOfTypeOrNull<Double>()
+				"value8" -> arguments[parameter_value8] = readValueOfTypeOrNull<Double>()
 				else -> skipValue()
 			}
 		}
