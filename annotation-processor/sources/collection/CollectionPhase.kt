@@ -9,7 +9,8 @@ import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.PackageElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
-import javax.lang.model.type.DeclaredType
+import javax.lang.model.type.ReferenceType
+import javax.lang.model.type.TypeMirror
 import kotlin.reflect.KClass
 
 
@@ -177,8 +178,11 @@ internal class CollectionPhase(
 			?.forEachIndexed { index, externalTypeAnnotationMirror ->
 				val externalTypeAnnotation = annotation.externalTypes[index]
 
-				val externalType = externalTypeAnnotationMirror.getValue<DeclaredType>("target")
+				val externalType = externalTypeAnnotationMirror.getValue<TypeMirror>("target")
 					?: error("cannot properly parse external type annotation mirror: $externalTypeAnnotationMirror")
+
+				if (externalType !is ReferenceType && externalTypeAnnotation.targetName.isEmpty())
+					error("JSON.ExternalType can only be used for reference types, not for '$externalType' (if you are using an inline class you have to specify 'targetName' too)")
 
 				val externalTypeName = externalTypeAnnotation.targetName.ifEmpty { externalType.toString() }
 				val externalTypeElement = typeResolver.resolveType(externalTypeName)
