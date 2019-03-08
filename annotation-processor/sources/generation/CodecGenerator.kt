@@ -233,7 +233,7 @@ internal class CodecGenerator(
 		val properties = strategy.properties.sortedBy { it.serializedName }
 		val rawValueType = (valueType as? ParameterizedTypeName)?.rawType ?: valueType
 
-		addProperty(PropertySpec.builder("constructor", KFunction::class.asTypeName().parameterizedBy(rawValueType))
+		addProperty(PropertySpec.builder("constructor", KFunction::class.asTypeName().parameterizedBy(valueType))
 			.addModifiers(KModifier.PRIVATE)
 			.initializer(CodeBlock.builder()
 				.beginControlFlow("%T::class.constructors.single { constructor ->", rawValueType)
