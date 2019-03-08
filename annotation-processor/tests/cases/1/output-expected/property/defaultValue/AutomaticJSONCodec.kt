@@ -5,6 +5,7 @@ import com.github.fluidsonic.fluid.json.AbstractJSONCodec
 import com.github.fluidsonic.fluid.json.JSONCodingType
 import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
+import com.github.fluidsonic.fluid.json.jvmErasure
 import com.github.fluidsonic.fluid.json.missingPropertyError
 import com.github.fluidsonic.fluid.json.readBooleanOrNull
 import com.github.fluidsonic.fluid.json.readByteOrNull
@@ -44,27 +45,29 @@ internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingCo
 		if (constructor.parameters.size != 10) return@single false
 
 		constructor.parameters.forEach { parameter ->
+			val erasure = parameter.type.jvmErasure
+
 			when (parameter.name) {
-				"value1" -> if (parameter.index != 0 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != String::class) return@single false
-				"value10" -> if (parameter.index != 1 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != List::class) return@single false
-				"value2" -> if (parameter.index != 2 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != String::class) return@single false
-				"value3" -> if (parameter.index != 3 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != String::class) return@single false
-				"value4" -> if (parameter.index != 4 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != String::class) return@single false
-				"value5" -> if (parameter.index != 5 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != Double::class) return@single false
-				"value6" -> if (parameter.index != 6 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != Double::class) return@single false
-				"value7" -> if (parameter.index != 7 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != Double::class) return@single false
-				"value8" -> if (parameter.index != 8 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != Double::class) return@single false
-				"value9" -> if (parameter.index != 9 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != List::class) return@single false
+				"value1" -> if (parameter.index != 0 || parameter.isVararg || erasure != String::class)
+						return@single false
+				"value10" -> if (parameter.index != 1 || parameter.isVararg || erasure != List::class)
+						return@single false
+				"value2" -> if (parameter.index != 2 || parameter.isVararg || erasure != String::class)
+						return@single false
+				"value3" -> if (parameter.index != 3 || parameter.isVararg || erasure != String::class)
+						return@single false
+				"value4" -> if (parameter.index != 4 || parameter.isVararg || erasure != String::class)
+						return@single false
+				"value5" -> if (parameter.index != 5 || parameter.isVararg || erasure != Double::class)
+						return@single false
+				"value6" -> if (parameter.index != 6 || parameter.isVararg || erasure != Double::class)
+						return@single false
+				"value7" -> if (parameter.index != 7 || parameter.isVararg || erasure != Double::class)
+						return@single false
+				"value8" -> if (parameter.index != 8 || parameter.isVararg || erasure != Double::class)
+						return@single false
+				"value9" -> if (parameter.index != 9 || parameter.isVararg || erasure != List::class)
+						return@single false
 				else -> return@single false
 			}
 		}

@@ -157,8 +157,11 @@ internal class CodecGenerator(
 						"readValueOfTypeOrNull"
 					)
 
-					if (codec.decodingStrategy.properties.any { it.defaultValue == DecodableProperty.DefaultValue.defaultArgument })
+					val usesReflection = codec.decodingStrategy.properties.any { it.defaultValue == DecodableProperty.DefaultValue.defaultArgument }
+					if (usesReflection) {
 						addImport("kotlin.reflect", "KClass")
+						addImport("com.github.fluidsonic.fluid.json", "jvmErasure")
+					}
 				}
 				if (codec.encodingStrategy != null) {
 					addImport("com.github.fluidsonic.fluid.json",
@@ -240,6 +243,7 @@ internal class CodecGenerator(
 				.addStatement("if (constructor.parameters.size != %L) return@single false\n", properties.size)
 				.run {
 					beginControlFlow("constructor.parameters.forEach { parameter ->")
+					addStatement("val erasure = parameter.type.jvmErasure\n")
 					run {
 						beginControlFlow("when (parameter.name) {")
 						run {
@@ -247,7 +251,7 @@ internal class CodecGenerator(
 								val rawType = (property.type as? ParameterizedTypeName)?.rawType ?: property.type
 
 								addStatement(
-									"%1S -> if (parameter.index != %2L || parameter.isVararg || (parameter.type.classifier as? KClass<*>) != %3T::class) return@single false",
+									"%1S -> if (parameter.index != %2L || parameter.isVararg || erasure != %3T::class) return@single false",
 									property.name,
 									index,
 									rawType.copy(nullable = false)

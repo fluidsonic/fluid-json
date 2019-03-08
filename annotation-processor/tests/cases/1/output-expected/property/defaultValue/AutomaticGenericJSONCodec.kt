@@ -5,6 +5,7 @@ import com.github.fluidsonic.fluid.json.AbstractJSONCodec
 import com.github.fluidsonic.fluid.json.JSONCodingType
 import com.github.fluidsonic.fluid.json.JSONDecoder
 import com.github.fluidsonic.fluid.json.JSONEncoder
+import com.github.fluidsonic.fluid.json.jvmErasure
 import com.github.fluidsonic.fluid.json.missingPropertyError
 import com.github.fluidsonic.fluid.json.readBooleanOrNull
 import com.github.fluidsonic.fluid.json.readByteOrNull
@@ -41,15 +42,17 @@ internal object AutomaticGenericJSONCodec : AbstractJSONCodec<AutomaticGeneric<*
 		if (constructor.parameters.size != 4) return@single false
 
 		constructor.parameters.forEach { parameter ->
+			val erasure = parameter.type.jvmErasure
+
 			when (parameter.name) {
-				"value1" -> if (parameter.index != 0 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != AutomaticGeneric.SomeInterface::class) return@single false
-				"value2" -> if (parameter.index != 1 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != AutomaticGeneric.SomeInterface::class) return@single false
-				"value3" -> if (parameter.index != 2 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != AutomaticGeneric.SomeInterface::class) return@single false
-				"value4" -> if (parameter.index != 3 || parameter.isVararg || (parameter.type.classifier as?
-						KClass<*>) != AutomaticGeneric.SomeInterface::class) return@single false
+				"value1" -> if (parameter.index != 0 || parameter.isVararg || erasure !=
+						AutomaticGeneric.SomeInterface::class) return@single false
+				"value2" -> if (parameter.index != 1 || parameter.isVararg || erasure !=
+						AutomaticGeneric.SomeInterface::class) return@single false
+				"value3" -> if (parameter.index != 2 || parameter.isVararg || erasure !=
+						AutomaticGeneric.SomeInterface::class) return@single false
+				"value4" -> if (parameter.index != 3 || parameter.isVararg || erasure !=
+						AutomaticGeneric.SomeInterface::class) return@single false
 				else -> return@single false
 			}
 		}
