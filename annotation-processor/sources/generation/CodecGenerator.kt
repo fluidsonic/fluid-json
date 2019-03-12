@@ -239,7 +239,7 @@ internal class CodecGenerator(
 		addProperty(PropertySpec.builder("constructor", KFunction::class.asTypeName().parameterizedBy(valueType))
 			.addModifiers(KModifier.PRIVATE)
 			.initializer(CodeBlock.builder()
-				.beginControlFlow("%T::class.constructors.single { constructor ->", rawValueType)
+				.beginControlFlow("%T::class.constructors.single·{·constructor·->", rawValueType)
 				.addStatement("if (constructor.parameters.size != %L) return@single false\n", properties.size)
 				.run {
 					beginControlFlow("constructor.parameters.forEach { parameter ->")
