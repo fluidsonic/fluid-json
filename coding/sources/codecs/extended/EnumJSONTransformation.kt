@@ -17,12 +17,12 @@ sealed class EnumJSONTransformation {
 		`lower-kebab-case`,
 		lower_snake_case,
 		lowercase,
-		`lowercase words`,
+		lowercase_words, // cannot use space here because Android DEX doesn't support it
 		UpperCamelCase,
 		`UPPER-KEBAB-CASE`,
 		UPPER_SNAKE_CASE,
 		UPPERCASE,
-		`UPPERCASE WORDS`
+		UPPERCASE_WORDS // cannot use space here because Android DEX doesn't support it
 	}
 }
 
@@ -41,12 +41,12 @@ internal fun Case?.convert(string: String) =
 		Case.`lower-kebab-case` -> string.words().joinToString(separator = "-").toLowerCase()
 		Case.lower_snake_case -> string.words().joinToString(separator = "_").toLowerCase()
 		Case.lowercase -> string.toLowerCase()
-		Case.`lowercase words` -> string.words().joinToString(separator = " ").toLowerCase()
+		Case.lowercase_words -> string.words().joinToString(separator = " ").toLowerCase()
 		Case.UpperCamelCase -> string.words().joinToString(separator = "") { it.camelize() }
 		Case.`UPPER-KEBAB-CASE` -> string.words().joinToString(separator = "-").toUpperCase()
 		Case.UPPER_SNAKE_CASE -> string.words().joinToString(separator = "_").toUpperCase()
 		Case.UPPERCASE -> string.toUpperCase()
-		Case.`UPPERCASE WORDS` -> string.words().joinToString(separator = " ").toUpperCase()
+		Case.UPPERCASE_WORDS -> string.words().joinToString(separator = " ").toUpperCase()
 	}
 
 

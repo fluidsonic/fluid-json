@@ -75,7 +75,7 @@ internal object EnumJSONCodecTest {
 				"uppercase words 123",
 				"0 some spaces uppercase wtf snakes_are_coming_in 123 abc123 justhtml xml xml jsoncodec@1_0"
 			),
-			Case.`lowercase words` to listOf(
+			Case.lowercase_words to listOf(
 				"lower camel case 123",
 				"lower kebab case 123",
 				"lower snake case 123",
@@ -140,7 +140,7 @@ internal object EnumJSONCodecTest {
 				"UPPERCASE WORDS 123",
 				"0 SOME SPACES UPPERCASE WTF SNAKES_ARE_COMING_IN 123 ABC123 JUSTHTML XML XML JSONCODEC@1_0"
 			),
-			Case.`UPPERCASE WORDS` to listOf(
+			Case.UPPERCASE_WORDS to listOf(
 				"LOWER CAMEL CASE 123",
 				"LOWER KEBAB CASE 123",
 				"LOWER SNAKE CASE 123",
@@ -220,7 +220,7 @@ internal object EnumJSONCodecTest {
 				"uppercase words 123.tostring()",
 				"0 some spaces uppercase wtf snakes_are_coming_in 123 abc123 justhtml xml xml jsoncodec/1.0.tostring()"
 			),
-			Case.`lowercase words` to listOf(
+			Case.lowercase_words to listOf(
 				"lower camel case 123 to string",
 				"lower kebab case 123 to string",
 				"lower snake case 123 to string",
@@ -285,7 +285,7 @@ internal object EnumJSONCodecTest {
 				"UPPERCASE WORDS 123.TOSTRING()",
 				"0 SOME SPACES UPPERCASE WTF SNAKES_ARE_COMING_IN 123 ABC123 JUSTHTML XML XML JSONCODEC/1.0.TOSTRING()"
 			),
-			Case.`UPPERCASE WORDS` to listOf(
+			Case.UPPERCASE_WORDS to listOf(
 				"LOWER CAMEL CASE 123 TO STRING",
 				"LOWER KEBAB CASE 123 TO STRING",
 				"LOWER SNAKE CASE 123 TO STRING",
