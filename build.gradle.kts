@@ -9,7 +9,7 @@ plugins {
 
 fluidLibrary {
 	name = "fluid-json"
-	version = "0.9.16"
+	version = "0.9.17"
 }
 
 
