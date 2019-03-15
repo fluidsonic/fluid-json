@@ -40,8 +40,8 @@ import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
 internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingContext>() {
-	private val constructor: KFunction<Automatic> = Automatic::class.constructors.single {
-			constructor ->
+	private val constructor: KFunction<Automatic> =
+			Automatic::class.constructors.single { constructor ->
 		if (constructor.parameters.size != 10) return@single false
 
 		constructor.parameters.forEach { parameter ->
