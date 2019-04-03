@@ -79,7 +79,7 @@ internal object JSONTestSuite {
 
 	private class TestEnvironment(
 		val name: String,
-		val parser: JSONCodingParser,
+		val parser: JSONCodingParser<*>,
 		val parserIsRecursive: Boolean
 	)
 }

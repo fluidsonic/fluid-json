@@ -12,7 +12,7 @@ import io.ktor.http.content.OutgoingContent
 
 
 class FluidJsonSerializer(
-	private val parser: JSONCodingParser = JSONCodingParser.nonRecursive,
+	private val parser: JSONCodingParser<*> = JSONCodingParser.nonRecursive,
 	private val serializer: JSONCodingSerializer = JSONCodingSerializer.nonRecursive
 ) : JsonSerializer {
 

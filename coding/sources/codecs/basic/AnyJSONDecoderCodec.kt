@@ -11,6 +11,6 @@ object AnyJSONDecoderCodec : AbstractJSONDecoderCodec<Any, JSONCodingContext>() 
 			JSONToken.mapStart -> readValueOfType<Map<*, *>>()
 			JSONToken.numberValue -> readValueOfType<Number>()
 			JSONToken.stringValue -> readValueOfType<String>()
-			else -> error("impossible token: $nextToken")
+			else -> invalidValueError("unexpected 'null'")
 		}
 }

@@ -136,11 +136,23 @@ internal object JSONCodingParserTest {
 
 	private inline fun <reified Value : Any> testParseMethod(
 		expectedValue: Value?,
-		testBody: JSONCodingParser.(type: JSONCodingType<Value>) -> Value?
+		testBody: JSONCodingParser<*>.(type: JSONCodingType<Value>) -> Value?
 	) {
 		val expectedType = jsonCodingType<Value>()
 
-		val parser = object : JSONCodingParser {
+		val parser = object : JSONCodingParser<JSONCodingContext> {
+
+			override fun createDecoder(source: JSONReader) =
+				error("not called")
+
+
+			override fun <Value : Any> parseValueOfType(source: JSONReader, valueType: JSONCodingType<Value>, withTermination: Boolean): Value {
+				assert(valueType as JSONCodingType<*>).toBe(expectedType)
+
+				@Suppress("UNCHECKED_CAST")
+				return expectedValue as Value
+			}
+
 
 			override fun <Value : Any> parseValueOfTypeOrNull(source: JSONReader, valueType: JSONCodingType<Value>, withTermination: Boolean): Value? {
 				assert(valueType as JSONCodingType<*>).toBe(expectedType)

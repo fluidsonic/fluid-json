@@ -3,7 +3,10 @@ package com.github.fluidsonic.fluid.json
 import java.io.Reader
 
 
-interface JSONCodingParser : JSONParser {
+interface JSONCodingParser<out Context : JSONCodingContext> : JSONParser {
+
+	fun createDecoder(source: JSONReader): JSONDecoder<Context>
+
 
 	override fun parseList(source: JSONReader, withTermination: Boolean) =
 		parseValueOfType<List<*>>(source, withTermination = withTermination)
@@ -13,7 +16,12 @@ interface JSONCodingParser : JSONParser {
 		parseValueOfType<Map<String, *>>(source, withTermination = withTermination)
 
 
-	fun <Value : Any> parseValueOfTypeOrNull(source: JSONReader, valueType: JSONCodingType<Value>, withTermination: Boolean = true): Value?
+	fun <Value : Any> parseValueOfType(source: JSONReader, valueType: JSONCodingType<Value>, withTermination: Boolean = true) =
+		createDecoder(source).withTermination(withTermination) { readValueOfType(valueType) }
+
+
+	fun <Value : Any> parseValueOfTypeOrNull(source: JSONReader, valueType: JSONCodingType<Value>, withTermination: Boolean = true) =
+		createDecoder(source).withTermination(withTermination) { readValueOfTypeOrNull(valueType) }
 
 
 	override fun parseValueOrNull(source: JSONReader, withTermination: Boolean) =
@@ -42,7 +50,7 @@ interface JSONCodingParser : JSONParser {
 
 		interface BuilderForDecoding<Context : JSONCodingContext> {
 
-			fun decodingWith(factory: (source: JSONReader, context: Context) -> JSONDecoder<Context>): Builder
+			fun decodingWith(factory: (source: JSONReader, context: Context) -> JSONDecoder<Context>): Builder<Context>
 
 
 			fun decodingWith(
@@ -77,16 +85,16 @@ interface JSONCodingParser : JSONParser {
 		}
 
 
-		interface Builder {
+		interface Builder<out Context : JSONCodingContext> {
 
-			fun build(): JSONCodingParser
+			fun build(): JSONCodingParser<Context>
 		}
 
 
 		private class BuilderImpl<out Context : JSONCodingContext>(
 			private val context: Context,
 			private val decoderFactory: (source: JSONReader, context: Context) -> JSONDecoder<Context>
-		) : Builder {
+		) : Builder<Context> {
 
 			override fun build() =
 				StandardCodingParser(
@@ -98,7 +106,7 @@ interface JSONCodingParser : JSONParser {
 }
 
 
-fun JSONCodingParser.parseValue(source: JSONReader, withTermination: Boolean = true) =
+fun JSONCodingParser<*>.parseValue(source: JSONReader, withTermination: Boolean = true) =
 	parseValueOrNull(source, withTermination = withTermination)
 		?: throw JSONException.Schema(
 			message = "Unexpected null value at top-level",
@@ -107,66 +115,57 @@ fun JSONCodingParser.parseValue(source: JSONReader, withTermination: Boolean = t
 		)
 
 
-fun JSONCodingParser.parseValue(source: Reader, withTermination: Boolean = true) =
+fun JSONCodingParser<*>.parseValue(source: Reader, withTermination: Boolean = true) =
 	parseValue(JSONReader.build(source), withTermination = withTermination)
 
 
-fun JSONCodingParser.parseValue(source: String) =
+fun JSONCodingParser<*>.parseValue(source: String) =
 	parseValue(JSONReader.build(source))
 
 
-inline fun <reified Value : Any> JSONCodingParser.parseValueOfType(source: JSONReader, withTermination: Boolean = true): Value =
+inline fun <reified Value : Any> JSONCodingParser<*>.parseValueOfType(source: JSONReader, withTermination: Boolean = true): Value =
 	parseValueOfType(source, valueType = jsonCodingType(), withTermination = withTermination)
 
 
-inline fun <reified Value : Any> JSONCodingParser.parseValueOfType(source: Reader, withTermination: Boolean = true): Value =
+inline fun <reified Value : Any> JSONCodingParser<*>.parseValueOfType(source: Reader, withTermination: Boolean = true): Value =
 	parseValueOfType(JSONReader.build(source), withTermination = withTermination)
 
 
-inline fun <reified Value : Any> JSONCodingParser.parseValueOfType(source: String): Value =
+inline fun <reified Value : Any> JSONCodingParser<*>.parseValueOfType(source: String): Value =
 	parseValueOfType(JSONReader.build(source))
 
 
-fun <Value : Any> JSONCodingParser.parseValueOfType(source: JSONReader, valueType: JSONCodingType<Value>, withTermination: Boolean = true) =
-	parseValueOfTypeOrNull(source, valueType = valueType, withTermination = withTermination)
-		?: throw JSONException.Schema(
-			message = "Unexpected null value at top-level",
-			offset = source.offset,
-			path = source.path
-		)
-
-
-fun <Value : Any> JSONCodingParser.parseValueOfType(source: Reader, valueType: JSONCodingType<Value>, withTermination: Boolean = true) =
+fun <Value : Any> JSONCodingParser<*>.parseValueOfType(source: Reader, valueType: JSONCodingType<Value>, withTermination: Boolean = true) =
 	parseValueOfType(JSONReader.build(source), valueType = valueType, withTermination = withTermination)
 
 
-fun <Value : Any> JSONCodingParser.parseValueOfType(source: String, valueType: JSONCodingType<Value>): Value =
+fun <Value : Any> JSONCodingParser<*>.parseValueOfType(source: String, valueType: JSONCodingType<Value>): Value =
 	parseValueOfType(JSONReader.build(source), valueType = valueType)
 
 
-inline fun <reified Value : Any> JSONCodingParser.parseValueOfTypeOrNull(source: JSONReader, withTermination: Boolean = true): Value? =
+inline fun <reified Value : Any> JSONCodingParser<*>.parseValueOfTypeOrNull(source: JSONReader, withTermination: Boolean = true): Value? =
 	parseValueOfTypeOrNull(source, valueType = jsonCodingType(), withTermination = withTermination)
 
 
-inline fun <reified Value : Any> JSONCodingParser.parseValueOfTypeOrNull(source: Reader, withTermination: Boolean = true): Value? =
+inline fun <reified Value : Any> JSONCodingParser<*>.parseValueOfTypeOrNull(source: Reader, withTermination: Boolean = true): Value? =
 	parseValueOfTypeOrNull(JSONReader.build(source), withTermination = withTermination)
 
 
-inline fun <reified Value : Any> JSONCodingParser.parseValueOfTypeOrNull(source: String): Value? =
+inline fun <reified Value : Any> JSONCodingParser<*>.parseValueOfTypeOrNull(source: String): Value? =
 	parseValueOfTypeOrNull(JSONReader.build(source))
 
 
-fun <Value : Any> JSONCodingParser.parseValueOfTypeOrNull(source: Reader, valueType: JSONCodingType<Value>, withTermination: Boolean = true): Value? =
+fun <Value : Any> JSONCodingParser<*>.parseValueOfTypeOrNull(source: Reader, valueType: JSONCodingType<Value>, withTermination: Boolean = true): Value? =
 	parseValueOfTypeOrNull(JSONReader.build(source), valueType = valueType, withTermination = withTermination)
 
 
-fun <Value : Any> JSONCodingParser.parseValueOfTypeOrNull(source: String, valueType: JSONCodingType<Value>): Value? =
+fun <Value : Any> JSONCodingParser<*>.parseValueOfTypeOrNull(source: String, valueType: JSONCodingType<Value>): Value? =
 	parseValueOfTypeOrNull(JSONReader.build(source), valueType = valueType)
 
 
-fun JSONCodingParser.parseValueOrNull(source: Reader, withTermination: Boolean = true) =
+fun JSONCodingParser<*>.parseValueOrNull(source: Reader, withTermination: Boolean = true) =
 	parseValueOrNull(JSONReader.build(source), withTermination = withTermination)
 
 
-fun JSONCodingParser.parseValueOrNull(source: String) =
+fun JSONCodingParser<*>.parseValueOrNull(source: String) =
 	parseValueOrNull(JSONReader.build(source))
