@@ -39,8 +39,8 @@ plugins {
 }
 
 dependencies {
-    kapt("com.github.fluidsonic:fluid-json-annotation-processor:0.9.17")
-    implementation("com.github.fluidsonic:fluid-json-coding-jdk8:0.9.17")
+    kapt("com.github.fluidsonic:fluid-json-annotation-processor:0.9.18")
+    implementation("com.github.fluidsonic:fluid-json-coding-jdk8:0.9.18")
 }
 ```
 
@@ -599,7 +599,7 @@ You can use this library with [`JsonFeature`](https://ktor.io/clients/http-clien
 `build.gradle.kts`:
 ```kotlin
 dependencies {
-    implementation("com.github.fluidsonic:fluid-json-ktor-client:0.9.17")
+    implementation("com.github.fluidsonic:fluid-json-ktor-client:0.9.18")
 }
 ```
 
