@@ -50,23 +50,23 @@ internal object AutomaticJSONCodec : AbstractJSONCodec<Automatic, CustomCodingCo
 			when (parameter.name) {
 				"value1" -> if (parameter.index != 0 || parameter.isVararg || erasure != String::class)
 						return@single false
-				"value10" -> if (parameter.index != 1 || parameter.isVararg || erasure != List::class)
+				"value10" -> if (parameter.index != 9 || parameter.isVararg || erasure != List::class)
 						return@single false
-				"value2" -> if (parameter.index != 2 || parameter.isVararg || erasure != String::class)
+				"value2" -> if (parameter.index != 1 || parameter.isVararg || erasure != String::class)
 						return@single false
-				"value3" -> if (parameter.index != 3 || parameter.isVararg || erasure != String::class)
+				"value3" -> if (parameter.index != 2 || parameter.isVararg || erasure != String::class)
 						return@single false
-				"value4" -> if (parameter.index != 4 || parameter.isVararg || erasure != String::class)
+				"value4" -> if (parameter.index != 3 || parameter.isVararg || erasure != String::class)
 						return@single false
-				"value5" -> if (parameter.index != 5 || parameter.isVararg || erasure != Double::class)
+				"value5" -> if (parameter.index != 4 || parameter.isVararg || erasure != Double::class)
 						return@single false
-				"value6" -> if (parameter.index != 6 || parameter.isVararg || erasure != Double::class)
+				"value6" -> if (parameter.index != 5 || parameter.isVararg || erasure != Double::class)
 						return@single false
-				"value7" -> if (parameter.index != 7 || parameter.isVararg || erasure != Double::class)
+				"value7" -> if (parameter.index != 6 || parameter.isVararg || erasure != Double::class)
 						return@single false
-				"value8" -> if (parameter.index != 8 || parameter.isVararg || erasure != Double::class)
+				"value8" -> if (parameter.index != 7 || parameter.isVararg || erasure != Double::class)
 						return@single false
-				"value9" -> if (parameter.index != 9 || parameter.isVararg || erasure != List::class)
+				"value9" -> if (parameter.index != 8 || parameter.isVararg || erasure != List::class)
 						return@single false
 				else -> return@single false
 			}

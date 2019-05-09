@@ -238,8 +238,9 @@ internal class CodecGenerator(
 					run {
 						beginControlFlow("when (parameter.name) {")
 						run {
-							properties.forEachIndexed { index, property ->
+							properties.forEach { property ->
 								val rawType = (property.type as? ParameterizedTypeName)?.rawType ?: property.type
+								val index = strategy.meta.valueParameters.indexOfFirst { it.name == property.name }
 
 								addStatement(
 									"%1S -> if (parameter.index != %2L || parameter.isVararg || erasure != %3T::class) return@single false",
