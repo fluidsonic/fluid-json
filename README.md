@@ -1,7 +1,7 @@
 fluid-json
 ==========
 
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.21-blue.svg)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.31-blue.svg)](http://kotlinlang.org)
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.fluidsonic/fluid-json-basic.svg)](https://search.maven.org/search?q=g:com.github.fluidsonic%20a:fluid-json*)
 [![Build Status](https://travis-ci.org/fluidsonic/fluid-json.svg?branch=master)](https://travis-ci.org/fluidsonic/fluid-json)
 [![#fluid-libraries Slack Channel](https://img.shields.io/badge/slack-%23fluid--libraries-543951.svg)](https://kotlinlang.slack.com/messages/C7UDFSVT2/)
@@ -39,8 +39,8 @@ plugins {
 }
 
 dependencies {
-    kapt("com.github.fluidsonic:fluid-json-annotation-processor:0.9.18")
-    implementation("com.github.fluidsonic:fluid-json-coding-jdk8:0.9.18")
+    kapt("com.github.fluidsonic:fluid-json-annotation-processor:0.9.19")
+    implementation("com.github.fluidsonic:fluid-json-coding-jdk8:0.9.19")
 }
 ```
 
@@ -599,7 +599,7 @@ You can use this library with [`JsonFeature`](https://ktor.io/clients/http-clien
 `build.gradle.kts`:
 ```kotlin
 dependencies {
-    implementation("com.github.fluidsonic:fluid-json-ktor-client:0.9.18")
+    implementation("com.github.fluidsonic:fluid-json-ktor-client:0.9.19")
 }
 ```
 
