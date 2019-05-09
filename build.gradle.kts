@@ -8,7 +8,7 @@ plugins {
 
 fluidJvmLibrary {
 	name = "fluid-json"
-	version = "0.9.19"
+	version = "0.9.20"
 }
 
 
