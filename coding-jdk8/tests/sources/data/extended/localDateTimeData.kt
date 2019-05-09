@@ -1,6 +1,6 @@
 package tests.coding
 
-import java.time.LocalDateTime
+import java.time.*
 
 
 internal val localDateTimeData: TestData<LocalDateTime> = TestData(

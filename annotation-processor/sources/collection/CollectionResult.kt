@@ -2,9 +2,7 @@ package com.github.fluidsonic.fluid.json.annotationprocessor
 
 import com.github.fluidsonic.fluid.json.*
 import com.github.fluidsonic.fluid.meta.*
-import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
+import javax.lang.model.element.*
 
 
 internal data class CollectionResult(

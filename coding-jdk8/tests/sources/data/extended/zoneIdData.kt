@@ -1,6 +1,6 @@
 package tests.coding
 
-import java.time.ZoneId
+import java.time.*
 
 
 internal val zoneIdData: TestData<ZoneId> = TestData(

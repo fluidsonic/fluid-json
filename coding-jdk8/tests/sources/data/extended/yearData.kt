@@ -1,6 +1,6 @@
 package tests.coding
 
-import java.time.Year
+import java.time.*
 
 
 internal val yearData: TestData<Year> = TestData(

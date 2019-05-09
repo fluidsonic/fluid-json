@@ -1,13 +1,8 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.toBe
-import ch.tutteli.atrium.verbs.assert
-import com.github.fluidsonic.fluid.json.JSONCodingContext
-import com.github.fluidsonic.fluid.json.JSONCodingType
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONDecoderCodec
-import com.github.fluidsonic.fluid.json.StringJSONCodec
-import com.github.fluidsonic.fluid.json.jsonCodingType
+import ch.tutteli.atrium.api.cc.en_GB.*
+import ch.tutteli.atrium.verbs.*
+import com.github.fluidsonic.fluid.json.*
 
 
 internal class ContextCheckingTestDecoderCodec<in Context : JSONCodingContext>(

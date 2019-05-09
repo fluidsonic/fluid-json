@@ -1,7 +1,6 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.StringWriter
-import java.io.Writer
+import java.io.*
 
 
 interface JSONSerializer {

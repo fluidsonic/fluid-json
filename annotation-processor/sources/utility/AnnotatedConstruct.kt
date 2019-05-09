@@ -1,7 +1,7 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
 import com.github.fluidsonic.fluid.meta.*
-import javax.lang.model.AnnotatedConstruct
+import javax.lang.model.*
 
 
 internal fun AnnotatedConstruct.getAnnotationMirror(typeName: MQualifiedTypeName) =

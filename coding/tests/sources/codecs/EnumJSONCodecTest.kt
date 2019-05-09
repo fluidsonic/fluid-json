@@ -2,7 +2,7 @@ package tests.coding
 
 import com.github.fluidsonic.fluid.json.*
 import com.github.fluidsonic.fluid.json.EnumJSONTransformation.*
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 
 
 @Suppress("UNCHECKED_CAST")

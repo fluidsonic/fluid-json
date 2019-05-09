@@ -1,6 +1,6 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
-import javax.lang.model.element.TypeElement
+import javax.lang.model.element.*
 
 
 internal interface TypeResolver {

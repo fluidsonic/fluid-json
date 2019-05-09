@@ -2,10 +2,9 @@ package tests.annotationprocessor
 
 import com.github.fluidsonic.fluid.compiler.*
 import com.github.fluidsonic.fluid.json.annotationprocessor.*
-import org.jetbrains.kotlin.cli.common.ExitCode
-import org.junit.jupiter.api.DynamicTest
-import org.junit.jupiter.api.TestFactory
-import java.io.File
+import org.jetbrains.kotlin.cli.common.*
+import org.junit.jupiter.api.*
+import java.io.*
 
 
 internal object CaseTests {

@@ -1,10 +1,6 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.AbstractJSONEncoderCodec
-import com.github.fluidsonic.fluid.json.ArrayJSONCodec
-import com.github.fluidsonic.fluid.json.JSONCodingContext
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.StringJSONCodec
+import com.github.fluidsonic.fluid.json.*
 
 
 internal object ArrayJSONTestEncoderCodec : AbstractJSONEncoderCodec<Array<*>, JSONCodingContext>(

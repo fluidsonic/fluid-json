@@ -1,7 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
 import com.github.fluidsonic.fluid.json.JSON.*
-import kotlin.reflect.KClass
+import kotlin.reflect.*
 
 
 /**

@@ -1,18 +1,6 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.AbstractJSONCodec
-import com.github.fluidsonic.fluid.json.AnyJSONDecoderCodec
-import com.github.fluidsonic.fluid.json.BooleanJSONCodec
-import com.github.fluidsonic.fluid.json.IntJSONCodec
-import com.github.fluidsonic.fluid.json.IterableJSONEncoderCodec
-import com.github.fluidsonic.fluid.json.JSONCodingContext
-import com.github.fluidsonic.fluid.json.JSONCodingType
-import com.github.fluidsonic.fluid.json.JSONDecoder
-import com.github.fluidsonic.fluid.json.JSONEncoder
-import com.github.fluidsonic.fluid.json.ListJSONDecoderCodec
-import com.github.fluidsonic.fluid.json.NumberJSONCodec
-import com.github.fluidsonic.fluid.json.SequenceJSONCodec
-import com.github.fluidsonic.fluid.json.StringJSONCodec
+import com.github.fluidsonic.fluid.json.*
 
 
 internal object SequenceJSONTestCodec : AbstractJSONCodec<Sequence<*>, JSONCodingContext>(

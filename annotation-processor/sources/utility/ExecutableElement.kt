@@ -1,6 +1,6 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
-import javax.lang.model.element.ExecutableElement
+import javax.lang.model.element.*
 
 
 internal val ExecutableElement.jvmMethodSignature

@@ -1,7 +1,7 @@
 package tests.basic
 
 import com.github.fluidsonic.fluid.json.*
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
 
 
 internal object CompanionTest {

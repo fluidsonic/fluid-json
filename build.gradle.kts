@@ -1,6 +1,5 @@
 import com.github.fluidsonic.fluid.library.*
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent
+import org.gradle.api.tasks.testing.logging.*
 
 plugins {
 	id("com.github.fluidsonic.fluid-library") version "0.9.10"

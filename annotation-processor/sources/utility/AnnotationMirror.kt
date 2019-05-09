@@ -1,6 +1,6 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
-import javax.lang.model.element.AnnotationMirror
+import javax.lang.model.element.*
 
 
 internal inline fun <reified T : Any> AnnotationMirror.getValue(key: String) =

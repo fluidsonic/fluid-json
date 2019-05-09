@@ -1,8 +1,8 @@
 package tests.basic
 
 import com.github.fluidsonic.fluid.json.*
-import org.junit.jupiter.api.Test
-import java.io.StringWriter
+import org.junit.jupiter.api.*
+import java.io.*
 
 
 internal object StandardWriterRejectTest {

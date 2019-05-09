@@ -1,8 +1,6 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.Closeable
-import java.io.Flushable
-import java.io.Writer
+import java.io.*
 
 // TODO re-enable contracts once fixed:
 // - https://youtrack.jetbrains.com/issue/KT-29510

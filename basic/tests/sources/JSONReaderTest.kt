@@ -1,8 +1,8 @@
 package tests.basic
 
-import ch.tutteli.atrium.api.cc.en_GB.toBe
-import ch.tutteli.atrium.verbs.assert
-import org.junit.jupiter.api.Test
+import ch.tutteli.atrium.api.cc.en_GB.*
+import ch.tutteli.atrium.verbs.*
+import org.junit.jupiter.api.*
 
 
 internal object JSONReaderTest {

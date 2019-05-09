@@ -1,6 +1,6 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.Reader
+import java.io.*
 
 
 interface JSONCodingParser<out Context : JSONCodingContext> : JSONParser {

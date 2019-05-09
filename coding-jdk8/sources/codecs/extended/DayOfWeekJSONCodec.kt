@@ -1,6 +1,6 @@
 package com.github.fluidsonic.fluid.json
 
-import java.time.DayOfWeek
+import java.time.*
 
 
 // TODO use Enum codec once implemented

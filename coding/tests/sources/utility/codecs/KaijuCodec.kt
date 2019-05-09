@@ -1,7 +1,7 @@
 package tests.coding
 
 import com.github.fluidsonic.fluid.json.*
-import tests.coding.Kaiju.Status
+import tests.coding.Kaiju.*
 
 
 internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(

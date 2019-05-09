@@ -1,6 +1,6 @@
 package com.github.fluidsonic.fluid.json
 
-import kotlin.reflect.KClass
+import kotlin.reflect.*
 
 
 sealed class EnumJSONCodec<Value : Enum<*>>(enumClass: KClass<Value>) : AbstractJSONCodec<Value, JSONCodingContext>(

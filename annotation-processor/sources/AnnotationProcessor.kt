@@ -1,13 +1,11 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
-import com.google.auto.service.AutoService
-import java.io.File
-import javax.annotation.processing.AbstractProcessor
-import javax.annotation.processing.Processor
-import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.SourceVersion
-import javax.lang.model.element.TypeElement
-import javax.tools.Diagnostic
+import com.google.auto.service.*
+import java.io.*
+import javax.annotation.processing.*
+import javax.lang.model.*
+import javax.lang.model.element.*
+import javax.tools.*
 
 
 @AutoService(Processor::class)

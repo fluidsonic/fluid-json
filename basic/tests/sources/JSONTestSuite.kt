@@ -1,12 +1,8 @@
 package tests.basic
 
 import com.github.fluidsonic.fluid.json.*
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.DynamicContainer
-import org.junit.jupiter.api.DynamicTest
-import org.junit.jupiter.api.TestFactory
-import java.io.File
-import java.io.FileReader
+import org.junit.jupiter.api.*
+import java.io.*
 
 
 @DisplayName("JSON Test Suite (https://github.com/nst/JSONTestSuite)")

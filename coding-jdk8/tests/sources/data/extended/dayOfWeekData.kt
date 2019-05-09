@@ -1,6 +1,6 @@
 package tests.coding
 
-import java.time.DayOfWeek
+import java.time.*
 
 
 internal val dayOfWeekData: TestData<DayOfWeek> = TestData(

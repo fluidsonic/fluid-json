@@ -1,9 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.Closeable
-import java.io.Reader
-import kotlin.contracts.InvocationKind
-import kotlin.contracts.contract
+import java.io.*
+import kotlin.contracts.*
 
 
 internal class TextInput(private val source: Reader) : Closeable by source {

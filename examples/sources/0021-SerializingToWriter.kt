@@ -1,7 +1,7 @@
 package examples
 
 import com.github.fluidsonic.fluid.json.*
-import java.io.StringWriter
+import java.io.*
 
 
 fun main() {

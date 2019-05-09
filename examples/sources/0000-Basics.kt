@@ -1,8 +1,7 @@
 package examples
 
 import com.github.fluidsonic.fluid.json.*
-import java.time.Duration
-import java.time.Instant
+import java.time.*
 
 // Note that IntelliJ IDEA still only has limited supported for annotation processing with kapt, so enable this setting first:
 // Preferences > Build, Execution, Deployment > Build Tools > Gradle > Runner > Delegate IDE build/run actions to gradle

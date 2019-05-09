@@ -1,8 +1,6 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.Closeable
-import java.io.Reader
-import java.io.StringReader
+import java.io.*
 
 // TODO re-enable contracts once fixed:
 // - https://youtrack.jetbrains.com/issue/KT-29510

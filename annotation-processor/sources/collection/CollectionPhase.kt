@@ -2,16 +2,10 @@ package com.github.fluidsonic.fluid.json.annotationprocessor
 
 import com.github.fluidsonic.fluid.json.*
 import com.github.fluidsonic.fluid.meta.*
-import javax.annotation.processing.RoundEnvironment
-import javax.lang.model.element.AnnotationMirror
-import javax.lang.model.element.Element
-import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.PackageElement
-import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
-import javax.lang.model.type.ReferenceType
-import javax.lang.model.type.TypeMirror
-import kotlin.reflect.KClass
+import javax.annotation.processing.*
+import javax.lang.model.element.*
+import javax.lang.model.type.*
+import kotlin.reflect.*
 
 
 // TODO disallow INTERNAL visibility for external types of different module

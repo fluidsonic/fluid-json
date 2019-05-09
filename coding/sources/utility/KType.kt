@@ -1,10 +1,7 @@
 package com.github.fluidsonic.fluid.json
 
-import kotlin.reflect.KClass
-import kotlin.reflect.KClassifier
-import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
-import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.*
+import kotlin.reflect.jvm.internal.*
 
 // from kotlin-reflect, modified, probably wrong in some edge cases, close enough in order to avoid kotlin-reflect dependency for now
 

@@ -1,6 +1,6 @@
 package tests.coding
 
-import java.time.Duration
+import java.time.*
 
 
 internal val durationData: TestData<Duration> = TestData(

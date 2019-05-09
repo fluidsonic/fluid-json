@@ -1,6 +1,6 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.Writer
+import java.io.*
 
 
 interface JSONEncoder<out Context : JSONCodingContext> : JSONWriter {

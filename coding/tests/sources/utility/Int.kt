@@ -1,6 +1,6 @@
 package tests.coding
 
-import java.math.BigDecimal
+import java.math.*
 
 
 internal fun Int.toBigDecimal() =

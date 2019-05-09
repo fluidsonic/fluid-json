@@ -1,7 +1,7 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
 import com.github.fluidsonic.fluid.meta.*
-import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.*
 
 
 internal data class ProcessingResult(

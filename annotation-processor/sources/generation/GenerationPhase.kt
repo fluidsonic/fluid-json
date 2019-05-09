@@ -1,6 +1,6 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
-import java.io.File
+import java.io.*
 
 
 internal class GenerationPhase(

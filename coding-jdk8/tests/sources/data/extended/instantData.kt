@@ -1,6 +1,6 @@
 package tests.coding
 
-import java.time.Instant
+import java.time.*
 
 
 internal val instantData: TestData<Instant> = TestData(

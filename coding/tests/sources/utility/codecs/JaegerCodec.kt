@@ -1,7 +1,7 @@
 package tests.coding
 
 import com.github.fluidsonic.fluid.json.*
-import tests.coding.Jaeger.Status
+import tests.coding.Jaeger.*
 
 
 internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(

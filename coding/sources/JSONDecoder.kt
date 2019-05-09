@@ -1,7 +1,6 @@
 package com.github.fluidsonic.fluid.json
 
-import java.io.Reader
-import java.io.StringReader
+import java.io.*
 
 
 interface JSONDecoder<out Context : JSONCodingContext> : JSONReader {

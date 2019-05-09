@@ -3,9 +3,9 @@ package com.github.fluidsonic.fluid.json.annotationprocessor
 import com.github.fluidsonic.fluid.json.*
 import com.github.fluidsonic.fluid.json.annotationprocessor.ProcessingResult.Codec.*
 import com.github.fluidsonic.fluid.meta.*
+import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.STAR
-import javax.lang.model.element.Element
+import javax.lang.model.element.*
 
 
 // TODO disallow INTERNAL visibility for external types

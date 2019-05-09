@@ -2,13 +2,12 @@
 
 package com.github.fluidsonic.fluid.json
 
-import io.ktor.client.call.TypeInfo
-import io.ktor.client.features.json.JsonSerializer
-import io.ktor.client.response.HttpResponse
-import io.ktor.client.response.readText
+import io.ktor.client.call.*
+import io.ktor.client.features.json.*
+import io.ktor.client.response.*
 import io.ktor.content.TextContent
-import io.ktor.http.ContentType
-import io.ktor.http.content.OutgoingContent
+import io.ktor.http.*
+import io.ktor.http.content.*
 
 
 class FluidJsonSerializer(

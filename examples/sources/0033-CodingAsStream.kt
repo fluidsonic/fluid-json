@@ -4,8 +4,8 @@ import com.github.fluidsonic.fluid.json.*
 import examples.CodingAsStreamExample.Event
 import examples.CodingAsStreamExample.decode
 import examples.CodingAsStreamExample.encode
-import java.io.StringWriter
-import java.time.Instant
+import java.io.*
+import java.time.*
 
 
 fun main() {

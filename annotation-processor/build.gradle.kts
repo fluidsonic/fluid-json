@@ -1,5 +1,5 @@
 import com.github.fluidsonic.fluid.library.*
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.*
 
 plugins {
 	kotlin("kapt")

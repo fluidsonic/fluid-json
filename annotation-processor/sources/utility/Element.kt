@@ -1,8 +1,6 @@
 package com.github.fluidsonic.fluid.json.annotationprocessor
 
-import javax.lang.model.element.Element
-import javax.lang.model.element.ExecutableElement
-import javax.lang.model.element.PackageElement
+import javax.lang.model.element.*
 
 
 internal val Element.debugName: String

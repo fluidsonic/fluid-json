@@ -3,7 +3,7 @@ package examples
 import com.github.fluidsonic.fluid.json.*
 import examples.EncodingExample.Event
 import examples.EncodingExample.EventCodec
-import java.time.Instant
+import java.time.*
 
 
 fun main() {
