@@ -1,6 +1,5 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.notToBeNullBut
 import ch.tutteli.atrium.api.cc.en_GB.toBe
 import ch.tutteli.atrium.verbs.assert
 import com.github.fluidsonic.fluid.json.*
@@ -163,7 +162,7 @@ internal object JSONCodingParserTest {
 		}
 
 		if (expectedValue != null)
-			assert(parser.testBody(expectedType)).notToBeNullBut(expectedValue)
+			assert(parser.testBody(expectedType)).toBe(expectedValue)
 		else
 			assert(parser.testBody(expectedType)).toBe(expectedValue)
 	}

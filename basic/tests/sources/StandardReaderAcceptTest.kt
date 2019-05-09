@@ -1,6 +1,6 @@
 package tests.basic
 
-import ch.tutteli.atrium.api.cc.en_GB.notToBeNullBut
+import ch.tutteli.atrium.api.cc.en_GB.toBe
 import ch.tutteli.atrium.api.cc.en_GB.toBe
 import ch.tutteli.atrium.verbs.assert
 import com.github.fluidsonic.fluid.json.*
@@ -45,8 +45,8 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testBooleanOrNull() {
-		assert(reader("true").readBooleanOrNull()).notToBeNullBut(true)
-		assert(reader("false").readBooleanOrNull()).notToBeNullBut(false)
+		assert(reader("true").readBooleanOrNull()).toBe(true)
+		assert(reader("false").readBooleanOrNull()).toBe(false)
 		assert(reader("null").readBooleanOrNull()).toBe(null)
 	}
 
@@ -75,24 +75,24 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testByteOrNull() {
-		assert(reader("0").readByteOrNull()).notToBeNullBut(0.toByte())
-		assert(reader("-0").readByteOrNull()).notToBeNullBut(0.toByte())
-		assert(reader("100").readByteOrNull()).notToBeNullBut(100.toByte())
-		assert(reader("-100").readByteOrNull()).notToBeNullBut((-100).toByte())
-		assert(reader("0.000").readByteOrNull()).notToBeNullBut(0.toByte())
-		assert(reader("-0.000").readByteOrNull()).notToBeNullBut(0.toByte())
-		assert(reader("100.001").readByteOrNull()).notToBeNullBut(100.toByte())
-		assert(reader("-100.001").readByteOrNull()).notToBeNullBut((-100).toByte())
-		assert(reader("100.999").readByteOrNull()).notToBeNullBut(100.toByte())
-		assert(reader("-100.999").readByteOrNull()).notToBeNullBut((-100).toByte())
-		assert(reader("1e2").readByteOrNull()).notToBeNullBut(100.toByte())
-		assert(reader("-1e2").readByteOrNull()).notToBeNullBut((-100).toByte())
-		assert(reader("1.0e2").readByteOrNull()).notToBeNullBut(100.toByte())
-		assert(reader("-1.0e2").readByteOrNull()).notToBeNullBut((-100).toByte())
-		assert(reader("1.0e+2").readByteOrNull()).notToBeNullBut(100.toByte())
-		assert(reader("-1.0e+2").readByteOrNull()).notToBeNullBut((-100).toByte())
-		assert(reader("1.0e-2").readByteOrNull()).notToBeNullBut(0.toByte())
-		assert(reader("-1.0e-2").readByteOrNull()).notToBeNullBut(0.toByte())
+		assert(reader("0").readByteOrNull()).toBe(0.toByte())
+		assert(reader("-0").readByteOrNull()).toBe(0.toByte())
+		assert(reader("100").readByteOrNull()).toBe(100.toByte())
+		assert(reader("-100").readByteOrNull()).toBe((-100).toByte())
+		assert(reader("0.000").readByteOrNull()).toBe(0.toByte())
+		assert(reader("-0.000").readByteOrNull()).toBe(0.toByte())
+		assert(reader("100.001").readByteOrNull()).toBe(100.toByte())
+		assert(reader("-100.001").readByteOrNull()).toBe((-100).toByte())
+		assert(reader("100.999").readByteOrNull()).toBe(100.toByte())
+		assert(reader("-100.999").readByteOrNull()).toBe((-100).toByte())
+		assert(reader("1e2").readByteOrNull()).toBe(100.toByte())
+		assert(reader("-1e2").readByteOrNull()).toBe((-100).toByte())
+		assert(reader("1.0e2").readByteOrNull()).toBe(100.toByte())
+		assert(reader("-1.0e2").readByteOrNull()).toBe((-100).toByte())
+		assert(reader("1.0e+2").readByteOrNull()).toBe(100.toByte())
+		assert(reader("-1.0e+2").readByteOrNull()).toBe((-100).toByte())
+		assert(reader("1.0e-2").readByteOrNull()).toBe(0.toByte())
+		assert(reader("-1.0e-2").readByteOrNull()).toBe(0.toByte())
 		assert(reader("null").readByteOrNull()).toBe(null)
 	}
 
@@ -106,8 +106,8 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testReadCharOrNull() {
-		assert(reader(""""\u0000"""").readCharOrNull()).notToBeNullBut(0.toChar())
-		assert(reader(""""a"""").readCharOrNull()).notToBeNullBut('a')
+		assert(reader(""""\u0000"""").readCharOrNull()).toBe(0.toChar())
+		assert(reader(""""a"""").readCharOrNull()).toBe('a')
 		assert(reader("null").readCharOrNull()).toBe(null)
 	}
 
@@ -143,30 +143,30 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testReadDoubleOrNull() {
-		assert(reader("0").readDoubleOrNull()).notToBeNullBut(0.0)
-		assert(reader("-0").readDoubleOrNull()).notToBeNullBut(-0.0)
-		assert(reader("100").readDoubleOrNull()).notToBeNullBut(100.0)
-		assert(reader("-100").readDoubleOrNull()).notToBeNullBut(-100.0)
-		assert(reader("0.000").readDoubleOrNull()).notToBeNullBut(0.0)
-		assert(reader("-0.000").readDoubleOrNull()).notToBeNullBut(-0.0)
-		assert(reader("100.001").readDoubleOrNull()).notToBeNullBut(100.001)
-		assert(reader("-100.001").readDoubleOrNull()).notToBeNullBut(-100.001)
-		assert(reader("100.999").readDoubleOrNull()).notToBeNullBut(100.999)
-		assert(reader("-100.999").readDoubleOrNull()).notToBeNullBut(-100.999)
-		assert(reader("1e2").readDoubleOrNull()).notToBeNullBut(100.0)
-		assert(reader("-1e2").readDoubleOrNull()).notToBeNullBut(-100.0)
-		assert(reader("1.0e2").readDoubleOrNull()).notToBeNullBut(100.0)
-		assert(reader("-1.0e2").readDoubleOrNull()).notToBeNullBut(-100.0)
-		assert(reader("1.0e+2").readDoubleOrNull()).notToBeNullBut(100.0)
-		assert(reader("-1.0e+2").readDoubleOrNull()).notToBeNullBut(-100.0)
-		assert(reader("1.0e-2").readDoubleOrNull()).notToBeNullBut(0.01)
-		assert(reader("-1.0e-2").readDoubleOrNull()).notToBeNullBut(-0.01)
-		assert(reader("9223372036854775808").readDoubleOrNull()).notToBeNullBut(9223372036854775808.0)
-		assert(reader("-9223372036854775809").readDoubleOrNull()).notToBeNullBut(-9223372036854775809.0)
-		assert(reader("1000000000000000000000000000000").readDoubleOrNull()).notToBeNullBut(1000000000000000000000000000000.0)
-		assert(reader("-1000000000000000000000000000000").readDoubleOrNull()).notToBeNullBut(-1000000000000000000000000000000.0)
-		assert(reader("1e20000").readDoubleOrNull()).notToBeNullBut(Double.POSITIVE_INFINITY)
-		assert(reader("-1e20000").readDoubleOrNull()).notToBeNullBut(Double.NEGATIVE_INFINITY)
+		assert(reader("0").readDoubleOrNull()).toBe(0.0)
+		assert(reader("-0").readDoubleOrNull()).toBe(-0.0)
+		assert(reader("100").readDoubleOrNull()).toBe(100.0)
+		assert(reader("-100").readDoubleOrNull()).toBe(-100.0)
+		assert(reader("0.000").readDoubleOrNull()).toBe(0.0)
+		assert(reader("-0.000").readDoubleOrNull()).toBe(-0.0)
+		assert(reader("100.001").readDoubleOrNull()).toBe(100.001)
+		assert(reader("-100.001").readDoubleOrNull()).toBe(-100.001)
+		assert(reader("100.999").readDoubleOrNull()).toBe(100.999)
+		assert(reader("-100.999").readDoubleOrNull()).toBe(-100.999)
+		assert(reader("1e2").readDoubleOrNull()).toBe(100.0)
+		assert(reader("-1e2").readDoubleOrNull()).toBe(-100.0)
+		assert(reader("1.0e2").readDoubleOrNull()).toBe(100.0)
+		assert(reader("-1.0e2").readDoubleOrNull()).toBe(-100.0)
+		assert(reader("1.0e+2").readDoubleOrNull()).toBe(100.0)
+		assert(reader("-1.0e+2").readDoubleOrNull()).toBe(-100.0)
+		assert(reader("1.0e-2").readDoubleOrNull()).toBe(0.01)
+		assert(reader("-1.0e-2").readDoubleOrNull()).toBe(-0.01)
+		assert(reader("9223372036854775808").readDoubleOrNull()).toBe(9223372036854775808.0)
+		assert(reader("-9223372036854775809").readDoubleOrNull()).toBe(-9223372036854775809.0)
+		assert(reader("1000000000000000000000000000000").readDoubleOrNull()).toBe(1000000000000000000000000000000.0)
+		assert(reader("-1000000000000000000000000000000").readDoubleOrNull()).toBe(-1000000000000000000000000000000.0)
+		assert(reader("1e20000").readDoubleOrNull()).toBe(Double.POSITIVE_INFINITY)
+		assert(reader("-1e20000").readDoubleOrNull()).toBe(Double.NEGATIVE_INFINITY)
 		assert(reader("null").readDoubleOrNull()).toBe(null)
 	}
 
@@ -202,30 +202,30 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testReadFloatOrNull() {
-		assert(reader("0").readFloatOrNull()).notToBeNullBut(0.0f)
-		assert(reader("-0").readFloatOrNull()).notToBeNullBut(-0.0f)
-		assert(reader("100").readFloatOrNull()).notToBeNullBut(100.0f)
-		assert(reader("-100").readFloatOrNull()).notToBeNullBut(-100.0f)
-		assert(reader("0.000").readFloatOrNull()).notToBeNullBut(0.0f)
-		assert(reader("-0.000").readFloatOrNull()).notToBeNullBut(-0.0f)
-		assert(reader("100.001").readFloatOrNull()).notToBeNullBut(100.001f)
-		assert(reader("-100.001").readFloatOrNull()).notToBeNullBut(-100.001f)
-		assert(reader("100.999").readFloatOrNull()).notToBeNullBut(100.999f)
-		assert(reader("-100.999").readFloatOrNull()).notToBeNullBut(-100.999f)
-		assert(reader("1e2").readFloatOrNull()).notToBeNullBut(100.0f)
-		assert(reader("-1e2").readFloatOrNull()).notToBeNullBut(-100.0f)
-		assert(reader("1.0e2").readFloatOrNull()).notToBeNullBut(100.0f)
-		assert(reader("-1.0e2").readFloatOrNull()).notToBeNullBut(-100.0f)
-		assert(reader("1.0e+2").readFloatOrNull()).notToBeNullBut(100.0f)
-		assert(reader("-1.0e+2").readFloatOrNull()).notToBeNullBut(-100.0f)
-		assert(reader("1.0e-2").readFloatOrNull()).notToBeNullBut(0.01f)
-		assert(reader("-1.0e-2").readFloatOrNull()).notToBeNullBut(-0.01f)
-		assert(reader("9223372036854775808").readFloatOrNull()).notToBeNullBut(9223372036854775808.0f)
-		assert(reader("-9223372036854775809").readFloatOrNull()).notToBeNullBut(-9223372036854775809.0f)
-		assert(reader("1000000000000000000000000000000").readFloatOrNull()).notToBeNullBut(1000000000000000000000000000000.0f)
-		assert(reader("-1000000000000000000000000000000").readFloatOrNull()).notToBeNullBut(-1000000000000000000000000000000.0f)
-		assert(reader("1e20000").readFloatOrNull()).notToBeNullBut(Float.POSITIVE_INFINITY)
-		assert(reader("-1e20000").readFloatOrNull()).notToBeNullBut(Float.NEGATIVE_INFINITY)
+		assert(reader("0").readFloatOrNull()).toBe(0.0f)
+		assert(reader("-0").readFloatOrNull()).toBe(-0.0f)
+		assert(reader("100").readFloatOrNull()).toBe(100.0f)
+		assert(reader("-100").readFloatOrNull()).toBe(-100.0f)
+		assert(reader("0.000").readFloatOrNull()).toBe(0.0f)
+		assert(reader("-0.000").readFloatOrNull()).toBe(-0.0f)
+		assert(reader("100.001").readFloatOrNull()).toBe(100.001f)
+		assert(reader("-100.001").readFloatOrNull()).toBe(-100.001f)
+		assert(reader("100.999").readFloatOrNull()).toBe(100.999f)
+		assert(reader("-100.999").readFloatOrNull()).toBe(-100.999f)
+		assert(reader("1e2").readFloatOrNull()).toBe(100.0f)
+		assert(reader("-1e2").readFloatOrNull()).toBe(-100.0f)
+		assert(reader("1.0e2").readFloatOrNull()).toBe(100.0f)
+		assert(reader("-1.0e2").readFloatOrNull()).toBe(-100.0f)
+		assert(reader("1.0e+2").readFloatOrNull()).toBe(100.0f)
+		assert(reader("-1.0e+2").readFloatOrNull()).toBe(-100.0f)
+		assert(reader("1.0e-2").readFloatOrNull()).toBe(0.01f)
+		assert(reader("-1.0e-2").readFloatOrNull()).toBe(-0.01f)
+		assert(reader("9223372036854775808").readFloatOrNull()).toBe(9223372036854775808.0f)
+		assert(reader("-9223372036854775809").readFloatOrNull()).toBe(-9223372036854775809.0f)
+		assert(reader("1000000000000000000000000000000").readFloatOrNull()).toBe(1000000000000000000000000000000.0f)
+		assert(reader("-1000000000000000000000000000000").readFloatOrNull()).toBe(-1000000000000000000000000000000.0f)
+		assert(reader("1e20000").readFloatOrNull()).toBe(Float.POSITIVE_INFINITY)
+		assert(reader("-1e20000").readFloatOrNull()).toBe(Float.NEGATIVE_INFINITY)
 		assert(reader("null").readFloatOrNull()).toBe(null)
 	}
 
@@ -388,24 +388,24 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testReadIntOrNull() {
-		assert(reader("0").readIntOrNull()).notToBeNullBut(0)
-		assert(reader("-0").readIntOrNull()).notToBeNullBut(0)
-		assert(reader("100").readIntOrNull()).notToBeNullBut(100)
-		assert(reader("-100").readIntOrNull()).notToBeNullBut(-100)
-		assert(reader("0.000").readIntOrNull()).notToBeNullBut(0)
-		assert(reader("-0.000").readIntOrNull()).notToBeNullBut(0)
-		assert(reader("100.001").readIntOrNull()).notToBeNullBut(100)
-		assert(reader("-100.001").readIntOrNull()).notToBeNullBut(-100)
-		assert(reader("100.999").readIntOrNull()).notToBeNullBut(100)
-		assert(reader("-100.999").readIntOrNull()).notToBeNullBut(-100)
-		assert(reader("1e2").readIntOrNull()).notToBeNullBut(100)
-		assert(reader("-1e2").readIntOrNull()).notToBeNullBut(-100)
-		assert(reader("1.0e2").readIntOrNull()).notToBeNullBut(100)
-		assert(reader("-1.0e2").readIntOrNull()).notToBeNullBut(-100)
-		assert(reader("1.0e+2").readIntOrNull()).notToBeNullBut(100)
-		assert(reader("-1.0e+2").readIntOrNull()).notToBeNullBut(-100)
-		assert(reader("1.0e-2").readIntOrNull()).notToBeNullBut(0)
-		assert(reader("-1.0e-2").readIntOrNull()).notToBeNullBut(0)
+		assert(reader("0").readIntOrNull()).toBe(0)
+		assert(reader("-0").readIntOrNull()).toBe(0)
+		assert(reader("100").readIntOrNull()).toBe(100)
+		assert(reader("-100").readIntOrNull()).toBe(-100)
+		assert(reader("0.000").readIntOrNull()).toBe(0)
+		assert(reader("-0.000").readIntOrNull()).toBe(0)
+		assert(reader("100.001").readIntOrNull()).toBe(100)
+		assert(reader("-100.001").readIntOrNull()).toBe(-100)
+		assert(reader("100.999").readIntOrNull()).toBe(100)
+		assert(reader("-100.999").readIntOrNull()).toBe(-100)
+		assert(reader("1e2").readIntOrNull()).toBe(100)
+		assert(reader("-1e2").readIntOrNull()).toBe(-100)
+		assert(reader("1.0e2").readIntOrNull()).toBe(100)
+		assert(reader("-1.0e2").readIntOrNull()).toBe(-100)
+		assert(reader("1.0e+2").readIntOrNull()).toBe(100)
+		assert(reader("-1.0e+2").readIntOrNull()).toBe(-100)
+		assert(reader("1.0e-2").readIntOrNull()).toBe(0)
+		assert(reader("-1.0e-2").readIntOrNull()).toBe(0)
 		assert(reader("null").readIntOrNull()).toBe(null)
 	}
 
@@ -431,7 +431,7 @@ internal class StandardReaderAcceptTest {
 	fun testReadListEnd() {
 		reader("[]").apply {
 			readListStart()
-			assert(nextToken).notToBeNullBut(JSONToken.listEnd)
+			assert(nextToken).toBe(JSONToken.listEnd)
 			readListEnd()
 			assert(nextToken).toBe(null)
 		}
@@ -440,11 +440,11 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testReadListOrNull() {
-		assert(reader("[]").readListOrNull()).notToBeNullBut(emptyList())
-		assert(reader("[ \t\n\r]").readListOrNull()).notToBeNullBut(emptyList())
-		assert(reader("[1]").readListOrNull()).notToBeNullBut(listOf(1))
-		assert(reader("[ true, \"hey\", null ]").readListOrNull()).notToBeNullBut(listOf(true, "hey", null))
-		assert(reader("[ [], [ 1 ] ]").readListOrNull()).notToBeNullBut(listOf(emptyList<Any?>(), listOf(1)))
+		assert(reader("[]").readListOrNull()).toBe(emptyList())
+		assert(reader("[ \t\n\r]").readListOrNull()).toBe(emptyList())
+		assert(reader("[1]").readListOrNull()).toBe(listOf(1))
+		assert(reader("[ true, \"hey\", null ]").readListOrNull()).toBe(listOf(true, "hey", null))
+		assert(reader("[ [], [ 1 ] ]").readListOrNull()).toBe(listOf(emptyList<Any?>(), listOf(1)))
 		assert(reader("null").readListOrNull()).toBe(null)
 	}
 
@@ -452,7 +452,7 @@ internal class StandardReaderAcceptTest {
 	@Test
 	fun testReadListOrNullByElement() {
 		assert(reader("[ true, \"hey\", null ]").readListOrNullByElement { readValueOrNull() })
-			.notToBeNullBut(listOf(true, "hey", null))
+			.toBe(listOf(true, "hey", null))
 
 		assert(reader("null").readListOrNullByElement { readValueOrNull() })
 			.toBe(null)
@@ -462,9 +462,9 @@ internal class StandardReaderAcceptTest {
 	@Test
 	fun testReadListStart() {
 		reader("[]").apply {
-			assert(nextToken).notToBeNullBut(JSONToken.listStart)
+			assert(nextToken).toBe(JSONToken.listStart)
 			readListStart()
-			assert(nextToken).notToBeNullBut(JSONToken.listEnd)
+			assert(nextToken).toBe(JSONToken.listEnd)
 		}
 	}
 
@@ -494,24 +494,24 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testReadLongOrNull() {
-		assert(reader("0").readLongOrNull()).notToBeNullBut(0L)
-		assert(reader("-0").readLongOrNull()).notToBeNullBut(0L)
-		assert(reader("100").readLongOrNull()).notToBeNullBut(100L)
-		assert(reader("-100").readLongOrNull()).notToBeNullBut(-100L)
-		assert(reader("0.000").readLongOrNull()).notToBeNullBut(0L)
-		assert(reader("-0.000").readLongOrNull()).notToBeNullBut(0L)
-		assert(reader("100.001").readLongOrNull()).notToBeNullBut(100L)
-		assert(reader("-100.001").readLongOrNull()).notToBeNullBut(-100L)
-		assert(reader("100.999").readLongOrNull()).notToBeNullBut(100L)
-		assert(reader("-100.999").readLongOrNull()).notToBeNullBut(-100L)
-		assert(reader("1e2").readLongOrNull()).notToBeNullBut(100L)
-		assert(reader("-1e2").readLongOrNull()).notToBeNullBut(-100L)
-		assert(reader("1.0e2").readLongOrNull()).notToBeNullBut(100L)
-		assert(reader("-1.0e2").readLongOrNull()).notToBeNullBut(-100L)
-		assert(reader("1.0e+2").readLongOrNull()).notToBeNullBut(100L)
-		assert(reader("-1.0e+2").readLongOrNull()).notToBeNullBut(-100L)
-		assert(reader("1.0e-2").readLongOrNull()).notToBeNullBut(0L)
-		assert(reader("-1.0e-2").readLongOrNull()).notToBeNullBut(0L)
+		assert(reader("0").readLongOrNull()).toBe(0L)
+		assert(reader("-0").readLongOrNull()).toBe(0L)
+		assert(reader("100").readLongOrNull()).toBe(100L)
+		assert(reader("-100").readLongOrNull()).toBe(-100L)
+		assert(reader("0.000").readLongOrNull()).toBe(0L)
+		assert(reader("-0.000").readLongOrNull()).toBe(0L)
+		assert(reader("100.001").readLongOrNull()).toBe(100L)
+		assert(reader("-100.001").readLongOrNull()).toBe(-100L)
+		assert(reader("100.999").readLongOrNull()).toBe(100L)
+		assert(reader("-100.999").readLongOrNull()).toBe(-100L)
+		assert(reader("1e2").readLongOrNull()).toBe(100L)
+		assert(reader("-1e2").readLongOrNull()).toBe(-100L)
+		assert(reader("1.0e2").readLongOrNull()).toBe(100L)
+		assert(reader("-1.0e2").readLongOrNull()).toBe(-100L)
+		assert(reader("1.0e+2").readLongOrNull()).toBe(100L)
+		assert(reader("-1.0e+2").readLongOrNull()).toBe(-100L)
+		assert(reader("1.0e-2").readLongOrNull()).toBe(0L)
+		assert(reader("-1.0e-2").readLongOrNull()).toBe(0L)
 		assert(reader("null").readLongOrNull()).toBe(null)
 	}
 
@@ -575,7 +575,7 @@ internal class StandardReaderAcceptTest {
 	fun testReadMapEnd() {
 		reader("{}").apply {
 			readMapStart()
-			assert(nextToken).notToBeNullBut(JSONToken.mapEnd)
+			assert(nextToken).toBe(JSONToken.mapEnd)
 			readMapEnd()
 			assert(nextToken).toBe(null)
 		}
@@ -609,22 +609,22 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testReadMapOrNull() {
-		assert(reader("{}").readMapOrNull()).notToBeNullBut(emptyMap())
-		assert(reader("{ \t\n\r}").readMapOrNull()).notToBeNullBut(emptyMap())
-		assert(reader("{\"key\":1}").readMapOrNull()).notToBeNullBut(mapOf("key" to 1))
-		assert(reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").readMapOrNull()).notToBeNullBut(mapOf(
+		assert(reader("{}").readMapOrNull()).toBe(emptyMap())
+		assert(reader("{ \t\n\r}").readMapOrNull()).toBe(emptyMap())
+		assert(reader("{\"key\":1}").readMapOrNull()).toBe(mapOf("key" to 1))
+		assert(reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }").readMapOrNull()).toBe(mapOf(
 			"key0" to true,
 			"key1" to "hey",
 			"key2" to null
 		))
-		assert(reader("{ \"key0\": {}, \"key1\": { \"key\": 1 } }").readMapOrNull()).notToBeNullBut(mapOf(
+		assert(reader("{ \"key0\": {}, \"key1\": { \"key\": 1 } }").readMapOrNull()).toBe(mapOf(
 			"key0" to emptyMap<String, Any>(),
 			"key1" to mapOf("key" to 1)
 		))
-		assert(reader("{ \" \\\\ \\\" \\/ \\b \\f \\n \\r \\t \\uD83D\\udc36 \": 1 }").readMapOrNull()).notToBeNullBut(mapOf(
+		assert(reader("{ \" \\\\ \\\" \\/ \\b \\f \\n \\r \\t \\uD83D\\udc36 \": 1 }").readMapOrNull()).toBe(mapOf(
 			" \\ \" / \b \u000C \n \r \t 🐶 " to 1
 		))
-		assert(reader("{ \"0\": 0, \"2\": 2, \"1\": 1, \"3\": 3, \"-1\": -1 }").readMapOrNull()?.toList()).notToBeNullBut(listOf(
+		assert(reader("{ \"0\": 0, \"2\": 2, \"1\": 1, \"3\": 3, \"-1\": -1 }").readMapOrNull()?.toList()).toBe(listOf(
 			"0" to 0,
 			"2" to 2,
 			"1" to 1,
@@ -641,7 +641,7 @@ internal class StandardReaderAcceptTest {
 			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }")
 				.readMapOrNullByElement { readMapKey() to readValueOrNull() }
 		)
-			.notToBeNullBut(mapOf(
+			.toBe(mapOf(
 				"key0" to true,
 				"key1" to "hey",
 				"key2" to null
@@ -661,7 +661,7 @@ internal class StandardReaderAcceptTest {
 			reader("{ \"key0\": true, \"key1\" :\"hey\", \"key2\" : null }")
 				.readMapOrNullByElementValue { readValueOrNull() }
 		)
-			.notToBeNullBut(mapOf(
+			.toBe(mapOf(
 				"key0" to true,
 				"key1" to "hey",
 				"key2" to null
@@ -678,9 +678,9 @@ internal class StandardReaderAcceptTest {
 	@Test
 	fun testReadMapStart() {
 		reader("{}").apply {
-			assert(nextToken).notToBeNullBut(JSONToken.mapStart)
+			assert(nextToken).toBe(JSONToken.mapStart)
 			readMapStart()
-			assert(nextToken).notToBeNullBut(JSONToken.mapEnd)
+			assert(nextToken).toBe(JSONToken.mapEnd)
 		}
 	}
 
@@ -728,36 +728,36 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testReadNumberOrNull() {
-		assert(reader("0").readNumberOrNull()).notToBeNullBut(0)
-		assert(reader("-0").readNumberOrNull()).notToBeNullBut(0)
-		assert(reader("100").readNumberOrNull()).notToBeNullBut(100)
-		assert(reader("-100").readNumberOrNull()).notToBeNullBut(-100)
-		assert(reader("0.000").readNumberOrNull()).notToBeNullBut(0.0)
-		assert(reader("-0.000").readNumberOrNull()).notToBeNullBut(-0.0)
-		assert(reader("100.001").readNumberOrNull()).notToBeNullBut(100.001)
-		assert(reader("-100.001").readNumberOrNull()).notToBeNullBut(-100.001)
-		assert(reader("100.999").readNumberOrNull()).notToBeNullBut(100.999)
-		assert(reader("-100.999").readNumberOrNull()).notToBeNullBut(-100.999)
-		assert(reader("2147483647").readNumberOrNull()).notToBeNullBut(2147483647)
-		assert(reader("-2147483648").readNumberOrNull()).notToBeNullBut(-2147483648)
-		assert(reader("2147483648").readNumberOrNull()).notToBeNullBut(2147483648L)
-		assert(reader("-2147483649").readNumberOrNull()).notToBeNullBut(-2147483649L)
-		assert(reader("2147483647").readNumberOrNull()).notToBeNullBut(2147483647)
-		assert(reader("-2147483648").readNumberOrNull()).notToBeNullBut(-2147483648)
-		assert(reader("9223372036854775807").readNumberOrNull()).notToBeNullBut(9223372036854775807L)
-		assert(reader("-9223372036854775808").readNumberOrNull()).notToBeNullBut(-9223372036854775807L - 1) // https://youtrack.jetbrains.com/issue/KT-17172
-		assert(reader("9223372036854775808").readNumberOrNull()).notToBeNullBut(9223372036854775808.0)
-		assert(reader("-9223372036854775809").readNumberOrNull()).notToBeNullBut(-9223372036854775809.0)
-		assert(reader("1e2").readNumberOrNull()).notToBeNullBut(100.0)
-		assert(reader("-1e2").readNumberOrNull()).notToBeNullBut(-100.0)
-		assert(reader("1.0e2").readNumberOrNull()).notToBeNullBut(100.0)
-		assert(reader("-1.0e2").readNumberOrNull()).notToBeNullBut(-100.0)
-		assert(reader("1.0e-2").readNumberOrNull()).notToBeNullBut(0.01)
-		assert(reader("-1.0e-2").readNumberOrNull()).notToBeNullBut(-0.01)
-		assert(reader("1000000000000000000000000000000").readNumberOrNull()).notToBeNullBut(1000000000000000000000000000000.0)
-		assert(reader("-1000000000000000000000000000000").readNumberOrNull()).notToBeNullBut(-1000000000000000000000000000000.0)
-		assert(reader("1e20000").readNumberOrNull()).notToBeNullBut(Double.POSITIVE_INFINITY)
-		assert(reader("-1e20000").readNumberOrNull()).notToBeNullBut(Double.NEGATIVE_INFINITY)
+		assert(reader("0").readNumberOrNull()).toBe(0)
+		assert(reader("-0").readNumberOrNull()).toBe(0)
+		assert(reader("100").readNumberOrNull()).toBe(100)
+		assert(reader("-100").readNumberOrNull()).toBe(-100)
+		assert(reader("0.000").readNumberOrNull()).toBe(0.0)
+		assert(reader("-0.000").readNumberOrNull()).toBe(-0.0)
+		assert(reader("100.001").readNumberOrNull()).toBe(100.001)
+		assert(reader("-100.001").readNumberOrNull()).toBe(-100.001)
+		assert(reader("100.999").readNumberOrNull()).toBe(100.999)
+		assert(reader("-100.999").readNumberOrNull()).toBe(-100.999)
+		assert(reader("2147483647").readNumberOrNull()).toBe(2147483647)
+		assert(reader("-2147483648").readNumberOrNull()).toBe(-2147483648)
+		assert(reader("2147483648").readNumberOrNull()).toBe(2147483648L)
+		assert(reader("-2147483649").readNumberOrNull()).toBe(-2147483649L)
+		assert(reader("2147483647").readNumberOrNull()).toBe(2147483647)
+		assert(reader("-2147483648").readNumberOrNull()).toBe(-2147483648)
+		assert(reader("9223372036854775807").readNumberOrNull()).toBe(9223372036854775807L)
+		assert(reader("-9223372036854775808").readNumberOrNull()).toBe(-9223372036854775807L - 1) // https://youtrack.jetbrains.com/issue/KT-17172
+		assert(reader("9223372036854775808").readNumberOrNull()).toBe(9223372036854775808.0)
+		assert(reader("-9223372036854775809").readNumberOrNull()).toBe(-9223372036854775809.0)
+		assert(reader("1e2").readNumberOrNull()).toBe(100.0)
+		assert(reader("-1e2").readNumberOrNull()).toBe(-100.0)
+		assert(reader("1.0e2").readNumberOrNull()).toBe(100.0)
+		assert(reader("-1.0e2").readNumberOrNull()).toBe(-100.0)
+		assert(reader("1.0e-2").readNumberOrNull()).toBe(0.01)
+		assert(reader("-1.0e-2").readNumberOrNull()).toBe(-0.01)
+		assert(reader("1000000000000000000000000000000").readNumberOrNull()).toBe(1000000000000000000000000000000.0)
+		assert(reader("-1000000000000000000000000000000").readNumberOrNull()).toBe(-1000000000000000000000000000000.0)
+		assert(reader("1e20000").readNumberOrNull()).toBe(Double.POSITIVE_INFINITY)
+		assert(reader("-1e20000").readNumberOrNull()).toBe(Double.NEGATIVE_INFINITY)
 		assert(reader("null").readNumberOrNull()).toBe(null)
 	}
 
@@ -787,24 +787,24 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testReadShortOrNull() {
-		assert(reader("0").readShortOrNull()).notToBeNullBut(0.toShort())
-		assert(reader("-0").readShortOrNull()).notToBeNullBut(0.toShort())
-		assert(reader("100").readShortOrNull()).notToBeNullBut(100.toShort())
-		assert(reader("-100").readShortOrNull()).notToBeNullBut((-100).toShort())
-		assert(reader("0.000").readShortOrNull()).notToBeNullBut(0.toShort())
-		assert(reader("-0.000").readShortOrNull()).notToBeNullBut(0.toShort())
-		assert(reader("100.001").readShortOrNull()).notToBeNullBut(100.toShort())
-		assert(reader("-100.001").readShortOrNull()).notToBeNullBut((-100).toShort())
-		assert(reader("100.999").readShortOrNull()).notToBeNullBut(100.toShort())
-		assert(reader("-100.999").readShortOrNull()).notToBeNullBut((-100).toShort())
-		assert(reader("1e2").readShortOrNull()).notToBeNullBut(100.toShort())
-		assert(reader("-1e2").readShortOrNull()).notToBeNullBut((-100).toShort())
-		assert(reader("1.0e2").readShortOrNull()).notToBeNullBut(100.toShort())
-		assert(reader("-1.0e2").readShortOrNull()).notToBeNullBut((-100).toShort())
-		assert(reader("1.0e+2").readShortOrNull()).notToBeNullBut(100.toShort())
-		assert(reader("-1.0e+2").readShortOrNull()).notToBeNullBut((-100).toShort())
-		assert(reader("1.0e-2").readShortOrNull()).notToBeNullBut(0.toShort())
-		assert(reader("-1.0e-2").readShortOrNull()).notToBeNullBut(0.toShort())
+		assert(reader("0").readShortOrNull()).toBe(0.toShort())
+		assert(reader("-0").readShortOrNull()).toBe(0.toShort())
+		assert(reader("100").readShortOrNull()).toBe(100.toShort())
+		assert(reader("-100").readShortOrNull()).toBe((-100).toShort())
+		assert(reader("0.000").readShortOrNull()).toBe(0.toShort())
+		assert(reader("-0.000").readShortOrNull()).toBe(0.toShort())
+		assert(reader("100.001").readShortOrNull()).toBe(100.toShort())
+		assert(reader("-100.001").readShortOrNull()).toBe((-100).toShort())
+		assert(reader("100.999").readShortOrNull()).toBe(100.toShort())
+		assert(reader("-100.999").readShortOrNull()).toBe((-100).toShort())
+		assert(reader("1e2").readShortOrNull()).toBe(100.toShort())
+		assert(reader("-1e2").readShortOrNull()).toBe((-100).toShort())
+		assert(reader("1.0e2").readShortOrNull()).toBe(100.toShort())
+		assert(reader("-1.0e2").readShortOrNull()).toBe((-100).toShort())
+		assert(reader("1.0e+2").readShortOrNull()).toBe(100.toShort())
+		assert(reader("-1.0e+2").readShortOrNull()).toBe((-100).toShort())
+		assert(reader("1.0e-2").readShortOrNull()).toBe(0.toShort())
+		assert(reader("-1.0e-2").readShortOrNull()).toBe(0.toShort())
 		assert(reader("null").readShortOrNull()).toBe(null)
 	}
 
@@ -823,12 +823,12 @@ internal class StandardReaderAcceptTest {
 
 	@Test
 	fun testReadStringOrNull() {
-		assert(reader("\"\"").readStringOrNull()).notToBeNullBut("")
-		assert(reader("\"\\u0022\"").readStringOrNull()).notToBeNullBut("\"")
-		assert(reader("\"simple\"").readStringOrNull()).notToBeNullBut("simple")
-		assert(reader("\" a bit longer \"").readStringOrNull()).notToBeNullBut(" a bit longer ")
-		assert(reader("\"a dog: 🐶\"").readStringOrNull()).notToBeNullBut("a dog: 🐶")
-		assert(reader("\" \\\\ \\\" \\/ \\b \\f \\n \\r \\t \\uD83D\\udc36 \"").readStringOrNull()).notToBeNullBut(" \\ \" / \b \u000C \n \r \t 🐶 ")
+		assert(reader("\"\"").readStringOrNull()).toBe("")
+		assert(reader("\"\\u0022\"").readStringOrNull()).toBe("\"")
+		assert(reader("\"simple\"").readStringOrNull()).toBe("simple")
+		assert(reader("\" a bit longer \"").readStringOrNull()).toBe(" a bit longer ")
+		assert(reader("\"a dog: 🐶\"").readStringOrNull()).toBe("a dog: 🐶")
+		assert(reader("\" \\\\ \\\" \\/ \\b \\f \\n \\r \\t \\uD83D\\udc36 \"").readStringOrNull()).toBe(" \\ \" / \b \u000C \n \r \t 🐶 ")
 		assert(reader("null").readStringOrNull()).toBe(null)
 	}
 
@@ -856,14 +856,14 @@ internal class StandardReaderAcceptTest {
 		reader("[null, true, 0, [], {}, \"\", {\"\":true}]").apply {
 			readFromList {
 				assert(readValueOrNull()).toBe(null)
-				assert(readValueOrNull()).notToBeNullBut(true)
-				assert(readValueOrNull()).notToBeNullBut(0)
-				assert(readValueOrNull()).notToBeNullBut(emptyList<Any?>())
-				assert(readValueOrNull()).notToBeNullBut(emptyMap<String, Any?>())
-				assert(readValueOrNull()).notToBeNullBut("")
+				assert(readValueOrNull()).toBe(true)
+				assert(readValueOrNull()).toBe(0)
+				assert(readValueOrNull()).toBe(emptyList<Any?>())
+				assert(readValueOrNull()).toBe(emptyMap<String, Any?>())
+				assert(readValueOrNull()).toBe("")
 				readFromMap {
-					assert(readValueOrNull()).notToBeNullBut("")
-					assert(readValueOrNull()).notToBeNullBut(true)
+					assert(readValueOrNull()).toBe("")
+					assert(readValueOrNull()).toBe(true)
 				}
 			}
 		}
@@ -873,23 +873,23 @@ internal class StandardReaderAcceptTest {
 	fun testSkipValue() {
 		reader("[null, 0, [], {}, \"\", {\"\":true}]").apply {
 			readFromList {
-				assert(nextToken).notToBeNullBut(JSONToken.nullValue)
+				assert(nextToken).toBe(JSONToken.nullValue)
 				skipValue()
-				assert(nextToken).notToBeNullBut(JSONToken.numberValue)
+				assert(nextToken).toBe(JSONToken.numberValue)
 				skipValue()
-				assert(nextToken).notToBeNullBut(JSONToken.listStart)
+				assert(nextToken).toBe(JSONToken.listStart)
 				skipValue()
-				assert(nextToken).notToBeNullBut(JSONToken.mapStart)
+				assert(nextToken).toBe(JSONToken.mapStart)
 				skipValue()
-				assert(nextToken).notToBeNullBut(JSONToken.stringValue)
+				assert(nextToken).toBe(JSONToken.stringValue)
 				skipValue()
-				assert(nextToken).notToBeNullBut(JSONToken.mapStart)
+				assert(nextToken).toBe(JSONToken.mapStart)
 				readFromMap {
-					assert(nextToken).notToBeNullBut(JSONToken.mapKey)
+					assert(nextToken).toBe(JSONToken.mapKey)
 					skipValue()
-					assert(nextToken).notToBeNullBut(JSONToken.booleanValue)
+					assert(nextToken).toBe(JSONToken.booleanValue)
 					skipValue()
-					assert(nextToken).notToBeNullBut(JSONToken.mapEnd)
+					assert(nextToken).toBe(JSONToken.mapEnd)
 				}
 			}
 		}
@@ -910,51 +910,51 @@ internal class StandardReaderAcceptTest {
 
 		@Test
 		fun testMatchesFullToken() {
-			assert(reader("null").nextToken).notToBeNullBut(JSONToken.nullValue)
-			assert(reader("true").nextToken).notToBeNullBut(JSONToken.booleanValue)
-			assert(reader("false").nextToken).notToBeNullBut(JSONToken.booleanValue)
-			assert(reader("0").nextToken).notToBeNullBut(JSONToken.numberValue)
-			assert(reader("1").nextToken).notToBeNullBut(JSONToken.numberValue)
-			assert(reader("-1.0").nextToken).notToBeNullBut(JSONToken.numberValue)
-			assert(reader("\"\"").nextToken).notToBeNullBut(JSONToken.stringValue)
+			assert(reader("null").nextToken).toBe(JSONToken.nullValue)
+			assert(reader("true").nextToken).toBe(JSONToken.booleanValue)
+			assert(reader("false").nextToken).toBe(JSONToken.booleanValue)
+			assert(reader("0").nextToken).toBe(JSONToken.numberValue)
+			assert(reader("1").nextToken).toBe(JSONToken.numberValue)
+			assert(reader("-1.0").nextToken).toBe(JSONToken.numberValue)
+			assert(reader("\"\"").nextToken).toBe(JSONToken.stringValue)
 			reader("[]").apply {
-				assert(nextToken).notToBeNullBut(JSONToken.listStart)
+				assert(nextToken).toBe(JSONToken.listStart)
 				readListStart()
-				assert(nextToken).notToBeNullBut(JSONToken.listEnd)
+				assert(nextToken).toBe(JSONToken.listEnd)
 			}
 			reader("{}").apply {
-				assert(nextToken).notToBeNullBut(JSONToken.mapStart)
+				assert(nextToken).toBe(JSONToken.mapStart)
 				readMapStart()
-				assert(nextToken).notToBeNullBut(JSONToken.mapEnd)
+				assert(nextToken).toBe(JSONToken.mapEnd)
 			}
 		}
 
 
 		@Test
 		fun testConsumesMinimalInput() {
-			assert(reader("n").nextToken).notToBeNullBut(JSONToken.nullValue)
-			assert(reader("t").nextToken).notToBeNullBut(JSONToken.booleanValue)
-			assert(reader("f").nextToken).notToBeNullBut(JSONToken.booleanValue)
-			assert(reader("0").nextToken).notToBeNullBut(JSONToken.numberValue)
-			assert(reader("1").nextToken).notToBeNullBut(JSONToken.numberValue)
-			assert(reader("-").nextToken).notToBeNullBut(JSONToken.numberValue)
-			assert(reader("[").nextToken).notToBeNullBut(JSONToken.listStart)
-			assert(reader("\"").nextToken).notToBeNullBut(JSONToken.stringValue)
-			assert(reader("{").nextToken).notToBeNullBut(JSONToken.mapStart)
+			assert(reader("n").nextToken).toBe(JSONToken.nullValue)
+			assert(reader("t").nextToken).toBe(JSONToken.booleanValue)
+			assert(reader("f").nextToken).toBe(JSONToken.booleanValue)
+			assert(reader("0").nextToken).toBe(JSONToken.numberValue)
+			assert(reader("1").nextToken).toBe(JSONToken.numberValue)
+			assert(reader("-").nextToken).toBe(JSONToken.numberValue)
+			assert(reader("[").nextToken).toBe(JSONToken.listStart)
+			assert(reader("\"").nextToken).toBe(JSONToken.stringValue)
+			assert(reader("{").nextToken).toBe(JSONToken.mapStart)
 		}
 
 
 		@Test
 		fun testIdempotency() {
-			reader("n").apply { nextToken;assert(nextToken).notToBeNullBut(JSONToken.nullValue) }
-			reader("t").apply { nextToken;assert(nextToken).notToBeNullBut(JSONToken.booleanValue) }
-			reader("f").apply { nextToken;assert(nextToken).notToBeNullBut(JSONToken.booleanValue) }
-			reader("0").apply { nextToken;assert(nextToken).notToBeNullBut(JSONToken.numberValue) }
-			reader("1").apply { nextToken;assert(nextToken).notToBeNullBut(JSONToken.numberValue) }
-			reader("-").apply { nextToken;assert(nextToken).notToBeNullBut(JSONToken.numberValue) }
-			reader("[").apply { nextToken;assert(nextToken).notToBeNullBut(JSONToken.listStart) }
-			reader("\"").apply { nextToken;assert(nextToken).notToBeNullBut(JSONToken.stringValue) }
-			reader("{").apply { nextToken;assert(nextToken).notToBeNullBut(JSONToken.mapStart) }
+			reader("n").apply { nextToken;assert(nextToken).toBe(JSONToken.nullValue) }
+			reader("t").apply { nextToken;assert(nextToken).toBe(JSONToken.booleanValue) }
+			reader("f").apply { nextToken;assert(nextToken).toBe(JSONToken.booleanValue) }
+			reader("0").apply { nextToken;assert(nextToken).toBe(JSONToken.numberValue) }
+			reader("1").apply { nextToken;assert(nextToken).toBe(JSONToken.numberValue) }
+			reader("-").apply { nextToken;assert(nextToken).toBe(JSONToken.numberValue) }
+			reader("[").apply { nextToken;assert(nextToken).toBe(JSONToken.listStart) }
+			reader("\"").apply { nextToken;assert(nextToken).toBe(JSONToken.stringValue) }
+			reader("{").apply { nextToken;assert(nextToken).toBe(JSONToken.mapStart) }
 		}
 
 

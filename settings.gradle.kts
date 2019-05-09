@@ -16,3 +16,5 @@ project(":coding").name = "fluid-json-coding"
 project(":coding-jdk8").name = "fluid-json-coding-jdk8"
 project(":examples").name = "fluid-json-examples"
 project(":ktor-client").name = "fluid-json-ktor-client"
+
+enableFeaturePreview("GRADLE_METADATA")

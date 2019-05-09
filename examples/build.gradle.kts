@@ -4,7 +4,7 @@ plugins {
 	kotlin("kapt")
 }
 
-fluidLibraryVariant {
+fluidJvmLibraryVariant {
 	jdk = JDK.v1_8
 	publishing = false
 }

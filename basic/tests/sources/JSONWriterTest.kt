@@ -1,6 +1,5 @@
 package tests.basic
 
-import ch.tutteli.atrium.api.cc.en_GB.notToBeNullBut
 import ch.tutteli.atrium.api.cc.en_GB.toBe
 import ch.tutteli.atrium.verbs.assert
 import com.github.fluidsonic.fluid.json.*
@@ -57,18 +56,18 @@ internal object JSONWriterTest {
 		}
 
 		writer.writeByte(1)
-		assert(longValue).notToBeNullBut(1L)
+		assert(longValue).toBe(1L)
 
 		writer.writeFloat(2.0f)
-		assert(doubleValue).notToBeNullBut(2.0)
+		assert(doubleValue).toBe(2.0)
 
 		writer.writeInt(3)
-		assert(longValue).notToBeNullBut(3)
+		assert(longValue).toBe(3)
 
 		writer.writeMapKey("4")
-		assert(stringValue).notToBeNullBut("4")
+		assert(stringValue).toBe("4")
 
 		writer.writeShort(5)
-		assert(longValue).notToBeNullBut(5)
+		assert(longValue).toBe(5)
 	}
 }

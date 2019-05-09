@@ -1,6 +1,5 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.notToBeNullBut
 import ch.tutteli.atrium.api.cc.en_GB.toBe
 import ch.tutteli.atrium.verbs.assert
 import com.github.fluidsonic.fluid.json.*
@@ -20,7 +19,7 @@ internal class FixedCodecProviderTest {
 				provider(UnrelatedDecoderCodec, ParentDecoderCodec, ChildDecoderCodec)
 					.decoderCodecForType<Parent, Context>()
 			)
-				.notToBeNullBut(ParentDecoderCodec)
+				.toBe(ParentDecoderCodec)
 		}
 
 
@@ -30,7 +29,7 @@ internal class FixedCodecProviderTest {
 				provider(UnrelatedDecoderCodec, ChildDecoderCodec, ParentDecoderCodec)
 					.decoderCodecForType<Child, Context>()
 			)
-				.notToBeNullBut(ChildDecoderCodec)
+				.toBe(ChildDecoderCodec)
 		}
 
 
@@ -40,7 +39,7 @@ internal class FixedCodecProviderTest {
 				provider(UnrelatedDecoderCodec, ChildDecoderCodec2, ChildDecoderCodec)
 					.decoderCodecForType<Child, Context>()
 			)
-				.notToBeNullBut(ChildDecoderCodec2)
+				.toBe(ChildDecoderCodec2)
 		}
 	}
 
@@ -54,7 +53,7 @@ internal class FixedCodecProviderTest {
 				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
 					.encoderCodecForClass(Parent::class)
 			)
-				.notToBeNullBut(ParentEncoderCodec)
+				.toBe(ParentEncoderCodec)
 		}
 
 
@@ -64,7 +63,7 @@ internal class FixedCodecProviderTest {
 				provider(UnrelatedEncoderCodec, ChildEncoderCodec, ParentEncoderCodec)
 					.encoderCodecForClass(Child::class)
 			)
-				.notToBeNullBut(ChildEncoderCodec)
+				.toBe(ChildEncoderCodec)
 		}
 
 
@@ -74,13 +73,13 @@ internal class FixedCodecProviderTest {
 				provider(ArrayJSONCodec)
 					.encoderCodecForClass(Array<Any?>::class)
 			)
-				.notToBeNullBut(ArrayJSONCodec)
+				.toBe(ArrayJSONCodec)
 
 			assert(
 				provider(ArrayJSONCodec)
 					.encoderCodecForClass(Array<String>::class)
 			)
-				.notToBeNullBut(ArrayJSONCodec)
+				.toBe(ArrayJSONCodec)
 		}
 
 
@@ -90,7 +89,7 @@ internal class FixedCodecProviderTest {
 				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
 					.encoderCodecForClass(Child::class)
 			)
-				.notToBeNullBut(ParentEncoderCodec)
+				.toBe(ParentEncoderCodec)
 		}
 
 
@@ -110,7 +109,7 @@ internal class FixedCodecProviderTest {
 				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
 					.encoderCodecForClass(Child::class)
 			)
-				.notToBeNullBut(ParentEncoderCodec)
+				.toBe(ParentEncoderCodec)
 		}
 	}
 

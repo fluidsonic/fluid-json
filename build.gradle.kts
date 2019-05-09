@@ -3,11 +3,11 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 
 plugins {
-	id("com.github.fluidsonic.fluid-library") version "0.9.3"
+	id("com.github.fluidsonic.fluid-library") version "0.9.10"
 	jacoco
 }
 
-fluidLibrary {
+fluidJvmLibrary {
 	name = "fluid-json"
 	version = "0.9.18"
 }
@@ -51,7 +51,7 @@ subprojects {
 
 	dependencies {
 		testImplementation(kotlin("reflect"))
-		testImplementation("ch.tutteli.atrium:atrium-cc-en_GB-robstoll:0.7.0")
+		testImplementation("ch.tutteli.atrium:atrium-cc-en_GB-robstoll:0.8.0")
 		testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.0")
 
 		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.0")

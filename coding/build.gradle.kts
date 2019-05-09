@@ -1,6 +1,6 @@
 import com.github.fluidsonic.fluid.library.*
 
-fluidLibraryVariant {
+fluidJvmLibraryVariant {
 	description = "A JSON library written in pure Kotlin (coding extension)"
 }
 

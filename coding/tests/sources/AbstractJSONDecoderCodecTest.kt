@@ -1,6 +1,6 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.notToBeNullBut
+import ch.tutteli.atrium.api.cc.en_GB.toBe
 import ch.tutteli.atrium.verbs.assert
 import com.github.fluidsonic.fluid.json.*
 import org.junit.jupiter.api.Test
@@ -10,7 +10,7 @@ internal object AbstractJSONDecoderCodecTest {
 
 	@Test
 	fun testEncoderCodecForClassReturnsNested() {
-		assert(OuterDecoderCodec.encoderCodecForClass(Unit::class)).notToBeNullBut(InnerEncoderCodec)
+		assert(OuterDecoderCodec.encoderCodecForClass(Unit::class)).toBe(InnerEncoderCodec)
 	}
 
 
