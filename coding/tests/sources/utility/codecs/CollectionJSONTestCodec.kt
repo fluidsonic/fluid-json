@@ -4,7 +4,7 @@ import com.github.fluidsonic.fluid.json.*
 
 
 internal object CollectionJSONTestCodec : AbstractJSONCodec<Collection<*>, JSONCodingContext>(
-	additionalProviders = listOf(StringJSONCodec)
+	additionalProviders = listOf(AnyJSONDecoderCodec, StringJSONCodec)
 ) {
 
 	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Collection<*>>) =
