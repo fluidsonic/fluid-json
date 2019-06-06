@@ -5,7 +5,7 @@ import kotlin.reflect.*
 
 
 /**
- * Creates a [JSONCodec] fo)r the annotated class.
+ * Creates a [JSONCodec] for the annotated class.
  *
  * Note that there are several limitations which classes can be annotated:
  * - it and all enclosing classes must have `internal` or `public` visibility
