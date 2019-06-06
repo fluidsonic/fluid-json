@@ -242,7 +242,7 @@ val Person.name get() = "$firstName $lastName"
 
 ### Customize JSON property names
 
-Some prefer it that way ¯\_(ツ)_/¯.
+Some prefer it that way ¯\\\_(ツ)\_/¯.
 
 ```kotlin
 @JSON
