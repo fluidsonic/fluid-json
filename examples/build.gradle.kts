@@ -15,3 +15,7 @@ dependencies {
 
 	kapt(project(":fluid-json-annotation-processor"))
 }
+
+configurations.getByName("kapt") {
+	attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, "java-runtime"))
+}

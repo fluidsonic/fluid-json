@@ -4,10 +4,10 @@ package com.github.fluidsonic.fluid.json
 
 import io.ktor.client.call.*
 import io.ktor.client.features.json.*
-import io.ktor.client.response.*
 import io.ktor.content.TextContent
 import io.ktor.http.*
 import io.ktor.http.content.*
+import kotlinx.io.core.*
 
 
 class FluidJsonSerializer(
@@ -15,10 +15,10 @@ class FluidJsonSerializer(
 	private val serializer: JSONCodingSerializer = JSONCodingSerializer.nonRecursive
 ) : JsonSerializer {
 
-	override suspend fun read(type: TypeInfo, response: HttpResponse) =
-		parser.parseValueOfType(response.readText(), JSONCodingType.of(type.reifiedType))
+	override fun read(type: TypeInfo, body: Input) =
+		parser.parseValueOfType(body.readText(), JSONCodingType.of(type.reifiedType))
 
 
-	override fun write(data: Any): OutgoingContent =
-		TextContent(serializer.serializeValue(data), ContentType.Application.Json)
+	override fun write(data: Any, contentType: ContentType): OutgoingContent =
+		TextContent(serializer.serializeValue(data), contentType)
 }
