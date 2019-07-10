@@ -7,7 +7,7 @@ plugins {
 
 fluidJvmLibraryVariant {
 	description = "A JSON library written in pure Kotlin (annotation processor)"
-	jdk = JDK.v1_8
+	jdk = JvmTarget.jdk8
 }
 
 dependencies {
@@ -16,7 +16,7 @@ dependencies {
 
 	implementation(kotlin("reflect"))
 	implementation(fluid("meta-jvm", "0.9.7"))
-	implementation(fluid("stdlib", "0.9.23"))
+	implementation(fluid("stdlib", "0.9.24"))
 	implementation("com.google.auto:auto-common:0.10")
 	implementation("com.google.auto.service:auto-service:1.0-rc5")
 	implementation("com.squareup:kotlinpoet:1.3.0")

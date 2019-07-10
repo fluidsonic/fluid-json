@@ -2,7 +2,7 @@ import com.github.fluidsonic.fluid.library.*
 import org.gradle.api.tasks.testing.logging.*
 
 plugins {
-	id("com.github.fluidsonic.fluid-library") version "0.9.19"
+	id("com.github.fluidsonic.fluid-library") version "0.9.21"
 	jacoco
 }
 
@@ -51,9 +51,9 @@ subprojects {
 	dependencies {
 		testImplementation(kotlin("reflect"))
 		testImplementation("ch.tutteli.atrium:atrium-cc-en_GB-robstoll:0.8.0")
-		testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.0")
+		testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.0")
 
-		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.0")
-		testRuntimeOnly("org.junit.platform:junit-platform-runner:1.4.0")
+		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.0")
+		testRuntimeOnly("org.junit.platform:junit-platform-runner:1.5.0")
 	}
 }
