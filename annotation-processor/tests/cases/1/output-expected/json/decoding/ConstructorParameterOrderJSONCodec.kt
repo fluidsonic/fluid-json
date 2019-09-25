@@ -33,12 +33,12 @@ internal object ConstructorParameterOrderJSONCodec :
 			val erasure = parameter.type.jvmErasure
 
 			when (parameter.name) {
-				"a" -> if (parameter.index != 1 || parameter.isVararg || erasure != String::class) return@single
-						false
-				"b" -> if (parameter.index != 0 || parameter.isVararg || erasure != String::class) return@single
-						false
-				"c" -> if (parameter.index != 2 || parameter.isVararg || erasure != String::class) return@single
-						false
+				"a" -> if (parameter.index != 1 || parameter.isVararg || erasure != String::class)
+						return@single false
+				"b" -> if (parameter.index != 0 || parameter.isVararg || erasure != String::class)
+						return@single false
+				"c" -> if (parameter.index != 2 || parameter.isVararg || erasure != String::class)
+						return@single false
 				else -> return@single false
 			}
 		}

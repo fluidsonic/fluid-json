@@ -231,7 +231,7 @@ internal class CodecGenerator(
 			.addModifiers(KModifier.PRIVATE)
 			.initializer(CodeBlock.builder()
 				.beginControlFlow("%T::class.constructors.single·{·constructor·->", rawValueType)
-				.addStatement("if (constructor.parameters.size != %L) return@single false\n", properties.size)
+				.addStatement("if (constructor.parameters.size != %L) return@single·false\n", properties.size)
 				.run {
 					beginControlFlow("constructor.parameters.forEach { parameter ->")
 					addStatement("val erasure = parameter.type.jvmErasure\n")
@@ -243,20 +243,20 @@ internal class CodecGenerator(
 								val index = strategy.meta.valueParameters.indexOfFirst { it.name == property.name }
 
 								addStatement(
-									"%1S -> if (parameter.index != %2L || parameter.isVararg || erasure != %3T::class) return@single false",
+									"%1S -> if (parameter.index != %2L || parameter.isVararg || erasure != %3T::class) return@single·false",
 									property.name,
 									index,
 									rawType.copy(nullable = false)
 								)
 							}
-							addStatement("else -> return@single false")
+							addStatement("else -> return@single·false")
 						}
 						endControlFlow()
 					}
 					endControlFlow()
 
 					add("\n")
-					addStatement("return@single true")
+					addStatement("return@single·true")
 				}
 				.endControlFlow()
 				.build()

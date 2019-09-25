@@ -10,8 +10,7 @@ internal fun MTypeReference.Class.forKotlinPoet(typeParameters: List<MTypeParame
 
 	return ClassName(
 		packageName = name.packageName.kotlin,
-		simpleName = typeNames.first(),
-		simpleNames = *typeNames.drop(1).toTypedArray()
+		simpleNames = typeNames
 	)
 		.let { className ->
 			if (this.arguments.isNotEmpty()) {

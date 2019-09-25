@@ -18,13 +18,14 @@ internal class CodecProviderGenerator(
 		val qualifiedTypeName = codecProvider.name.forKotlinPoet()
 		val generatedQualifiedTypeName = ClassName(
 			packageName = qualifiedTypeName.packageName,
-			simpleName = "Generated" + typeName.replace('.', '_')
+			simpleNames = listOf("Generated" + typeName.replace('.', '_'))
 		)
 
 		FileSpec.builder(qualifiedTypeName.packageName, generatedQualifiedTypeName.simpleName)
 			.indent("\t")
 			.apply {
 				// TODO remove once fixed: https://github.com/square/kotlinpoet/pull/636
+				// TODO was merged by now but is still broken somehow :O
 				codecNames.forEach { codecName ->
 					if (codecName.packageName.isRoot) addImport("", codecName.withoutPackage().kotlin)
 				}

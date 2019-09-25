@@ -42,23 +42,29 @@ internal object CaseTests {
 
 			val processedFiles = mutableSetOf<File>()
 
-			for (expectedFile in expectedOutputPath.walkTopDown().filter(File::isFile)) {
-				val file = expectedFile.relativeTo(expectedOutputPath)
-				val actualFile = actualOutputPath.resolve(file)
-				if (!actualFile.exists())
-					fail("expected output file '$file' does not exist in actual output")
+			expectedOutputPath.walkTopDown()
+				.filter(File::isFile)
+				.filterNot { it.name.startsWith(".") }
+				.forEach { expectedFile ->
+					val file = expectedFile.relativeTo(expectedOutputPath)
+					val actualFile = actualOutputPath.resolve(file)
+					if (!actualFile.exists())
+						fail("expected output file '$file' does not exist in actual output")
 
-				if (actualFile.readText().replace("\r", "") != expectedFile.readText().replace("\r", ""))
-					fail("content of actual output file '$file' differs from expected output")
+					if (actualFile.readText().replace("\r", "") != expectedFile.readText().replace("\r", ""))
+						fail("content of actual output file '$file' differs from expected output")
 
-				processedFiles += file
-			}
+					processedFiles += file
+				}
 
-			for (actualFile in actualOutputPath.walkTopDown().filter(File::isFile)) {
-				val file = actualFile.relativeTo(actualOutputPath)
-				if (!processedFiles.contains(file))
-					fail("actual output contains unexpected file '$file'")
-			}
+			actualOutputPath.walkTopDown()
+				.filter(File::isFile)
+				.filterNot { it.name.startsWith(".") }
+				.forEach { actualFile ->
+					val file = actualFile.relativeTo(actualOutputPath)
+					if (!processedFiles.contains(file))
+						fail("actual output contains unexpected file '$file'")
+				}
 		}!!
 
 
@@ -71,6 +77,7 @@ internal object CaseTests {
 		File("tests/cases")
 			.canonicalFile
 			.listFiles()
+			.orEmpty()
 			.filter(File::isDirectory)
 			.map(this::buildTest)
 }

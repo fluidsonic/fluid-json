@@ -7,5 +7,5 @@ fluidJvmLibraryVariant {
 dependencies {
 	api(project(":fluid-json-coding"))
 
-	api("io.ktor:ktor-client-json-jvm:1.2.2")
+	api("io.ktor:ktor-client-json-jvm:1.2.3")
 }
