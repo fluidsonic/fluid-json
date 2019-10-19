@@ -2,17 +2,17 @@ package tests.coding
 
 import ch.tutteli.atrium.api.cc.en_GB.*
 import ch.tutteli.atrium.verbs.*
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-internal class ContextCheckingTestEncoderCodec<in Context : JSONCodingContext>(
+internal class ContextCheckingTestEncoderCodec<in Context : JsonCodingContext>(
 	private val expectedContext: Context
-) : JSONEncoderCodec<String, Context> {
+) : JsonEncoderCodec<String, Context> {
 
-	override fun JSONEncoder<Context>.encode(value: String) {
+	override fun JsonEncoder<Context>.encode(value: String) {
 		assert(context).toBe(expectedContext)
 
-		StringJSONCodec.run { encode(value) }
+		StringJsonCodec.run { encode(value) }
 	}
 
 

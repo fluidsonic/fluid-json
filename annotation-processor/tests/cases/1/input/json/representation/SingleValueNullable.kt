@@ -1,9 +1,9 @@
 package json.representation
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	representation = JSON.Representation.singleValue
+@Json(
+	representation = Json.Representation.singleValue
 )
 class SingleValueNullable(val value: String?)

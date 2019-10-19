@@ -1,12 +1,12 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import java.time.*
 
 // Note that IntelliJ IDEA still only has limited supported for annotation processing with kapt, so enable this setting first:
 // Preferences > Build, Execution, Deployment > Build Tools > Gradle > Runner > Delegate IDE build/run actions to gradle
 
-// EventJSONCodec and AttendeeJSONCodec are generated automatically for the @JSON-annotated classes in this file
+// EventJsonCodec and AttendeeJsonCodec are generated automatically for the @Json-annotated classes in this file
 
 fun main() {
 	val data = Event(
@@ -21,15 +21,15 @@ fun main() {
 		title = "fluid-json MeetUp"
 	)
 
-	val serializer = JSONCodingSerializer.builder(MyContext()) // see example 0001
-		.encodingWith(EventJSONCodec, AttendeeJSONCodec)
+	val serializer = JsonCodingSerializer.builder(MyContext()) // see example 0001
+		.encodingWith(EventJsonCodec, AttendeeJsonCodec)
 		.build()
 
 	val serialized = serializer.serializeValue(data)
 	println("serialized: $serialized")
 
-	val parser = JSONCodingParser.builder(MyContext()) // see example 0001
-		.decodingWith(EventJSONCodec, AttendeeJSONCodec)
+	val parser = JsonCodingParser.builder(MyContext()) // see example 0001
+		.decodingWith(EventJsonCodec, AttendeeJsonCodec)
 		.build()
 
 	val parsed = parser.parseValueOfType<Event>(serialized)
@@ -37,7 +37,7 @@ fun main() {
 }
 
 
-@JSON
+@Json
 data class Event(
 	val attendees: Collection<Attendee>,
 	val description: String,
@@ -47,7 +47,7 @@ data class Event(
 	val title: String
 )
 
-@JSON
+@Json
 data class Attendee(
 	val emailAddress: String,
 	val firstName: String,

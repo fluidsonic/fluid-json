@@ -1,13 +1,13 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
-import com.github.fluidsonic.fluid.json.*
-import com.github.fluidsonic.fluid.meta.*
+import io.fluidsonic.json.*
+import io.fluidsonic.meta.*
 
 
 internal object TypeNames {
 
 	val anyType = MQualifiedTypeName.of(Any::class)
-	val codecProviderType = MQualifiedTypeName.of(JSONCodecProvider::class)
-	val codingContext = MQualifiedTypeName.of(JSONCodingContext::class)
-	val encoder = MQualifiedTypeName.of(JSONEncoder::class)
+	val codecProviderType = MQualifiedTypeName.of(JsonCodecProvider::class)
+	val codingContext = MQualifiedTypeName.of(JsonCodingContext::class)
+	val encoder = MQualifiedTypeName.of(JsonEncoder::class)
 }

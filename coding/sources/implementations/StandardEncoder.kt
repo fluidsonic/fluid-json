@@ -1,29 +1,29 @@
-package com.github.fluidsonic.fluid.json
+package io.fluidsonic.json
 
 
-internal class StandardEncoder<out Context : JSONCodingContext>(
+internal class StandardEncoder<out Context : JsonCodingContext>(
 	override val context: Context,
-	private val codecProvider: JSONCodecProvider<Context>,
-	private val destination: JSONWriter
-) : JSONEncoder<Context>, JSONWriter by destination {
+	private val codecProvider: JsonCodecProvider<Context>,
+	private val destination: JsonWriter
+) : JsonEncoder<Context>, JsonWriter by destination {
 
 	@Suppress("UNCHECKED_CAST")
 	override fun writeValue(value: Any) {
 		withErrorChecking {
-			(codecProvider.encoderCodecForClass(value::class) as JSONEncoderCodec<Any, Context>?)
+			(codecProvider.encoderCodecForClass(value::class) as JsonEncoderCodec<Any, Context>?)
 				?.run {
 					try {
 						isolateValueWrite {
 							encode(value = value)
 						}
 					}
-					catch (e: JSONException) {
+					catch (e: JsonException) {
 						// TODO remove .java once KT-28418 is fixed
-						e.addSuppressed(JSONException.Serialization("… when encoding value of ${value::class} using ${this::class.java.name}: $value"))
+						e.addSuppressed(JsonException.Serialization("… when encoding value of ${value::class} using ${this::class.java.name}: $value"))
 						throw e
 					}
 				}
-				?: throw JSONException.Serialization(
+				?: throw JsonException.Serialization(
 					message = "No encoder codec registered for ${value::class}: $value",
 					path = path
 				)

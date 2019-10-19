@@ -1,9 +1,9 @@
 package json.codecName
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	codecName = JSON.automatic
+@Json(
+	codecName = Json.automatic
 )
 class Automatic(val value: String)

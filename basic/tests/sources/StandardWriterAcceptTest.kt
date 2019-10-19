@@ -2,7 +2,7 @@ package tests.basic
 
 import ch.tutteli.atrium.api.cc.en_GB.*
 import ch.tutteli.atrium.verbs.*
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.io.*
 
@@ -949,6 +949,6 @@ internal object StandardWriterAcceptTest {
 	}
 
 
-	private fun write(block: JSONWriter.() -> Unit): String =
-		StringWriter().also { JSONWriter.build(it).block() }.toString()
+	private fun write(block: JsonWriter.() -> Unit): String =
+		StringWriter().also { JsonWriter.build(it).block() }.toString()
 }

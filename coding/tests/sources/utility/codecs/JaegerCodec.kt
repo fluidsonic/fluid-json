@@ -1,14 +1,14 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import tests.coding.Jaeger.*
 
 
-internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
+internal object JaegerCodec : AbstractJsonCodec<Jaeger, TestCoderContext>(
 	additionalProviders = listOf(StatusCodec)
 ) {
 
-	override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<Jaeger>): Jaeger {
+	override fun JsonDecoder<TestCoderContext>.decode(valueType: JsonCodingType<Jaeger>): Jaeger {
 		var height: Double? = null
 		var launchDate: YearMonthDay? = null
 		var mark: Int? = null
@@ -42,7 +42,7 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 	}
 
 
-	override fun JSONEncoder<TestCoderContext>.encode(value: Jaeger) {
+	override fun JsonEncoder<TestCoderContext>.encode(value: Jaeger) {
 		writeIntoMap {
 			writeMapElement(Keys.height, double = value.height)
 			writeMapElement(Keys.launchDate, value = value.launchDate)
@@ -67,9 +67,9 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 	}
 
 
-	object StatusCodec : AbstractJSONCodec<Status, TestCoderContext>() {
+	object StatusCodec : AbstractJsonCodec<Status, TestCoderContext>() {
 
-		override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<Status>): Status {
+		override fun JsonDecoder<TestCoderContext>.decode(valueType: JsonCodingType<Status>): Status {
 			val id = readString()
 			return when (id) {
 				"destroyed" -> Status.destroyed
@@ -78,7 +78,7 @@ internal object JaegerCodec : AbstractJSONCodec<Jaeger, TestCoderContext>(
 		}
 
 
-		override fun JSONEncoder<TestCoderContext>.encode(value: Status) {
+		override fun JsonEncoder<TestCoderContext>.encode(value: Status) {
 			writeString(when (value) {
 				Status.destroyed -> "destroyed"
 			})

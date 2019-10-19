@@ -2,7 +2,7 @@ package tests.coding
 
 import ch.tutteli.atrium.api.cc.en_GB.*
 import ch.tutteli.atrium.verbs.*
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import kotlin.reflect.*
 
@@ -69,16 +69,16 @@ internal class FixedCodecProviderTest {
 		@Test
 		fun testMatchesArrayTypes() {
 			assert(
-				provider(ArrayJSONCodec)
+				provider(ArrayJsonCodec)
 					.encoderCodecForClass(Array<Any?>::class)
 			)
-				.toBe(ArrayJSONCodec)
+				.toBe(ArrayJsonCodec)
 
 			assert(
-				provider(ArrayJSONCodec)
+				provider(ArrayJsonCodec)
 					.encoderCodecForClass(Array<String>::class)
 			)
-				.toBe(ArrayJSONCodec)
+				.toBe(ArrayJsonCodec)
 		}
 
 
@@ -95,7 +95,7 @@ internal class FixedCodecProviderTest {
 		@Test
 		fun testMatchesPrimitiveArrayTypes() {
 			assert(
-				provider(ArrayJSONCodec)
+				provider(ArrayJsonCodec)
 					.encoderCodecForClass(IntArray::class as KClass<*>)
 			)
 				.toBe(null)
@@ -113,71 +113,71 @@ internal class FixedCodecProviderTest {
 	}
 
 
-	private fun provider(vararg codecs: JSONDecoderCodec<*, FixedCodecProviderTest.Context>) =
+	private fun provider(vararg codecs: JsonDecoderCodec<*, FixedCodecProviderTest.Context>) =
 		FixedCodecProvider(codecs.toList())
 
 
-	private fun provider(vararg codecs: JSONEncoderCodec<*, FixedCodecProviderTest.Context>) =
+	private fun provider(vararg codecs: JsonEncoderCodec<*, FixedCodecProviderTest.Context>) =
 		FixedCodecProvider(codecs.toList())
 
 
 	interface Parent
 	object Child : Parent
-	object Context : JSONCodingContext
+	object Context : JsonCodingContext
 	interface Unrelated
 
 
-	object ChildDecoderCodec : JSONDecoderCodec<Child, Context> {
+	object ChildDecoderCodec : JsonDecoderCodec<Child, Context> {
 
-		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<Child>) = error("dummy")
-
-		override val decodableType = jsonCodingType<Child>()
-	}
-
-
-	object ChildDecoderCodec2 : JSONDecoderCodec<Child, Context> {
-
-		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<Child>) = error("dummy")
+		override fun JsonDecoder<Context>.decode(valueType: JsonCodingType<Child>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Child>()
 	}
 
 
-	object ChildEncoderCodec : JSONEncoderCodec<Child, Context> {
+	object ChildDecoderCodec2 : JsonDecoderCodec<Child, Context> {
 
-		override fun JSONEncoder<Context>.encode(value: Child) = error("dummy")
+		override fun JsonDecoder<Context>.decode(valueType: JsonCodingType<Child>) = error("dummy")
+
+		override val decodableType = jsonCodingType<Child>()
+	}
+
+
+	object ChildEncoderCodec : JsonEncoderCodec<Child, Context> {
+
+		override fun JsonEncoder<Context>.encode(value: Child) = error("dummy")
 
 		override val encodableClass = Child::class
 	}
 
 
-	object ParentDecoderCodec : JSONDecoderCodec<Parent, Context> {
+	object ParentDecoderCodec : JsonDecoderCodec<Parent, Context> {
 
-		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<Parent>) = error("dummy")
+		override fun JsonDecoder<Context>.decode(valueType: JsonCodingType<Parent>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Parent>()
 	}
 
 
-	object ParentEncoderCodec : JSONEncoderCodec<Parent, Context> {
+	object ParentEncoderCodec : JsonEncoderCodec<Parent, Context> {
 
-		override fun JSONEncoder<Context>.encode(value: Parent) = error("dummy")
+		override fun JsonEncoder<Context>.encode(value: Parent) = error("dummy")
 
 		override val encodableClass = Parent::class
 	}
 
 
-	object UnrelatedDecoderCodec : JSONDecoderCodec<Unrelated, Context> {
+	object UnrelatedDecoderCodec : JsonDecoderCodec<Unrelated, Context> {
 
-		override fun JSONDecoder<Context>.decode(valueType: JSONCodingType<Unrelated>) = error("dummy")
+		override fun JsonDecoder<Context>.decode(valueType: JsonCodingType<Unrelated>) = error("dummy")
 
 		override val decodableType = jsonCodingType<Unrelated>()
 	}
 
 
-	object UnrelatedEncoderCodec : JSONEncoderCodec<Unrelated, Context> {
+	object UnrelatedEncoderCodec : JsonEncoderCodec<Unrelated, Context> {
 
-		override fun JSONEncoder<Context>.encode(value: Unrelated) = error("dummy")
+		override fun JsonEncoder<Context>.encode(value: Unrelated) = error("dummy")
 
 		override val encodableClass = Unrelated::class
 	}

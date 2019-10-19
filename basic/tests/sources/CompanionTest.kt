@@ -1,6 +1,6 @@
 package tests.basic
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
 
@@ -10,14 +10,14 @@ internal object CompanionTest {
 	fun testInitialization() {
 		// just make sure all companions initialize properly and we get more code coverage :)
 		listOf(
-			JSONException.Companion,
-			JSONReader.Companion,
-			JSONToken.Companion,
-			JSONWriter.Companion
+			JsonException.Companion,
+			JsonReader.Companion,
+			JsonToken.Companion,
+			JsonWriter.Companion
 		)
 
 		// trigger initialization of Character.* objects to make code coverage happy
-		JSONCharacter::class.nestedClasses.forEach {
+		JsonCharacter::class.nestedClasses.forEach {
 			try {
 				it.objectInstance
 			}

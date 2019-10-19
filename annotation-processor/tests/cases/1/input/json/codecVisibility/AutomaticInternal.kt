@@ -1,9 +1,9 @@
 package json.codecVisibility
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	codecVisibility = JSON.CodecVisibility.automatic
+@Json(
+	codecVisibility = Json.CodecVisibility.automatic
 )
 internal class AutomaticInternal(val value: String)

@@ -1,11 +1,10 @@
-import com.github.fluidsonic.fluid.library.*
+import io.fluidsonic.gradle.*
 
 plugins {
 	kotlin("kapt")
 }
 
-fluidJvmLibraryVariant {
-	jdk = JvmTarget.jdk8
+fluidJvmLibraryVariant(JvmTarget.jdk8) {
 	publishing = false
 }
 
@@ -14,8 +13,4 @@ dependencies {
 	implementation(project(":fluid-json-annotations"))
 
 	kapt(project(":fluid-json-annotation-processor"))
-}
-
-configurations.getByName("kapt") {
-	attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, "java-runtime"))
 }

@@ -1,9 +1,9 @@
 @file:Suppress("INVISIBLE_MEMBER")
 
-package com.github.fluidsonic.fluid.json
+package io.fluidsonic.json
 
 import io.ktor.client.call.*
-import io.ktor.client.features.json.*
+import io.ktor.client.features.json.JsonSerializer
 import io.ktor.content.TextContent
 import io.ktor.http.*
 import io.ktor.http.content.*
@@ -11,12 +11,12 @@ import kotlinx.io.core.*
 
 
 class FluidJsonSerializer(
-	private val parser: JSONCodingParser<*> = JSONCodingParser.nonRecursive,
-	private val serializer: JSONCodingSerializer = JSONCodingSerializer.nonRecursive
+	private val parser: JsonCodingParser<*> = JsonCodingParser.nonRecursive,
+	private val serializer: JsonCodingSerializer = JsonCodingSerializer.nonRecursive
 ) : JsonSerializer {
 
 	override fun read(type: TypeInfo, body: Input) =
-		parser.parseValueOfType(body.readText(), JSONCodingType.of(type.reifiedType))
+		parser.parseValueOfType(body.readText(), JsonCodingType.of(type.reifiedType))
 
 
 	override fun write(data: Any, contentType: ContentType): OutgoingContent =

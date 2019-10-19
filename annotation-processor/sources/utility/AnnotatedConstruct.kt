@@ -1,6 +1,6 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
-import com.github.fluidsonic.fluid.meta.*
+import io.fluidsonic.meta.*
 import javax.lang.model.*
 
 

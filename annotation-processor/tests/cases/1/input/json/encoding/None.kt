@@ -1,11 +1,11 @@
 package json.encoding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import java.io.Serializable
 
 
-@JSON(
-	encoding = JSON.Encoding.none
+@Json(
+	encoding = Json.Encoding.none
 )
 class None(
 	val value1: String

@@ -1,10 +1,10 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
-import com.github.fluidsonic.fluid.json.*
-import com.github.fluidsonic.fluid.json.annotationprocessor.ProcessingResult.Codec.*
-import com.github.fluidsonic.fluid.meta.*
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import io.fluidsonic.json.*
+import io.fluidsonic.json.annotationprocessor.ProcessingResult.Codec.*
+import io.fluidsonic.meta.*
 import java.io.*
 import kotlin.reflect.*
 
@@ -27,14 +27,14 @@ internal class CodecGenerator(
 		val decodableProperty = codec.decodingStrategy?.properties?.singleOrNull()
 		val encodableProperty = codec.encodingStrategy?.properties?.singleOrNull()
 
-		val decoderType = JSONDecoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
-		val encoderType = JSONEncoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
+		val decoderType = JsonDecoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
+		val encoderType = JsonEncoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
 
 		FileSpec.builder(codec.name.packageName.kotlin, typeName)
 			.indent("\t")
 			.apply {
 				if (decodableProperty != null) {
-					addImport("com.github.fluidsonic.fluid.json",
+					addImport("io.fluidsonic.json",
 						"readBooleanOrNull",
 						"readByteOrNull",
 						"readCharOrNull",
@@ -49,7 +49,7 @@ internal class CodecGenerator(
 					)
 				}
 				if (encodableProperty != null) {
-					addImport("com.github.fluidsonic.fluid.json",
+					addImport("io.fluidsonic.json",
 						"writeValueOrNull"
 					)
 					encodableProperty.importPackageName?.let { addImport(it.kotlin, encodableProperty.name.kotlin) }
@@ -59,9 +59,9 @@ internal class CodecGenerator(
 				.applyIf(!codec.isPublic) { addModifiers(KModifier.INTERNAL) }
 				.superclass(
 					when {
-						decodableProperty == null -> AbstractJSONEncoderCodec::class
-						encodableProperty == null -> AbstractJSONDecoderCodec::class
-						else -> AbstractJSONCodec::class
+						decodableProperty == null -> AbstractJsonEncoderCodec::class
+						encodableProperty == null -> AbstractJsonDecoderCodec::class
+						else -> AbstractJsonCodec::class
 					}.asTypeName().parameterizedBy(codec.valueType, codec.contextType.forKotlinPoet())
 				)
 				.apply {
@@ -132,7 +132,7 @@ internal class CodecGenerator(
 			.indent("\t")
 			.apply {
 				if (codec.decodingStrategy != null) {
-					addImport("com.github.fluidsonic.fluid.json",
+					addImport("io.fluidsonic.json",
 						"missingPropertyError",
 						"readBooleanOrNull",
 						"readByteOrNull",
@@ -151,11 +151,11 @@ internal class CodecGenerator(
 					val usesReflection = codec.decodingStrategy.properties.any { it.defaultValue == DecodableProperty.DefaultValue.defaultArgument }
 					if (usesReflection) {
 						addImport("kotlin.reflect", "KClass")
-						addImport("com.github.fluidsonic.fluid.json", "jvmErasure")
+						addImport("io.fluidsonic.json", "jvmErasure")
 					}
 				}
 				if (codec.encodingStrategy != null) {
-					addImport("com.github.fluidsonic.fluid.json",
+					addImport("io.fluidsonic.json",
 						"writeIntoMap",
 						"writeBooleanOrNull",
 						"writeByteOrNull",
@@ -187,9 +187,9 @@ internal class CodecGenerator(
 				.applyIf(!codec.isPublic) { addModifiers(KModifier.INTERNAL) }
 				.superclass(
 					when {
-						codec.decodingStrategy == null -> AbstractJSONEncoderCodec::class
-						codec.encodingStrategy == null -> AbstractJSONDecoderCodec::class
-						else -> AbstractJSONCodec::class
+						codec.decodingStrategy == null -> AbstractJsonEncoderCodec::class
+						codec.encodingStrategy == null -> AbstractJsonDecoderCodec::class
+						else -> AbstractJsonCodec::class
 					}.asTypeName().parameterizedBy(codec.valueType, codec.contextType.forKotlinPoet())
 				)
 				.apply {
@@ -223,7 +223,7 @@ internal class CodecGenerator(
 		strategy: DecodingStrategy,
 		valueType: TypeName
 	): TypeSpec.Builder {
-		val decoderType = JSONDecoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
+		val decoderType = JsonDecoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
 		val properties = strategy.properties.sortedBy { it.serializedName }
 		val rawValueType = (valueType as? ParameterizedTypeName)?.rawType ?: valueType
 
@@ -361,7 +361,7 @@ internal class CodecGenerator(
 		strategy: DecodingStrategy,
 		valueType: TypeName
 	): TypeSpec.Builder {
-		val decoderType = JSONDecoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
+		val decoderType = JsonDecoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
 		val properties = strategy.properties.sortedBy { it.serializedName }
 
 		return addFunction(FunSpec.builder("decode")
@@ -475,7 +475,7 @@ internal class CodecGenerator(
 		strategy: EncodingStrategy,
 		valueType: TypeName
 	): TypeSpec.Builder {
-		val encoderType = JSONEncoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
+		val encoderType = JsonEncoder::class.asTypeName().parameterizedBy(codec.contextType.forKotlinPoet())
 
 		val customPropertyMethod = strategy.customPropertyMethods.sortedBy { it.second.kotlin }
 		val properties = strategy.properties.sortedBy { it.serializedName }
@@ -554,6 +554,6 @@ internal class CodecGenerator(
 
 	companion object {
 
-		private val codingType = JSONCodingType::class.asTypeName()
+		private val codingType = JsonCodingType::class.asTypeName()
 	}
 }

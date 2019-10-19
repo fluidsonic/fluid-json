@@ -1,7 +1,7 @@
 package codecProvider
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON.CodecProvider
-interface StandardContextCodecProvider : JSONCodecProvider<JSONCodingContext>
+@Json.CodecProvider
+interface StandardContextCodecProvider : JsonCodecProvider<JsonCodingContext>

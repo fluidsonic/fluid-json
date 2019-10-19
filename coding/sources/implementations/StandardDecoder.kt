@@ -1,17 +1,17 @@
-package com.github.fluidsonic.fluid.json
+package io.fluidsonic.json
 
 
-internal class StandardDecoder<out Context : JSONCodingContext>(
+internal class StandardDecoder<out Context : JsonCodingContext>(
 	override val context: Context,
-	private val codecProvider: JSONCodecProvider<Context>,
-	source: JSONReader
-) : JSONDecoder<Context>, JSONReader by source {
+	private val codecProvider: JsonCodecProvider<Context>,
+	source: JsonReader
+) : JsonDecoder<Context>, JsonReader by source {
 
 	override fun readValue() =
-		super<JSONDecoder>.readValue()
+		super<JsonDecoder>.readValue()
 
 
-	override fun <Value : Any> readValueOfType(valueType: JSONCodingType<Value>) =
+	override fun <Value : Any> readValueOfType(valueType: JsonCodingType<Value>) =
 		codecProvider.decoderCodecForType(valueType)
 			?.run {
 				try {
@@ -19,13 +19,13 @@ internal class StandardDecoder<out Context : JSONCodingContext>(
 						decode(valueType = valueType)
 					}
 				}
-				catch (e: JSONException) {
+				catch (e: JsonException) {
 					// TODO remove .java once KT-28418 is fixed
-					e.addSuppressed(JSONException.Parsing("… when decoding value of type $valueType using ${this::class.java.name}"))
+					e.addSuppressed(JsonException.Parsing("… when decoding value of type $valueType using ${this::class.java.name}"))
 					throw e
 				}
 			}
-			?: throw JSONException.Parsing(
+			?: throw JsonException.Parsing(
 				message = "No decoder codec registered for $valueType",
 				offset = offset,
 				path = path

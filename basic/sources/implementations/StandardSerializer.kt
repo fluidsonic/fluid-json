@@ -1,14 +1,14 @@
-package com.github.fluidsonic.fluid.json
+package io.fluidsonic.json
 
 
-internal object StandardSerializer : JSONSerializer {
+internal object StandardSerializer : JsonSerializer {
 
-	override fun serializeValue(value: Any?, destination: JSONWriter, withTermination: Boolean) {
+	override fun serializeValue(value: Any?, destination: JsonWriter, withTermination: Boolean) {
 		destination.withTermination(withTermination) { serializeValueUnterminated(value, destination) }
 	}
 
 
-	private fun serializeValueUnterminated(value: Any?, destination: JSONWriter) {
+	private fun serializeValueUnterminated(value: Any?, destination: JsonWriter) {
 		var currentIterator: Iterator<*>? = null
 		var currentValue: Any? = value
 		var isInMap = false
@@ -17,7 +17,7 @@ internal object StandardSerializer : JSONSerializer {
 		var isInMapElementValue = false
 
 		fun serializationError(message: String): Nothing =
-			throw JSONException.Serialization(message = message, path = destination.path)
+			throw JsonException.Serialization(message = message, path = destination.path)
 
 
 		loop@ do {

@@ -1,14 +1,14 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import tests.coding.Kaiju.*
 
 
-internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
+internal object KaijuCodec : AbstractJsonCodec<Kaiju, TestCoderContext>(
 	additionalProviders = listOf(StatusCodec)
 ) {
 
-	override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<Kaiju>): Kaiju {
+	override fun JsonDecoder<TestCoderContext>.decode(valueType: JsonCodingType<Kaiju>): Kaiju {
 		var breachDate: YearMonthDay? = null
 		var category: Int? = null
 		var height: Double? = null
@@ -42,7 +42,7 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 	}
 
 
-	override fun JSONEncoder<TestCoderContext>.encode(value: Kaiju) {
+	override fun JsonEncoder<TestCoderContext>.encode(value: Kaiju) {
 		writeIntoMap {
 			writeMapElement(Keys.breachDate, value = value.breachDate)
 			writeMapElement(Keys.category, int = value.category)
@@ -67,9 +67,9 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 	}
 
 
-	object StatusCodec : AbstractJSONCodec<Status, TestCoderContext>() {
+	object StatusCodec : AbstractJsonCodec<Status, TestCoderContext>() {
 
-		override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<Status>): Status {
+		override fun JsonDecoder<TestCoderContext>.decode(valueType: JsonCodingType<Status>): Status {
 			val id = readString()
 			return when (id) {
 				"deceased" -> Status.deceased
@@ -78,7 +78,7 @@ internal object KaijuCodec : AbstractJSONCodec<Kaiju, TestCoderContext>(
 		}
 
 
-		override fun JSONEncoder<TestCoderContext>.encode(value: Status) {
+		override fun JsonEncoder<TestCoderContext>.encode(value: Status) {
 			writeString(when (value) {
 				Status.deceased -> "deceased"
 			})

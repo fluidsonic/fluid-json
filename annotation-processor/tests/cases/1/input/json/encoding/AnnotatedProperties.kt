@@ -1,11 +1,11 @@
 package json.encoding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import java.io.Serializable
 
 
-@JSON(
-	encoding = JSON.Encoding.annotatedProperties
+@Json(
+	encoding = Json.Encoding.annotatedProperties
 )
 class AnnotatedProperties(
 	val value1: String
@@ -13,7 +13,7 @@ class AnnotatedProperties(
 
 	val value2 = ""
 
-	@JSON.Property
+	@Json.Property
 	val value3 = ""
 
 	private val value4 = ""
@@ -21,7 +21,7 @@ class AnnotatedProperties(
 	val value5
 		get() = ""
 
-	@JSON.Property
+	@Json.Property
 	val value6
 		get() = ""
 
@@ -32,6 +32,6 @@ class AnnotatedProperties(
 val AnnotatedProperties.value8
 	get() = ""
 
-@JSON.Property
+@Json.Property
 val AnnotatedProperties.value9
 	get() = ""

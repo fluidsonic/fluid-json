@@ -1,6 +1,6 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
 
@@ -36,8 +36,8 @@ internal object StandardCodingSerializerRejectTest {
 
 
 	private fun failToSerialize(value: Any?) {
-		val serializer = StandardCodingSerializer(JSONCodingContext.empty) { destination, context ->
-			JSONEncoder.builder(context)
+		val serializer = StandardCodingSerializer(JsonCodingContext.empty) { destination, context ->
+			JsonEncoder.builder(context)
 				.codecs()
 				.destination(destination)
 				.build()
@@ -45,9 +45,9 @@ internal object StandardCodingSerializerRejectTest {
 
 		try {
 			serializer.serializeValue(value)
-			throw AssertionError("should fail with a JSONException")
+			throw AssertionError("should fail with a JsonException")
 		}
-		catch (e: JSONException) {
+		catch (e: JsonException) {
 			// good
 		}
 	}

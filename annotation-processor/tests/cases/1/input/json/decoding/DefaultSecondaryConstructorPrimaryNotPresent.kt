@@ -1,9 +1,9 @@
 package json.decoding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 class DefaultSecondaryConstructorPrimaryNotPresent {
 
 	var value = ""

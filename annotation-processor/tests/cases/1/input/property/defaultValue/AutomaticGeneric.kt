@@ -1,9 +1,9 @@
 package property.defaultValue
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 class AutomaticGeneric<T : AutomaticGeneric.SomeInterface>(
 	val value1: T,
 	val value2: T = error(""),

@@ -1,6 +1,6 @@
 package tests.basic
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.io.*
 
@@ -80,12 +80,12 @@ internal object StandardWriterRejectTest {
 	}
 
 
-	private inline fun writerShouldFail(block: JSONWriter.() -> Unit) {
+	private inline fun writerShouldFail(block: JsonWriter.() -> Unit) {
 		try {
 			StandardWriter(StringWriter()).block()
-			throw AssertionError("should fail with a JSONException")
+			throw AssertionError("should fail with a JsonException")
 		}
-		catch (e: JSONException) {
+		catch (e: JsonException) {
 			// good
 		}
 	}

@@ -1,9 +1,9 @@
 package json.codecVisibility
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	codecVisibility = JSON.CodecVisibility.publicRequired
+@Json(
+	codecVisibility = Json.CodecVisibility.publicRequired
 )
 class Public(val value: String)

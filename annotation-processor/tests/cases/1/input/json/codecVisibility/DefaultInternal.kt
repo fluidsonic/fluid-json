@@ -1,7 +1,7 @@
 package json.codecVisibility
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 class DefaultInternal(val value: String)

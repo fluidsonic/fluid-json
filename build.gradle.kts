@@ -1,21 +1,15 @@
-import com.github.fluidsonic.fluid.library.*
-import org.gradle.api.tasks.testing.logging.*
+import io.fluidsonic.gradle.*
 
 plugins {
-	id("com.github.fluidsonic.fluid-library") version "0.9.25"
+	id("io.fluidsonic.gradle") version "1.0.1"
 	jacoco
 }
 
-fluidJvmLibrary {
-	name = "fluid-json"
-	version = "0.9.25"
-}
+fluidJvmLibrary(name = "json", version = "1.0.0")
 
 
 subprojects {
 	apply<JacocoPlugin>()
-	apply<JUnitTestSuitePlugin>()
-	apply<TestingBasePlugin>()
 
 	jacoco {
 		toolVersion = "0.8.3"
@@ -23,20 +17,6 @@ subprojects {
 
 	tasks {
 		val check by this
-
-		withType<Test> {
-			useJUnitPlatform {
-				includeEngines("junit-jupiter")
-			}
-
-			testLogging {
-				events(TestLogEvent.FAILED, TestLogEvent.SKIPPED)
-
-				exceptionFormat = TestExceptionFormat.FULL
-				showExceptions = true
-				testLogging.showStandardStreams = true
-			}
-		}
 
 		withType<JacocoReport> {
 			reports {
@@ -51,9 +31,5 @@ subprojects {
 	dependencies {
 		testImplementation(kotlin("reflect"))
 		testImplementation("ch.tutteli.atrium:atrium-cc-en_GB-robstoll:0.8.0")
-		testImplementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
-
-		testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.5.2")
-		testRuntimeOnly("org.junit.platform:junit-platform-runner:1.5.2")
 	}
 }

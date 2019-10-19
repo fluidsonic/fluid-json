@@ -1,15 +1,15 @@
 package customProperties
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 class SamePackage(val value: String) {
 
-	@JSON.CustomProperties
-	internal fun JSONEncoder<JSONCodingContext>.writeCustomProperties1() = Unit
+	@Json.CustomProperties
+	internal fun JsonEncoder<JsonCodingContext>.writeCustomProperties1() = Unit
 }
 
 
-@JSON.CustomProperties
-internal fun JSONEncoder<JSONCodingContext>.writeCustomProperties2(value: SamePackage) = Unit
+@Json.CustomProperties
+internal fun JsonEncoder<JsonCodingContext>.writeCustomProperties2(value: SamePackage) = Unit

@@ -1,13 +1,13 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import java.io.*
 
 
 fun main() {
 	// You can also avoid the higher-order functions for stream serializing and write token by token
 	val output = StringWriter()
-	JSONWriter.build(output).use { writer ->
+	JsonWriter.build(output).use { writer ->
 		writer.apply {
 			writeMapStart()
 			writeMapKey("data")

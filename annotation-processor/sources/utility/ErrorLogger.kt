@@ -1,4 +1,4 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
 
 internal interface ErrorLogger {

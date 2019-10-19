@@ -1,15 +1,15 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
 import examples.EncodingExample.Event
 import examples.EncodingExample.EventCodec
+import io.fluidsonic.json.*
 import java.time.*
 
 
 fun main() {
 	// Using a codec for encoding specific Kotlin types simplifies JSON serialization a lot
 
-	val serializer = JSONCodingSerializer.builder()
+	val serializer = JsonCodingSerializer.builder()
 		.encodingWith(EventCodec)
 		.build()
 
@@ -45,9 +45,9 @@ private object EncodingExample {
 	}
 
 
-	object EventCodec : AbstractJSONEncoderCodec<Event, JSONCodingContext>() {
+	object EventCodec : AbstractJsonEncoderCodec<Event, JsonCodingContext>() {
 
-		override fun JSONEncoder<JSONCodingContext>.encode(value: Event) {
+		override fun JsonEncoder<JsonCodingContext>.encode(value: Event) {
 			writeIntoMap {
 				writeMapElement("id", int = value.id)
 				writeMapElement("date", value = value.date, skipIfNull = true)

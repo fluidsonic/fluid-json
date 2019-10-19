@@ -1,10 +1,10 @@
 package json.decoding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	decoding = JSON.Decoding.annotatedConstructor
+@Json(
+	decoding = Json.Decoding.annotatedConstructor
 )
 class AnnotatedConstructor(
 	val value: String
@@ -12,6 +12,6 @@ class AnnotatedConstructor(
 
 	constructor(value: Int) : this(value.toString())
 
-	@JSON.Constructor
+	@Json.Constructor
 	constructor(value: Long) : this(value.toString())
 }

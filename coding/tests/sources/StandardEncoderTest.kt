@@ -2,7 +2,7 @@ package tests.coding
 
 import ch.tutteli.atrium.api.cc.en_GB.*
 import ch.tutteli.atrium.verbs.*
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.io.*
 
@@ -41,12 +41,12 @@ internal object StandardEncoderTest {
 		val expectedOutput = """{"jaegers":[{"height":76.2,"launchDate":"2019-11-02","mark":5,"name":"Striker Eureka","origin":"Australia","status":"destroyed","weight":1850.0}],"kaijus":[{"breachDate":"2025-01-12","category":5,"height":181.7,"name":"Slattern","origin":"Anteverse","status":"deceased","weight":6750.0}]}"""
 
 		val output = encode(
-			codecProvider = JSONCodecProvider(
+			codecProvider = JsonCodecProvider(
 				JaegerCodec,
 				KaijuCodec,
 				YearMonthDayCodec,
 				UniverseCodec,
-				JSONCodecProvider.basic
+				JsonCodecProvider.basic
 			)
 		) {
 			writeValue(input)
@@ -63,7 +63,7 @@ internal object StandardEncoderTest {
 				writeValue(object {})
 				throw AssertionError("an exception was expected")
 			}
-			catch (e: JSONException) {
+			catch (e: JsonException) {
 				// good
 			}
 		}
@@ -75,28 +75,28 @@ internal object StandardEncoderTest {
 		val context = TestCoderContext()
 
 		encode(
-			codecProvider = JSONCodecProvider(ContextCheckingTestCodec(context)),
+			codecProvider = JsonCodecProvider(ContextCheckingTestCodec(context)),
 			context = context
 		) { writeValue("test") }
 
 		encode(
-			codecProvider = JSONCodecProvider(ContextCheckingTestEncoderCodec(context)),
+			codecProvider = JsonCodecProvider(ContextCheckingTestEncoderCodec(context)),
 			context = context
 		) { writeValue("test") }
 	}
 
 
 	private inline fun encode(
-		codecProvider: JSONCodecProvider<TestCoderContext> = JSONCodecProvider(),
+		codecProvider: JsonCodecProvider<TestCoderContext> = JsonCodecProvider(),
 		context: TestCoderContext = TestCoderContext(),
-		block: JSONEncoder<TestCoderContext>.() -> Unit
+		block: JsonEncoder<TestCoderContext>.() -> Unit
 	): String {
 		val writer = StringWriter()
 
 		StandardEncoder(
 			codecProvider = codecProvider,
 			context = context,
-			destination = JSONWriter.build(writer)
+			destination = JsonWriter.build(writer)
 		)
 			.use(withTermination = false) {
 				it.block()

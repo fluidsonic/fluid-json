@@ -1,14 +1,14 @@
 package property.serializedName
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 class Default(
-	@JSON.Property
+	@Json.Property
 	val value1: String
 ) {
 
-	@JSON.Property
+	@Json.Property
 	val value2 = ""
 }

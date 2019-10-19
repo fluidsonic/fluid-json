@@ -1,10 +1,10 @@
 package json.decoding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
-class DefaultSecondaryConstructorPrimaryExcluded @JSON.Excluded constructor(
+@Json
+class DefaultSecondaryConstructorPrimaryExcluded @Json.Excluded constructor(
 	val value: String
 ) {
 

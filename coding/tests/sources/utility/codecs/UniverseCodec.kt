@@ -1,11 +1,11 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-internal object UniverseCodec : AbstractJSONCodec<Universe, TestCoderContext>() {
+internal object UniverseCodec : AbstractJsonCodec<Universe, TestCoderContext>() {
 
-	override fun JSONDecoder<TestCoderContext>.decode(valueType: JSONCodingType<Universe>): Universe {
+	override fun JsonDecoder<TestCoderContext>.decode(valueType: JsonCodingType<Universe>): Universe {
 		var jaegers: List<Jaeger>? = null
 		var kaijus: List<Kaiju>? = null
 
@@ -24,7 +24,7 @@ internal object UniverseCodec : AbstractJSONCodec<Universe, TestCoderContext>() 
 	}
 
 
-	override fun JSONEncoder<TestCoderContext>.encode(value: Universe) {
+	override fun JsonEncoder<TestCoderContext>.encode(value: Universe) {
 		writeIntoMap {
 			writeMapElement(Keys.jaegers, value = value.jaegers)
 			writeMapElement(Keys.kaijus, value = value.kaijus)

@@ -1,18 +1,18 @@
-package com.github.fluidsonic.fluid.json.dynamic
+package io.fluidsonic.json.dynamic
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
 internal interface CodingImplementationsJava {
 
-	fun extendedCodecProviders(): List<JSONCodecProvider<JSONCodingContext>> =
+	fun extendedCodecProviders(): List<JsonCodecProvider<JsonCodingContext>> =
 		emptyList()
 }
 
 
 internal val codingImplementationsJava: CodingImplementationsJava by lazy {
 	try {
-		return@lazy Class.forName("com.github.fluidsonic.fluid.json.dynamic.CodingImplementationsJava8").getDeclaredConstructor().newInstance()
+		return@lazy Class.forName("io.fluidsonic.json.dynamic.CodingImplementationsJava8").getDeclaredConstructor().newInstance()
 			as CodingImplementationsJava
 	}
 	catch (e: Exception) {

@@ -1,4 +1,4 @@
-package com.github.fluidsonic.fluid.json
+package io.fluidsonic.json
 
 import java.io.*
 import kotlin.contracts.*
@@ -67,14 +67,14 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 		if (tryPreloadCharacters(1) > 0)
 			buffer[bufferStartIndex].toInt()
 		else
-			JSONCharacter.end
+			JsonCharacter.end
 
 
 	fun readCharacter(): Int {
 		val character = if (tryPreloadCharacters(1) > 0)
 			buffer[bufferStartIndex].toInt()
 		else
-			JSONCharacter.end
+			JsonCharacter.end
 
 		bufferStartIndex += 1
 
@@ -117,7 +117,7 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 			val character = buffer[bufferStartIndex].toInt()
 			bufferStartIndex += 1
 		}
-		while (JSONCharacter.isWhitespace(character))
+		while (JsonCharacter.isWhitespace(character))
 
 		this.bufferStartIndex = bufferStartIndex - 1
 	}

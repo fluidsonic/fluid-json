@@ -1,8 +1,8 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
 import examples.CodingExample.Event
 import examples.CodingExample.EventCodec
+import io.fluidsonic.json.*
 import java.time.*
 
 
@@ -18,13 +18,13 @@ fun main() {
 		Event(id = 6, title = "Six", type = Event.Type.GOOD_NIGHT_OF_SLEEP)
 	)
 
-	val serializer = JSONCodingSerializer.builder()
+	val serializer = JsonCodingSerializer.builder()
 		.encodingWith(EventCodec)
 		.build()
 
 	val json = serializer.serializeValue(original)
 
-	val parser = JSONCodingParser.builder()
+	val parser = JsonCodingParser.builder()
 		.decodingWith(EventCodec)
 		.build()
 
@@ -56,9 +56,9 @@ private object CodingExample {
 	}
 
 
-	object EventCodec : AbstractJSONCodec<Event, JSONCodingContext>() {
+	object EventCodec : AbstractJsonCodec<Event, JsonCodingContext>() {
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Event>): Event {
+		override fun JsonDecoder<JsonCodingContext>.decode(valueType: JsonCodingType<Event>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null
@@ -83,7 +83,7 @@ private object CodingExample {
 		}
 
 
-		override fun JSONEncoder<JSONCodingContext>.encode(value: Event) {
+		override fun JsonEncoder<JsonCodingContext>.encode(value: Event) {
 			writeIntoMap {
 				writeMapElement("id", int = value.id)
 				writeMapElement("date", value = value.date, skipIfNull = true)

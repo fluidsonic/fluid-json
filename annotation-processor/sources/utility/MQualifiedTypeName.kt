@@ -1,7 +1,7 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
-import com.github.fluidsonic.fluid.meta.*
 import com.squareup.kotlinpoet.*
+import io.fluidsonic.meta.*
 
 
 internal fun MQualifiedTypeName.forKotlinPoet(nullable: Boolean = false) =

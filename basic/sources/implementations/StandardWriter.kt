@@ -1,10 +1,10 @@
-package com.github.fluidsonic.fluid.json
+package io.fluidsonic.json
 
 import java.io.*
 
 
 internal class StandardWriter(private val destination: Writer)
-	: JSONWriter, Closeable, Flushable by destination {
+	: JsonWriter, Closeable, Flushable by destination {
 
 	private var isClosed = false
 	private var state = State()
@@ -23,7 +23,7 @@ internal class StandardWriter(private val destination: Writer)
 	}
 
 
-	override fun beginValueIsolation(): JSONDepth {
+	override fun beginValueIsolation(): JsonDepth {
 		ensureNotClosed()
 
 		valueIsolationCheck(state.tokenLocation != TokenLocation.afterRootValue) { "the root value has already been written" }
@@ -36,7 +36,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	override val depth
-		get() = JSONDepth(stateStack.size - 1)
+		get() = JsonDepth(stateStack.size - 1)
 
 
 	private fun didWriteValue() {
@@ -58,7 +58,7 @@ internal class StandardWriter(private val destination: Writer)
 	}
 
 
-	override fun endValueIsolation(depth: JSONDepth) {
+	override fun endValueIsolation(depth: JsonDepth) {
 		ensureNotClosed()
 
 		valueIsolationCheck(depth <= this.depth) { "lists or maps have been ended prematurely" }
@@ -76,7 +76,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	private fun ensureNotClosed() {
-		serializationCheck(!isClosed) { "Cannot operate on a closed JSONWriter" }
+		serializationCheck(!isClosed) { "Cannot operate on a closed JsonWriter" }
 	}
 
 
@@ -91,17 +91,17 @@ internal class StandardWriter(private val destination: Writer)
 	}
 
 
-	override val path: JSONPath
+	override val path: JsonPath
 		get() {
-			if (isClosed) return JSONPath.root
+			if (isClosed) return JsonPath.root
 
 			return when (state.tokenLocation) {
 				TokenLocation.afterRootValue,
 				TokenLocation.beforeRootValue ->
-					JSONPath.root
+					JsonPath.root
 
 				else ->
-					JSONPath(elements = stateStack.mapNotNull { it.toPathElement() })
+					JsonPath(elements = stateStack.mapNotNull { it.toPathElement() })
 			}
 		}
 
@@ -136,7 +136,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	private fun serializationError(message: String): Nothing =
-		throw JSONException.Serialization(message = message, path = path)
+		throw JsonException.Serialization(message = message, path = path)
 
 
 	override fun terminate() {
@@ -145,7 +145,7 @@ internal class StandardWriter(private val destination: Writer)
 
 		withErrorChecking {
 			if (state.tokenLocation != TokenLocation.afterRootValue)
-				serializationError("JSONWriter was terminated without writing a complete value")
+				serializationError("JsonWriter was terminated without writing a complete value")
 		}
 	}
 
@@ -160,7 +160,7 @@ internal class StandardWriter(private val destination: Writer)
 
 
 	private fun valueIsolationError(message: String): Nothing {
-		throw JSONException.Serialization(
+		throw JsonException.Serialization(
 			message = "Value isolation failed: $message",
 			path = path
 		)
@@ -174,7 +174,7 @@ internal class StandardWriter(private val destination: Writer)
 
 		when (state.tokenLocation) {
 			TokenLocation.afterListElement ->
-				destination.write(JSONCharacter.Symbol.comma)
+				destination.write(JsonCharacter.Symbol.comma)
 
 			TokenLocation.afterListStart ->
 				Unit
@@ -182,11 +182,11 @@ internal class StandardWriter(private val destination: Writer)
 			TokenLocation.afterMapElement -> {
 				serializationCheck(isString) { "Expected a string as map key" }
 
-				destination.write(JSONCharacter.Symbol.comma)
+				destination.write(JsonCharacter.Symbol.comma)
 			}
 
 			TokenLocation.afterMapKey ->
-				destination.write(JSONCharacter.Symbol.colon)
+				destination.write(JsonCharacter.Symbol.colon)
 
 			TokenLocation.afterMapStart ->
 				serializationCheck(isString) { "Expected a string as map key" }
@@ -259,7 +259,7 @@ internal class StandardWriter(private val destination: Writer)
 					serializationError("Cannot write end of list when not in a list")
 			}
 
-			destination.write(JSONCharacter.Symbol.rightSquareBracket)
+			destination.write(JsonCharacter.Symbol.rightSquareBracket)
 
 			popState()
 			didWriteValue()
@@ -271,7 +271,7 @@ internal class StandardWriter(private val destination: Writer)
 		withErrorChecking {
 			willWriteValue(isString = false)
 
-			destination.write(JSONCharacter.Symbol.leftSquareBracket)
+			destination.write(JsonCharacter.Symbol.leftSquareBracket)
 
 			pushState(tokenLocation = TokenLocation.afterListStart)
 
@@ -296,7 +296,7 @@ internal class StandardWriter(private val destination: Writer)
 					serializationError("Cannot write end of map when not in a map")
 			}
 
-			destination.write(JSONCharacter.Symbol.rightCurlyBracket)
+			destination.write(JsonCharacter.Symbol.rightCurlyBracket)
 
 			popState()
 			didWriteValue()
@@ -308,7 +308,7 @@ internal class StandardWriter(private val destination: Writer)
 		withErrorChecking {
 			willWriteValue(isString = false)
 
-			destination.write(JSONCharacter.Symbol.leftCurlyBracket)
+			destination.write(JsonCharacter.Symbol.leftCurlyBracket)
 
 			pushState(tokenLocation = TokenLocation.afterMapStart)
 		}
@@ -339,54 +339,54 @@ internal class StandardWriter(private val destination: Writer)
 			}
 
 			// TODO optimize
-			destination.write(JSONCharacter.Symbol.quotationMark)
+			destination.write(JsonCharacter.Symbol.quotationMark)
 
 			for (character in value) {
 				when (character) {
 					'"', '\\' -> {
-						destination.write(JSONCharacter.Symbol.reverseSolidus)
+						destination.write(JsonCharacter.Symbol.reverseSolidus)
 						destination.write(character.toInt())
 					}
 
 					'\b' -> {
-						destination.write(JSONCharacter.Symbol.reverseSolidus)
-						destination.write(JSONCharacter.Letter.b)
+						destination.write(JsonCharacter.Symbol.reverseSolidus)
+						destination.write(JsonCharacter.Letter.b)
 					}
 
 					'\u000C' -> {
-						destination.write(JSONCharacter.Symbol.reverseSolidus)
-						destination.write(JSONCharacter.Letter.f)
+						destination.write(JsonCharacter.Symbol.reverseSolidus)
+						destination.write(JsonCharacter.Letter.f)
 					}
 
 					'\n' -> {
-						destination.write(JSONCharacter.Symbol.reverseSolidus)
-						destination.write(JSONCharacter.Letter.n)
+						destination.write(JsonCharacter.Symbol.reverseSolidus)
+						destination.write(JsonCharacter.Letter.n)
 					}
 
 					'\r' -> {
-						destination.write(JSONCharacter.Symbol.reverseSolidus)
-						destination.write(JSONCharacter.Letter.r)
+						destination.write(JsonCharacter.Symbol.reverseSolidus)
+						destination.write(JsonCharacter.Letter.r)
 					}
 
 					'\t' -> {
-						destination.write(JSONCharacter.Symbol.reverseSolidus)
-						destination.write(JSONCharacter.Letter.t)
+						destination.write(JsonCharacter.Symbol.reverseSolidus)
+						destination.write(JsonCharacter.Letter.t)
 					}
 
 					'\u0000', '\u0001', '\u0002', '\u0003', '\u0004', '\u0005', '\u0006', '\u0007',
 					'\u000B', '\u000E', '\u000F', '\u0010', '\u0011', '\u0012', '\u0013', '\u0014',
 					'\u0015', '\u0016', '\u0017', '\u0018', '\u0019', '\u001A', '\u001B', '\u001C',
 					'\u001D', '\u001E', '\u001F' -> {
-						destination.write(JSONCharacter.Symbol.reverseSolidus)
-						destination.write(JSONCharacter.Letter.u)
-						destination.write(JSONCharacter.Digit.zero)
-						destination.write(JSONCharacter.Digit.zero)
+						destination.write(JsonCharacter.Symbol.reverseSolidus)
+						destination.write(JsonCharacter.Letter.u)
+						destination.write(JsonCharacter.Digit.zero)
+						destination.write(JsonCharacter.Digit.zero)
 
 						if (character.toInt() >= 0x10) {
-							destination.write(JSONCharacter.Digit.one)
+							destination.write(JsonCharacter.Digit.one)
 						}
 						else {
-							destination.write(JSONCharacter.Digit.zero)
+							destination.write(JsonCharacter.Digit.zero)
 						}
 
 						destination.write(hexCharacters[character.toInt() and 0xF].toInt())
@@ -397,7 +397,7 @@ internal class StandardWriter(private val destination: Writer)
 				}
 			}
 
-			destination.write(JSONCharacter.Symbol.quotationMark)
+			destination.write(JsonCharacter.Symbol.quotationMark)
 		}
 	}
 
@@ -440,9 +440,9 @@ internal class StandardWriter(private val destination: Writer)
 		}
 
 
-		fun toPathElement(): JSONPath.Element? {
-			if (currentValueListIndex >= 0) return JSONPath.Element.ListIndex(currentValueListIndex)
-			currentValueMapKey?.let { return JSONPath.Element.MapKey(it) }
+		fun toPathElement(): JsonPath.Element? {
+			if (currentValueListIndex >= 0) return JsonPath.Element.ListIndex(currentValueListIndex)
+			currentValueMapKey?.let { return JsonPath.Element.MapKey(it) }
 
 			return null
 		}

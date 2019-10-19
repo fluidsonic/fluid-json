@@ -2,7 +2,7 @@ package tests.coding
 
 import ch.tutteli.atrium.api.cc.en_GB.*
 import ch.tutteli.atrium.verbs.*
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.time.*
 
@@ -11,30 +11,30 @@ import java.time.*
 internal object ExtendedCodecsTest {
 
 	private val cases = listOf(
-		TestCase("DayOfWeek", DayOfWeekJSONCodec, dayOfWeekData),
-		TestCase("Duration", DurationJSONCodec, durationData),
-		TestCase("Instant", InstantJSONCodec, instantData),
-		TestCase("LocalDate", LocalDateJSONCodec, localDateData),
-		TestCase("LocalDateTime", LocalDateTimeJSONCodec, localDateTimeData),
-		TestCase("LocalTime", LocalTimeJSONCodec, localTimeData),
-		TestCase("Month", MonthJSONCodec, monthData),
-		TestCase("MonthDay", MonthDayJSONCodec, monthDayData),
-		TestCase("OffsetDateTime", OffsetDateTimeJSONCodec, offsetDateTimeData),
-		TestCase("OffsetTime", OffsetTimeJSONCodec, offsetTimeData),
-		TestCase("Period", PeriodJSONCodec, periodData),
-		TestCase("Year", YearJSONCodec, yearData),
-		TestCase("YearMonth", YearMonthJSONCodec, yearMonthData),
-		TestCase("ZonedDateTime", ZonedDateTimeJSONCodec, zonedDateTimeData),
-		TestCase("ZoneId", ZoneIdJSONCodec, zoneIdData),
-		TestCase("ZoneOffset", ZoneOffsetJSONCodec, zoneOffsetData)
+		TestCase("DayOfWeek", DayOfWeekJsonCodec, dayOfWeekData),
+		TestCase("Duration", DurationJsonCodec, durationData),
+		TestCase("Instant", InstantJsonCodec, instantData),
+		TestCase("LocalDate", LocalDateJsonCodec, localDateData),
+		TestCase("LocalDateTime", LocalDateTimeJsonCodec, localDateTimeData),
+		TestCase("LocalTime", LocalTimeJsonCodec, localTimeData),
+		TestCase("Month", MonthJsonCodec, monthData),
+		TestCase("MonthDay", MonthDayJsonCodec, monthDayData),
+		TestCase("OffsetDateTime", OffsetDateTimeJsonCodec, offsetDateTimeData),
+		TestCase("OffsetTime", OffsetTimeJsonCodec, offsetTimeData),
+		TestCase("Period", PeriodJsonCodec, periodData),
+		TestCase("Year", YearJsonCodec, yearData),
+		TestCase("YearMonth", YearMonthJsonCodec, yearMonthData),
+		TestCase("ZonedDateTime", ZonedDateTimeJsonCodec, zonedDateTimeData),
+		TestCase("ZoneId", ZoneIdJsonCodec, zoneIdData),
+		TestCase("ZoneOffset", ZoneOffsetJsonCodec, zoneOffsetData)
 	)
 
 
 	private fun buildTests(case: TestCase<*>) = listOfNotNull(
-		(case.codec as? JSONDecoderCodec<Any, JSONCodingContext>)?.let { decoderCodec ->
+		(case.codec as? JsonDecoderCodec<Any, JsonCodingContext>)?.let { decoderCodec ->
 			DynamicTest.dynamicTest("is decodable") {
 				try {
-					case.data.testDecoding { decoderCodec.parse(it, type = case.type as JSONCodingType<Any>) }
+					case.data.testDecoding { decoderCodec.parse(it, type = case.type as JsonCodingType<Any>) }
 				}
 				catch (e: Throwable) {
 					throw AssertionError("${decoderCodec::class.simpleName} (for ${case.type}): ${e.message}").apply {
@@ -44,7 +44,7 @@ internal object ExtendedCodecsTest {
 			}
 		},
 
-		(case.codec as? JSONEncoderCodec<Any, JSONCodingContext>)?.let { encoderCodec ->
+		(case.codec as? JsonEncoderCodec<Any, JsonCodingContext>)?.let { encoderCodec ->
 			DynamicTest.dynamicTest("is encodable") {
 				try {
 					case.data.testEncoding { encoderCodec.serialize(it) }
@@ -71,7 +71,7 @@ internal object ExtendedCodecsTest {
 
 	@TestFactory
 	fun testDefaultCodecs(): List<DynamicTest> {
-		val provider = JSONCodecProvider(DefaultJSONCodecs.extended)
+		val provider = JsonCodecProvider(DefaultJsonCodecs.extended)
 
 		return listOf(
 			DayOfWeek::class,
@@ -101,8 +101,8 @@ internal object ExtendedCodecsTest {
 
 	private class TestCase<Value : Any> private constructor(
 		val name: String,
-		val codec: JSONCodecProvider<JSONCodingContext>,
-		val type: JSONCodingType<Value>,
+		val codec: JsonCodecProvider<JsonCodingContext>,
+		val type: JsonCodingType<Value>,
 		val data: TestData<Value>
 	) {
 
@@ -110,7 +110,7 @@ internal object ExtendedCodecsTest {
 
 			inline operator fun <reified Value : Any> invoke(
 				name: String,
-				codec: JSONCodecProvider<JSONCodingContext>,
+				codec: JsonCodecProvider<JsonCodingContext>,
 				data: TestData<Value>
 			) =
 				TestCase(name = name, codec = codec, type = jsonCodingType(), data = data)

@@ -2,19 +2,10 @@ package tests.basic
 
 import ch.tutteli.atrium.api.cc.en_GB.*
 import ch.tutteli.atrium.verbs.*
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.io.*
-import kotlin.collections.associate
-import kotlin.collections.emptyList
-import kotlin.collections.emptyMap
-import kotlin.collections.listOf
-import kotlin.collections.mapOf
-import kotlin.collections.mutableListOf
-import kotlin.collections.mutableMapOf
-import kotlin.collections.plusAssign
 import kotlin.collections.set
-import kotlin.collections.toList
 
 
 internal class StandardReaderAcceptTest {
@@ -438,7 +429,7 @@ internal class StandardReaderAcceptTest {
 	fun testReadListEnd() {
 		reader("[]").apply {
 			readListStart()
-			assert(nextToken).toBe(JSONToken.listEnd)
+			assert(nextToken).toBe(JsonToken.listEnd)
 			readListEnd()
 			assert(nextToken).toBe(null)
 		}
@@ -469,9 +460,9 @@ internal class StandardReaderAcceptTest {
 	@Test
 	fun testReadListStart() {
 		reader("[]").apply {
-			assert(nextToken).toBe(JSONToken.listStart)
+			assert(nextToken).toBe(JsonToken.listStart)
 			readListStart()
-			assert(nextToken).toBe(JSONToken.listEnd)
+			assert(nextToken).toBe(JsonToken.listEnd)
 		}
 	}
 
@@ -582,7 +573,7 @@ internal class StandardReaderAcceptTest {
 	fun testReadMapEnd() {
 		reader("{}").apply {
 			readMapStart()
-			assert(nextToken).toBe(JSONToken.mapEnd)
+			assert(nextToken).toBe(JsonToken.mapEnd)
 			readMapEnd()
 			assert(nextToken).toBe(null)
 		}
@@ -685,9 +676,9 @@ internal class StandardReaderAcceptTest {
 	@Test
 	fun testReadMapStart() {
 		reader("{}").apply {
-			assert(nextToken).toBe(JSONToken.mapStart)
+			assert(nextToken).toBe(JsonToken.mapStart)
 			readMapStart()
-			assert(nextToken).toBe(JSONToken.mapEnd)
+			assert(nextToken).toBe(JsonToken.mapEnd)
 		}
 	}
 
@@ -880,23 +871,23 @@ internal class StandardReaderAcceptTest {
 	fun testSkipValue() {
 		reader("[null, 0, [], {}, \"\", {\"\":true}]").apply {
 			readFromList {
-				assert(nextToken).toBe(JSONToken.nullValue)
+				assert(nextToken).toBe(JsonToken.nullValue)
 				skipValue()
-				assert(nextToken).toBe(JSONToken.numberValue)
+				assert(nextToken).toBe(JsonToken.numberValue)
 				skipValue()
-				assert(nextToken).toBe(JSONToken.listStart)
+				assert(nextToken).toBe(JsonToken.listStart)
 				skipValue()
-				assert(nextToken).toBe(JSONToken.mapStart)
+				assert(nextToken).toBe(JsonToken.mapStart)
 				skipValue()
-				assert(nextToken).toBe(JSONToken.stringValue)
+				assert(nextToken).toBe(JsonToken.stringValue)
 				skipValue()
-				assert(nextToken).toBe(JSONToken.mapStart)
+				assert(nextToken).toBe(JsonToken.mapStart)
 				readFromMap {
-					assert(nextToken).toBe(JSONToken.mapKey)
+					assert(nextToken).toBe(JsonToken.mapKey)
 					skipValue()
-					assert(nextToken).toBe(JSONToken.booleanValue)
+					assert(nextToken).toBe(JsonToken.booleanValue)
 					skipValue()
-					assert(nextToken).toBe(JSONToken.mapEnd)
+					assert(nextToken).toBe(JsonToken.mapEnd)
 				}
 			}
 		}
@@ -917,51 +908,51 @@ internal class StandardReaderAcceptTest {
 
 		@Test
 		fun testMatchesFullToken() {
-			assert(reader("null").nextToken).toBe(JSONToken.nullValue)
-			assert(reader("true").nextToken).toBe(JSONToken.booleanValue)
-			assert(reader("false").nextToken).toBe(JSONToken.booleanValue)
-			assert(reader("0").nextToken).toBe(JSONToken.numberValue)
-			assert(reader("1").nextToken).toBe(JSONToken.numberValue)
-			assert(reader("-1.0").nextToken).toBe(JSONToken.numberValue)
-			assert(reader("\"\"").nextToken).toBe(JSONToken.stringValue)
+			assert(reader("null").nextToken).toBe(JsonToken.nullValue)
+			assert(reader("true").nextToken).toBe(JsonToken.booleanValue)
+			assert(reader("false").nextToken).toBe(JsonToken.booleanValue)
+			assert(reader("0").nextToken).toBe(JsonToken.numberValue)
+			assert(reader("1").nextToken).toBe(JsonToken.numberValue)
+			assert(reader("-1.0").nextToken).toBe(JsonToken.numberValue)
+			assert(reader("\"\"").nextToken).toBe(JsonToken.stringValue)
 			reader("[]").apply {
-				assert(nextToken).toBe(JSONToken.listStart)
+				assert(nextToken).toBe(JsonToken.listStart)
 				readListStart()
-				assert(nextToken).toBe(JSONToken.listEnd)
+				assert(nextToken).toBe(JsonToken.listEnd)
 			}
 			reader("{}").apply {
-				assert(nextToken).toBe(JSONToken.mapStart)
+				assert(nextToken).toBe(JsonToken.mapStart)
 				readMapStart()
-				assert(nextToken).toBe(JSONToken.mapEnd)
+				assert(nextToken).toBe(JsonToken.mapEnd)
 			}
 		}
 
 
 		@Test
 		fun testConsumesMinimalInput() {
-			assert(reader("n").nextToken).toBe(JSONToken.nullValue)
-			assert(reader("t").nextToken).toBe(JSONToken.booleanValue)
-			assert(reader("f").nextToken).toBe(JSONToken.booleanValue)
-			assert(reader("0").nextToken).toBe(JSONToken.numberValue)
-			assert(reader("1").nextToken).toBe(JSONToken.numberValue)
-			assert(reader("-").nextToken).toBe(JSONToken.numberValue)
-			assert(reader("[").nextToken).toBe(JSONToken.listStart)
-			assert(reader("\"").nextToken).toBe(JSONToken.stringValue)
-			assert(reader("{").nextToken).toBe(JSONToken.mapStart)
+			assert(reader("n").nextToken).toBe(JsonToken.nullValue)
+			assert(reader("t").nextToken).toBe(JsonToken.booleanValue)
+			assert(reader("f").nextToken).toBe(JsonToken.booleanValue)
+			assert(reader("0").nextToken).toBe(JsonToken.numberValue)
+			assert(reader("1").nextToken).toBe(JsonToken.numberValue)
+			assert(reader("-").nextToken).toBe(JsonToken.numberValue)
+			assert(reader("[").nextToken).toBe(JsonToken.listStart)
+			assert(reader("\"").nextToken).toBe(JsonToken.stringValue)
+			assert(reader("{").nextToken).toBe(JsonToken.mapStart)
 		}
 
 
 		@Test
 		fun testIdempotency() {
-			reader("n").apply { nextToken;assert(nextToken).toBe(JSONToken.nullValue) }
-			reader("t").apply { nextToken;assert(nextToken).toBe(JSONToken.booleanValue) }
-			reader("f").apply { nextToken;assert(nextToken).toBe(JSONToken.booleanValue) }
-			reader("0").apply { nextToken;assert(nextToken).toBe(JSONToken.numberValue) }
-			reader("1").apply { nextToken;assert(nextToken).toBe(JSONToken.numberValue) }
-			reader("-").apply { nextToken;assert(nextToken).toBe(JSONToken.numberValue) }
-			reader("[").apply { nextToken;assert(nextToken).toBe(JSONToken.listStart) }
-			reader("\"").apply { nextToken;assert(nextToken).toBe(JSONToken.stringValue) }
-			reader("{").apply { nextToken;assert(nextToken).toBe(JSONToken.mapStart) }
+			reader("n").apply { nextToken;assert(nextToken).toBe(JsonToken.nullValue) }
+			reader("t").apply { nextToken;assert(nextToken).toBe(JsonToken.booleanValue) }
+			reader("f").apply { nextToken;assert(nextToken).toBe(JsonToken.booleanValue) }
+			reader("0").apply { nextToken;assert(nextToken).toBe(JsonToken.numberValue) }
+			reader("1").apply { nextToken;assert(nextToken).toBe(JsonToken.numberValue) }
+			reader("-").apply { nextToken;assert(nextToken).toBe(JsonToken.numberValue) }
+			reader("[").apply { nextToken;assert(nextToken).toBe(JsonToken.listStart) }
+			reader("\"").apply { nextToken;assert(nextToken).toBe(JsonToken.stringValue) }
+			reader("{").apply { nextToken;assert(nextToken).toBe(JsonToken.mapStart) }
 		}
 
 
@@ -972,11 +963,11 @@ internal class StandardReaderAcceptTest {
 	}
 
 
-	private fun reader(reader: Reader): JSONReader =
+	private fun reader(reader: Reader): JsonReader =
 		StandardReader(TextInput(reader))
 
 
-	private fun reader(string: String): JSONReader =
+	private fun reader(string: String): JsonReader =
 		StandardReader(TextInput(StringReader(string)))
 
 

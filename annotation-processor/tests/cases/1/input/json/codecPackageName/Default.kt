@@ -1,7 +1,7 @@
 package json.codecPackageName
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 class Default(val value: String)

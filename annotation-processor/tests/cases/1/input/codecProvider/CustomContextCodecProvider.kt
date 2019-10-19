@@ -1,23 +1,23 @@
 package codecProvider
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON.CodecProvider(
+@Json.CodecProvider(
 	externalTypes = [
-		JSON.ExternalType(KT30280::class, JSON(codecPackageName = "externalType"), targetName = "codecProvider.KT30280"),
-		JSON.ExternalType(KT30280Primitive::class, JSON(codecPackageName = "externalType"), targetName = "codecProvider.KT30280Primitive"),
-		JSON.ExternalType(Pair::class, JSON(
+		Json.ExternalType(KT30280::class, Json(codecPackageName = "externalType"), targetName = "codecProvider.KT30280"),
+		Json.ExternalType(KT30280Primitive::class, Json(codecPackageName = "externalType"), targetName = "codecProvider.KT30280Primitive"),
+		Json.ExternalType(Pair::class, Json(
 			codecName = "ExternalPairCodec",
 			codecPackageName = "externalType",
-			codecVisibility = JSON.CodecVisibility.publicRequired
+			codecVisibility = Json.CodecVisibility.publicRequired
 		))
 	]
 )
-interface CustomContextCodecProvider : JSONCodecProvider<CustomCodingContext>
+interface CustomContextCodecProvider : JsonCodecProvider<CustomCodingContext>
 
 
-interface CustomCodingContext : JSONCodingContext
+interface CustomCodingContext : JsonCodingContext
 
 inline class KT30280(val value: String)
 inline class KT30280Primitive(val value: Double)

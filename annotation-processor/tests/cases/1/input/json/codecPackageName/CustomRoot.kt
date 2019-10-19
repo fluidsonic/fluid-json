@@ -1,9 +1,9 @@
 package json.codecPackageName
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
+@Json(
 	codecPackageName = ""
 )
 class CustomRoot(val value: String)

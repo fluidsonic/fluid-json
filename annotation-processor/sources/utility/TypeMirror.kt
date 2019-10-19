@@ -1,4 +1,4 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
 import javax.lang.model.element.*
 import javax.lang.model.type.*

@@ -1,10 +1,10 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
 fun main() {
-	val parser = JSONCodingParser.default
+	val parser = JsonCodingParser.default
 
 	// You can parse a List of values in a typesafe way
 	val value1 = parser.parseValueOfType<List<*>>("[1, true, []]")

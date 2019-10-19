@@ -1,10 +1,10 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
-import com.github.fluidsonic.fluid.json.*
-import com.github.fluidsonic.fluid.json.annotationprocessor.ProcessingResult.Codec.*
-import com.github.fluidsonic.fluid.meta.*
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import io.fluidsonic.json.*
+import io.fluidsonic.json.annotationprocessor.ProcessingResult.Codec.*
+import io.fluidsonic.meta.*
 import javax.lang.model.element.*
 
 
@@ -83,16 +83,16 @@ internal class ProcessingPhase(
 
 
 		if (type.constructor != null && type.constructorExclusions.containsKey(type.constructor.meta.localId))
-			fail("cannot use @JSON.Constructor and @JSON.Excluded on the same constructor")
+			fail("cannot use @Json.Constructor and @Json.Excluded on the same constructor")
 
 		val strategy = when (type.meta) {
 			is MClass -> when (type.annotation.decoding) {
-				JSON.Decoding.annotatedConstructor ->
+				Json.Decoding.annotatedConstructor ->
 					type.constructor?.meta
 						?.let(::decodingStrategyForConstructor)
-						?: fail("type uses JSON.Decoding.annotatedConstructor but none was annotated with @JSON.Constructor")
+						?: fail("type uses Json.Decoding.annotatedConstructor but none was annotated with @Json.Constructor")
 
-				JSON.Decoding.automatic ->
+				Json.Decoding.automatic ->
 					(type.constructor?.meta
 						?: type.meta.primaryConstructor?.takeIf(MConstructor::isSuitableForAutomaticSelection)
 						?: type.meta.constructors
@@ -100,46 +100,46 @@ internal class ProcessingPhase(
 							.ifEmpty { null }
 							?.let { candidates ->
 								candidates.singleOrNull()
-									?: fail("multiple secondary constructors could be used for decoding so one must be marked explicitly with @JSON.Constructor")
+									?: fail("multiple secondary constructors could be used for decoding so one must be marked explicitly with @Json.Constructor")
 							}
 						)
 						?.let(::decodingStrategyForConstructor)
-						?: fail("cannot find a constructor suitable for decoding so one should be provided or decoding be disabled using JSON.Decoding.none")
+						?: fail("cannot find a constructor suitable for decoding so one should be provided or decoding be disabled using Json.Decoding.none")
 
-				JSON.Decoding.none ->
+				Json.Decoding.none ->
 					null
 
-				JSON.Decoding.primaryConstructor ->
+				Json.Decoding.primaryConstructor ->
 					type.meta.primaryConstructor
 						?.let(::decodingStrategyForConstructor)
-						?: fail("type uses @JSON.Decoding.primaryConstructor but has no primary constructor")
+						?: fail("type uses @Json.Decoding.primaryConstructor but has no primary constructor")
 			}
 
 			is MObject -> when (type.annotation.decoding) {
-				JSON.Decoding.annotatedConstructor ->
-					fail("cannot use JSON.Decoding.annotatedConstructor with objects")
+				Json.Decoding.annotatedConstructor ->
+					fail("cannot use Json.Decoding.annotatedConstructor with objects")
 
-				JSON.Decoding.automatic,
-				JSON.Decoding.none ->
+				Json.Decoding.automatic,
+				Json.Decoding.none ->
 					null
 
-				JSON.Decoding.primaryConstructor ->
-					fail("cannot use JSON.Decoding.primaryConstructor with objects")
+				Json.Decoding.primaryConstructor ->
+					fail("cannot use Json.Decoding.primaryConstructor with objects")
 			}
 
-			else -> fail("cannot use @JSON on this type")
+			else -> fail("cannot use @Json on this type")
 		}
 
 		if (strategy != null) {
 			if (type.constructor != null && type.constructor.meta.localId != strategy.meta.localId)
-				fail("type uses JSON.Decoding.${type.annotation.decoding.name} but annotated a different constructor with @JSON.Constructor")
+				fail("type uses Json.Decoding.${type.annotation.decoding.name} but annotated a different constructor with @Json.Constructor")
 
 			if (type.constructorExclusions.containsKey(strategy.meta.localId))
-				fail("type uses JSON.Decoding.${type.annotation.decoding.name} but selected constructor is annotated with @JSON.Excluded")
+				fail("type uses Json.Decoding.${type.annotation.decoding.name} but selected constructor is annotated with @Json.Excluded")
 		}
 		else {
 			if (type.constructor != null)
-				fail("type is supposed to not be decodable but a constructor was annotated with @JSON.Constructor")
+				fail("type is supposed to not be decodable but a constructor was annotated with @Json.Constructor")
 		}
 
 		return strategy
@@ -195,34 +195,34 @@ internal class ProcessingPhase(
 
 
 		val metaProperties = (type.meta as? MPropertyContainer)?.properties
-			?: fail("cannot use @JSON on this type")
+			?: fail("cannot use @Json on this type")
 
 		val strategy = when (type.annotation.encoding) {
-			JSON.Encoding.allProperties ->
+			Json.Encoding.allProperties ->
 				encodingStrategyForProperties(
 					metaProperties.filter { it.isSuitableForAutomaticSelection(defaultOnly = false) } +
 						type.properties.values.map { it.meta }
 				)
 
-			JSON.Encoding.annotatedProperties ->
+			Json.Encoding.annotatedProperties ->
 				encodingStrategyForProperties(
 					metaProperties.filter { type.decodableProperties.containsKey(it.name) } +
 						type.properties.values.map { it.meta }
 				)
 
-			JSON.Encoding.automatic ->
+			Json.Encoding.automatic ->
 				encodingStrategyForProperties(
 					metaProperties.filter { it.isSuitableForAutomaticSelection(defaultOnly = true) } +
 						type.properties.values.map { it.meta }
 				)
 
-			JSON.Encoding.none ->
+			Json.Encoding.none ->
 				null
 		}
 
 		if (strategy == null) {
 			if (type.customProperties.isNotEmpty())
-				fail("type is supposed to not be encodable but methods have been annotated with @JSON.CustomProperties")
+				fail("type is supposed to not be encodable but methods have been annotated with @Json.CustomProperties")
 
 			val encodableOnlyProperties = when (decodingStrategy) {
 				null -> type.properties.values
@@ -230,7 +230,7 @@ internal class ProcessingPhase(
 					.filterNot { property -> decodingStrategy.properties.any { it.name == property.meta.name } }
 			}
 			if (encodableOnlyProperties.isNotEmpty())
-				fail("type is supposed to not be encodable but properties have been annotated with @JSON.Property")
+				fail("type is supposed to not be encodable but properties have been annotated with @Json.Property")
 		}
 
 		return strategy
@@ -258,7 +258,7 @@ internal class ProcessingPhase(
 	@JvmName("processCodecProviders")
 	private fun process(results: Collection<CollectionResult.CodecProvider>) {
 		for (result in results) {
-			withFailureHandling(annotation = "JSON.CodecProvider", element = result.element) {
+			withFailureHandling(annotation = "Json.CodecProvider", element = result.element) {
 				process(result)
 			}
 		}
@@ -268,7 +268,7 @@ internal class ProcessingPhase(
 	@JvmName("processTypes")
 	private fun process(results: Collection<CollectionResult.Type>) {
 		for (result in results) {
-			withFailureHandling(annotation = "JSON", element = result.element) {
+			withFailureHandling(annotation = "Json", element = result.element) {
 				process(result)
 			}
 		}
@@ -295,7 +295,7 @@ internal class ProcessingPhase(
 
 	private fun process(type: CollectionResult.Type) {
 		val annotation = type.annotation
-		val meta = type.meta as? MNamedType ?: fail("cannot use @JSON on this type")
+		val meta = type.meta as? MNamedType ?: fail("cannot use @Json on this type")
 
 		val decodingStrategy = decodingStrategyForType(type)
 		val encodingStrategy = encodingStrategyForType(type, decodingStrategy = decodingStrategy)
@@ -303,27 +303,27 @@ internal class ProcessingPhase(
 			fail("type is neither decodable nor encodable")
 
 		val isSingleValue = when (annotation.representation) {
-			JSON.Representation.automatic -> meta is MInlineable && meta.isInline
-			JSON.Representation.structured -> false
-			JSON.Representation.singleValue -> true
+			Json.Representation.automatic -> meta is MInlineable && meta.isInline
+			Json.Representation.structured -> false
+			Json.Representation.singleValue -> true
 		}
 		if (isSingleValue) {
 			if (decodingStrategy != null && decodingStrategy.properties.size != 1)
-				fail("class with JSON.Representation.singleValue must have exactly one decodable property")
+				fail("class with Json.Representation.singleValue must have exactly one decodable property")
 
 			if (encodingStrategy != null) {
 				if (encodingStrategy.properties.size != 1)
-					fail("class with JSON.Representation.singleValue must have exactly one encodable property")
+					fail("class with Json.Representation.singleValue must have exactly one encodable property")
 
 				if (encodingStrategy.customPropertyMethods.isNotEmpty())
-					fail("class with JSON.Representation.singleValue cannot use @JSON.CustomProperties")
+					fail("class with Json.Representation.singleValue cannot use @Json.CustomProperties")
 			}
 		}
 
 		val isPublic = when (annotation.codecVisibility) {
-			JSON.CodecVisibility.automatic -> type.actualVisibility == MVisibility.PUBLIC
-			JSON.CodecVisibility.internal -> false
-			JSON.CodecVisibility.publicRequired -> true
+			Json.CodecVisibility.automatic -> type.actualVisibility == MVisibility.PUBLIC
+			Json.CodecVisibility.internal -> false
+			Json.CodecVisibility.publicRequired -> true
 		}
 
 		codecs += ProcessingResult.Codec(
@@ -339,7 +339,7 @@ internal class ProcessingPhase(
 					?: meta.name.packageName.kotlin,
 				typeName = annotation.codecName
 					.takeIf { it != "<automatic>" }
-					?: meta.name.withoutPackage().kotlin.replace('.', '_') + "JSONCodec"
+					?: meta.name.withoutPackage().kotlin.replace('.', '_') + "JsonCodec"
 			),
 			valueType = meta.name.forKotlinPoet().let {
 				if (meta is MGeneralizable && meta.typeParameters.isNotEmpty()) it.parameterizedBy(*Array(meta.typeParameters.size) { STAR })

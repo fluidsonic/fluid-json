@@ -1,9 +1,9 @@
 package json.classes
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 data class GenericClass<A, B : GenericClass.Bound, C : Any>(
 	val a: A,
 	val b: B,

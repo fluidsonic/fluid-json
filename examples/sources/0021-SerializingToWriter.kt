@@ -1,11 +1,11 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import java.io.*
 
 
 fun main() {
-	val serializer = JSONSerializer.default
+	val serializer = JsonSerializer.default
 
 	// You can also let the serializer write to a Writer
 	val writer = StringWriter()

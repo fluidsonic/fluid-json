@@ -1,11 +1,11 @@
 package json.decoding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
 // check that finding the right constructor using reflection uses the correct order of parameters
-@JSON(
-	encoding = JSON.Encoding.none
+@Json(
+	encoding = Json.Encoding.none
 )
 class ConstructorParameterOrder(
 	val b: String = "b",

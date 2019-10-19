@@ -1,17 +1,17 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-internal fun <Value : Any> JSONDecoderCodec<Value, JSONCodingContext>.parse(source: String, type: JSONCodingType<Value>) =
-	JSONCodingParser.builder()
+internal fun <Value : Any> JsonDecoderCodec<Value, JsonCodingContext>.parse(source: String, type: JsonCodingType<Value>) =
+	JsonCodingParser.builder()
 		.decodingWith(this, base = null)
 		.build()
 		.parseValueOfType(source, type)
 
 
-internal fun <Value : Any> JSONEncoderCodec<Value, JSONCodingContext>.serialize(value: Value) =
-	JSONCodingSerializer.builder()
+internal fun <Value : Any> JsonEncoderCodec<Value, JsonCodingContext>.serialize(value: Value) =
+	JsonCodingSerializer.builder()
 		.encodingWith(this, base = null)
 		.build()
 		.serializeValue(value)

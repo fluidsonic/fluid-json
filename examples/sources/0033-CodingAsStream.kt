@@ -1,16 +1,16 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
 import examples.CodingAsStreamExample.Event
 import examples.CodingAsStreamExample.decode
 import examples.CodingAsStreamExample.encode
+import io.fluidsonic.json.*
 import java.io.*
 import java.time.*
 
 
 fun main() {
-	// Parsing and serialization using codecs is also supported when streaming by using JSONDecoder instead of
-	// JSONReader and JSONEncoder instead of JSONWriter
+	// Parsing and serialization using codecs is also supported when streaming by using JsonDecoder instead of
+	// JsonReader and JsonEncoder instead of JsonWriter
 
 	val input = listOf(
 		Event(id = 1, date = Instant.ofEpochSecond(1000000000), title = "One"),
@@ -33,7 +33,7 @@ fun main() {
 private object CodingAsStreamExample {
 
 	fun decode(json: String) =
-		JSONDecoder.builder()
+		JsonDecoder.builder()
 			.codecs(EventCodec)
 			.source(json)
 			.build()
@@ -41,7 +41,7 @@ private object CodingAsStreamExample {
 				val output = mutableListOf<Event>()
 
 				decoder.readListStart()
-				while (decoder.nextToken != JSONToken.listEnd) {
+				while (decoder.nextToken != JsonToken.listEnd) {
 					output.add(decoder.readValueOfType())
 				}
 				decoder.readListEnd()
@@ -53,7 +53,7 @@ private object CodingAsStreamExample {
 	fun encode(input: List<Event>): String {
 		val writer = StringWriter()
 
-		return JSONEncoder.builder()
+		return JsonEncoder.builder()
 			.codecs(EventCodec)
 			.destination(writer)
 			.build()
@@ -76,9 +76,9 @@ private object CodingAsStreamExample {
 	)
 
 
-	object EventCodec : AbstractJSONCodec<Event, JSONCodingContext>() {
+	object EventCodec : AbstractJsonCodec<Event, JsonCodingContext>() {
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Event>): Event {
+		override fun JsonDecoder<JsonCodingContext>.decode(valueType: JsonCodingType<Event>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null
@@ -100,7 +100,7 @@ private object CodingAsStreamExample {
 		}
 
 
-		override fun JSONEncoder<JSONCodingContext>.encode(value: Event) {
+		override fun JsonEncoder<JsonCodingContext>.encode(value: Event) {
 			writeIntoMap {
 				writeMapElement("id", int = value.id)
 				writeMapElement("date", value = value.date, skipIfNull = true)

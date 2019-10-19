@@ -1,7 +1,7 @@
 package json.classes
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 inline class InlineClass(val value: String)

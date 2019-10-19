@@ -1,6 +1,6 @@
-package com.github.fluidsonic.fluid.json.dynamic
+package io.fluidsonic.json.dynamic
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
 internal open class CodingImplementationsJava7 : CodingImplementationsJava {
@@ -8,12 +8,12 @@ internal open class CodingImplementationsJava7 : CodingImplementationsJava {
 	override fun extendedCodecProviders() =
 		super.extendedCodecProviders() + listOf(
 			// from specific to unspecific
-			CharRangeJSONCodec,
-			IntRangeJSONCodec,
-			LongRangeJSONCodec,
-			ClosedRangeJSONCodec,
-			EnumJSONCodecProvider(
-				transformation = EnumJSONTransformation.ToString(case = EnumJSONTransformation.Case.lowerCamelCase)
+			CharRangeJsonCodec,
+			IntRangeJsonCodec,
+			LongRangeJsonCodec,
+			ClosedRangeJsonCodec,
+			EnumJsonCodecProvider(
+				transformation = EnumJsonTransformation.ToString(case = EnumJsonTransformation.Case.lowerCamelCase)
 			)
 		)
 }

@@ -1,6 +1,6 @@
 package tests.basic
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.io.*
 
@@ -809,16 +809,16 @@ internal object StandardReaderRejectTest {
 	}
 
 
-	private inline fun readerShouldFail(string: String, block: JSONReader.() -> Unit) {
+	private inline fun readerShouldFail(string: String, block: JsonReader.() -> Unit) {
 		try {
 			StandardReader(TextInput(StringReader(string))).block()
-			throw AssertionError("should fail with a JSONException for JSON: $string")
+			throw AssertionError("should fail with a JsonException for JSON: $string")
 		}
-		catch (e: JSONException) {
+		catch (e: JsonException) {
 			// good
 		}
 		catch (e: Throwable) {
-			throw AssertionError("should fail with a JSONException for JSON: $string", e)
+			throw AssertionError("should fail with a JsonException for JSON: $string", e)
 		}
 	}
 }

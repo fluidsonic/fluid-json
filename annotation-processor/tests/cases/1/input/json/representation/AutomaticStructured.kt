@@ -1,9 +1,9 @@
 package json.representation
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	representation = JSON.Representation.automatic
+@Json(
+	representation = Json.Representation.automatic
 )
 class AutomaticStructured(val value: String)

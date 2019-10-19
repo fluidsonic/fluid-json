@@ -1,11 +1,11 @@
 package json.encoding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import java.io.Serializable
 
 
-@JSON(
-	encoding = JSON.Encoding.automatic
+@Json(
+	encoding = Json.Encoding.automatic
 )
 class Automatic(
 	val value1: String
@@ -13,7 +13,7 @@ class Automatic(
 
 	val value2 = ""
 
-	@JSON.Excluded
+	@Json.Excluded
 	val value3 = ""
 
 	private val value4 = ""
@@ -21,7 +21,7 @@ class Automatic(
 	val value5
 		get() = ""
 
-	@JSON.Property
+	@Json.Property
 	val value6
 		get() = ""
 
@@ -32,6 +32,6 @@ class Automatic(
 val Automatic.value8
 	get() = ""
 
-@JSON.Property
+@Json.Property
 val Automatic.value9
 	get() = ""

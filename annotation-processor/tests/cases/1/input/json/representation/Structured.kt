@@ -1,9 +1,9 @@
 package json.representation
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	representation = JSON.Representation.structured
+@Json(
+	representation = Json.Representation.structured
 )
 inline class Structured(val value: String)

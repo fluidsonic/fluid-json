@@ -1,7 +1,7 @@
 package json.representation
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 class DefaultStructured(val value: String)

@@ -1,7 +1,7 @@
 package tests.annotationprocessor
 
-import com.github.fluidsonic.fluid.compiler.*
-import com.github.fluidsonic.fluid.json.annotationprocessor.*
+import io.fluidsonic.compiler.*
+import io.fluidsonic.json.annotationprocessor.*
 import org.jetbrains.kotlin.cli.common.*
 import org.junit.jupiter.api.*
 import java.io.*

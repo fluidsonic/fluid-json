@@ -1,11 +1,11 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import java.io.*
 
 
 fun main() {
-	val parser = JSONParser.default
+	val parser = JsonParser.default
 
 	// You can also let the parser read from a Reader
 	val value = parser.parseValue(StringReader(""" { "hello": "world", "test": 123 } """))

@@ -1,15 +1,15 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
 import examples.DecodingExample.Event
 import examples.DecodingExample.EventCodec
+import io.fluidsonic.json.*
 import java.time.*
 
 
 fun main() {
 	// Using a codec for decoding specific classes simplifies JSON parsing a lot
 
-	val parser = JSONCodingParser.builder()
+	val parser = JsonCodingParser.builder()
 		.decodingWith(EventCodec)
 		.build()
 
@@ -76,9 +76,9 @@ private object DecodingExample {
 	}
 
 
-	object EventCodec : AbstractJSONDecoderCodec<Event, JSONCodingContext>() {
+	object EventCodec : AbstractJsonDecoderCodec<Event, JsonCodingContext>() {
 
-		override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<Event>): Event {
+		override fun JsonDecoder<JsonCodingContext>.decode(valueType: JsonCodingType<Event>): Event {
 			var id: Int? = null
 			var date: Instant? = null
 			var title: String? = null

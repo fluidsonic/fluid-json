@@ -1,13 +1,13 @@
 package examples
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import java.io.*
 
 
 fun main() {
 	// You can write values directly to a stream without having to build the temporary map or list
 	val output = StringWriter()
-	JSONWriter.build(output).use { writer ->
+	JsonWriter.build(output).use { writer ->
 		writer.writeIntoMap {
 			writeMapElement("data") {
 				writeIntoList {

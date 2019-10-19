@@ -1,7 +1,7 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
-import com.github.fluidsonic.fluid.json.*
-import com.github.fluidsonic.fluid.meta.*
+import io.fluidsonic.json.*
+import io.fluidsonic.meta.*
 import javax.annotation.processing.*
 import javax.lang.model.element.*
 import javax.lang.model.type.*
@@ -15,12 +15,12 @@ internal class CollectionPhase(
 ) {
 
 	val annotationClasses = setOf(
-		JSON::class,
-		JSON.CodecProvider::class,
-		JSON.Constructor::class,
-		JSON.CustomProperties::class,
-		JSON.Excluded::class,
-		JSON.Property::class
+		Json::class,
+		Json.CodecProvider::class,
+		Json.Constructor::class,
+		Json.CustomProperties::class,
+		Json.Excluded::class,
+		Json.Property::class
 	)
 
 
@@ -29,12 +29,12 @@ internal class CollectionPhase(
 
 
 	fun collect(roundEnvironment: RoundEnvironment) {
-		collect(JSON::class, roundEnvironment = roundEnvironment, collector = this::collect)
-		collect(JSON.CodecProvider::class, roundEnvironment = roundEnvironment, collector = this::collect)
-		collect(JSON.Constructor::class, roundEnvironment = roundEnvironment, collector = this::collect)
-		collect(JSON.CustomProperties::class, roundEnvironment = roundEnvironment, collector = this::collect)
-		collect(JSON.Excluded::class, roundEnvironment = roundEnvironment, collector = this::collect)
-		collect(JSON.Property::class, roundEnvironment = roundEnvironment, collector = this::collect)
+		collect(Json::class, roundEnvironment = roundEnvironment, collector = this::collect)
+		collect(Json.CodecProvider::class, roundEnvironment = roundEnvironment, collector = this::collect)
+		collect(Json.Constructor::class, roundEnvironment = roundEnvironment, collector = this::collect)
+		collect(Json.CustomProperties::class, roundEnvironment = roundEnvironment, collector = this::collect)
+		collect(Json.Excluded::class, roundEnvironment = roundEnvironment, collector = this::collect)
+		collect(Json.Property::class, roundEnvironment = roundEnvironment, collector = this::collect)
 	}
 
 
@@ -53,12 +53,12 @@ internal class CollectionPhase(
 	}
 
 
-	private fun collect(annotation: JSON, roundEnvironment: RoundEnvironment, element: Element) =
+	private fun collect(annotation: Json, roundEnvironment: RoundEnvironment, element: Element) =
 		collect(annotation = annotation, roundEnvironment = roundEnvironment, element = element, preferredCodecPackageName = null)
 
 
 	@Suppress("UNUSED_PARAMETER")
-	private fun collect(annotation: JSON, roundEnvironment: RoundEnvironment, element: Element, preferredCodecPackageName: MPackageName?) {
+	private fun collect(annotation: Json, roundEnvironment: RoundEnvironment, element: Element, preferredCodecPackageName: MPackageName?) {
 		val meta = Meta.of(element)
 			?: fail("must be a Kotlin type")
 
@@ -78,7 +78,7 @@ internal class CollectionPhase(
 
 		when (val visibility = meta.visibility) {
 			MVisibility.INTERNAL ->
-				if (annotation.codecVisibility == JSON.CodecVisibility.publicRequired)
+				if (annotation.codecVisibility == Json.CodecVisibility.publicRequired)
 					fail("must be public if codec is supposed to be public")
 
 			MVisibility.PUBLIC ->
@@ -97,7 +97,7 @@ internal class CollectionPhase(
 
 			when (val visibility = enclosingType.visibility) {
 				MVisibility.INTERNAL -> {
-					if (annotation.codecVisibility == JSON.CodecVisibility.publicRequired)
+					if (annotation.codecVisibility == Json.CodecVisibility.publicRequired)
 						fail("must only be nested in public types if codec is supposed to be public but '$enclosingElement' is $visibility")
 
 					actualVisibility = visibility
@@ -122,7 +122,7 @@ internal class CollectionPhase(
 	}
 
 
-	private fun collect(annotation: JSON.CodecProvider, roundEnvironment: RoundEnvironment, element: Element) {
+	private fun collect(annotation: Json.CodecProvider, roundEnvironment: RoundEnvironment, element: Element) {
 		val interfaceMeta = Meta.of(element)
 			?: fail("must be a Kotlin type")
 
@@ -149,7 +149,7 @@ internal class CollectionPhase(
 		val supertype = (interfaceMeta.supertypes.singleOrNull() as? MTypeReference.Class)
 			?.takeIf { it.name == TypeNames.codecProviderType }
 			?: fail(
-				"must only extend the interface JSONCodecProvider, extends " + interfaceMeta.supertypes
+				"must only extend the interface JsonCodecProvider, extends " + interfaceMeta.supertypes
 					.filterNot { it.name == TypeNames.anyType }
 					.joinToString { it.name?.toString() ?: "?" }
 					.ifEmpty { "none" }
@@ -167,7 +167,7 @@ internal class CollectionPhase(
 		)
 
 		@Suppress("UNCHECKED_CAST")
-		element.getAnnotationMirror(MQualifiedTypeName.of(JSON.CodecProvider::class))
+		element.getAnnotationMirror(MQualifiedTypeName.of(Json.CodecProvider::class))
 			?.getValue<List<AnnotationMirror>>("externalTypes")
 			?.forEachIndexed { index, externalTypeAnnotationMirror ->
 				val externalTypeAnnotation = annotation.externalTypes[index]
@@ -176,13 +176,13 @@ internal class CollectionPhase(
 					?: error("cannot properly parse external type annotation mirror: $externalTypeAnnotationMirror")
 
 				if (externalType !is ReferenceType && externalTypeAnnotation.targetName.isEmpty())
-					error("JSON.ExternalType can only be used for reference types, not for '$externalType' (if you are using an inline class you have to specify 'targetName' too)")
+					error("Json.ExternalType can only be used for reference types, not for '$externalType' (if you are using an inline class you have to specify 'targetName' too)")
 
 				val externalTypeName = externalTypeAnnotation.targetName.ifEmpty { externalType.toString() }
 				val externalTypeElement = typeResolver.resolveType(externalTypeName)
 					?: error("cannot find external type element for '$externalTypeName'")
 
-				withFailureHandling(annotationClass = JSON.ExternalType::class, element = externalTypeElement) {
+				withFailureHandling(annotationClass = Json.ExternalType::class, element = externalTypeElement) {
 					collect(
 						annotation = externalTypeAnnotation.configuration,
 						roundEnvironment = roundEnvironment,
@@ -195,7 +195,7 @@ internal class CollectionPhase(
 
 
 	@Suppress("UNUSED_PARAMETER")
-	private fun collect(annotation: JSON.Constructor, roundEnvironment: RoundEnvironment, element: Element) {
+	private fun collect(annotation: Json.Constructor, roundEnvironment: RoundEnvironment, element: Element) {
 		if (element !is ExecutableElement)
 			fail("cannot be used on that element")
 
@@ -228,7 +228,7 @@ internal class CollectionPhase(
 
 
 	@Suppress("UNUSED_PARAMETER")
-	private fun collect(annotation: JSON.CustomProperties, roundEnvironment: RoundEnvironment, element: Element) {
+	private fun collect(annotation: Json.CustomProperties, roundEnvironment: RoundEnvironment, element: Element) {
 		if (element !is ExecutableElement)
 			fail("cannot be used on that element")
 
@@ -290,7 +290,7 @@ internal class CollectionPhase(
 
 
 	@Suppress("UNUSED_PARAMETER")
-	private fun collect(annotation: JSON.Excluded, roundEnvironment: RoundEnvironment, element: Element) {
+	private fun collect(annotation: Json.Excluded, roundEnvironment: RoundEnvironment, element: Element) {
 		if (element !is ExecutableElement)
 			fail("cannot be used on that element")
 
@@ -309,8 +309,8 @@ internal class CollectionPhase(
 		val jvmMethodSignature = element.jvmMethodSignature
 
 		if (typeMeta is MConstructable && element.simpleName.contentEquals("<init>")) {
-			if (element.getAnnotation(JSON.Constructor::class.java) != null)
-				fail("cannot be used along @JSON.Constructor on the same constructor")
+			if (element.getAnnotation(Json.Constructor::class.java) != null)
+				fail("cannot be used along @Json.Constructor on the same constructor")
 
 			val meta = typeMeta.constructors
 				.firstOrNull { it.jvmSignature.toString() == jvmMethodSignature }
@@ -324,8 +324,8 @@ internal class CollectionPhase(
 				)
 		}
 		else {
-			if (element.getAnnotation(JSON.Property::class.java) != null)
-				fail("cannot be used along @JSON.Property on the same property")
+			if (element.getAnnotation(Json.Property::class.java) != null)
+				fail("cannot be used along @Json.Property on the same property")
 
 			val meta = typeMeta.properties
 				.firstOrNull { it.jvmSyntheticMethodForAnnotationsSignature?.toString() == jvmMethodSignature }
@@ -347,7 +347,7 @@ internal class CollectionPhase(
 	}
 
 
-	private fun collect(annotation: JSON.Property, roundEnvironment: RoundEnvironment, element: Element) {
+	private fun collect(annotation: Json.Property, roundEnvironment: RoundEnvironment, element: Element) {
 		when (element) {
 			is ExecutableElement -> collect(annotation = annotation, roundEnvironment = roundEnvironment, element = element)
 			is VariableElement -> collect(annotation = annotation, roundEnvironment = roundEnvironment, element = element)
@@ -357,7 +357,7 @@ internal class CollectionPhase(
 
 
 	@Suppress("UNUSED_PARAMETER")
-	private fun collect(annotation: JSON.Property, roundEnvironment: RoundEnvironment, element: ExecutableElement) {
+	private fun collect(annotation: Json.Property, roundEnvironment: RoundEnvironment, element: ExecutableElement) {
 		val enclosingElement = element.enclosingElement
 			?: fail("cannot find enclosing element")
 
@@ -415,7 +415,7 @@ internal class CollectionPhase(
 
 
 	@Suppress("UNUSED_PARAMETER")
-	private fun collect(annotation: JSON.Property, roundEnvironment: RoundEnvironment, element: VariableElement) {
+	private fun collect(annotation: Json.Property, roundEnvironment: RoundEnvironment, element: VariableElement) {
 		val functionElement = element.enclosingElement as? ExecutableElement
 			?: fail("cannot find enclosing function element")
 
@@ -470,19 +470,19 @@ internal class CollectionPhase(
 
 	private fun finishType(type: CollectedType): CollectionResult.Type {
 		val typeName = type.name
-		val typeMeta = type.meta ?: fail("using @JSON.* annotations on members of type $typeName isn't allowed unless the type itself is annotated with @JSON")
+		val typeMeta = type.meta ?: fail("using @Json.* annotations on members of type $typeName isn't allowed unless the type itself is annotated with @Json")
 
 		return CollectionResult.Type(
 			actualVisibility = type.actualVisibility
-				?: fail("using @JSON.* annotations on members of type $typeName isn't allowed unless the type itself is annotated with @JSON"),
+				?: fail("using @Json.* annotations on members of type $typeName isn't allowed unless the type itself is annotated with @Json"),
 
 			annotation = type.annotation
-				?: fail("using @JSON.* annotations on members of type $typeName isn't allowed unless the type itself is annotated with @JSON"),
+				?: fail("using @Json.* annotations on members of type $typeName isn't allowed unless the type itself is annotated with @Json"),
 
 			constructor = type.constructors.ifEmpty { null }?.let { constructors ->
 				constructors.singleOrNull().also { singleConstructor ->
 					singleConstructor ?: fail(
-						"annotating multiple constructors on type $typeName with @JSON.Constructor isn't allowed:\n" +
+						"annotating multiple constructors on type $typeName with @Json.Constructor isn't allowed:\n" +
 							constructors.joinToString(separator = "\n") { it.meta.toString() }
 					)
 				}
@@ -490,13 +490,13 @@ internal class CollectionPhase(
 
 			constructorExclusions = type.constructorExclusions.also { exclusions ->
 				if (exclusions.isNotEmpty() && type.constructors.isNotEmpty())
-					fail("using @JSON.Excluded on constructors of type $typeName isn't allowed if explicitly selecting a constructor with @JSON.Constructor")
+					fail("using @Json.Excluded on constructors of type $typeName isn't allowed if explicitly selecting a constructor with @Json.Constructor")
 			},
 
 			customProperties = type.customProperties
 				.mapValues { (_, customProperties) ->
 					if (customProperties.size != 1) {
-						fail("multiple @JSON.CustomProperties-annotated extension functions on type $typeName cannot have the same name:\n" +
+						fail("multiple @Json.CustomProperties-annotated extension functions on type $typeName cannot have the same name:\n" +
 							customProperties.joinToString(separator = "\n") { element ->
 								when (val extensionPackageName = element.extensionPackageName) {
 									null -> "// in $typeName\n${element.functionMeta}"
@@ -513,7 +513,7 @@ internal class CollectionPhase(
 			decodableProperties = type.decodableProperties,
 
 			element = type.element
-				?: fail("using @JSON.* annotations on members of type $typeName isn't allowed unless the type itself is annotated with @JSON"),
+				?: fail("using @Json.* annotations on members of type $typeName isn't allowed unless the type itself is annotated with @Json"),
 
 			meta = typeMeta,
 
@@ -522,7 +522,7 @@ internal class CollectionPhase(
 			properties = type.properties
 				.mapValues { (_, properties) ->
 					if (properties.size != 1) {
-						fail("multiple @JSON.Property-annotated properties of type $typeName cannot have the same name:\n" +
+						fail("multiple @Json.Property-annotated properties of type $typeName cannot have the same name:\n" +
 							properties.joinToString(separator = "\n") { element ->
 								when (val extensionPackageName = element.extensionPackageName) {
 									null -> "// in $typeName\n${element.meta}"
@@ -540,7 +540,7 @@ internal class CollectionPhase(
 									(it.visibility == MVisibility.PUBLIC || it.visibility == MVisibility.INTERNAL)
 							}
 							if (shadowingProperty != null)
-								fail("@JSON.Property-annotated extension property is shadowed by a direct class member:\n" +
+								fail("@Json.Property-annotated extension property is shadowed by a direct class member:\n" +
 									"// in package ${property.extensionPackageName}\n${property.meta}\n" +
 									"// in $typeName\n$shadowingProperty")
 						}
@@ -571,7 +571,7 @@ internal class CollectionPhase(
 	) {
 
 		var actualVisibility: MVisibility? = null
-		var annotation: JSON? = null
+		var annotation: Json? = null
 		val constructors: MutableCollection<CollectionResult.Constructor> = mutableListOf()
 		val constructorExclusions: MutableMap<MLocalId.Constructor, CollectionResult.ConstructorExclusion> = mutableMapOf()
 		val customProperties: MutableMap<Pair<MFunctionName, Boolean>, MutableCollection<CollectionResult.CustomProperties>> = mutableMapOf()

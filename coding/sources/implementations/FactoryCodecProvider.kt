@@ -1,23 +1,23 @@
-package com.github.fluidsonic.fluid.json
+package io.fluidsonic.json
 
 import java.util.concurrent.*
 import kotlin.reflect.*
 
 
-internal class FactoryCodecProvider<out Value : Any, in Context : JSONCodingContext> internal constructor(
+internal class FactoryCodecProvider<out Value : Any, in Context : JsonCodingContext> internal constructor(
 	private val valueClass: KClass<Value>,
-	private val factory: (actualClass: KClass<out Value>) -> JSONCodecProvider<Context>?
-) : JSONCodecProvider<Context> {
+	private val factory: (actualClass: KClass<out Value>) -> JsonCodecProvider<Context>?
+) : JsonCodecProvider<Context> {
 
 	private val codecsByClass = ConcurrentHashMap<KClass<*>, Codecs<*, Context>>()
 
 
-	override fun <ActualValue : Any> decoderCodecForType(decodableType: JSONCodingType<ActualValue>): JSONDecoderCodec<ActualValue, Context>? =
+	override fun <ActualValue : Any> decoderCodecForType(decodableType: JsonCodingType<ActualValue>): JsonDecoderCodec<ActualValue, Context>? =
 		decodableType.rawClass.takeIfSubclassOf(valueClass)
 			?.let { codecsForClass(it).decoderCodec }
 
 
-	override fun <ActualValue : Any> encoderCodecForClass(encodableClass: KClass<ActualValue>): JSONEncoderCodec<ActualValue, Context>? =
+	override fun <ActualValue : Any> encoderCodecForClass(encodableClass: KClass<ActualValue>): JsonEncoderCodec<ActualValue, Context>? =
 		encodableClass.takeIfSubclassOf(valueClass)
 			?.let { codecsForClass(it).encoderCodec }
 
@@ -36,169 +36,169 @@ internal class FactoryCodecProvider<out Value : Any, in Context : JSONCodingCont
 		} as Codecs<ActualValue, Context>
 
 
-	private data class Codecs<Value : Any, in Context : JSONCodingContext>(
-		val decoderCodec: JSONDecoderCodec<Value, Context>?,
-		val encoderCodec: JSONEncoderCodec<Value, Context>?
+	private data class Codecs<Value : Any, in Context : JsonCodingContext>(
+		val decoderCodec: JsonDecoderCodec<Value, Context>?,
+		val encoderCodec: JsonEncoderCodec<Value, Context>?
 	) {
 
 		companion object {
 
-			private val empty: Codecs<Any, JSONCodingContext> = Codecs(decoderCodec = null, encoderCodec = null)
+			private val empty: Codecs<Any, JsonCodingContext> = Codecs(decoderCodec = null, encoderCodec = null)
 
 
 			@Suppress("UNCHECKED_CAST")
 			fun <Value : Any> empty() =
-				empty as Codecs<Value, JSONCodingContext>
+				empty as Codecs<Value, JsonCodingContext>
 		}
 	}
 }
 
 
-@JvmName("JSONCodecProviderForDecoding")
+@JvmName("JsonCodecProviderForDecoding")
 @Suppress("FunctionName")
-fun JSONCodecProvider.Companion.factory(
-	factory: (valueClass: KClass<out Any>) -> JSONDecoderCodec<Any, JSONCodingContext>?
-): JSONCodecProvider<JSONCodingContext> =
-	JSONCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
+fun JsonCodecProvider.Companion.factory(
+	factory: (valueClass: KClass<out Any>) -> JsonDecoderCodec<Any, JsonCodingContext>?
+): JsonCodecProvider<JsonCodingContext> =
+	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForDecodingWithContext")
+@JvmName("JsonCodecProviderForDecodingWithContext")
 @Suppress("FunctionName")
-fun <Context : JSONCodingContext> JSONCodecProvider.Companion.factory(
-	factory: (valueClass: KClass<out Any>) -> JSONDecoderCodec<Any, Context>?
-): JSONCodecProvider<Context> =
-	JSONCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
+fun <Context : JsonCodingContext> JsonCodecProvider.Companion.factory(
+	factory: (valueClass: KClass<out Any>) -> JsonDecoderCodec<Any, Context>?
+): JsonCodecProvider<Context> =
+	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForEncoding")
+@JvmName("JsonCodecProviderForEncoding")
 @Suppress("FunctionName")
-fun JSONCodecProvider.Companion.factory(
-	factory: (valueClass: KClass<out Any>) -> JSONEncoderCodec<Any, JSONCodingContext>?
-): JSONCodecProvider<JSONCodingContext> =
-	JSONCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
+fun JsonCodecProvider.Companion.factory(
+	factory: (valueClass: KClass<out Any>) -> JsonEncoderCodec<Any, JsonCodingContext>?
+): JsonCodecProvider<JsonCodingContext> =
+	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForEncodingWithContext")
+@JvmName("JsonCodecProviderForEncodingWithContext")
 @Suppress("FunctionName")
-fun <Context : JSONCodingContext> JSONCodecProvider.Companion.factory(
-	factory: (valueClass: KClass<out Any>) -> JSONEncoderCodec<Any, Context>?
-): JSONCodecProvider<Context> =
-	JSONCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
+fun <Context : JsonCodingContext> JsonCodecProvider.Companion.factory(
+	factory: (valueClass: KClass<out Any>) -> JsonEncoderCodec<Any, Context>?
+): JsonCodecProvider<Context> =
+	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForCoding")
+@JvmName("JsonCodecProviderForCoding")
 @Suppress("FunctionName")
-fun JSONCodecProvider.Companion.factory(
-	factory: (valueClass: KClass<out Any>) -> JSONCodec<Any, JSONCodingContext>?
-): JSONCodecProvider<JSONCodingContext> =
-	JSONCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
+fun JsonCodecProvider.Companion.factory(
+	factory: (valueClass: KClass<out Any>) -> JsonCodec<Any, JsonCodingContext>?
+): JsonCodecProvider<JsonCodingContext> =
+	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForCodingWithContext")
+@JvmName("JsonCodecProviderForCodingWithContext")
 @Suppress("FunctionName")
-fun <Context : JSONCodingContext> JSONCodecProvider.Companion.factory(
-	factory: (valueClass: KClass<out Any>) -> JSONCodec<Any, Context>?
-): JSONCodecProvider<Context> =
-	JSONCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
+fun <Context : JsonCodingContext> JsonCodecProvider.Companion.factory(
+	factory: (valueClass: KClass<out Any>) -> JsonCodec<Any, Context>?
+): JsonCodecProvider<Context> =
+	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForDecodingSpecificValue")
+@JvmName("JsonCodecProviderForDecodingSpecificValue")
 @Suppress("FunctionName")
-inline fun <reified Value : Any> JSONCodecProvider.Companion.factoryOf(
-	noinline factory: (valueClass: KClass<out Value>) -> JSONDecoderCodec<Value, JSONCodingContext>?
-): JSONCodecProvider<JSONCodingContext> =
-	JSONCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
+inline fun <reified Value : Any> JsonCodecProvider.Companion.factoryOf(
+	noinline factory: (valueClass: KClass<out Value>) -> JsonDecoderCodec<Value, JsonCodingContext>?
+): JsonCodecProvider<JsonCodingContext> =
+	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForDecodingSpecificValue")
+@JvmName("JsonCodecProviderForDecodingSpecificValue")
 @Suppress("FunctionName")
-fun <Value : Any> JSONCodecProvider.Companion.factoryOf(
+fun <Value : Any> JsonCodecProvider.Companion.factoryOf(
 	valueClass: KClass<out Value>,
-	factory: (valueClass: KClass<out Value>) -> JSONDecoderCodec<Value, JSONCodingContext>?
-): JSONCodecProvider<JSONCodingContext> =
+	factory: (valueClass: KClass<out Value>) -> JsonDecoderCodec<Value, JsonCodingContext>?
+): JsonCodecProvider<JsonCodingContext> =
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)
 
 
-@JvmName("JSONCodecProviderForDecodingSpecificValueWithContext")
+@JvmName("JsonCodecProviderForDecodingSpecificValueWithContext")
 @Suppress("FunctionName")
-inline fun <reified Value : Any, Context : JSONCodingContext> JSONCodecProvider.Companion.factoryOf(
-	noinline factory: (valueClass: KClass<out Value>) -> JSONDecoderCodec<Value, Context>?
-): JSONCodecProvider<Context> =
-	JSONCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
+inline fun <reified Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
+	noinline factory: (valueClass: KClass<out Value>) -> JsonDecoderCodec<Value, Context>?
+): JsonCodecProvider<Context> =
+	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForDecodingSpecificValueWithContext")
+@JvmName("JsonCodecProviderForDecodingSpecificValueWithContext")
 @Suppress("FunctionName")
-fun <Value : Any, Context : JSONCodingContext> JSONCodecProvider.Companion.factoryOf(
+fun <Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
 	valueClass: KClass<out Value>,
-	factory: (valueClass: KClass<out Value>) -> JSONDecoderCodec<Value, Context>?
-): JSONCodecProvider<Context> =
+	factory: (valueClass: KClass<out Value>) -> JsonDecoderCodec<Value, Context>?
+): JsonCodecProvider<Context> =
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)
 
 
-@JvmName("JSONCodecProviderForEncodingSpecificValue")
+@JvmName("JsonCodecProviderForEncodingSpecificValue")
 @Suppress("FunctionName")
-inline fun <reified Value : Any> JSONCodecProvider.Companion.factoryOf(
-	noinline factory: (valueClass: KClass<out Value>) -> JSONEncoderCodec<Value, JSONCodingContext>?
-): JSONCodecProvider<JSONCodingContext> =
-	JSONCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
+inline fun <reified Value : Any> JsonCodecProvider.Companion.factoryOf(
+	noinline factory: (valueClass: KClass<out Value>) -> JsonEncoderCodec<Value, JsonCodingContext>?
+): JsonCodecProvider<JsonCodingContext> =
+	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForEncodingSpecificValue")
+@JvmName("JsonCodecProviderForEncodingSpecificValue")
 @Suppress("FunctionName")
-fun <Value : Any> JSONCodecProvider.Companion.factoryOf(
+fun <Value : Any> JsonCodecProvider.Companion.factoryOf(
 	valueClass: KClass<out Value>,
-	factory: (valueClass: KClass<out Value>) -> JSONEncoderCodec<Value, JSONCodingContext>?
-): JSONCodecProvider<JSONCodingContext> =
+	factory: (valueClass: KClass<out Value>) -> JsonEncoderCodec<Value, JsonCodingContext>?
+): JsonCodecProvider<JsonCodingContext> =
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)
 
 
-@JvmName("JSONCodecProviderForEncodingSpecificValueWithContext")
+@JvmName("JsonCodecProviderForEncodingSpecificValueWithContext")
 @Suppress("FunctionName")
-inline fun <reified Value : Any, Context : JSONCodingContext> JSONCodecProvider.Companion.factoryOf(
-	noinline factory: (valueClass: KClass<out Value>) -> JSONEncoderCodec<Value, Context>?
-): JSONCodecProvider<Context> =
-	JSONCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
+inline fun <reified Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
+	noinline factory: (valueClass: KClass<out Value>) -> JsonEncoderCodec<Value, Context>?
+): JsonCodecProvider<Context> =
+	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForEncodingSpecificValueWithContext")
+@JvmName("JsonCodecProviderForEncodingSpecificValueWithContext")
 @Suppress("FunctionName")
-fun <Value : Any, Context : JSONCodingContext> JSONCodecProvider.Companion.factoryOf(
+fun <Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
 	valueClass: KClass<out Value>,
-	factory: (valueClass: KClass<out Value>) -> JSONEncoderCodec<Value, Context>?
-): JSONCodecProvider<Context> =
+	factory: (valueClass: KClass<out Value>) -> JsonEncoderCodec<Value, Context>?
+): JsonCodecProvider<Context> =
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)
 
 
-@JvmName("JSONCodecProviderForCodingSpecificValue")
+@JvmName("JsonCodecProviderForCodingSpecificValue")
 @Suppress("FunctionName")
-inline fun <reified Value : Any> JSONCodecProvider.Companion.factoryOf(
-	noinline factory: (valueClass: KClass<out Value>) -> JSONCodec<Value, JSONCodingContext>?
-): JSONCodecProvider<JSONCodingContext> =
-	JSONCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
+inline fun <reified Value : Any> JsonCodecProvider.Companion.factoryOf(
+	noinline factory: (valueClass: KClass<out Value>) -> JsonCodec<Value, JsonCodingContext>?
+): JsonCodecProvider<JsonCodingContext> =
+	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForCodingSpecificValue")
+@JvmName("JsonCodecProviderForCodingSpecificValue")
 @Suppress("FunctionName")
-fun <Value : Any> JSONCodecProvider.Companion.factoryOf(
+fun <Value : Any> JsonCodecProvider.Companion.factoryOf(
 	valueClass: KClass<out Value>,
-	factory: (valueClass: KClass<out Value>) -> JSONCodec<Value, JSONCodingContext>?
-): JSONCodecProvider<JSONCodingContext> =
+	factory: (valueClass: KClass<out Value>) -> JsonCodec<Value, JsonCodingContext>?
+): JsonCodecProvider<JsonCodingContext> =
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)
 
 
-@JvmName("JSONCodecProviderForCodingSpecificValueWithContext")
+@JvmName("JsonCodecProviderForCodingSpecificValueWithContext")
 @Suppress("FunctionName")
-inline fun <reified Value : Any, Context : JSONCodingContext> JSONCodecProvider.Companion.factoryOf(
-	noinline factory: (valueClass: KClass<out Value>) -> JSONCodec<Value, Context>?
-): JSONCodecProvider<Context> =
-	JSONCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
+inline fun <reified Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
+	noinline factory: (valueClass: KClass<out Value>) -> JsonCodec<Value, Context>?
+): JsonCodecProvider<Context> =
+	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
-@JvmName("JSONCodecProviderForCodingSpecificValueWithContext")
+@JvmName("JsonCodecProviderForCodingSpecificValueWithContext")
 @Suppress("FunctionName")
-fun <Value : Any, Context : JSONCodingContext> JSONCodecProvider.Companion.factoryOf(
+fun <Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
 	valueClass: KClass<out Value>,
-	factory: (valueClass: KClass<out Value>) -> JSONCodec<Value, Context>?
-): JSONCodecProvider<Context> =
+	factory: (valueClass: KClass<out Value>) -> JsonCodec<Value, Context>?
+): JsonCodecProvider<Context> =
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)

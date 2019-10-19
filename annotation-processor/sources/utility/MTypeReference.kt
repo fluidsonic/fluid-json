@@ -1,8 +1,8 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
-import com.github.fluidsonic.fluid.meta.*
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import io.fluidsonic.meta.*
 
 
 internal fun MTypeReference.Class.forKotlinPoet(typeParameters: List<MTypeParameter>): TypeName {

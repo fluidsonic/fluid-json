@@ -1,17 +1,17 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-internal object YearMonthDayCodec : AbstractJSONCodec<YearMonthDay, JSONCodingContext>() {
+internal object YearMonthDayCodec : AbstractJsonCodec<YearMonthDay, JsonCodingContext>() {
 
-	override fun JSONDecoder<JSONCodingContext>.decode(valueType: JSONCodingType<YearMonthDay>) =
+	override fun JsonDecoder<JsonCodingContext>.decode(valueType: JsonCodingType<YearMonthDay>) =
 		readString().let { raw ->
 			YearMonthDay.parse(raw) ?: invalidValueError("expected date in format YYYY-MM-DD, got '$raw'")
 		}
 
 
-	override fun JSONEncoder<JSONCodingContext>.encode(value: YearMonthDay) {
+	override fun JsonEncoder<JsonCodingContext>.encode(value: YearMonthDay) {
 		writeString(value.toString())
 	}
 }

@@ -1,27 +1,27 @@
-package com.github.fluidsonic.fluid.json
+package io.fluidsonic.json
 
 
-internal object StandardParser : JSONParser {
+internal object StandardParser : JsonParser {
 
-	private fun parse(source: JSONReader, expectedType: ExpectedType, withTermination: Boolean) =
+	private fun parse(source: JsonReader, expectedType: ExpectedType, withTermination: Boolean) =
 		source.withTermination(withTermination) { parseUnterminated(source, expectedType) }
 
 
-	override fun parseValueOrNull(source: JSONReader, withTermination: Boolean) =
+	override fun parseValueOrNull(source: JsonReader, withTermination: Boolean) =
 		parse(source, ExpectedType.any, withTermination = withTermination)
 
 
-	override fun parseList(source: JSONReader, withTermination: Boolean) =
+	override fun parseList(source: JsonReader, withTermination: Boolean) =
 		parse(source, ExpectedType.list, withTermination = withTermination) as List<*>
 
 
 	@Suppress("UNCHECKED_CAST")
-	override fun parseMap(source: JSONReader, withTermination: Boolean) =
+	override fun parseMap(source: JsonReader, withTermination: Boolean) =
 		parse(source, ExpectedType.map, withTermination = withTermination) as Map<String, *>
 
 
 	@Suppress("UNCHECKED_CAST")
-	private fun parseUnterminated(source: JSONReader, expectedType: ExpectedType): Any? {
+	private fun parseUnterminated(source: JsonReader, expectedType: ExpectedType): Any? {
 		var currentList: MutableList<Any?>? = null
 		var currentKey: String? = null
 		var currentMap: MutableMap<Any?, Any?>? = null
@@ -31,15 +31,15 @@ internal object StandardParser : JSONParser {
 		when (expectedType) {
 			ExpectedType.any -> Unit
 
-			ExpectedType.list -> source.nextToken == JSONToken.listStart ||
-				throw JSONException.Schema(
+			ExpectedType.list -> source.nextToken == JsonToken.listStart ||
+				throw JsonException.Schema(
 					message = "Expected a list, got ${source.nextToken}",
 					offset = source.offset,
 					path = source.path
 				)
 
-			ExpectedType.map -> source.nextToken == JSONToken.mapStart ||
-				throw JSONException.Schema(
+			ExpectedType.map -> source.nextToken == JsonToken.mapStart ||
+				throw JsonException.Schema(
 					message = "Expected a map, got ${source.nextToken}",
 					offset = source.offset,
 					path = source.path
@@ -48,10 +48,10 @@ internal object StandardParser : JSONParser {
 
 		loop@ while (true) {
 			val value: Any? = when (source.nextToken) {
-				JSONToken.booleanValue ->
+				JsonToken.booleanValue ->
 					source.readBoolean()
 
-				JSONToken.listEnd -> {
+				JsonToken.listEnd -> {
 					source.readListEnd()
 
 					val list = currentList
@@ -75,7 +75,7 @@ internal object StandardParser : JSONParser {
 					list
 				}
 
-				JSONToken.listStart -> {
+				JsonToken.listStart -> {
 					source.readListStart()
 
 					val list = mutableListOf<Any?>()
@@ -91,10 +91,10 @@ internal object StandardParser : JSONParser {
 					continue@loop
 				}
 
-				JSONToken.nullValue
+				JsonToken.nullValue
 				-> source.readNull()
 
-				JSONToken.mapEnd -> {
+				JsonToken.mapEnd -> {
 					source.readMapEnd()
 
 					val map = currentMap
@@ -123,12 +123,12 @@ internal object StandardParser : JSONParser {
 					map
 				}
 
-				JSONToken.mapKey -> {
+				JsonToken.mapKey -> {
 					currentKey = source.readMapKey()
 					continue@loop
 				}
 
-				JSONToken.mapStart -> {
+				JsonToken.mapStart -> {
 					source.readMapStart()
 
 					val map = mutableMapOf<Any?, Any?>()
@@ -149,10 +149,10 @@ internal object StandardParser : JSONParser {
 					continue@loop
 				}
 
-				JSONToken.numberValue ->
+				JsonToken.numberValue ->
 					source.readNumber()
 
-				JSONToken.stringValue ->
+				JsonToken.stringValue ->
 					source.readString()
 
 				else ->

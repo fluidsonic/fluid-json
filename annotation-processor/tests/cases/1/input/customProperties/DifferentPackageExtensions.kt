@@ -1,8 +1,8 @@
 package customProperties.differentPackage
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import customProperties.DifferentPackage
 
 
-@JSON.CustomProperties
-internal fun JSONEncoder<JSONCodingContext>.writeCustomProperties3(value: DifferentPackage) = Unit
+@Json.CustomProperties
+internal fun JsonEncoder<JsonCodingContext>.writeCustomProperties3(value: DifferentPackage) = Unit

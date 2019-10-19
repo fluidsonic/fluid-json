@@ -1,13 +1,13 @@
 package codecProvider
 
-import com.github.fluidsonic.fluid.json.JSONCodecProvider
-import com.github.fluidsonic.fluid.json.JSONCodingContext
+import io.fluidsonic.json.JsonCodecProvider
+import io.fluidsonic.json.JsonCodingContext
 import kotlin.Suppress
 import kotlin.reflect.KClass
 
 private object GeneratedStandardContextCodecProvider : StandardContextCodecProvider,
-		JSONCodecProvider<JSONCodingContext> by JSONCodecProvider()
+		JsonCodecProvider<JsonCodingContext> by JsonCodecProvider()
 
 @Suppress("UNUSED_PARAMETER")
-fun JSONCodecProvider.Companion.generated(interfaceClass: KClass<StandardContextCodecProvider>):
+fun JsonCodecProvider.Companion.generated(interfaceClass: KClass<StandardContextCodecProvider>):
 		StandardContextCodecProvider = GeneratedStandardContextCodecProvider

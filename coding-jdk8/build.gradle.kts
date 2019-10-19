@@ -1,8 +1,7 @@
-import com.github.fluidsonic.fluid.library.*
+import io.fluidsonic.gradle.*
 
-fluidJvmLibraryVariant {
+fluidJvmLibraryVariant(JvmTarget.jdk8) {
 	description = "A JSON library written in pure Kotlin (JDK8+ coding extension)"
-	jdk = JvmTarget.jdk8
 }
 
 dependencies {

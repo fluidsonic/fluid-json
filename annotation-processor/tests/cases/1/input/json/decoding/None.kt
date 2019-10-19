@@ -1,10 +1,10 @@
 package json.decoding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	decoding = JSON.Decoding.none
+@Json(
+	decoding = Json.Decoding.none
 )
 class None(
 	val value: String

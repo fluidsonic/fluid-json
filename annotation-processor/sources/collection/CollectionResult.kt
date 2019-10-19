@@ -1,7 +1,7 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
-import com.github.fluidsonic.fluid.json.*
-import com.github.fluidsonic.fluid.meta.*
+import io.fluidsonic.json.*
+import io.fluidsonic.meta.*
 import javax.lang.model.element.*
 
 
@@ -11,7 +11,7 @@ internal data class CollectionResult(
 ) {
 
 	data class CodecProvider(
-		val annotation: JSON.CodecProvider,
+		val annotation: Json.CodecProvider,
 		val contextType: MTypeReference,
 		val element: TypeElement,
 		val interfaceMeta: MInterface,
@@ -21,21 +21,21 @@ internal data class CollectionResult(
 
 
 	data class Constructor(
-		val annotation: JSON.Constructor,
+		val annotation: Json.Constructor,
 		val element: ExecutableElement,
 		val meta: MConstructor
 	)
 
 
 	data class ConstructorExclusion(
-		val annotation: JSON.Excluded,
+		val annotation: Json.Excluded,
 		val meta: MConstructor,
 		val element: ExecutableElement
 	)
 
 
 	data class CustomProperties(
-		val annotation: JSON.CustomProperties,
+		val annotation: Json.CustomProperties,
 		val element: ExecutableElement,
 		val extensionPackageName: MPackageName?,
 		val functionMeta: MFunction
@@ -43,14 +43,14 @@ internal data class CollectionResult(
 
 
 	data class DecodableProperty(
-		val annotation: JSON.Property,
+		val annotation: Json.Property,
 		val element: VariableElement,
 		val meta: MValueParameter
 	)
 
 
 	data class Property(
-		val annotation: JSON.Property,
+		val annotation: Json.Property,
 		val element: ExecutableElement,
 		val extensionPackageName: MPackageName?,
 		val meta: MProperty
@@ -58,7 +58,7 @@ internal data class CollectionResult(
 
 
 	data class PropertyExclusion(
-		val annotation: JSON.Excluded,
+		val annotation: Json.Excluded,
 		val meta: MProperty,
 		val element: ExecutableElement
 	)
@@ -66,7 +66,7 @@ internal data class CollectionResult(
 
 	data class Type(
 		val actualVisibility: MVisibility,
-		val annotation: JSON,
+		val annotation: Json,
 		val constructor: Constructor?,
 		val constructorExclusions: Map<MLocalId.Constructor, ConstructorExclusion>,
 		val customProperties: Collection<CustomProperties>,

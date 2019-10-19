@@ -1,4 +1,4 @@
-package com.github.fluidsonic.fluid.json
+package io.fluidsonic.json
 
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*

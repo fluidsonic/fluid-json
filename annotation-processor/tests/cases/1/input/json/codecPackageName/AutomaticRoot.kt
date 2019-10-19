@@ -1,7 +1,7 @@
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	codecPackageName = JSON.automatic
+@Json(
+	codecPackageName = Json.automatic
 )
 class AutomaticRoot(val value: String)

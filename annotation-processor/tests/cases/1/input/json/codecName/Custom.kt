@@ -1,9 +1,9 @@
 package json.codecName
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	codecName = "CustomizedJSONCodec"
+@Json(
+	codecName = "CustomizedJsonCodec"
 )
 class Custom(val value: String)

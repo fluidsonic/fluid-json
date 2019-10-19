@@ -1,21 +1,21 @@
-package com.github.fluidsonic.fluid.json
+package io.fluidsonic.json
 
 import java.util.concurrent.*
 import kotlin.reflect.*
 
 
-internal class FixedCodecProvider<in Context : JSONCodingContext>(
-	providers: Iterable<JSONCodecProvider<Context>>
-) : JSONCodecProvider<Context> {
+internal class FixedCodecProvider<in Context : JsonCodingContext>(
+	providers: Iterable<JsonCodecProvider<Context>>
+) : JsonCodecProvider<Context> {
 
 	private val providers = providers.toSet().toTypedArray()
 
-	private val decoderCodecByType = ConcurrentHashMap<JSONCodingType<*>, JSONDecoderCodec<*, Context>>()
-	private val encoderCodecByClass = ConcurrentHashMap<KClass<*>, JSONEncoderCodec<*, Context>>()
+	private val decoderCodecByType = ConcurrentHashMap<JsonCodingType<*>, JsonDecoderCodec<*, Context>>()
+	private val encoderCodecByClass = ConcurrentHashMap<KClass<*>, JsonEncoderCodec<*, Context>>()
 
 
 	@Suppress("LoopToCallChain", "UNCHECKED_CAST")
-	override fun <ActualValue : Any> decoderCodecForType(decodableType: JSONCodingType<ActualValue>): JSONDecoderCodec<ActualValue, Context>? {
+	override fun <ActualValue : Any> decoderCodecForType(decodableType: JsonCodingType<ActualValue>): JsonDecoderCodec<ActualValue, Context>? {
 		return decoderCodecByType.getOrPut(decodableType) {
 			for (provider in providers) {
 				val decoder = provider.decoderCodecForType(decodableType)
@@ -25,12 +25,12 @@ internal class FixedCodecProvider<in Context : JSONCodingContext>(
 			}
 
 			return null
-		} as JSONDecoderCodec<ActualValue, Context>
+		} as JsonDecoderCodec<ActualValue, Context>
 	}
 
 
 	@Suppress("LoopToCallChain", "UNCHECKED_CAST")
-	override fun <ActualValue : Any> encoderCodecForClass(encodableClass: KClass<ActualValue>): JSONEncoderCodec<ActualValue, Context>? {
+	override fun <ActualValue : Any> encoderCodecForClass(encodableClass: KClass<ActualValue>): JsonEncoderCodec<ActualValue, Context>? {
 		return encoderCodecByClass.getOrPut(encodableClass) {
 			for (provider in providers) {
 				val encoder = provider.encoderCodecForClass(encodableClass)
@@ -40,20 +40,20 @@ internal class FixedCodecProvider<in Context : JSONCodingContext>(
 			}
 
 			return null
-		} as JSONEncoderCodec<ActualValue, Context>
+		} as JsonEncoderCodec<ActualValue, Context>
 	}
 }
 
 
 @Suppress("FunctionName")
-fun <Context : JSONCodingContext> JSONCodecProvider(
-	vararg providers: JSONCodecProvider<Context>
+fun <Context : JsonCodingContext> JsonCodecProvider(
+	vararg providers: JsonCodecProvider<Context>
 ) =
-	JSONCodecProvider(providers.asIterable())
+	JsonCodecProvider(providers.asIterable())
 
 
 @Suppress("FunctionName")
-fun <Context : JSONCodingContext> JSONCodecProvider(
-	providers: Iterable<JSONCodecProvider<Context>>
-): JSONCodecProvider<Context> =
+fun <Context : JsonCodingContext> JsonCodecProvider(
+	providers: Iterable<JsonCodecProvider<Context>>
+): JsonCodecProvider<Context> =
 	FixedCodecProvider(providers = providers)

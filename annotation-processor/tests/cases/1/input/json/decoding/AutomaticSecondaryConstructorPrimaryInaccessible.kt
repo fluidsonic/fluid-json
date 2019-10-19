@@ -1,10 +1,10 @@
 package json.decoding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON(
-	decoding = JSON.Decoding.automatic
+@Json(
+	decoding = Json.Decoding.automatic
 )
 class AutomaticSecondaryConstructorPrimaryInaccessible private constructor(
 	val value: String

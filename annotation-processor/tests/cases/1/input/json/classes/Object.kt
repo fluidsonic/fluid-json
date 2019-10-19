@@ -1,9 +1,9 @@
 package json.classes
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 object Object {
 
 	val value = ""

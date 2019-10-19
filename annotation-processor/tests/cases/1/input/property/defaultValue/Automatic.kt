@@ -1,9 +1,9 @@
 package property.defaultValue
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
-@JSON
+@Json
 class Automatic(
 	val value1: String,
 	val value2: String = "",

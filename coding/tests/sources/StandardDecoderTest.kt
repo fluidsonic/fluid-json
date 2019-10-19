@@ -2,7 +2,7 @@ package tests.coding
 
 import ch.tutteli.atrium.api.cc.en_GB.*
 import ch.tutteli.atrium.verbs.*
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
 
@@ -66,12 +66,12 @@ internal object StandardDecoderTest {
 
 		val output = decode(
 			input = input,
-			codecProvider = JSONCodecProvider(
+			codecProvider = JsonCodecProvider(
 				JaegerCodec,
 				KaijuCodec,
 				YearMonthDayCodec,
 				UniverseCodec,
-				JSONCodecProvider.basic
+				JsonCodecProvider.basic
 			)
 		) { readValueOfType<Universe>() }
 
@@ -88,7 +88,7 @@ internal object StandardDecoderTest {
 				readValueOfType<Unsupported>()
 				throw AssertionError("an exception was expected")
 			}
-			catch (e: JSONException) {
+			catch (e: JsonException) {
 				// good
 			}
 		}
@@ -101,13 +101,13 @@ internal object StandardDecoderTest {
 
 		decode(
 			input = "\"test\"",
-			codecProvider = JSONCodecProvider(ContextCheckingTestCodec(context)),
+			codecProvider = JsonCodecProvider(ContextCheckingTestCodec(context)),
 			context = context
 		) { readValueOfType<String>() }
 
 		decode(
 			input = "\"test\"",
-			codecProvider = JSONCodecProvider(ContextCheckingTestDecoderCodec(context)),
+			codecProvider = JsonCodecProvider(ContextCheckingTestDecoderCodec(context)),
 			context = context
 		) { readValueOfType<String>() }
 	}
@@ -115,13 +115,13 @@ internal object StandardDecoderTest {
 
 	private inline fun <ReturnValue> decode(
 		input: String,
-		codecProvider: JSONCodecProvider<TestCoderContext> = JSONCodecProvider(),
+		codecProvider: JsonCodecProvider<TestCoderContext> = JsonCodecProvider(),
 		context: TestCoderContext = TestCoderContext(),
-		block: JSONDecoder<TestCoderContext>.() -> ReturnValue
+		block: JsonDecoder<TestCoderContext>.() -> ReturnValue
 	) =
 		StandardDecoder(
 			codecProvider = codecProvider,
 			context = context,
-			source = JSONReader.build(input)
+			source = JsonReader.build(input)
 		).use(withTermination = false) { it.block() }
 }

@@ -2,7 +2,7 @@ package tests.coding
 
 import ch.tutteli.atrium.api.cc.en_GB.*
 import ch.tutteli.atrium.verbs.*
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 
 
 internal class TestData<out Value : Any>(
@@ -44,7 +44,7 @@ internal class TestData<out Value : Any>(
 				encode(input)
 				throw AssertionError("Encoding succeeded but should have failed when encoding ${input::class}: $input")
 			}
-			catch (e: JSONException) {
+			catch (e: JsonException) {
 				// good
 			}
 	}

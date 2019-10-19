@@ -1,6 +1,6 @@
 package tests.coding
 
-import com.github.fluidsonic.fluid.json.*
+import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
 
@@ -206,25 +206,25 @@ internal object StandardCodingParserRejectTest {
 	}
 
 
-	private inline fun shouldFailWithJSONException(block: () -> Unit) {
+	private inline fun shouldFailWithJsonException(block: () -> Unit) {
 		try {
 			block()
-			throw AssertionError("should fail with a JSONException")
+			throw AssertionError("should fail with a JsonException")
 		}
-		catch (e: JSONException) {
+		catch (e: JsonException) {
 			// good
 		}
 	}
 
 
 	private fun failToParse(string: String) {
-		val parser = StandardCodingParser(JSONCodingContext.empty) { source, context ->
-			JSONDecoder.builder(context)
+		val parser = StandardCodingParser(JsonCodingContext.empty) { source, context ->
+			JsonDecoder.builder(context)
 				.codecs()
 				.source(source)
 				.build()
 		}
 
-		shouldFailWithJSONException { parser.parseValue(string) }
+		shouldFailWithJsonException { parser.parseValue(string) }
 	}
 }

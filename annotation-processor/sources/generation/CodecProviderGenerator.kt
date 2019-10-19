@@ -1,9 +1,9 @@
-package com.github.fluidsonic.fluid.json.annotationprocessor
+package io.fluidsonic.json.annotationprocessor
 
-import com.github.fluidsonic.fluid.json.*
-import com.github.fluidsonic.fluid.meta.*
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import io.fluidsonic.json.*
+import io.fluidsonic.meta.*
 import java.io.*
 import kotlin.reflect.*
 
@@ -35,7 +35,7 @@ internal class CodecProviderGenerator(
 				.addSuperinterface(qualifiedTypeName)
 				.addSuperinterface(
 					codecProvider.interfaceType.forKotlinPoet(typeParameters = emptyList()),
-					CodeBlock.of("JSONCodecProvider(${codecNames.sortedBy { it.kotlinInternal }.joinToString()})")
+					CodeBlock.of("JsonCodecProvider(${codecNames.sortedBy { it.kotlinInternal }.joinToString()})")
 				)
 				.build()
 			)
@@ -45,7 +45,7 @@ internal class CodecProviderGenerator(
 					.addMember("%S", "UNUSED_PARAMETER")
 					.build()
 				)
-				.receiver(JSONCodecProvider.Companion::class)
+				.receiver(JsonCodecProvider.Companion::class)
 				.addParameter(name = "interfaceClass", type = KClass::class.asTypeName().parameterizedBy(qualifiedTypeName))
 				.returns(qualifiedTypeName)
 				.addCode("return %T\n", generatedQualifiedTypeName)
