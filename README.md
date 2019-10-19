@@ -1,7 +1,7 @@
 fluid-json
 ==========
 
-[![Maven Central](https://img.shields.io/maven-central/v/io.fluidsonic.json/fluid-json?label=Maven%20Central)](https://search.maven.org/artifact/io.fluidsonic.json/fluid-json)
+[![Maven Central](https://img.shields.io/maven-central/v/io.fluidsonic.json/fluid-json-basic?label=Maven%20Central)](https://search.maven.org/search?q=io.fluidsonic.json)
 [![JCenter](https://img.shields.io/bintray/v/fluidsonic/kotlin/json?label=JCenter)](https://bintray.com/fluidsonic/kotlin/json)
 [![Kotlin](https://img.shields.io/badge/Kotlin-1.3.50-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.3.50)
 [![Build Status](https://travis-ci.org/fluidsonic/fluid-json.svg?branch=master)](https://travis-ci.org/fluidsonic/fluid-json)
