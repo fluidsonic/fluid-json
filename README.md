@@ -3,7 +3,7 @@ fluid-json
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.fluidsonic.json/fluid-json-basic?label=Maven%20Central)](https://search.maven.org/search?q=io.fluidsonic.json)
 [![JCenter](https://img.shields.io/bintray/v/fluidsonic/kotlin/json?label=JCenter)](https://bintray.com/fluidsonic/kotlin/json)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.50-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.3.50)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.61-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.3.61)
 [![Build Status](https://travis-ci.org/fluidsonic/fluid-json.svg?branch=master)](https://travis-ci.org/fluidsonic/fluid-json)
 [![#fluid-libraries Slack Channel](https://img.shields.io/badge/slack-%23fluid--libraries-543951.svg)](https://kotlinlang.slack.com/messages/C7UDFSVT2/)
 
@@ -39,8 +39,8 @@ plugins {
 }
 
 dependencies {
-    kapt("io.fluidsonic.json:fluid-json-annotation-processor:1.0.0")
-    implementation("io.fluidsonic.json:fluid-json-coding-jdk8:1.0.0")
+    kapt("io.fluidsonic.json:fluid-json-annotation-processor:1.0.1")
+    implementation("io.fluidsonic.json:fluid-json-coding-jdk8:1.0.1")
 }
 ```
 
@@ -599,7 +599,7 @@ You can use this library with [`JsonFeature`](https://ktor.io/clients/http-clien
 `build.gradle.kts`:
 ```kotlin
 dependencies {
-    implementation("io.fluidsonic.json:fluid-json-ktor-client:1.0.0")
+    implementation("io.fluidsonic.json:fluid-json-ktor-client:1.0.1")
 }
 ```
 

@@ -5,7 +5,7 @@ plugins {
 	jacoco
 }
 
-fluidJvmLibrary(name = "json", version = "1.0.0")
+fluidJvmLibrary(name = "json", version = "1.0.1")
 
 
 subprojects {
