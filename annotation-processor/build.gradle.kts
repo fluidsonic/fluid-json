@@ -14,8 +14,8 @@ dependencies {
 	implementation(project(":fluid-json-coding"))
 
 	implementation(kotlin("reflect"))
-	implementation(fluid("meta", "0.9.12"))
-	implementation(fluid("stdlib", "0.9.28")) {
+	implementation(fluid("meta", "0.9.14"))
+	implementation(fluid("stdlib", "0.9.29")) {
 		attributes {
 			attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
 			attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, Usage.JAVA_RUNTIME))
@@ -24,9 +24,9 @@ dependencies {
 	}
 	implementation("com.google.auto:auto-common:0.10")
 	implementation("com.google.auto.service:auto-service:1.0-rc6")
-	implementation("com.squareup:kotlinpoet:1.4.1")
+	implementation("com.squareup:kotlinpoet:1.5.0")
 
 	kapt("com.google.auto.service:auto-service:1.0-rc6")
 
-	testImplementation(fluid("compiler", "0.9.7"))
+	testImplementation(fluid("compiler", "0.9.8"))
 }

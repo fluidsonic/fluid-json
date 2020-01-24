@@ -7,7 +7,7 @@ import io.ktor.client.features.json.JsonSerializer
 import io.ktor.content.TextContent
 import io.ktor.http.*
 import io.ktor.http.content.*
-import kotlinx.io.core.*
+import io.ktor.utils.io.core.*
 
 
 class FluidJsonSerializer(

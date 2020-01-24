@@ -57,7 +57,7 @@ internal object JsonCodingParserTest {
 
 	@Test
 	fun testDefault() {
-		anyData.testDecoding(JsonCodingParser.default::parseValue)
+		anyData.testDecoding { JsonCodingParser.default.parseValue(it) }
 	}
 
 

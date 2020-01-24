@@ -1,7 +1,7 @@
 import io.fluidsonic.gradle.*
 
 plugins {
-	id("io.fluidsonic.gradle") version "1.0.1"
+	id("io.fluidsonic.gradle") version "1.0.6"
 	jacoco
 }
 
