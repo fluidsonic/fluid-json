@@ -32,7 +32,7 @@ internal class FactoryCodecProvider<out Value : Any, in Context : JsonCodingCont
 						encoderCodec = provider.encoderCodecForClass(actualClass)
 					)
 				}
-				?: Codecs.empty()
+				?: Codecs.empty<ActualValue>()
 		} as Codecs<ActualValue, Context>
 
 
