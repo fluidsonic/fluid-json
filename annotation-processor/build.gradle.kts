@@ -14,7 +14,7 @@ dependencies {
 	implementation(project(":fluid-json-coding"))
 
 	implementation(kotlin("reflect"))
-	implementation(fluid("meta", "0.9.14"))
+	implementation(fluid("meta", "0.9.15"))
 	implementation(fluid("stdlib", "0.9.29")) {
 		attributes {
 			attribute(KotlinPlatformType.attribute, KotlinPlatformType.jvm)
@@ -28,5 +28,5 @@ dependencies {
 
 	kapt("com.google.auto.service:auto-service:1.0-rc6")
 
-	testImplementation(fluid("compiler", "0.9.8"))
+	testImplementation(fluid("compiler", "0.9.9"))
 }

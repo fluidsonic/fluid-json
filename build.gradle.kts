@@ -1,11 +1,11 @@
 import io.fluidsonic.gradle.*
 
 plugins {
-	id("io.fluidsonic.gradle") version "1.0.6"
+	id("io.fluidsonic.gradle") version "1.0.7"
 	jacoco
 }
 
-fluidJvmLibrary(name = "json", version = "1.0.1")
+fluidJvmLibrary(name = "json", version = "1.0.2")
 
 
 subprojects {
