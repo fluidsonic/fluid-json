@@ -7,5 +7,5 @@ fluidJvmLibraryVariant(JvmTarget.jdk7) {
 dependencies {
 	api(project(":fluid-json-coding"))
 
-	api("io.ktor:ktor-client-json-jvm:1.3.0")
+	api("io.ktor:ktor-client-json-jvm:1.3.1")
 }

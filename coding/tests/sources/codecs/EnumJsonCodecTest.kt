@@ -5,7 +5,7 @@ import io.fluidsonic.json.EnumJsonTransformation.*
 import org.junit.jupiter.api.*
 
 
-@Suppress("UNCHECKED_CAST")
+@Suppress("SpellCheckingInspection", "UNCHECKED_CAST")
 internal object EnumJsonCodecTest {
 
 	private val samplesByPropertyAndCase = mapOf(
@@ -304,15 +304,15 @@ internal object EnumJsonCodecTest {
 
 	private fun enumCodec(property: String, case: Case? = null) =
 		EnumJsonCodec<Example>(transformation = when (property) {
-			"name" -> EnumJsonTransformation.Name(case = case)
-			"toString" -> EnumJsonTransformation.ToString(case = case)
+			"name" -> Name(case = case)
+			"toString" -> ToString(case = case)
 			else -> error("unknown property")
 		})
 
 
 	@Test
 	fun testOrdinal() {
-		val codec = EnumJsonCodec<Example>(transformation = EnumJsonTransformation.Ordinal)
+		val codec = EnumJsonCodec<Example>(transformation = Ordinal)
 
 		val parser = JsonCodingParser
 			.builder()

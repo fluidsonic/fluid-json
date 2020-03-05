@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
@@ -75,7 +75,7 @@ internal object StandardDecoderTest {
 			)
 		) { readValueOfType<Universe>() }
 
-		assert(output).toBe(expectedOutput)
+		expect(output).toBe(expectedOutput)
 	}
 
 

@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
@@ -10,47 +10,47 @@ internal object KClassTest {
 
 	@Test
 	fun testBoxed() {
-		assert(Boolean::class.boxed).toBe(java.lang.Boolean::class)
-		assert(Byte::class.boxed).toBe(java.lang.Byte::class)
-		assert(Char::class.boxed).toBe(java.lang.Character::class)
-		assert(Double::class.boxed).toBe(java.lang.Double::class)
-		assert(Float::class.boxed).toBe(java.lang.Float::class)
-		assert(Int::class.boxed).toBe(java.lang.Integer::class)
-		assert(Long::class.boxed).toBe(java.lang.Long::class)
-		assert(Short::class.boxed).toBe(java.lang.Short::class)
-		assert(String::class.boxed).toBe(String::class)
-		assert(Void.TYPE.kotlin.boxed).toBe(java.lang.Void::class)
+		expect(Boolean::class.boxed).toBe(java.lang.Boolean::class)
+		expect(Byte::class.boxed).toBe(java.lang.Byte::class)
+		expect(Char::class.boxed).toBe(java.lang.Character::class)
+		expect(Double::class.boxed).toBe(java.lang.Double::class)
+		expect(Float::class.boxed).toBe(java.lang.Float::class)
+		expect(Int::class.boxed).toBe(java.lang.Integer::class)
+		expect(Long::class.boxed).toBe(java.lang.Long::class)
+		expect(Short::class.boxed).toBe(java.lang.Short::class)
+		expect(String::class.boxed).toBe(String::class)
+		expect(Void.TYPE.kotlin.boxed).toBe(java.lang.Void::class)
 	}
 
 
 	@Test
 	fun testIsAssignableOrBoxableFrom() {
-		assert(String::class.isAssignableOrBoxableFrom(Any::class))
+		expect(String::class.isAssignableOrBoxableFrom(Any::class))
 			.toBe(false)
 
-		assert(Any::class.isAssignableOrBoxableFrom(String::class))
+		expect(Any::class.isAssignableOrBoxableFrom(String::class))
 			.toBe(true)
 
-		assert(Boolean::class.isAssignableOrBoxableFrom(java.lang.Boolean::class))
+		expect(Boolean::class.isAssignableOrBoxableFrom(java.lang.Boolean::class))
 			.toBe(true)
 
-		assert(java.lang.Boolean::class.isAssignableOrBoxableFrom(Boolean::class))
+		expect(java.lang.Boolean::class.isAssignableOrBoxableFrom(Boolean::class))
 			.toBe(true)
 	}
 
 
 	@Test
 	fun testIsAssignableOrBoxableTo() {
-		assert(String::class.isAssignableOrBoxableTo(Any::class))
+		expect(String::class.isAssignableOrBoxableTo(Any::class))
 			.toBe(true)
 
-		assert(Any::class.isAssignableOrBoxableTo(String::class))
+		expect(Any::class.isAssignableOrBoxableTo(String::class))
 			.toBe(false)
 
-		assert(Boolean::class.isAssignableOrBoxableTo(java.lang.Boolean::class))
+		expect(Boolean::class.isAssignableOrBoxableTo(java.lang.Boolean::class))
 			.toBe(true)
 
-		assert(java.lang.Boolean::class.isAssignableOrBoxableTo(Boolean::class))
+		expect(java.lang.Boolean::class.isAssignableOrBoxableTo(Boolean::class))
 			.toBe(true)
 	}
 }

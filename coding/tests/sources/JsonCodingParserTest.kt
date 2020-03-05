@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.io.*
@@ -16,7 +16,7 @@ internal object JsonCodingParserTest {
 			.build()
 			.apply {
 				// TODO check correct context
-				assert(parseValue(StringReader("true"))).toBe(true)
+				expect(parseValue(StringReader("true"))).toBe(true)
 			}
 
 		JsonCodingParser.builder()
@@ -24,7 +24,7 @@ internal object JsonCodingParserTest {
 			.build()
 			.apply {
 				// TODO check correct context
-				assert(parseValue(StringReader("true"))).toBe(true)
+				expect(parseValue(StringReader("true"))).toBe(true)
 			}
 
 		val testContext = TestCoderContext()
@@ -34,7 +34,7 @@ internal object JsonCodingParserTest {
 			.build()
 			.apply {
 				// TODO check correct context
-				assert(parseValue(StringReader("true"))).toBe(true)
+				expect(parseValue(StringReader("true"))).toBe(true)
 			}
 	}
 
@@ -65,11 +65,11 @@ internal object JsonCodingParserTest {
 	fun testParse() {
 		testParseMethod<Any>(true) { parseValue("") }
 		testParseMethod<Any>(true) { parseValueOrNull("") }
-		testParseMethod<Any>(null) { parseValueOrNull("") }
+		testParseMethod(null) { parseValueOrNull("") }
 
 		testParseMethod<Any>(true) { parseValue(StringReader("")) }
 		testParseMethod<Any>(true) { parseValueOrNull(StringReader("")) }
-		testParseMethod<Any>(null) { parseValueOrNull(StringReader("")) }
+		testParseMethod(null) { parseValueOrNull(StringReader("")) }
 
 		testParseMethod(listOf(true)) { parseValueOfType("") }
 		testParseMethod(listOf(true)) { parseValueOfTypeOrNull("") }
@@ -146,7 +146,7 @@ internal object JsonCodingParserTest {
 
 
 			override fun <Value : Any> parseValueOfType(source: JsonReader, valueType: JsonCodingType<Value>, withTermination: Boolean): Value {
-				assert(valueType as JsonCodingType<*>).toBe(expectedType)
+				expect(valueType as JsonCodingType<*>).toBe(expectedType)
 
 				@Suppress("UNCHECKED_CAST")
 				return expectedValue as Value
@@ -154,7 +154,7 @@ internal object JsonCodingParserTest {
 
 
 			override fun <Value : Any> parseValueOfTypeOrNull(source: JsonReader, valueType: JsonCodingType<Value>, withTermination: Boolean): Value? {
-				assert(valueType as JsonCodingType<*>).toBe(expectedType)
+				expect(valueType as JsonCodingType<*>).toBe(expectedType)
 
 				@Suppress("UNCHECKED_CAST")
 				return expectedValue as Value?
@@ -162,8 +162,8 @@ internal object JsonCodingParserTest {
 		}
 
 		if (expectedValue != null)
-			assert(parser.testBody(expectedType)).toBe(expectedValue)
+			expect(parser.testBody(expectedType)).toBe(expectedValue)
 		else
-			assert(parser.testBody(expectedType)).toBe(expectedValue)
+			expect(parser.testBody(expectedType)).toBe(expectedValue)
 	}
 }

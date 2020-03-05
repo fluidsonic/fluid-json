@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
@@ -15,7 +15,7 @@ internal object JsonCodingSerializerTest {
 			.build()
 			.apply {
 				// TODO check correct context
-				assert(serializeValue(true)).toBe("true")
+				expect(serializeValue(true)).toBe("true")
 			}
 
 		JsonCodingSerializer.builder()
@@ -23,7 +23,7 @@ internal object JsonCodingSerializerTest {
 			.build()
 			.apply {
 				// TODO check correct context
-				assert(serializeValue(true)).toBe("true")
+				expect(serializeValue(true)).toBe("true")
 			}
 
 		val testContext = TestCoderContext()
@@ -33,7 +33,7 @@ internal object JsonCodingSerializerTest {
 			.build()
 			.apply {
 				// TODO check correct context
-				assert(serializeValue(true)).toBe("true")
+				expect(serializeValue(true)).toBe("true")
 			}
 	}
 

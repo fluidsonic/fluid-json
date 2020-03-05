@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
@@ -25,14 +25,14 @@ internal object CharRangeJsonCodecTest {
 
 	@Test
 	fun testDecodesCharRange() {
-		assert(parser.parseValueOfType<CharRange>("""{"start":"\u0000","endInclusive":"a"}"""))
+		expect(parser.parseValueOfType<CharRange>("""{"start":"\u0000","endInclusive":"a"}"""))
 			.toBe(CharRange(0.toChar(), 'a'))
 	}
 
 
 	@Test
 	fun testEncodesCharRange() {
-		assert(serializer.serializeValue(CharRange(0.toChar(), 'a')))
+		expect(serializer.serializeValue(CharRange(0.toChar(), 'a')))
 			.toBe("""{"start":"\u0000","endInclusive":"a"}""")
 	}
 }

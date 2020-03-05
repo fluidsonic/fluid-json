@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
@@ -25,14 +25,14 @@ internal object LongRangeJsonCodecTest {
 
 	@Test
 	fun testDecodesLongRange() {
-		assert(parser.parseValueOfType<LongRange>("""{"start":0,"endInclusive":1}"""))
+		expect(parser.parseValueOfType<LongRange>("""{"start":0,"endInclusive":1}"""))
 			.toBe(LongRange(0L, 1L))
 	}
 
 
 	@Test
 	fun encodesLongRange() {
-		assert(serializer.serializeValue(LongRange(0L, 1L)))
+		expect(serializer.serializeValue(LongRange(0L, 1L)))
 			.toBe("""{"start":0,"endInclusive":1}""")
 	}
 }

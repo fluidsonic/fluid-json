@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
@@ -15,19 +15,20 @@ internal object JsonCodingTypeTest {
 
 
 	@Test
+	@Suppress("UNCHECKED_CAST")
 	fun testKClassBasedCreation() {
-		assert(jsonCodingType(List::class)).toBe(jsonCodingType())
-		assert(jsonCodingType(Array<Any>::class)).toBe(jsonCodingType())
-		assert(jsonCodingType(Array<String>::class, String::class)).toBe(jsonCodingType())
-		assert(jsonCodingType(Map::class)).toBe(jsonCodingType())
-		assert(jsonCodingType(Map::class, String::class, Int::class)).toBe(jsonCodingType<Map<String, Int>>())
-		assert(jsonCodingType(String::class)).toBe(jsonCodingType())
+		expect(jsonCodingType(List::class)).toBe(jsonCodingType())
+		expect(jsonCodingType(Array<Any>::class)).toBe(jsonCodingType())
+		expect(jsonCodingType(Array<String>::class, String::class)).toBe(jsonCodingType())
+		expect(jsonCodingType(Map::class)).toBe(jsonCodingType())
+		expect(jsonCodingType(Map::class, String::class, Int::class)).toBe(jsonCodingType<Map<String, Int>>() as JsonCodingType<Map<*, *>>)
+		expect(jsonCodingType(String::class)).toBe(jsonCodingType())
 	}
 
 
 	@Test
 	fun testRecursiveGenerics() {
-		assert(jsonCodingType(ClosedRange::class)).toBe(jsonCodingType())
+		expect(jsonCodingType(ClosedRange::class)).toBe(jsonCodingType())
 	}
 
 

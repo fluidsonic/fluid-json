@@ -1,7 +1,7 @@
 package tests.basic
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
@@ -12,7 +12,7 @@ internal object JsonCharacterTest {
 	fun testIsControl() {
 		val boundaries = (0 .. 0x1F).toSet()
 		for (character in 0 .. 0xFF)
-			assert(JsonCharacter.isControl(character)).toBe(boundaries.contains(character))
+			expect(JsonCharacter.isControl(character)).toBe(boundaries.contains(character))
 	}
 
 
@@ -20,10 +20,10 @@ internal object JsonCharacterTest {
 	fun testIsDigit() {
 		val boundaries = setOf('0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
 		for (character in 0 .. 0xFF) {
-			assert(JsonCharacter.isDigit(character)).toBe(boundaries.contains(character.toChar()))
+			expect(JsonCharacter.isDigit(character)).toBe(boundaries.contains(character.toChar()))
 		}
 
-		assert(JsonCharacter.isDigit(JsonCharacter.end)).toBe(false)
+		expect(JsonCharacter.isDigit(JsonCharacter.end)).toBe(false)
 	}
 
 
@@ -35,10 +35,10 @@ internal object JsonCharacterTest {
 			'A', 'B', 'C', 'D', 'E', 'F'
 		)
 		for (character in 0 .. 0xFF) {
-			assert(JsonCharacter.isHexDigit(character)).toBe(boundaries.contains(character.toChar()))
+			expect(JsonCharacter.isHexDigit(character)).toBe(boundaries.contains(character.toChar()))
 		}
 
-		assert(JsonCharacter.isHexDigit(JsonCharacter.end)).toBe(false)
+		expect(JsonCharacter.isHexDigit(JsonCharacter.end)).toBe(false)
 	}
 
 
@@ -46,10 +46,10 @@ internal object JsonCharacterTest {
 	fun testIsValueBoundary() {
 		val boundaries = setOf(',', ':', ',', '{', '[', '}', ']', '\r', '\t', '\n', ' ')
 		for (character in 0 .. 0xFF) {
-			assert(JsonCharacter.isValueBoundary(character)).toBe(boundaries.contains(character.toChar()))
+			expect(JsonCharacter.isValueBoundary(character)).toBe(boundaries.contains(character.toChar()))
 		}
 
-		assert(JsonCharacter.isValueBoundary(JsonCharacter.end)).toBe(true)
+		expect(JsonCharacter.isValueBoundary(JsonCharacter.end)).toBe(true)
 	}
 
 
@@ -57,10 +57,10 @@ internal object JsonCharacterTest {
 	fun testIsWhitespace() {
 		val boundaries = setOf(' ', '\n', '\r', '\t')
 		for (character in 0 .. 0xFF) {
-			assert(JsonCharacter.isWhitespace(character)).toBe(boundaries.contains(character.toChar()))
+			expect(JsonCharacter.isWhitespace(character)).toBe(boundaries.contains(character.toChar()))
 		}
 
-		assert(JsonCharacter.isWhitespace(JsonCharacter.end)).toBe(false)
+		expect(JsonCharacter.isWhitespace(JsonCharacter.end)).toBe(false)
 	}
 
 
@@ -74,7 +74,7 @@ internal object JsonCharacterTest {
 		for (character in 0 .. 0xFF) {
 			val expectValue = expectValues[character.toChar()]
 			if (expectValue != null) {
-				assert(JsonCharacter.parseHexDigit(character)).toBe(expectValue)
+				expect(JsonCharacter.parseHexDigit(character)).toBe(expectValue)
 			}
 			else {
 				try {

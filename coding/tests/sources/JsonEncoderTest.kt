@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.io.*
@@ -17,9 +17,9 @@ internal object JsonEncoderTest {
 				.destination(writer)
 				.build()
 				.apply {
-					assert(context).toBe(JsonCodingContext.empty)
+					expect(context).toBe(JsonCodingContext.empty)
 					writeBoolean(true)
-					assert(writer.toString()).toBe("true")
+					expect(writer.toString()).toBe("true")
 				}
 		}
 
@@ -29,9 +29,9 @@ internal object JsonEncoderTest {
 				.destination(writer)
 				.build()
 				.apply {
-					assert(context).toBe(JsonCodingContext.empty)
+					expect(context).toBe(JsonCodingContext.empty)
 					writeBoolean(true)
-					assert(writer.toString()).toBe("true")
+					expect(writer.toString()).toBe("true")
 				}
 		}
 
@@ -43,9 +43,9 @@ internal object JsonEncoderTest {
 				.destination(JsonWriter.build(writer))
 				.build()
 				.apply {
-					assert(context).toBe(testContext)
+					expect(context).toBe(testContext)
 					writeBoolean(true)
-					assert(writer.toString()).toBe("true")
+					expect(writer.toString()).toBe("true")
 				}
 		}
 
@@ -55,9 +55,9 @@ internal object JsonEncoderTest {
 				.destination(writer)
 				.build()
 				.apply {
-					assert(context).toBe(testContext)
+					expect(context).toBe(testContext)
 					writeBoolean(true)
-					assert(writer.toString()).toBe("true")
+					expect(writer.toString()).toBe("true")
 				}
 		}
 	}

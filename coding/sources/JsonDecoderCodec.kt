@@ -35,7 +35,7 @@ interface JsonDecoderCodec<Value : Any, in Context : JsonCodingContext> : JsonCo
 
 			val decodableArguments = arguments
 			val requestedArguments = requestedType.arguments
-			assert(decodableArguments.size == requestedArguments.size)
+			check(decodableArguments.size == requestedArguments.size)
 
 			@Suppress("LoopToCallChain")
 			for ((index, decodableArgument) in decodableArguments.withIndex()) {

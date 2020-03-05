@@ -91,7 +91,7 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 
 	fun seekTo(index: Int) {
 		check(bufferIsLocked) { "This operation is only possible with a locked buffer." }
-		check(index in 0 .. (bufferEndIndex - 1)) { "index $index out of bounds 0 ..< $bufferEndIndex" }
+		check(index in 0 until bufferEndIndex) { "index $index out of bounds 0 ..< $bufferEndIndex" }
 
 		bufferStartIndex = index
 	}

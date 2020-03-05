@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
@@ -88,7 +88,7 @@ internal object BasicCodecsTest {
 
 	@Test
 	fun testMaintainsMapEntryOrder() {
-		assert(
+		expect(
 			MapJsonTestCodec.parse("""{ "3": 3, "1": 1, "2": 2, "0": 0 }""", jsonCodingType())
 				.entries.toList()
 		)

@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.io.*
@@ -16,8 +16,8 @@ internal object JsonDecoderTest {
 			.source("true")
 			.build()
 			.apply {
-				assert(context).toBe(JsonCodingContext.empty)
-				assert(readBoolean()).toBe(true)
+				expect(context).toBe(JsonCodingContext.empty)
+				expect(readBoolean()).toBe(true)
 			}
 
 		JsonDecoder.builder()
@@ -25,8 +25,8 @@ internal object JsonDecoderTest {
 			.source(StringReader("true"))
 			.build()
 			.apply {
-				assert(context).toBe(JsonCodingContext.empty)
-				assert(readBoolean()).toBe(true)
+				expect(context).toBe(JsonCodingContext.empty)
+				expect(readBoolean()).toBe(true)
 			}
 
 		val testContext = TestCoderContext()
@@ -36,8 +36,8 @@ internal object JsonDecoderTest {
 			.source(JsonReader.build(StringReader("true")))
 			.build()
 			.apply {
-				assert(context).toBe(testContext)
-				assert(readBoolean()).toBe(true)
+				expect(context).toBe(testContext)
+				expect(readBoolean()).toBe(true)
 			}
 	}
 
@@ -45,7 +45,7 @@ internal object JsonDecoderTest {
 	@Test
 	fun testReadShortcuts() {
 		testReadMethod<Any>("1") { readValueOrNull() }
-		testReadMethod<Any>(null) { readValueOrNull() }
+		testReadMethod(null) { readValueOrNull() }
 
 		testReadMethod("1") { readValueOfType() }
 		testReadMethod("1") { readValueOfTypeOrNull() }
@@ -116,7 +116,7 @@ internal object JsonDecoderTest {
 
 
 			override fun <Value : Any> readValueOfType(valueType: JsonCodingType<Value>): Value {
-				assert((valueType as JsonCodingType<*>)).toBe(expectedType)
+				expect((valueType as JsonCodingType<*>)).toBe(expectedType)
 
 				@Suppress("UNCHECKED_CAST")
 				return expectedValue as Value
@@ -124,8 +124,8 @@ internal object JsonDecoderTest {
 		}
 
 		if (expectedValue != null)
-			assert(decoder.testBody(expectedType)).toBe(expectedValue)
+			expect(decoder.testBody(expectedType)).toBe(expectedValue)
 		else
-			assert(decoder.testBody(expectedType)).toBe(expectedValue)
+			expect(decoder.testBody(expectedType)).toBe(expectedValue)
 	}
 }

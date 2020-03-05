@@ -4,6 +4,7 @@ import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
 
+@Suppress("SpellCheckingInspection")
 internal object StandardCodingParserRejectTest {
 
 	@Test

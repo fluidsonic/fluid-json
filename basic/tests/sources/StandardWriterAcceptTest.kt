@@ -1,7 +1,7 @@
 package tests.basic
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.io.*
@@ -25,156 +25,156 @@ internal object StandardWriterAcceptTest {
 	@Test
 	fun testMarkAsErrored() {
 		write {
-			assert(isErrored).toBe(false)
+			expect(isErrored).toBe(false)
 			markAsErrored()
-			assert(isErrored).toBe(true)
+			expect(isErrored).toBe(true)
 		}
 	}
 
 
 	@Test
 	fun testWriteBoolean() {
-		assert(write { writeBoolean(false) }).toBe("false")
-		assert(write { writeBoolean(true) }).toBe("true")
+		expect(write { writeBoolean(false) }).toBe("false")
+		expect(write { writeBoolean(true) }).toBe("true")
 	}
 
 
 	@Test
 	fun testWriteBooleanOrNull() {
-		assert(write { writeBooleanOrNull(false) }).toBe("false")
-		assert(write { writeBooleanOrNull(true) }).toBe("true")
-		assert(write { writeBooleanOrNull(null) }).toBe("null")
+		expect(write { writeBooleanOrNull(false) }).toBe("false")
+		expect(write { writeBooleanOrNull(true) }).toBe("true")
+		expect(write { writeBooleanOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteByte() {
-		assert(write { writeByte(Byte.MIN_VALUE) }).toBe("-128")
-		assert(write { writeByte(-1) }).toBe("-1")
-		assert(write { writeByte(0) }).toBe("0")
-		assert(write { writeByte(1) }).toBe("1")
-		assert(write { writeByte(Byte.MAX_VALUE) }).toBe("127")
+		expect(write { writeByte(Byte.MIN_VALUE) }).toBe("-128")
+		expect(write { writeByte(-1) }).toBe("-1")
+		expect(write { writeByte(0) }).toBe("0")
+		expect(write { writeByte(1) }).toBe("1")
+		expect(write { writeByte(Byte.MAX_VALUE) }).toBe("127")
 	}
 
 
 	@Test
 	fun testWriteByteOrNull() {
-		assert(write { writeByteOrNull(Byte.MIN_VALUE) }).toBe("-128")
-		assert(write { writeByteOrNull(-1) }).toBe("-1")
-		assert(write { writeByteOrNull(0) }).toBe("0")
-		assert(write { writeByteOrNull(1) }).toBe("1")
-		assert(write { writeByteOrNull(Byte.MAX_VALUE) }).toBe("127")
-		assert(write { writeByteOrNull(null) }).toBe("null")
+		expect(write { writeByteOrNull(Byte.MIN_VALUE) }).toBe("-128")
+		expect(write { writeByteOrNull(-1) }).toBe("-1")
+		expect(write { writeByteOrNull(0) }).toBe("0")
+		expect(write { writeByteOrNull(1) }).toBe("1")
+		expect(write { writeByteOrNull(Byte.MAX_VALUE) }).toBe("127")
+		expect(write { writeByteOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteChar() {
-		assert(write { writeChar(Char.MIN_VALUE) }).toBe(""""\u0000"""")
-		assert(write { writeChar('a') }).toBe(""""a"""")
-		assert(write { writeChar(Char.MAX_VALUE) }).toBe("\"\uFFFF\"")
+		expect(write { writeChar(Char.MIN_VALUE) }).toBe(""""\u0000"""")
+		expect(write { writeChar('a') }).toBe(""""a"""")
+		expect(write { writeChar(Char.MAX_VALUE) }).toBe("\"\uFFFF\"")
 	}
 
 
 	@Test
 	fun testWriteCharOrNull() {
-		assert(write { writeCharOrNull(Char.MIN_VALUE) }).toBe(""""\u0000"""")
-		assert(write { writeCharOrNull('a') }).toBe(""""a"""")
-		assert(write { writeCharOrNull(Char.MAX_VALUE) }).toBe("\"\uFFFF\"")
-		assert(write { writeCharOrNull(null) }).toBe("null")
+		expect(write { writeCharOrNull(Char.MIN_VALUE) }).toBe(""""\u0000"""")
+		expect(write { writeCharOrNull('a') }).toBe(""""a"""")
+		expect(write { writeCharOrNull(Char.MAX_VALUE) }).toBe("\"\uFFFF\"")
+		expect(write { writeCharOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteDouble() {
-		assert(write { writeDouble(-1E200) }).toBe("-1.0E200")
-		assert(write { writeDouble(-100.999) }).toBe("-100.999")
-		assert(write { writeDouble(-100.001) }).toBe("-100.001")
-		assert(write { writeDouble(-1E-200) }).toBe("-1.0E-200")
-		assert(write { writeDouble(-0.0) }).toBe("-0.0")
-		assert(write { writeDouble(0.0) }).toBe("0.0")
-		assert(write { writeDouble(1E-200) }).toBe("1.0E-200")
-		assert(write { writeDouble(100.001) }).toBe("100.001")
-		assert(write { writeDouble(100.999) }).toBe("100.999")
-		assert(write { writeDouble(1E200) }).toBe("1.0E200")
+		expect(write { writeDouble(-1E200) }).toBe("-1.0E200")
+		expect(write { writeDouble(-100.999) }).toBe("-100.999")
+		expect(write { writeDouble(-100.001) }).toBe("-100.001")
+		expect(write { writeDouble(-1E-200) }).toBe("-1.0E-200")
+		expect(write { writeDouble(-0.0) }).toBe("-0.0")
+		expect(write { writeDouble(0.0) }).toBe("0.0")
+		expect(write { writeDouble(1E-200) }).toBe("1.0E-200")
+		expect(write { writeDouble(100.001) }).toBe("100.001")
+		expect(write { writeDouble(100.999) }).toBe("100.999")
+		expect(write { writeDouble(1E200) }).toBe("1.0E200")
 	}
 
 
 	@Test
 	fun testWriteDoubleOrNull() {
-		assert(write { writeDoubleOrNull(-1E200) }).toBe("-1.0E200")
-		assert(write { writeDoubleOrNull(-100.999) }).toBe("-100.999")
-		assert(write { writeDoubleOrNull(-100.001) }).toBe("-100.001")
-		assert(write { writeDoubleOrNull(-1E-200) }).toBe("-1.0E-200")
-		assert(write { writeDoubleOrNull(-0.0) }).toBe("-0.0")
-		assert(write { writeDoubleOrNull(0.0) }).toBe("0.0")
-		assert(write { writeDoubleOrNull(1E-200) }).toBe("1.0E-200")
-		assert(write { writeDoubleOrNull(100.001) }).toBe("100.001")
-		assert(write { writeDoubleOrNull(100.999) }).toBe("100.999")
-		assert(write { writeDoubleOrNull(1E200) }).toBe("1.0E200")
-		assert(write { writeDoubleOrNull(null) }).toBe("null")
+		expect(write { writeDoubleOrNull(-1E200) }).toBe("-1.0E200")
+		expect(write { writeDoubleOrNull(-100.999) }).toBe("-100.999")
+		expect(write { writeDoubleOrNull(-100.001) }).toBe("-100.001")
+		expect(write { writeDoubleOrNull(-1E-200) }).toBe("-1.0E-200")
+		expect(write { writeDoubleOrNull(-0.0) }).toBe("-0.0")
+		expect(write { writeDoubleOrNull(0.0) }).toBe("0.0")
+		expect(write { writeDoubleOrNull(1E-200) }).toBe("1.0E-200")
+		expect(write { writeDoubleOrNull(100.001) }).toBe("100.001")
+		expect(write { writeDoubleOrNull(100.999) }).toBe("100.999")
+		expect(write { writeDoubleOrNull(1E200) }).toBe("1.0E200")
+		expect(write { writeDoubleOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteFloat() {
-		assert(write { writeFloat(-1E38f) }).toBe("-1.0E38")
-		assert(write { writeFloat(-100.999f) }).toBe("-100.999")
-		assert(write { writeFloat(-100.001f) }).toBe("-100.001")
-		assert(write { writeFloat(-1E-38f) }).toBe("-1.0E-38")
-		assert(write { writeFloat(-0.0f) }).toBe("-0.0")
-		assert(write { writeFloat(0.0f) }).toBe("0.0")
-		assert(write { writeFloat(1E-38f) }).toBe("1.0E-38")
-		assert(write { writeFloat(100.001f) }).toBe("100.001")
-		assert(write { writeFloat(100.999f) }).toBe("100.999")
-		assert(write { writeFloat(1E38f) }).toBe("1.0E38")
+		expect(write { writeFloat(-1E38f) }).toBe("-1.0E38")
+		expect(write { writeFloat(-100.999f) }).toBe("-100.999")
+		expect(write { writeFloat(-100.001f) }).toBe("-100.001")
+		expect(write { writeFloat(-1E-38f) }).toBe("-1.0E-38")
+		expect(write { writeFloat(-0.0f) }).toBe("-0.0")
+		expect(write { writeFloat(0.0f) }).toBe("0.0")
+		expect(write { writeFloat(1E-38f) }).toBe("1.0E-38")
+		expect(write { writeFloat(100.001f) }).toBe("100.001")
+		expect(write { writeFloat(100.999f) }).toBe("100.999")
+		expect(write { writeFloat(1E38f) }).toBe("1.0E38")
 	}
 
 
 	@Test
 	fun testWriteFloatOrNull() {
-		assert(write { writeFloatOrNull(-1E38f) }).toBe("-1.0E38")
-		assert(write { writeFloatOrNull(-100.999f) }).toBe("-100.999")
-		assert(write { writeFloatOrNull(-100.001f) }).toBe("-100.001")
-		assert(write { writeFloatOrNull(-1E-38f) }).toBe("-1.0E-38")
-		assert(write { writeFloatOrNull(-0.0f) }).toBe("-0.0")
-		assert(write { writeFloatOrNull(0.0f) }).toBe("0.0")
-		assert(write { writeFloatOrNull(1E-38f) }).toBe("1.0E-38")
-		assert(write { writeFloatOrNull(100.001f) }).toBe("100.001")
-		assert(write { writeFloatOrNull(100.999f) }).toBe("100.999")
-		assert(write { writeFloatOrNull(1E38f) }).toBe("1.0E38")
-		assert(write { writeFloatOrNull(null) }).toBe("null")
+		expect(write { writeFloatOrNull(-1E38f) }).toBe("-1.0E38")
+		expect(write { writeFloatOrNull(-100.999f) }).toBe("-100.999")
+		expect(write { writeFloatOrNull(-100.001f) }).toBe("-100.001")
+		expect(write { writeFloatOrNull(-1E-38f) }).toBe("-1.0E-38")
+		expect(write { writeFloatOrNull(-0.0f) }).toBe("-0.0")
+		expect(write { writeFloatOrNull(0.0f) }).toBe("0.0")
+		expect(write { writeFloatOrNull(1E-38f) }).toBe("1.0E-38")
+		expect(write { writeFloatOrNull(100.001f) }).toBe("100.001")
+		expect(write { writeFloatOrNull(100.999f) }).toBe("100.999")
+		expect(write { writeFloatOrNull(1E38f) }).toBe("1.0E38")
+		expect(write { writeFloatOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteInt() {
-		assert(write { writeInt(Int.MIN_VALUE) }).toBe("-2147483648")
-		assert(write { writeInt(-1) }).toBe("-1")
-		assert(write { writeInt(0) }).toBe("0")
-		assert(write { writeInt(1) }).toBe("1")
-		assert(write { writeInt(Int.MAX_VALUE) }).toBe("2147483647")
+		expect(write { writeInt(Int.MIN_VALUE) }).toBe("-2147483648")
+		expect(write { writeInt(-1) }).toBe("-1")
+		expect(write { writeInt(0) }).toBe("0")
+		expect(write { writeInt(1) }).toBe("1")
+		expect(write { writeInt(Int.MAX_VALUE) }).toBe("2147483647")
 	}
 
 
 	@Test
 	fun testWriteIntOrNull() {
-		assert(write { writeIntOrNull(Int.MIN_VALUE) }).toBe("-2147483648")
-		assert(write { writeIntOrNull(-1) }).toBe("-1")
-		assert(write { writeIntOrNull(0) }).toBe("0")
-		assert(write { writeIntOrNull(1) }).toBe("1")
-		assert(write { writeIntOrNull(Int.MAX_VALUE) }).toBe("2147483647")
-		assert(write { writeIntOrNull(null) }).toBe("null")
+		expect(write { writeIntOrNull(Int.MIN_VALUE) }).toBe("-2147483648")
+		expect(write { writeIntOrNull(-1) }).toBe("-1")
+		expect(write { writeIntOrNull(0) }).toBe("0")
+		expect(write { writeIntOrNull(1) }).toBe("1")
+		expect(write { writeIntOrNull(Int.MAX_VALUE) }).toBe("2147483647")
+		expect(write { writeIntOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteIntoList() {
-		assert(write {
+		expect(write {
 			writeIntoList {}
 		}).toBe("[]")
 
-		assert(write {
+		expect(write {
 			writeIntoList {
 				writeNull()
 				writeInt(1)
@@ -185,11 +185,11 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteIntoMap() {
-		assert(write {
+		expect(write {
 			writeIntoMap {}
 		}).toBe("{}")
 
-		assert(write {
+		expect(write {
 			writeIntoMap {
 				writeMapKey("")
 				writeInt(1)
@@ -200,50 +200,50 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteList() {
-		assert(write { writeList(booleanArrayOf(false, true)) }).toBe("[false,true]")
-		assert(write { writeList(byteArrayOf(0, 1)) }).toBe("[0,1]")
-		assert(write { writeList(charArrayOf(0.toChar(), 'a')) }).toBe("""["\u0000","a"]""")
-		assert(write { writeList(doubleArrayOf(0.0, 1.0)) }).toBe("[0.0,1.0]")
-		assert(write { writeList(floatArrayOf(0.0f, 1.0f)) }).toBe("[0.0,1.0]")
-		assert(write { writeList(intArrayOf(0, 1)) }).toBe("[0,1]")
-		assert(write { writeList(longArrayOf(0, 1)) }).toBe("[0,1]")
-		assert(write { writeList(shortArrayOf(0, 1)) }).toBe("[0,1]")
-		assert(write { writeList(arrayOf("", "")) }).toBe("""["",""]""")
-		assert(write { writeList(arrayOf("", "").asSequence().asIterable()) }).toBe("""["",""]""")
-		assert(write { writeList(arrayOf("", "").asSequence()) }).toBe("""["",""]""")
+		expect(write { writeList(booleanArrayOf(false, true)) }).toBe("[false,true]")
+		expect(write { writeList(byteArrayOf(0, 1)) }).toBe("[0,1]")
+		expect(write { writeList(charArrayOf(0.toChar(), 'a')) }).toBe("""["\u0000","a"]""")
+		expect(write { writeList(doubleArrayOf(0.0, 1.0)) }).toBe("[0.0,1.0]")
+		expect(write { writeList(floatArrayOf(0.0f, 1.0f)) }).toBe("[0.0,1.0]")
+		expect(write { writeList(intArrayOf(0, 1)) }).toBe("[0,1]")
+		expect(write { writeList(longArrayOf(0, 1)) }).toBe("[0,1]")
+		expect(write { writeList(shortArrayOf(0, 1)) }).toBe("[0,1]")
+		expect(write { writeList(arrayOf("", "")) }).toBe("""["",""]""")
+		expect(write { writeList(arrayOf("", "").asSequence().asIterable()) }).toBe("""["",""]""")
+		expect(write { writeList(arrayOf("", "").asSequence()) }).toBe("""["",""]""")
 	}
 
 
 	@Test
 	fun testWriteListByElement() {
-		assert(write { writeListByElement(booleanArrayOf(false, true)) { writeValue(it) } }).toBe("[false,true]")
-		assert(write { writeListByElement(byteArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
-		assert(write { writeListByElement(charArrayOf(0.toChar(), 'a')) { writeValue(it) } }).toBe("""["\u0000","a"]""")
-		assert(write { writeListByElement(doubleArrayOf(0.0, 1.0)) { writeValue(it) } }).toBe("[0.0,1.0]")
-		assert(write { writeListByElement(floatArrayOf(0.0f, 1.0f)) { writeValue(it) } }).toBe("[0.0,1.0]")
-		assert(write { writeListByElement(intArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
-		assert(write { writeListByElement(longArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
-		assert(write { writeListByElement(shortArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
-		assert(write { writeListByElement(arrayOf("", "")) { writeValue(it) } }).toBe("""["",""]""")
-		assert(write { writeListByElement(arrayOf("", "").asSequence().asIterable()) { writeValue(it) } }).toBe("""["",""]""")
-		assert(write { writeListByElement(arrayOf("", "").asSequence()) { writeValue(it) } }).toBe("""["",""]""")
+		expect(write { writeListByElement(booleanArrayOf(false, true)) { writeValue(it) } }).toBe("[false,true]")
+		expect(write { writeListByElement(byteArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
+		expect(write { writeListByElement(charArrayOf(0.toChar(), 'a')) { writeValue(it) } }).toBe("""["\u0000","a"]""")
+		expect(write { writeListByElement(doubleArrayOf(0.0, 1.0)) { writeValue(it) } }).toBe("[0.0,1.0]")
+		expect(write { writeListByElement(floatArrayOf(0.0f, 1.0f)) { writeValue(it) } }).toBe("[0.0,1.0]")
+		expect(write { writeListByElement(intArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
+		expect(write { writeListByElement(longArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
+		expect(write { writeListByElement(shortArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
+		expect(write { writeListByElement(arrayOf("", "")) { writeValue(it) } }).toBe("""["",""]""")
+		expect(write { writeListByElement(arrayOf("", "").asSequence().asIterable()) { writeValue(it) } }).toBe("""["",""]""")
+		expect(write { writeListByElement(arrayOf("", "").asSequence()) { writeValue(it) } }).toBe("""["",""]""")
 	}
 
 
 	@Test
 	fun testWriteListStartAndEnd() {
-		assert(write {
+		expect(write {
 			writeListStart()
 			writeListEnd()
 		}).toBe("[]")
 
-		assert(write {
+		expect(write {
 			writeListStart()
 			writeInt(0)
 			writeListEnd()
 		}).toBe("[0]")
 
-		assert(write {
+		expect(write {
 			writeListStart()
 			writeInt(0)
 			writeInt(1); writeListEnd()
@@ -253,88 +253,88 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteListOrNull() {
-		assert(write { writeListOrNull(booleanArrayOf(false, true)) }).toBe("[false,true]")
-		assert(write { writeListOrNull(byteArrayOf(0, 1)) }).toBe("[0,1]")
-		assert(write { writeListOrNull(charArrayOf(0.toChar(), 'a')) }).toBe("""["\u0000","a"]""")
-		assert(write { writeListOrNull(doubleArrayOf(0.0, 1.0)) }).toBe("[0.0,1.0]")
-		assert(write { writeListOrNull(floatArrayOf(0.0f, 1.0f)) }).toBe("[0.0,1.0]")
-		assert(write { writeListOrNull(intArrayOf(0, 1)) }).toBe("[0,1]")
-		assert(write { writeListOrNull(longArrayOf(0, 1)) }).toBe("[0,1]")
-		assert(write { writeListOrNull(shortArrayOf(0, 1)) }).toBe("[0,1]")
-		assert(write { writeListOrNull(arrayOf("", "")) }).toBe("""["",""]""")
-		assert(write { writeListOrNull(arrayOf("", "").asSequence().asIterable()) }).toBe("""["",""]""")
-		assert(write { writeListOrNull(arrayOf("", "").asSequence()) }).toBe("""["",""]""")
-		assert(write { writeListOrNull(null as BooleanArray?) }).toBe("null")
-		assert(write { writeListOrNull(null as ByteArray?) }).toBe("null")
-		assert(write { writeListOrNull(null as CharArray?) }).toBe("null")
-		assert(write { writeListOrNull(null as DoubleArray?) }).toBe("null")
-		assert(write { writeListOrNull(null as FloatArray?) }).toBe("null")
-		assert(write { writeListOrNull(null as IntArray?) }).toBe("null")
-		assert(write { writeListOrNull(null as LongArray?) }).toBe("null")
-		assert(write { writeListOrNull(null as ShortArray?) }).toBe("null")
-		assert(write { writeListOrNull(null as Array<String?>?) }).toBe("null")
-		assert(write { writeListOrNull(null as Iterable<String?>?) }).toBe("null")
-		assert(write { writeListOrNull(null as Sequence<String?>?) }).toBe("null")
+		expect(write { writeListOrNull(booleanArrayOf(false, true)) }).toBe("[false,true]")
+		expect(write { writeListOrNull(byteArrayOf(0, 1)) }).toBe("[0,1]")
+		expect(write { writeListOrNull(charArrayOf(0.toChar(), 'a')) }).toBe("""["\u0000","a"]""")
+		expect(write { writeListOrNull(doubleArrayOf(0.0, 1.0)) }).toBe("[0.0,1.0]")
+		expect(write { writeListOrNull(floatArrayOf(0.0f, 1.0f)) }).toBe("[0.0,1.0]")
+		expect(write { writeListOrNull(intArrayOf(0, 1)) }).toBe("[0,1]")
+		expect(write { writeListOrNull(longArrayOf(0, 1)) }).toBe("[0,1]")
+		expect(write { writeListOrNull(shortArrayOf(0, 1)) }).toBe("[0,1]")
+		expect(write { writeListOrNull(arrayOf("", "")) }).toBe("""["",""]""")
+		expect(write { writeListOrNull(arrayOf("", "").asSequence().asIterable()) }).toBe("""["",""]""")
+		expect(write { writeListOrNull(arrayOf("", "").asSequence()) }).toBe("""["",""]""")
+		expect(write { writeListOrNull(null as BooleanArray?) }).toBe("null")
+		expect(write { writeListOrNull(null as ByteArray?) }).toBe("null")
+		expect(write { writeListOrNull(null as CharArray?) }).toBe("null")
+		expect(write { writeListOrNull(null as DoubleArray?) }).toBe("null")
+		expect(write { writeListOrNull(null as FloatArray?) }).toBe("null")
+		expect(write { writeListOrNull(null as IntArray?) }).toBe("null")
+		expect(write { writeListOrNull(null as LongArray?) }).toBe("null")
+		expect(write { writeListOrNull(null as ShortArray?) }).toBe("null")
+		expect(write { writeListOrNull(null as Array<String?>?) }).toBe("null")
+		expect(write { writeListOrNull(null as Iterable<String?>?) }).toBe("null")
+		expect(write { writeListOrNull(null as Sequence<String?>?) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteListOrNullByElement() {
-		assert(write { writeListOrNullByElement(booleanArrayOf(false, true)) { writeValue(it) } }).toBe("[false,true]")
-		assert(write { writeListOrNullByElement(byteArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
-		assert(write { writeListOrNullByElement(charArrayOf(0.toChar(), 'a')) { writeValue(it) } }).toBe("""["\u0000","a"]""")
-		assert(write { writeListOrNullByElement(doubleArrayOf(0.0, 1.0)) { writeValue(it) } }).toBe("[0.0,1.0]")
-		assert(write { writeListOrNullByElement(floatArrayOf(0.0f, 1.0f)) { writeValue(it) } }).toBe("[0.0,1.0]")
-		assert(write { writeListOrNullByElement(intArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
-		assert(write { writeListOrNullByElement(longArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
-		assert(write { writeListOrNullByElement(shortArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
-		assert(write { writeListOrNullByElement(arrayOf("", "")) { writeValue(it) } }).toBe("""["",""]""")
-		assert(write { writeListOrNullByElement(arrayOf("", "").asSequence().asIterable()) { writeValue(it) } }).toBe("""["",""]""")
-		assert(write { writeListOrNullByElement(arrayOf("", "").asSequence()) { writeValue(it) } }).toBe("""["",""]""")
-		assert(write { writeListOrNullByElement(null as BooleanArray?) {} }).toBe("null")
-		assert(write { writeListOrNullByElement(null as ByteArray?) {} }).toBe("null")
-		assert(write { writeListOrNullByElement(null as CharArray?) {} }).toBe("null")
-		assert(write { writeListOrNullByElement(null as DoubleArray?) {} }).toBe("null")
-		assert(write { writeListOrNullByElement(null as FloatArray?) {} }).toBe("null")
-		assert(write { writeListOrNullByElement(null as IntArray?) {} }).toBe("null")
-		assert(write { writeListOrNullByElement(null as LongArray?) {} }).toBe("null")
-		assert(write { writeListOrNullByElement(null as ShortArray?) {} }).toBe("null")
-		assert(write { writeListOrNullByElement(null as Array<String?>?) {} }).toBe("null")
-		assert(write { writeListOrNullByElement(null as Iterable<String?>?) {} }).toBe("null")
-		assert(write { writeListOrNullByElement(null as Sequence<String?>?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(booleanArrayOf(false, true)) { writeValue(it) } }).toBe("[false,true]")
+		expect(write { writeListOrNullByElement(byteArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
+		expect(write { writeListOrNullByElement(charArrayOf(0.toChar(), 'a')) { writeValue(it) } }).toBe("""["\u0000","a"]""")
+		expect(write { writeListOrNullByElement(doubleArrayOf(0.0, 1.0)) { writeValue(it) } }).toBe("[0.0,1.0]")
+		expect(write { writeListOrNullByElement(floatArrayOf(0.0f, 1.0f)) { writeValue(it) } }).toBe("[0.0,1.0]")
+		expect(write { writeListOrNullByElement(intArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
+		expect(write { writeListOrNullByElement(longArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
+		expect(write { writeListOrNullByElement(shortArrayOf(0, 1)) { writeValue(it) } }).toBe("[0,1]")
+		expect(write { writeListOrNullByElement(arrayOf("", "")) { writeValue(it) } }).toBe("""["",""]""")
+		expect(write { writeListOrNullByElement(arrayOf("", "").asSequence().asIterable()) { writeValue(it) } }).toBe("""["",""]""")
+		expect(write { writeListOrNullByElement(arrayOf("", "").asSequence()) { writeValue(it) } }).toBe("""["",""]""")
+		expect(write { writeListOrNullByElement(null as BooleanArray?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(null as ByteArray?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(null as CharArray?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(null as DoubleArray?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(null as FloatArray?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(null as IntArray?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(null as LongArray?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(null as ShortArray?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(null as Array<String?>?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(null as Iterable<String?>?) {} }).toBe("null")
+		expect(write { writeListOrNullByElement(null as Sequence<String?>?) {} }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteLong() {
-		assert(write { writeLong(Long.MIN_VALUE) }).toBe("-9223372036854775808")
-		assert(write { writeLong(-1) }).toBe("-1")
-		assert(write { writeLong(0) }).toBe("0")
-		assert(write { writeLong(1) }).toBe("1")
-		assert(write { writeLong(Long.MAX_VALUE) }).toBe("9223372036854775807")
+		expect(write { writeLong(Long.MIN_VALUE) }).toBe("-9223372036854775808")
+		expect(write { writeLong(-1) }).toBe("-1")
+		expect(write { writeLong(0) }).toBe("0")
+		expect(write { writeLong(1) }).toBe("1")
+		expect(write { writeLong(Long.MAX_VALUE) }).toBe("9223372036854775807")
 	}
 
 
 	@Test
 	fun testWriteLongOrNull() {
-		assert(write { writeLongOrNull(Long.MIN_VALUE) }).toBe("-9223372036854775808")
-		assert(write { writeLongOrNull(-1) }).toBe("-1")
-		assert(write { writeLongOrNull(0) }).toBe("0")
-		assert(write { writeLongOrNull(1) }).toBe("1")
-		assert(write { writeLongOrNull(Long.MAX_VALUE) }).toBe("9223372036854775807")
-		assert(write { writeLongOrNull(null) }).toBe("null")
+		expect(write { writeLongOrNull(Long.MIN_VALUE) }).toBe("-9223372036854775808")
+		expect(write { writeLongOrNull(-1) }).toBe("-1")
+		expect(write { writeLongOrNull(0) }).toBe("0")
+		expect(write { writeLongOrNull(1) }).toBe("1")
+		expect(write { writeLongOrNull(Long.MAX_VALUE) }).toBe("9223372036854775807")
+		expect(write { writeLongOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteMap() {
-		assert(write { writeMap(mapOf("0" to 0, "1" to 1)) }).toBe("""{"0":0,"1":1}""")
+		expect(write { writeMap(mapOf("0" to 0, "1" to 1)) }).toBe("""{"0":0,"1":1}""")
 	}
 
 
 	@Test
 	fun testWriteMapByElement() {
-		assert(write {
+		expect(write {
 			writeMapByElement(mapOf("0" to 0, "1" to 1)) { key, value ->
 				writeMapKey(key)
 				writeInt(value)
@@ -345,7 +345,7 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteMapByElementValue() {
-		assert(write {
+		expect(write {
 			writeMapByElementValue(mapOf("0" to 0, "1" to 1)) { value ->
 				writeInt(value)
 			}
@@ -355,7 +355,7 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteMapElement() {
-		assert(write {
+		expect(write {
 			writeIntoMap {
 				writeMapElement("", boolean = true)
 				writeMapElement("", boolean = true, skipIfNull = false)
@@ -671,19 +671,19 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteMapStartAndEnd() {
-		assert(write {
+		expect(write {
 			writeMapStart()
 			writeMapEnd()
 		}).toBe("{}")
 
-		assert(write {
+		expect(write {
 			writeMapStart()
 			writeMapKey("0")
 			writeInt(0)
 			writeMapEnd()
 		}).toBe("""{"0":0}""")
 
-		assert(write {
+		expect(write {
 			writeMapStart()
 			writeMapKey("0")
 			writeInt(0)
@@ -696,42 +696,42 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteMapKey() {
-		assert(write {
+		expect(write {
 			writeMapStart()
 			writeMapKey("")
 			writeInt(0)
 			writeMapEnd()
 		}).toBe("""{"":0}""")
 
-		assert(write {
+		expect(write {
 			writeMapStart()
 			writeMapKey("simple")
 			writeInt(0)
 			writeMapEnd()
 		}).toBe("""{"simple":0}""")
 
-		assert(write {
+		expect(write {
 			writeMapStart()
 			writeMapKey("emoji: 🐶")
 			writeInt(0)
 			writeMapEnd()
 		}).toBe("""{"emoji: 🐶":0}""")
 
-		assert(write {
+		expect(write {
 			writeMapStart()
 			writeMapKey("\\ \"")
 			writeInt(0)
 			writeMapEnd()
 		}).toBe("""{"\\ \"":0}""")
 
-		assert(write {
+		expect(write {
 			writeMapStart()
 			writeMapKey("\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u000B\u000E\u000F\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F\u0020")
 			writeInt(0)
 			writeMapEnd()
 		}).toBe("""{"\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u000B\u000E\u000F\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F ":0}""")
 
-		assert(write {
+		expect(write {
 			writeMapStart()
 			writeMapKey(" \\ \" / \b \u000C \n \r \t ")
 			writeInt(0)
@@ -742,21 +742,21 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteMapOrNull() {
-		assert(write { writeMapOrNull(mapOf("0" to 0, "1" to 1)) }).toBe("""{"0":0,"1":1}""")
-		assert(write { writeMapOrNull(null) }).toBe("null")
+		expect(write { writeMapOrNull(mapOf("0" to 0, "1" to 1)) }).toBe("""{"0":0,"1":1}""")
+		expect(write { writeMapOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteMapOrNullByElement() {
-		assert(write {
+		expect(write {
 			writeMapOrNullByElement(mapOf("0" to 0, "1" to 1)) { key, value ->
 				writeMapKey(key)
 				writeInt(value)
 			}
 		}).toBe("""{"0":0,"1":1}""")
 
-		assert(write {
+		expect(write {
 			writeMapOrNullByElement(null as Map<String, Int>?) { _, _ -> Unit }
 		}).toBe("null")
 	}
@@ -764,13 +764,13 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteMapOrNullByElementValue() {
-		assert(write {
+		expect(write {
 			writeMapOrNullByElementValue(mapOf("0" to 0, "1" to 1)) { value ->
 				writeInt(value)
 			}
 		}).toBe("""{"0":0,"1":1}""")
 
-		assert(write {
+		expect(write {
 			writeMapOrNullByElementValue(null as Map<String, Int>?) {}
 		}).toBe("null")
 	}
@@ -778,106 +778,106 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteNull() {
-		assert(write { writeNull() }).toBe("null")
+		expect(write { writeNull() }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteNumber() {
-		assert(write { writeNumber(Long.MIN_VALUE) }).toBe("-9223372036854775808")
-		assert(write { writeNumber(Int.MIN_VALUE - 1L) }).toBe("-2147483649")
-		assert(write { writeNumber(Int.MIN_VALUE) }).toBe("-2147483648")
-		assert(write { writeNumber(-1) }).toBe("-1")
-		assert(write { writeNumber(0) }).toBe("0")
-		assert(write { writeNumber(1) }).toBe("1")
-		assert(write { writeNumber(Int.MAX_VALUE) }).toBe("2147483647")
-		assert(write { writeNumber(Int.MAX_VALUE + 1L) }).toBe("2147483648")
-		assert(write { writeNumber(Long.MAX_VALUE) }).toBe("9223372036854775807")
-		assert(write { writeNumber(-1E200) }).toBe("-1.0E200")
-		assert(write { writeNumber(-100.999) }).toBe("-100.999")
-		assert(write { writeNumber(-100.001) }).toBe("-100.001")
-		assert(write { writeNumber(-1E-200) }).toBe("-1.0E-200")
-		assert(write { writeNumber(-0.0) }).toBe("-0.0")
-		assert(write { writeNumber(0.0) }).toBe("0.0")
-		assert(write { writeNumber(1E-200) }).toBe("1.0E-200")
-		assert(write { writeNumber(100.001) }).toBe("100.001")
-		assert(write { writeNumber(100.999) }).toBe("100.999")
-		assert(write { writeNumber(1E200) }).toBe("1.0E200")
+		expect(write { writeNumber(Long.MIN_VALUE) }).toBe("-9223372036854775808")
+		expect(write { writeNumber(Int.MIN_VALUE - 1L) }).toBe("-2147483649")
+		expect(write { writeNumber(Int.MIN_VALUE) }).toBe("-2147483648")
+		expect(write { writeNumber(-1) }).toBe("-1")
+		expect(write { writeNumber(0) }).toBe("0")
+		expect(write { writeNumber(1) }).toBe("1")
+		expect(write { writeNumber(Int.MAX_VALUE) }).toBe("2147483647")
+		expect(write { writeNumber(Int.MAX_VALUE + 1L) }).toBe("2147483648")
+		expect(write { writeNumber(Long.MAX_VALUE) }).toBe("9223372036854775807")
+		expect(write { writeNumber(-1E200) }).toBe("-1.0E200")
+		expect(write { writeNumber(-100.999) }).toBe("-100.999")
+		expect(write { writeNumber(-100.001) }).toBe("-100.001")
+		expect(write { writeNumber(-1E-200) }).toBe("-1.0E-200")
+		expect(write { writeNumber(-0.0) }).toBe("-0.0")
+		expect(write { writeNumber(0.0) }).toBe("0.0")
+		expect(write { writeNumber(1E-200) }).toBe("1.0E-200")
+		expect(write { writeNumber(100.001) }).toBe("100.001")
+		expect(write { writeNumber(100.999) }).toBe("100.999")
+		expect(write { writeNumber(1E200) }).toBe("1.0E200")
 	}
 
 
 	@Test
 	fun testWriteNumberOrNull() {
-		assert(write { writeNumberOrNull(Long.MIN_VALUE) }).toBe("-9223372036854775808")
-		assert(write { writeNumberOrNull(Int.MIN_VALUE - 1L) }).toBe("-2147483649")
-		assert(write { writeNumberOrNull(Int.MIN_VALUE) }).toBe("-2147483648")
-		assert(write { writeNumberOrNull(-1) }).toBe("-1")
-		assert(write { writeNumberOrNull(0) }).toBe("0")
-		assert(write { writeNumberOrNull(1) }).toBe("1")
-		assert(write { writeNumberOrNull(Int.MAX_VALUE) }).toBe("2147483647")
-		assert(write { writeNumberOrNull(Int.MAX_VALUE + 1L) }).toBe("2147483648")
-		assert(write { writeNumberOrNull(Long.MAX_VALUE) }).toBe("9223372036854775807")
-		assert(write { writeNumberOrNull(-1E200) }).toBe("-1.0E200")
-		assert(write { writeNumberOrNull(-100.999) }).toBe("-100.999")
-		assert(write { writeNumberOrNull(-100.001) }).toBe("-100.001")
-		assert(write { writeNumberOrNull(-1E-200) }).toBe("-1.0E-200")
-		assert(write { writeNumberOrNull(-0.0) }).toBe("-0.0")
-		assert(write { writeNumberOrNull(0.0) }).toBe("0.0")
-		assert(write { writeNumberOrNull(1E-200) }).toBe("1.0E-200")
-		assert(write { writeNumberOrNull(100.001) }).toBe("100.001")
-		assert(write { writeNumberOrNull(100.999) }).toBe("100.999")
-		assert(write { writeNumberOrNull(1E200) }).toBe("1.0E200")
-		assert(write { writeNumberOrNull(null) }).toBe("null")
+		expect(write { writeNumberOrNull(Long.MIN_VALUE) }).toBe("-9223372036854775808")
+		expect(write { writeNumberOrNull(Int.MIN_VALUE - 1L) }).toBe("-2147483649")
+		expect(write { writeNumberOrNull(Int.MIN_VALUE) }).toBe("-2147483648")
+		expect(write { writeNumberOrNull(-1) }).toBe("-1")
+		expect(write { writeNumberOrNull(0) }).toBe("0")
+		expect(write { writeNumberOrNull(1) }).toBe("1")
+		expect(write { writeNumberOrNull(Int.MAX_VALUE) }).toBe("2147483647")
+		expect(write { writeNumberOrNull(Int.MAX_VALUE + 1L) }).toBe("2147483648")
+		expect(write { writeNumberOrNull(Long.MAX_VALUE) }).toBe("9223372036854775807")
+		expect(write { writeNumberOrNull(-1E200) }).toBe("-1.0E200")
+		expect(write { writeNumberOrNull(-100.999) }).toBe("-100.999")
+		expect(write { writeNumberOrNull(-100.001) }).toBe("-100.001")
+		expect(write { writeNumberOrNull(-1E-200) }).toBe("-1.0E-200")
+		expect(write { writeNumberOrNull(-0.0) }).toBe("-0.0")
+		expect(write { writeNumberOrNull(0.0) }).toBe("0.0")
+		expect(write { writeNumberOrNull(1E-200) }).toBe("1.0E-200")
+		expect(write { writeNumberOrNull(100.001) }).toBe("100.001")
+		expect(write { writeNumberOrNull(100.999) }).toBe("100.999")
+		expect(write { writeNumberOrNull(1E200) }).toBe("1.0E200")
+		expect(write { writeNumberOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteShort() {
-		assert(write { writeShort(Short.MIN_VALUE) }).toBe("-32768")
-		assert(write { writeShort(-1) }).toBe("-1")
-		assert(write { writeShort(0) }).toBe("0")
-		assert(write { writeShort(1) }).toBe("1")
-		assert(write { writeShort(Short.MAX_VALUE) }).toBe("32767")
+		expect(write { writeShort(Short.MIN_VALUE) }).toBe("-32768")
+		expect(write { writeShort(-1) }).toBe("-1")
+		expect(write { writeShort(0) }).toBe("0")
+		expect(write { writeShort(1) }).toBe("1")
+		expect(write { writeShort(Short.MAX_VALUE) }).toBe("32767")
 	}
 
 
 	@Test
 	fun testWriteShortOrNull() {
-		assert(write { writeShortOrNull(Short.MIN_VALUE) }).toBe("-32768")
-		assert(write { writeShortOrNull(-1) }).toBe("-1")
-		assert(write { writeShortOrNull(0) }).toBe("0")
-		assert(write { writeShortOrNull(1) }).toBe("1")
-		assert(write { writeShortOrNull(Short.MAX_VALUE) }).toBe("32767")
-		assert(write { writeShortOrNull(null) }).toBe("null")
+		expect(write { writeShortOrNull(Short.MIN_VALUE) }).toBe("-32768")
+		expect(write { writeShortOrNull(-1) }).toBe("-1")
+		expect(write { writeShortOrNull(0) }).toBe("0")
+		expect(write { writeShortOrNull(1) }).toBe("1")
+		expect(write { writeShortOrNull(Short.MAX_VALUE) }).toBe("32767")
+		expect(write { writeShortOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteString() {
-		assert(write { writeString("") }).toBe("\"\"")
-		assert(write { writeString("simple") }).toBe("\"simple\"")
-		assert(write { writeString("emoji: 🐶") }).toBe("\"emoji: 🐶\"")
-		assert(write { writeString("\\ \"") }).toBe("\"\\\\ \\\"\"")
-		assert(write { writeString("\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u000B\u000E\u000F\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F\u0020") }).toBe("\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\u000B\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D\\u001E\\u001F \"")
-		assert(write { writeString(" \\ \" / \b \u000C \n \r \t ") }).toBe("\" \\\\ \\\" / \\b \\f \\n \\r \\t \"")
+		expect(write { writeString("") }).toBe("\"\"")
+		expect(write { writeString("simple") }).toBe("\"simple\"")
+		expect(write { writeString("emoji: 🐶") }).toBe("\"emoji: 🐶\"")
+		expect(write { writeString("\\ \"") }).toBe("\"\\\\ \\\"\"")
+		expect(write { writeString("\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u000B\u000E\u000F\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F\u0020") }).toBe("\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\u000B\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D\\u001E\\u001F \"")
+		expect(write { writeString(" \\ \" / \b \u000C \n \r \t ") }).toBe("\" \\\\ \\\" / \\b \\f \\n \\r \\t \"")
 	}
 
 
 	@Test
 	fun testWriteStringOrNull() {
-		assert(write { writeStringOrNull("") }).toBe("\"\"")
-		assert(write { writeStringOrNull("simple") }).toBe("\"simple\"")
-		assert(write { writeStringOrNull("emoji: 🐶") }).toBe("\"emoji: 🐶\"")
-		assert(write { writeStringOrNull("\\ \"") }).toBe("\"\\\\ \\\"\"")
-		assert(write { writeStringOrNull("\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u000B\u000E\u000F\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F\u0020") }).toBe("\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\u000B\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D\\u001E\\u001F \"")
-		assert(write { writeStringOrNull(" \\ \" / \b \u000C \n \r \t ") }).toBe("\" \\\\ \\\" / \\b \\f \\n \\r \\t \"")
-		assert(write { writeStringOrNull(null) }).toBe("null")
+		expect(write { writeStringOrNull("") }).toBe("\"\"")
+		expect(write { writeStringOrNull("simple") }).toBe("\"simple\"")
+		expect(write { writeStringOrNull("emoji: 🐶") }).toBe("\"emoji: 🐶\"")
+		expect(write { writeStringOrNull("\\ \"") }).toBe("\"\\\\ \\\"\"")
+		expect(write { writeStringOrNull("\u0000\u0001\u0002\u0003\u0004\u0005\u0006\u0007\u000B\u000E\u000F\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001A\u001B\u001C\u001D\u001E\u001F\u0020") }).toBe("\"\\u0000\\u0001\\u0002\\u0003\\u0004\\u0005\\u0006\\u0007\\u000B\\u000E\\u000F\\u0010\\u0011\\u0012\\u0013\\u0014\\u0015\\u0016\\u0017\\u0018\\u0019\\u001A\\u001B\\u001C\\u001D\\u001E\\u001F \"")
+		expect(write { writeStringOrNull(" \\ \" / \b \u000C \n \r \t ") }).toBe("\" \\\\ \\\" / \\b \\f \\n \\r \\t \"")
+		expect(write { writeStringOrNull(null) }).toBe("null")
 	}
 
 
 	@Test
 	fun testWriteValue() {
-		assert(write {
+		expect(write {
 			writeIntoList {
 				writeValue(arrayOf("", ""))
 				writeValue(true)
@@ -908,7 +908,7 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteValueOrNull() {
-		assert(write {
+		expect(write {
 			writeIntoList {
 				writeValueOrNull(arrayOf("", ""))
 				writeValueOrNull(true)
@@ -940,7 +940,7 @@ internal object StandardWriterAcceptTest {
 
 	@Test
 	fun testWriteValueAsMapKey() {
-		assert(write {
+		expect(write {
 			writeIntoMap {
 				writeValue("hey")
 				writeNull()

@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.time.*
@@ -93,7 +93,7 @@ internal object ExtendedCodecsTest {
 		)
 			.map {
 				DynamicTest.dynamicTest("for ${it.simpleName}") {
-					assert(provider.encoderCodecForClass(it)).notToBeNull {}
+					expect(provider.encoderCodecForClass(it)).notToBeNull()
 				}
 			}
 	}

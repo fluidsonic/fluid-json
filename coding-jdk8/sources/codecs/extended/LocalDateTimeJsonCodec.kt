@@ -5,10 +5,10 @@ import java.time.*
 
 object LocalDateTimeJsonCodec : AbstractJsonCodec<LocalDateTime, JsonCodingContext>() {
 
-	override fun JsonDecoder<JsonCodingContext>.decode(valueType: JsonCodingType<LocalDateTime>) =
+	override fun JsonDecoder<JsonCodingContext>.decode(valueType: JsonCodingType<LocalDateTime>): LocalDateTime =
 		readString().let { raw ->
 			try {
-				LocalDateTime.parse(raw)!!
+				LocalDateTime.parse(raw)
 			}
 			catch (e: DateTimeException) {
 				invalidValueError("date and time in ISO-8601 format expected, got '$raw'")

@@ -79,9 +79,8 @@ interface JsonReader : Closeable {
 	}
 
 
-	fun readValue(): Any {
-		val token = nextToken
-		return when (token) {
+	fun readValue(): Any =
+		when (val token = nextToken) {
 			JsonToken.booleanValue -> readBoolean()
 			JsonToken.listStart -> readList()
 			JsonToken.mapKey -> readMapKey()
@@ -94,12 +93,10 @@ interface JsonReader : Closeable {
 				path = path
 			)
 		}
-	}
 
 
 	fun skipValue() {
-		val token = nextToken
-		when (token) {
+		when (val token = nextToken) {
 			JsonToken.booleanValue -> readBoolean()
 			JsonToken.listStart -> readListByElement { skipValue() }
 			JsonToken.mapKey -> readMapKey()

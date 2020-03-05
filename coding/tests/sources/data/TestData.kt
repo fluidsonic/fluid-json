@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 
 
@@ -31,7 +31,7 @@ internal class TestData<out Value : Any>(
 	fun testEncoding(encode: (input: Value) -> String) {
 		for ((input, expectedOutput) in symmetric.toList() + encodableOnly.toList())
 			try {
-				assert(encode(input)).toBe(expectedOutput)
+				expect(encode(input)).toBe(expectedOutput)
 			}
 			catch (e: Throwable) {
 				throw AssertionError("${e.message} - when encoding ${input::class}: $input").apply {

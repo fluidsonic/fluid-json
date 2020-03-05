@@ -69,13 +69,11 @@ internal object KaijuCodec : AbstractJsonCodec<Kaiju, TestCoderContext>(
 
 	object StatusCodec : AbstractJsonCodec<Status, TestCoderContext>() {
 
-		override fun JsonDecoder<TestCoderContext>.decode(valueType: JsonCodingType<Status>): Status {
-			val id = readString()
-			return when (id) {
+		override fun JsonDecoder<TestCoderContext>.decode(valueType: JsonCodingType<Status>) =
+			when (val id = readString()) {
 				"deceased" -> Status.deceased
 				else -> invalidValueError("unknown Kaiju status: $id")
 			}
-		}
 
 
 		override fun JsonEncoder<TestCoderContext>.encode(value: Status) {

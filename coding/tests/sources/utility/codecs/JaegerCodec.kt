@@ -69,13 +69,11 @@ internal object JaegerCodec : AbstractJsonCodec<Jaeger, TestCoderContext>(
 
 	object StatusCodec : AbstractJsonCodec<Status, TestCoderContext>() {
 
-		override fun JsonDecoder<TestCoderContext>.decode(valueType: JsonCodingType<Status>): Status {
-			val id = readString()
-			return when (id) {
+		override fun JsonDecoder<TestCoderContext>.decode(valueType: JsonCodingType<Status>) =
+			when (val id = readString()) {
 				"destroyed" -> Status.destroyed
 				else -> invalidValueError("unknown Jäger status: $id")
 			}
-		}
 
 
 		override fun JsonEncoder<TestCoderContext>.encode(value: Status) {

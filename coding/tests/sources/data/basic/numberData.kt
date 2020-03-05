@@ -2,7 +2,7 @@ package tests.coding
 
 
 internal val numberData =
-	TestData.of<Number>(
+	TestData.of(
 		TestData<Number>(
 			symmetric = mapOf(
 				Long.MIN_VALUE to "-9223372036854775808",

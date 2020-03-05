@@ -5,6 +5,7 @@ import org.junit.jupiter.api.*
 import java.io.*
 
 
+@Suppress("SpellCheckingInspection")
 internal object StandardReaderRejectTest {
 
 	@Test

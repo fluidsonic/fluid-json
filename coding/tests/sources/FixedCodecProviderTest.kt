@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import kotlin.reflect.*
@@ -14,7 +14,7 @@ internal class FixedCodecProviderTest {
 
 		@Test
 		fun testMatchesExactInterface() {
-			assert(
+			expect(
 				provider(UnrelatedDecoderCodec, ParentDecoderCodec, ChildDecoderCodec)
 					.decoderCodecForType<Parent, Context>()
 			)
@@ -24,7 +24,7 @@ internal class FixedCodecProviderTest {
 
 		@Test
 		fun testMatchesExactClass() {
-			assert(
+			expect(
 				provider(UnrelatedDecoderCodec, ChildDecoderCodec, ParentDecoderCodec)
 					.decoderCodecForType<Child, Context>()
 			)
@@ -34,7 +34,7 @@ internal class FixedCodecProviderTest {
 
 		@Test
 		fun testObeysOrderOfCodecs() {
-			assert(
+			expect(
 				provider(UnrelatedDecoderCodec, ChildDecoderCodec2, ChildDecoderCodec)
 					.decoderCodecForType<Child, Context>()
 			)
@@ -48,7 +48,7 @@ internal class FixedCodecProviderTest {
 
 		@Test
 		fun testMatchesExactInterface() {
-			assert(
+			expect(
 				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
 					.encoderCodecForClass(Parent::class)
 			)
@@ -58,7 +58,7 @@ internal class FixedCodecProviderTest {
 
 		@Test
 		fun testMatchesExactClassType() {
-			assert(
+			expect(
 				provider(UnrelatedEncoderCodec, ChildEncoderCodec, ParentEncoderCodec)
 					.encoderCodecForClass(Child::class)
 			)
@@ -68,13 +68,13 @@ internal class FixedCodecProviderTest {
 
 		@Test
 		fun testMatchesArrayTypes() {
-			assert(
+			expect(
 				provider(ArrayJsonCodec)
 					.encoderCodecForClass(Array<Any?>::class)
 			)
 				.toBe(ArrayJsonCodec)
 
-			assert(
+			expect(
 				provider(ArrayJsonCodec)
 					.encoderCodecForClass(Array<String>::class)
 			)
@@ -84,7 +84,7 @@ internal class FixedCodecProviderTest {
 
 		@Test
 		fun testMatchesSubclasses() {
-			assert(
+			expect(
 				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
 					.encoderCodecForClass(Child::class)
 			)
@@ -94,7 +94,7 @@ internal class FixedCodecProviderTest {
 
 		@Test
 		fun testMatchesPrimitiveArrayTypes() {
-			assert(
+			expect(
 				provider(ArrayJsonCodec)
 					.encoderCodecForClass(IntArray::class as KClass<*>)
 			)
@@ -104,7 +104,7 @@ internal class FixedCodecProviderTest {
 
 		@Test
 		fun testObeysOrderOfCodecs() {
-			assert(
+			expect(
 				provider(UnrelatedEncoderCodec, ParentEncoderCodec, ChildEncoderCodec)
 					.encoderCodecForClass(Child::class)
 			)
@@ -113,11 +113,11 @@ internal class FixedCodecProviderTest {
 	}
 
 
-	private fun provider(vararg codecs: JsonDecoderCodec<*, FixedCodecProviderTest.Context>) =
+	private fun provider(vararg codecs: JsonDecoderCodec<*, Context>) =
 		FixedCodecProvider(codecs.toList())
 
 
-	private fun provider(vararg codecs: JsonEncoderCodec<*, FixedCodecProviderTest.Context>) =
+	private fun provider(vararg codecs: JsonEncoderCodec<*, Context>) =
 		FixedCodecProvider(codecs.toList())
 
 

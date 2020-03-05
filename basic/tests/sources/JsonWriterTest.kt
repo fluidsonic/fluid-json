@@ -1,7 +1,7 @@
 package tests.basic
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 import java.io.*
@@ -12,16 +12,16 @@ internal object JsonWriterTest {
 	@Test
 	fun testWithErrorChecking() {
 		val writer = JsonWriter.build(StringWriter())
-		assert(writer.isErrored).toBe(false)
-		assert(writer.withErrorChecking { "test" }).toBe("test")
-		assert(writer.isErrored).toBe(false)
+		expect(writer.isErrored).toBe(false)
+		expect(writer.withErrorChecking { "test" }).toBe("test")
+		expect(writer.isErrored).toBe(false)
 
 		try {
 			if (0.toBigDecimal() == 0.toBigDecimal()) writer.withErrorChecking { throw RuntimeException() }
 			throw AssertionError(".withErrorChecking() should not consume exception")
 		}
 		catch (e: Throwable) {
-			assert(writer.isErrored).toBe(true)
+			expect(writer.isErrored).toBe(true)
 		}
 
 		try {
@@ -29,7 +29,7 @@ internal object JsonWriterTest {
 			throw AssertionError(".withErrorChecking() throw when errored")
 		}
 		catch (e: JsonException) {
-			assert(writer.isErrored).toBe(true)
+			expect(writer.isErrored).toBe(true)
 		}
 	}
 
@@ -56,18 +56,18 @@ internal object JsonWriterTest {
 		}
 
 		writer.writeByte(1)
-		assert(longValue).toBe(1L)
+		expect(longValue).toBe(1L)
 
 		writer.writeFloat(2.0f)
-		assert(doubleValue).toBe(2.0)
+		expect(doubleValue).toBe(2.0)
 
 		writer.writeInt(3)
-		assert(longValue).toBe(3)
+		expect(longValue).toBe(3)
 
 		writer.writeMapKey("4")
-		assert(stringValue).toBe("4")
+		expect(stringValue).toBe("4")
 
 		writer.writeShort(5)
-		assert(longValue).toBe(5)
+		expect(longValue).toBe(5)
 	}
 }

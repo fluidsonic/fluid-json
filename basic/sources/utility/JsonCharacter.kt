@@ -76,88 +76,88 @@ internal object JsonCharacter {
 
 	fun isHexDigit(character: Int) =
 		when (character) {
-			JsonCharacter.Digit.zero,
-			JsonCharacter.Digit.one,
-			JsonCharacter.Digit.two,
-			JsonCharacter.Digit.three,
-			JsonCharacter.Digit.four,
-			JsonCharacter.Digit.five,
-			JsonCharacter.Digit.six,
-			JsonCharacter.Digit.seven,
-			JsonCharacter.Digit.eight,
-			JsonCharacter.Digit.nine,
-			JsonCharacter.Letter.a,
-			JsonCharacter.Letter.b,
-			JsonCharacter.Letter.c,
-			JsonCharacter.Letter.d,
-			JsonCharacter.Letter.e,
-			JsonCharacter.Letter.f,
-			JsonCharacter.Letter.A,
-			JsonCharacter.Letter.B,
-			JsonCharacter.Letter.C,
-			JsonCharacter.Letter.D,
-			JsonCharacter.Letter.E,
-			JsonCharacter.Letter.F -> true
+			Digit.zero,
+			Digit.one,
+			Digit.two,
+			Digit.three,
+			Digit.four,
+			Digit.five,
+			Digit.six,
+			Digit.seven,
+			Digit.eight,
+			Digit.nine,
+			Letter.a,
+			Letter.b,
+			Letter.c,
+			Letter.d,
+			Letter.e,
+			Letter.f,
+			Letter.A,
+			Letter.B,
+			Letter.C,
+			Letter.D,
+			Letter.E,
+			Letter.F -> true
 			else -> false
 		}
 
 
 	fun isValueBoundary(character: Int) =
 		when (character) {
-			JsonCharacter.end,
-			JsonCharacter.Symbol.colon,
-			JsonCharacter.Symbol.comma,
-			JsonCharacter.Symbol.leftCurlyBracket,
-			JsonCharacter.Symbol.leftSquareBracket,
-			JsonCharacter.Symbol.rightCurlyBracket,
-			JsonCharacter.Symbol.rightSquareBracket,
-			JsonCharacter.Whitespace.carriageReturn,
-			JsonCharacter.Whitespace.characterTabulation,
-			JsonCharacter.Whitespace.lineFeed,
-			JsonCharacter.Whitespace.space -> true
+			end,
+			Symbol.colon,
+			Symbol.comma,
+			Symbol.leftCurlyBracket,
+			Symbol.leftSquareBracket,
+			Symbol.rightCurlyBracket,
+			Symbol.rightSquareBracket,
+			Whitespace.carriageReturn,
+			Whitespace.characterTabulation,
+			Whitespace.lineFeed,
+			Whitespace.space -> true
 			else -> false
 		}
 
 
 	fun isWhitespace(character: Int) =
 		when (character) {
-			JsonCharacter.Whitespace.carriageReturn,
-			JsonCharacter.Whitespace.characterTabulation,
-			JsonCharacter.Whitespace.lineFeed,
-			JsonCharacter.Whitespace.space -> true
+			Whitespace.carriageReturn,
+			Whitespace.characterTabulation,
+			Whitespace.lineFeed,
+			Whitespace.space -> true
 			else -> false
 		}
 
 
 	fun parseHexDigit(character: Int) =
 		when (character) {
-			JsonCharacter.Digit.zero,
-			JsonCharacter.Digit.one,
-			JsonCharacter.Digit.two,
-			JsonCharacter.Digit.three,
-			JsonCharacter.Digit.four,
-			JsonCharacter.Digit.five,
-			JsonCharacter.Digit.six,
-			JsonCharacter.Digit.seven,
-			JsonCharacter.Digit.eight,
-			JsonCharacter.Digit.nine ->
-				character - JsonCharacter.Digit.zero
+			Digit.zero,
+			Digit.one,
+			Digit.two,
+			Digit.three,
+			Digit.four,
+			Digit.five,
+			Digit.six,
+			Digit.seven,
+			Digit.eight,
+			Digit.nine ->
+				character - Digit.zero
 
-			JsonCharacter.Letter.a,
-			JsonCharacter.Letter.b,
-			JsonCharacter.Letter.c,
-			JsonCharacter.Letter.d,
-			JsonCharacter.Letter.e,
-			JsonCharacter.Letter.f ->
-				character - JsonCharacter.Letter.a + 10
+			Letter.a,
+			Letter.b,
+			Letter.c,
+			Letter.d,
+			Letter.e,
+			Letter.f ->
+				character - Letter.a + 10
 
-			JsonCharacter.Letter.A,
-			JsonCharacter.Letter.B,
-			JsonCharacter.Letter.C,
-			JsonCharacter.Letter.D,
-			JsonCharacter.Letter.E,
-			JsonCharacter.Letter.F ->
-				character - JsonCharacter.Letter.A + 10
+			Letter.A,
+			Letter.B,
+			Letter.C,
+			Letter.D,
+			Letter.E,
+			Letter.F ->
+				character - Letter.A + 10
 
 			else ->
 				throw IllegalArgumentException("${toString(character)} is not a hex digit.")
@@ -168,7 +168,7 @@ internal object JsonCharacter {
 		when {
 			character == end -> "end of input"
 			isControl(character) -> "control character $character"
-			else -> "character '${Character.toString(character.toChar())}'"
+			else -> "character '${character.toChar()}'"
 		}
 
 

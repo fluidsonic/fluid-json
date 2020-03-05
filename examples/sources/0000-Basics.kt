@@ -4,7 +4,7 @@ import io.fluidsonic.json.*
 import java.time.*
 
 // Note that IntelliJ IDEA still only has limited supported for annotation processing with kapt, so enable this setting first:
-// Preferences > Build, Execution, Deployment > Build Tools > Gradle > Runner > Delegate IDE build/run actions to gradle
+// Preferences > Build, Execution, Deployment > Build Tools > Gradle > Build an run using: > Gradle
 
 // EventJsonCodec and AttendeeJsonCodec are generated automatically for the @Json-annotated classes in this file
 

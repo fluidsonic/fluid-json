@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
@@ -25,14 +25,14 @@ internal object IntRangeJsonCodecTest {
 
 	@Test
 	fun testDecodesIntRange() {
-		assert(parser.parseValueOfType<IntRange>("""{"start":0,"endInclusive":1}"""))
+		expect(parser.parseValueOfType<IntRange>("""{"start":0,"endInclusive":1}"""))
 			.toBe(IntRange(0, 1))
 	}
 
 
 	@Test
 	fun testEncodesIntRange() {
-		assert(serializer.serializeValue(IntRange(0, 1)))
+		expect(serializer.serializeValue(IntRange(0, 1)))
 			.toBe("""{"start":0,"endInclusive":1}""")
 	}
 }

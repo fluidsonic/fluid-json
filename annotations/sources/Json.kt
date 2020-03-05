@@ -94,7 +94,7 @@ annotation class Json(
 		/**
 		 * Defines additional types for which codecs should be generated but which are not part of the same module as the annotated interface.
 		 */
-		val externalTypes: Array<Json.ExternalType> = []
+		val externalTypes: Array<ExternalType> = []
 	)
 
 

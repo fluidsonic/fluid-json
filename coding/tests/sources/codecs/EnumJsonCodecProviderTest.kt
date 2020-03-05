@@ -1,7 +1,7 @@
 package tests.coding
 
-import ch.tutteli.atrium.api.cc.en_GB.*
-import ch.tutteli.atrium.verbs.*
+import ch.tutteli.atrium.api.fluent.en_GB.*
+import ch.tutteli.atrium.api.verbs.*
 import io.fluidsonic.json.*
 import org.junit.jupiter.api.*
 
@@ -15,7 +15,7 @@ internal object EnumJsonCodecProviderTest {
 		val serializer = JsonCodingSerializer.builder().encodingWith(provider).build()
 
 		for (enumClass in listOf(Example1::class, Example2::class)) {
-			assert(serializer.serializeValue(enumClass.java.enumConstants.first())).toBe("0")
+			expect(serializer.serializeValue(enumClass.java.enumConstants.first())).toBe("0")
 		}
 	}
 

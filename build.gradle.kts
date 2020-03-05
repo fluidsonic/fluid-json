@@ -1,7 +1,7 @@
 import io.fluidsonic.gradle.*
 
 plugins {
-	id("io.fluidsonic.gradle") version "1.0.7"
+	id("io.fluidsonic.gradle") version "1.0.10"
 	jacoco
 }
 
@@ -30,6 +30,6 @@ subprojects {
 
 	dependencies {
 		testImplementation(kotlin("reflect"))
-		testImplementation("ch.tutteli.atrium:atrium-cc-en_GB-robstoll:0.8.0")
+		testImplementation("ch.tutteli.atrium:atrium-cc-en_GB-robstoll:0.9.2")
 	}
 }

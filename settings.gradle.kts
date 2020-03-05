@@ -1,10 +1,3 @@
-pluginManagement {
-	repositories {
-		gradlePluginPortal()
-		maven("https://dl.bintray.com/fluidsonic/kotlin")
-	}
-}
-
 rootProject.name = "fluid-json"
 
 include("annotation-processor", "annotations", "basic", "coding", "coding-jdk8", "examples", "ktor-client")
