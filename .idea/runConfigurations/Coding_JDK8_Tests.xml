@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Coding JDK8 Tests" type="JUnit" factoryName="JUnit">
-    <module name="fluid-json-coding-jdk8_test" />
+    <module name="fluid-json.fluid-json-coding-jdk8.jvmTest" />
+    <useClassPathOnly />
     <option name="PACKAGE_NAME" value="" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />

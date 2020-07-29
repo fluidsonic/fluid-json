@@ -1,16 +1,27 @@
 import io.fluidsonic.gradle.*
 
 plugins {
+	kotlin("multiplatform")
 	kotlin("kapt")
 }
 
-fluidJvmLibraryVariant(JvmTarget.jdk8) {
-	publishing = false
+fluidLibraryModule(description = "examples") {
+	withoutPublishing()
+
+	language {
+		withoutExplicitApi()
+	}
+
+	targets {
+		jvm {
+			dependencies {
+				implementation(project(":fluid-json-coding-jdk8"))
+				implementation(project(":fluid-json-annotations"))
+			}
+		}
+	}
 }
 
 dependencies {
-	implementation(project(":fluid-json-coding-jdk8"))
-	implementation(project(":fluid-json-annotations"))
-
-	kapt(project(":fluid-json-annotation-processor"))
+	"kapt"(project(":fluid-json-annotation-processor"))
 }

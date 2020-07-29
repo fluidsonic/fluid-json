@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Basic Tests" type="JUnit" factoryName="JUnit">
-    <module name="fluid-json-basic_test" />
+    <module name="fluid-json.fluid-json-basic.jvm-jdk7Test" />
+    <useClassPathOnly />
     <option name="PACKAGE_NAME" value="" />
     <option name="MAIN_CLASS_NAME" value="" />
     <option name="METHOD_NAME" value="" />

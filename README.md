@@ -3,7 +3,7 @@ fluid-json
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.fluidsonic.json/fluid-json-basic?label=Maven%20Central)](https://search.maven.org/search?q=io.fluidsonic.json)
 [![JCenter](https://img.shields.io/bintray/v/fluidsonic/kotlin/json?label=JCenter)](https://bintray.com/fluidsonic/kotlin/json)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.3.70-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.3.70)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.4.0--rc-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.4.0-rc)
 [![Build Status](https://travis-ci.org/fluidsonic/fluid-json.svg?branch=master)](https://travis-ci.org/fluidsonic/fluid-json)
 [![#fluid-libraries Slack Channel](https://img.shields.io/badge/slack-%23fluid--libraries-543951.svg)](https://kotlinlang.slack.com/messages/C7UDFSVT2/)
 

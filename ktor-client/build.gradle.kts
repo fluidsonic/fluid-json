@@ -1,11 +1,12 @@
 import io.fluidsonic.gradle.*
 
-fluidJvmLibraryVariant(JvmTarget.jdk7) {
-	description = "A JSON library written in pure Kotlin (Ktor Client extension)"
-}
-
-dependencies {
-	api(project(":fluid-json-coding"))
-
-	api("io.ktor:ktor-client-json-jvm:1.3.1")
+fluidLibraryModule(description = "A JSON library written in pure Kotlin (Ktor Client extension)") {
+	targets {
+		jvmJdk7 {
+			dependencies {
+				api(project(":fluid-json-coding"))
+				api("io.ktor:ktor-client-json-jvm:1.3.2-1.4.0-rc")
+			}
+		}
+	}
 }
