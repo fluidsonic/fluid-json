@@ -11,6 +11,7 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: 8
+      - run: git submodule update --init
       - run: ./gradlew jvmJdk7test
   jdk:
     name: JDK ${{ matrix.java_version }}
@@ -23,4 +24,5 @@ jobs:
       - uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java_version }}
-      - run: ./gradlew jvmTest
+      - run: git submodule update --init
+      - run: ./gradlew jvmJdk7test jvmTest
