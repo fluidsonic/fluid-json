@@ -1,10 +1,5 @@
 import io.fluidsonic.gradle.*
 
-plugins {
-	kotlin("multiplatform")
-	kotlin("kapt")
-}
-
 fluidLibraryModule(description = "examples") {
 	withoutPublishing()
 
@@ -14,14 +9,14 @@ fluidLibraryModule(description = "examples") {
 
 	targets {
 		jvm {
+			withJava()
+
 			dependencies {
 				implementation(project(":fluid-json-coding-jdk8"))
 				implementation(project(":fluid-json-annotations"))
+
+				kapt(project(":fluid-json-annotation-processor"))
 			}
 		}
 	}
-}
-
-dependencies {
-	"kapt"(project(":fluid-json-annotation-processor"))
 }
