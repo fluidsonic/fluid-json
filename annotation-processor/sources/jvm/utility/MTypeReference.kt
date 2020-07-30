@@ -27,7 +27,7 @@ internal fun MTypeReference.TypeParameter.forKotlinPoet(typeParameters: List<MTy
 	typeParameters.first { it.id == id }.let { typeParameter ->
 		TypeVariableName(
 			name = typeParameter.name.kotlin,
-			bounds = *typeParameter.upperBounds
+			bounds = typeParameter.upperBounds
 				.map { it.forKotlinPoet(typeParameters = typeParameters) }
 				.ifEmpty { listOf(KotlinpoetTypeNames.nullableAny) }
 				.toTypedArray(),
