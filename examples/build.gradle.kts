@@ -8,7 +8,7 @@ fluidLibraryModule(description = "examples") {
 	}
 
 	targets {
-		jvm {
+		jvmJdk8 {
 			withJava()
 
 			dependencies {
