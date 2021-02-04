@@ -4,7 +4,7 @@ fluid-json
 [![Maven Central](https://img.shields.io/maven-central/v/io.fluidsonic.json/fluid-json-basic?label=Maven%20Central)](https://search.maven.org/search?q=io.fluidsonic.json)
 [![JCenter](https://img.shields.io/bintray/v/fluidsonic/kotlin/json?label=JCenter)](https://bintray.com/fluidsonic/kotlin/json)
 [![Tests](https://github.com/fluidsonic/fluid-json/workflows/Tests/badge.svg)](https://github.com/fluidsonic/fluid-json/actions?workflow=Tests)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.4.0-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.4.0)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.4.30-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.4.30)
 [![#fluid-libraries Slack Channel](https://img.shields.io/badge/slack-%23fluid--libraries-543951.svg)](https://kotlinlang.slack.com/messages/C7UDFSVT2/)
 
 A JSON library written in pure Kotlin.
@@ -27,12 +27,11 @@ Table of Contents
 - [Architecture](#architecture)
 - [Future Planning](#future-planning)
 
-
-
 Installation
 ------------
 
 `build.gradle.kts`:
+
 ```kotlin
 plugins {
     kotlin("kapt")
@@ -58,7 +57,6 @@ Basic Usage
 `fluid-json` uses `@Json`-annotations for automatically generating codec classes at compile-time which are responsible for decoding and encoding from and to
 JSON.  
 You can also [create these codecs on your own](#manual-coding) instead of relying on annotation processing.
-
 
 ```kotlin
 import io.fluidsonic.json.*
@@ -122,11 +120,13 @@ fun main() {
 ```
 
 Prints this:
+
 ```
 serialized: {"attendees":[{"emailAddress":"marc@knaup.io","firstName":"Marc","lastName":"Knaup","rsvp":"going"},{"emailAddress":"john@doe.com","firstName":"John","lastName":"Doe","rsvp":null}],"description":"Discussing the fluid-json library.","end":"2019-03-05T00:45:08.335Z","id":1,"start":"2019-03-04T22:45:08.339Z","title":"fluid-json MeetUp"}
 
 parsed: Event(attendees=[Attendee(emailAddress=marc@knaup.io, firstName=Marc, lastName=Knaup, rsvp=going), Attendee(emailAddress=john@doe.com, firstName=John, lastName=Doe, rsvp=null)], description=Discussing the fluid-json library., end=2019-03-05T00:45:08.335Z, id=1, start=2019-03-04T22:45:08.339Z, title=fluid-json MeetUp)
 ```
+
 (nope, no [pretty serialization](https://github.com/fluidsonic/fluid-json/issues/15) yet)
 
 
@@ -338,8 +338,8 @@ fun main() {
 
 ### Annotate types without having the source code
 
-If a type is not part of your module you can still annotate it indirectly in order to automatically generate a codec for it.
-Note that this currently does not work correctly if the type has internal properties or an internal primary constructor.
+If a type is not part of your module you can still annotate it indirectly in order to automatically generate a codec for it. Note that this currently does not
+work correctly if the type has internal properties or an internal primary constructor.
 
 ```kotlin
 @Json.CodecProvider(
@@ -351,8 +351,6 @@ Note that this currently does not work correctly if the type has internal proper
 )
 interface MyCodecProvider: JsonCodecProvider<JsonCodingContext>
 ```
-
-
 
 Examples
 --------
@@ -366,8 +364,7 @@ Manual Coding
 -------------
 
 Instead of using annotations to generate codecs, JSON can be written either directly using low-level APIs or by manually creating codecs to decode and encode
-classes from and to JSON. 
-
+classes from and to JSON.
 
 ### Simple Parsing
 
@@ -385,7 +382,6 @@ You can also accept a `null` value by using `parseValueOrNull` instead.
 
 [Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0010-Parsing.kt)
 
-
 ### Simple Serializing
 
 ```kotlin
@@ -399,7 +395,6 @@ JsonSerializer.default.serializeValue(mapOf(
 ```
 
 [Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0020-Serializing.kt)
-
 
 ### Using Reader and Writer
 
@@ -415,7 +410,6 @@ JsonSerializer.default.serializeValue(…, destination = writer)
 
 Full example [for Reader](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0011-ParsingFromReader.kt)
 and [for Writer](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0021-SerializingToWriter.kt)
-
 
 ### Parsing Lists and Maps
 
@@ -437,7 +431,6 @@ always contain `null` keys and values. This can cause an unexpected `NullPointer
 Full example [for Lists](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0012-ParsingLists.kt)
 and [for Maps](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0013-ParsingMaps.kt)
 
-
 ### Streaming Parser
 
 `JsonReader` provides an extensive API for reading JSON values from a `Reader`.
@@ -458,7 +451,6 @@ JsonReader.build(input).use { reader ->
 Full example
 [using higher-order functions](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0014-ParsingAsStream.kt) and
 [using low-level functions](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0015-ParsingAsStreamLowLevel.kt)
-
 
 ### Streaming Writer
 
@@ -482,7 +474,6 @@ JsonWriter.build(output).use { writer ->
 Full example
 [using higher-order functions](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0022-SerializingAsStream.kt) and
 [using low-level functions](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0023-SerializingAsStreamLowLevel.kt)
-
 
 ### Type Encoder Codecs
 
@@ -509,7 +500,6 @@ object MyTypeCodec : AbstractJsonEncoderCodec<MyType, JsonCodingContext>() {
 ```
 
 [Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0030-TypeEncoderCodecs.kt)
-
 
 ### Type Decoder Codecs
 
@@ -541,7 +531,6 @@ example the list codec to serialize the list value's directly as `Something` usi
 
 [Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0031-TypeDecoderCodecs.kt)
 
-
 ### Type Codecs
 
 If you want to be able to encode and decode the same type you can implement the interface `JsonCodec` which in turn extends `JsonEncoderCodec` and
@@ -551,14 +540,12 @@ Because `JsonCodec` is simply an interface you can use `AbstractJsonCodec` as ba
 
 [Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0032-TypeCodecs.kt)
 
-
 ### Coding and Streaming
 
 You can use encoding and decoding codecs not just for high-level encoding and decoding using `JsonCodingSerializer` and `JsonCodingParser` but also for
 streaming-based encoding and decoding using `JsonEncoder` and `JsonDecoder`.
 
 [Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0033-CodingAsStream.kt)
-
 
 ### Thread Safety
 
@@ -588,14 +575,13 @@ errors explicitly is not needed in your use-case. This is especially important i
 | `JsonException.Schema`        | Thrown when a `JsonReader` or `JsonDecoder` reads data in an unexpected format, i.e. them schema of the JSON data is wrong.
 | `JsonException.Syntax`        | Thrown when a `JsonReader` reads data which is not properly formatted JSON.
 
-
-
 Ktor Client
 -----------
 
 You can use this library with [`JsonFeature`](https://ktor.io/clients/http-client/features/json-feature.html) of Ktor Client.
 
 `build.gradle.kts`:
+
 ```kotlin
 dependencies {
     implementation("io.fluidsonic.json:fluid-json-ktor-client:1.1.1")
@@ -603,6 +589,7 @@ dependencies {
 ```
 
 Setting up your `HttpClient`:
+
 ```kotlin
 val client = HttpClient(…) {
     install(JsonFeature) {
@@ -620,8 +607,6 @@ val client = HttpClient(…) {
 }
 ```
 
-
-
 Modules
 -------
 
@@ -633,8 +618,6 @@ Modules
 | `fluid-json-coding`               | `JsonCodec`-based parsing and serialization using `JsonDecoder`/`JsonCodingParser` and `JsonEncoder`/`JsonCodingSerializer`
 | `fluid-json-coding-jdk8`          | additional `JsonCodec`s for commonly used Java 8 types on top of `fluid-json-coding`
 | `fluid-json-ktor-client`          | plugs in `JsonCodingParser`/`JsonCodingSerializer` to `ktor-client` using its `JsonSerializer`
-
-
 
 Testing
 -------
@@ -649,8 +632,6 @@ You can run the tests manually using `Tests` run configuration in IntelliJ IDEA 
 ```bash
 ./gradlew check
 ```
-
-
 
 Type Mapping
 ------------
@@ -734,31 +715,29 @@ For types in the `java.time` package the `-coding-jdk8` library variant must be 
 | `ZoneId`         | `string`                            | using `.of()` / `.id`
 | `ZoneOffset`     | `string`                            | using `.of()` / `.id`
 
-
-
 Architecture
 ------------
 
--   `JsonReader`/`JsonWriter` are at the lowest level and read/write JSON as a stream of `JsonToken`s:
+- `JsonReader`/`JsonWriter` are at the lowest level and read/write JSON as a stream of `JsonToken`s:
     - part of `-basic` library variant
     - character-level input/output
     - validation of read/written syntax
     - one instance per parsing/serializing (maintains state & holds reference to `Reader`/`Writer`)
--   `JsonParser`/`JsonSerializer` are built on top of `JsonReader`/`JsonWriter` and read/write a complete JSON value at once.
+- `JsonParser`/`JsonSerializer` are built on top of `JsonReader`/`JsonWriter` and read/write a complete JSON value at once.
     - part of `-basic` library variant
     - completely hides usage of underlying `JsonReader`/`JsonWriter`
     - encoding is performed using the actual type of values to be encoded
     - decoding is performed using the type expected by the caller of `JsonParser`'s `parse…` methods and only available for basic types
     - instance can be reused and creates one `JsonReader`/`JsonWriter` per parsing/serialization invocation
     - ease of use is important
--   `JsonDecoder`/`JsonEncoder` are built on top of `JsonReader`/`JsonWriter` and decode/encode arbitrary Kotlin types from/to a stream of `JsonToken`s:
+- `JsonDecoder`/`JsonEncoder` are built on top of `JsonReader`/`JsonWriter` and decode/encode arbitrary Kotlin types from/to a stream of `JsonToken`s:
     - part of `-coding` library variant
     - most read/write operations are forwarded to the underlying `JsonReader`/`JsonWriter`
     - some read/write operations are intercepted by `JsonEncoder` to encode compatible types using codecs
     - implementations provided by `JsonDecoderCodec`s and `JsonEncoderCodec`s
     - inspired by MongoDB's [Codec and CodecRegistry](http://mongodb.github.io/mongo-java-driver/3.9/bson/codecs/)
     - one instance per parsing/serialization invocation (holds reference to `JsonReader`/`JsonWriter`)
--   `JsonCodingParser`/`JsonCodingSerializer` are built on top of `JsonDecoder`/`JsonEncoder` and read/write a complete JSON value at once.
+- `JsonCodingParser`/`JsonCodingSerializer` are built on top of `JsonDecoder`/`JsonEncoder` and read/write a complete JSON value at once.
     - part of `-coding` library variant
     - completely hides usage of underlying `JsonDecoder`/`JsonEncoder`
     - encoding is performed using the actual type of values to be encoded using a matching `JsonEncoderCodec` implementation
@@ -807,8 +786,6 @@ non-basic types.
 | `JsonWriter`               | Interface for low-level JSON serialization on a token-by-token basis.
 | `*Codec`                   | The various codec classes are concrete codecs for common Kotlin types.
 
-
-
 Future Planning
 ---------------
 
@@ -818,8 +795,6 @@ This is on the backlog for later consideration, in no specific order:
 - [Add performance testing](https://github.com/fluidsonic/fluid-json/issues/4)
 - [Add low-level support for `BigDecimal` / `BigInteger`](https://github.com/fluidsonic/fluid-json/issues/18)
 - [Add pretty serialization](https://github.com/fluidsonic/fluid-json/issues/15)
-
-
 
 License
 -------

@@ -74,7 +74,7 @@ internal object CaseTests {
 
 	@TestFactory
 	fun test() =
-		File("tests/cases")
+		File("test cases")
 			.canonicalFile
 			.listFiles()
 			.orEmpty()
