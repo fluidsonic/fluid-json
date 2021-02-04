@@ -2,7 +2,7 @@ import io.fluidsonic.gradle.*
 
 fluidLibraryModule(description = "A JSON library written in pure Kotlin (JDK8+ coding extension)") {
 	targets {
-		jvmJdk8 {
+		jvm {
 			dependencies {
 				api(project(":fluid-json-coding"))
 			}

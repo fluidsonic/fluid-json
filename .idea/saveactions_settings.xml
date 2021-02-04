@@ -12,6 +12,7 @@
     <option name="configurationPath" value="" />
     <option name="exclusions">
       <set>
+        <option value=".*/output-expected/.*" />
         <option value="\.idea/.*" />
       </set>
     </option>
