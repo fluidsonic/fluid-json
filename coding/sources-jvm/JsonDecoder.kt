@@ -136,7 +136,7 @@ public inline fun <reified Value : Any> JsonDecoder<*>.readValueOfType(): Value 
 
 
 public inline fun <reified Value : Any> JsonDecoder<*>.readValueOfTypeOrNull(): Value? =
-	readValueOfTypeOrNull(jsonCodingType<Value>())
+	readValueOfTypeOrNull(jsonCodingType())
 
 
 public fun <Value : Any> JsonDecoder<*>.readValueOfTypeOrNull(valueType: JsonCodingType<Value>): Value? =

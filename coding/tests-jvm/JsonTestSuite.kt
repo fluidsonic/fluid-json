@@ -39,7 +39,7 @@ class JsonTestSuite {
 			e
 		}
 		catch (e: StackOverflowError) {
-			throw AssertionError("Stack overflow in '${file.name}'")
+			throw AssertionError("Stack overflow in '${file.name}'", e)
 		}
 
 		val actualBehavior = if (result is JsonException) Behavior.rejected else Behavior.accepted

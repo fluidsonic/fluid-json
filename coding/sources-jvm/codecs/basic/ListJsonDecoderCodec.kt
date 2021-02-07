@@ -7,7 +7,8 @@ public object ListJsonDecoderCodec : AbstractJsonDecoderCodec<List<*>, JsonCodin
 		val elementType = valueType.arguments.single()
 
 		return readListByElement {
-			readValueOfTypeOrNull(elementType)
+			// No readValueOfTypeOrNull() to reduce stack size for deep recursive structures.
+			readOrNull { readValueOfType(elementType) }
 		}
 	}
 
