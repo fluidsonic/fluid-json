@@ -18,7 +18,7 @@ internal class CaseTests {
 				.arguments {
 					// TODO remove once fixed: https://youtrack.jetbrains.com/issue/KT-28011
 					compileJava = false
-					languageVersion = "1.5"
+					languageVersion = "1.4"
 					useJavac = false
 				}
 				.includesCurrentClasspath()
