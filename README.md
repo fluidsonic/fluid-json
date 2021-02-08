@@ -34,12 +34,12 @@ Installation
 
 ```kotlin
 plugins {
-    kotlin("kapt")
+	kotlin("kapt")
 }
 
 dependencies {
-    kapt("io.fluidsonic.json:fluid-json-annotation-processor:1.1.1")
-    implementation("io.fluidsonic.json:fluid-json-coding-jdk8:1.1.1")
+	kapt("io.fluidsonic.json:fluid-json-annotation-processor:1.2.0")
+	implementation("io.fluidsonic.json:fluid-json-coding-jdk8:1.2.0")
 }
 ```
 
@@ -584,7 +584,7 @@ You can use this library with [`JsonFeature`](https://ktor.io/clients/http-clien
 
 ```kotlin
 dependencies {
-    implementation("io.fluidsonic.json:fluid-json-ktor-client:1.1.1")
+	implementation("io.fluidsonic.json:fluid-json-ktor-client:1.2.0")
 }
 ```
 
