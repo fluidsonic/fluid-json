@@ -4,4 +4,4 @@ plugins {
 	id("io.fluidsonic.gradle") version "1.1.22"
 }
 
-fluidLibrary(name = "json", version = "1.2.0")
+fluidLibrary(name = "json", version = "1.2.1")
