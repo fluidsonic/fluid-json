@@ -5,7 +5,7 @@ fluidLibraryModule(description = "A JSON library written in pure Kotlin (Ktor Cl
 		jvm {
 			dependencies {
 				api(project(":fluid-json-coding"))
-				api("io.ktor:ktor-client-json:1.5.2")
+				api("io.ktor:ktor-client-json:1.6.7")
 			}
 		}
 	}

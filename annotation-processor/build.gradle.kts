@@ -1,32 +1,42 @@
 import io.fluidsonic.gradle.*
-import org.jetbrains.kotlin.gradle.dsl.*
 
 fluidLibraryModule(description = "A JSON library written in pure Kotlin (annotation processor)") {
 	targets {
 		jvm {
-			noIR() // https://youtrack.jetbrains.com/issue/KT-44723
 			withJava()
 
+			@Suppress("SpellCheckingInspection")
 			dependencies {
 				implementation(project(":fluid-json-annotations"))
 				implementation(project(":fluid-json-coding"))
 				implementation(kotlin("reflect"))
-				implementation(fluid("meta", "0.11.2"))
-				implementation("com.google.auto:auto-common:0.11")
-				implementation("com.google.auto.service:auto-service:1.0-rc7")
-				implementation("com.squareup:kotlinpoet:1.7.2")
+				implementation(fluid("meta", "0.12.0"))
+				implementation("com.google.auto:auto-common:1.2.1")
+				implementation("com.google.auto.service:auto-service:1.0.1")
+				implementation("com.squareup:kotlinpoet:1.10.2")
 
-				kapt("com.google.auto.service:auto-service:1.0-rc7")
+				kapt("com.google.auto.service:auto-service:1.0.1")
 			}
 
 			testDependencies {
-				implementation(fluid("compiler", "0.10.5"))
+				implementation(fluid("compiler", "0.11.0"))
 			}
 		}
 	}
 }
 
-// https://youtrack.jetbrains.com/issue/KT-44723
-tasks.withType<KotlinJvmCompile> {
-	kotlinOptions.useOldBackend = true
+// https://youtrack.jetbrains.com/issue/KT-45545
+tasks.withType<Test>().all {
+	jvmArgs(
+		"--add-opens", "jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+		"--add-opens", "jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+		"--add-opens", "jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
+		"--add-opens", "jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+		"--add-opens", "jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
+		"--add-opens", "jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+		"--add-opens", "jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+		"--add-opens", "jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+		"--add-opens", "jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+		"--add-opens", "jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+	)
 }

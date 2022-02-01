@@ -17,9 +17,9 @@ import io.fluidsonic.json.writeStringOrNull
 import io.fluidsonic.json.writeValueOrNull
 import kotlin.Unit
 
-internal object AutomaticObjectJsonCodec : AbstractJsonEncoderCodec<AutomaticObject,
-		CustomCodingContext>() {
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: AutomaticObject): Unit {
+internal object AutomaticObjectJsonCodec :
+		AbstractJsonEncoderCodec<AutomaticObject, CustomCodingContext>() {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticObject): Unit {
 		writeIntoMap {
 		}
 	}

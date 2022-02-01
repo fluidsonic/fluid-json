@@ -32,8 +32,8 @@ import io.fluidsonic.json.writeStringOrNull
 import io.fluidsonic.json.writeValueOrNull
 import kotlin.Unit
 
-internal object AnnotatedConstructorJsonCodec : AbstractJsonCodec<AnnotatedConstructor,
-		CustomCodingContext>() {
+internal object AnnotatedConstructorJsonCodec :
+		AbstractJsonCodec<AnnotatedConstructor, CustomCodingContext>() {
 	public override
 			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<AnnotatedConstructor>):
 			AnnotatedConstructor {
@@ -53,13 +53,13 @@ internal object AnnotatedConstructorJsonCodec : AbstractJsonCodec<AnnotatedConst
 		value_isPresent || missingPropertyError("value")
 
 		return AnnotatedConstructor(
-			value = _value
+			`value` = _value
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: AnnotatedConstructor): Unit {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: AnnotatedConstructor): Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

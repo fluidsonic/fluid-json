@@ -18,7 +18,7 @@ public annotation class Json(
 	/**
 	 * Name of the generated codec class.
 	 *
-	 * By default its name will be derived from the name of the annotated class with `JsonCodec` appended and with the names of enclosing types prepended and
+	 * By default, its name will be derived from the name of the annotated class with `JsonCodec` appended and with the names of enclosing types prepended and
 	 * separated by `_`.
 	 *
 	 * ### Examples:
@@ -30,35 +30,35 @@ public annotation class Json(
 	/**
 	 * Package name of the generated codec class.
 	 *
-	 * By default it will be located in the same package as the annotated class.
+	 * By default, it will be located in the same package as the annotated class.
 	 */
 	val codecPackageName: String = automatic,
 
 	/**
 	 * Visibility of the generated codec class.
 	 *
-	 * By default the visibility will be [internal][CodecVisibility.internal].
+	 * By default, the visibility will be [internal][CodecVisibility.internal].
 	 */
 	val codecVisibility: CodecVisibility = CodecVisibility.internal,
 
 	/**
 	 * Defines how to create an instance of the annotated class when decoding it from JSON.
 	 *
-	 * By default the [automatic][Decoding.automatic] approach will be used.
+	 * By default, the [automatic][Decoding.automatic] approach will be used.
 	 */
 	val decoding: Decoding = Decoding.automatic,
 
 	/**
 	 * Defines how an instance of the annotated class will be encoded to JSON.
 	 *
-	 * By default the [automatic][Encoding.automatic] approach will be used.
+	 * By default, the [automatic][Encoding.automatic] approach will be used.
 	 */
 	val encoding: Encoding = Encoding.automatic,
 
 	/**
 	 * Defines how the annotated class is represented in JSON.
 	 *
-	 * By default the representation will be determined [automatically][Representation.automatic].
+	 * By default, the representation will be determined [automatically][Representation.automatic].
 	 */
 	val representation: Representation = Representation.automatic
 ) {
@@ -77,7 +77,7 @@ public annotation class Json(
 	 * using [`JsonCodecProvider.generated(AnnotatedInterface::class)`][JsonCodecProvider.Companion.generated]. It provides all codecs which have been generated
 	 * using [@Json][Json] annotations. The annotated interface also specifies the [JsonCodingContext] type being used by all generated codecs.
 	 *
-	 * Note that only one codec provider can be created per module and it must not be generic.
+	 * Note that only one codec provider can be created per module, and it must not be generic.
 	 *
 	 * ### Example
 	 *
@@ -107,7 +107,7 @@ public annotation class Json(
 	 * The annotated extension function must either be a member of the [@Json][Json]-annotated class or be defined at file-level and take exactly one value
 	 * parameter of the [@Json][Json]-annotated class.
 	 *
-	 * Note that the function can have any name, its return value is ignored, it must have `internal` or `public` visibility and it must not be generic.
+	 * Note that the function can have any name, its return value is ignored, it must have `internal` or `public` visibility, and it must not be generic.
 	 *
 	 * ### Example
 	 *
@@ -196,7 +196,7 @@ public annotation class Json(
 		/**
 		 * Defines the value of the JSON object key when decoding or encoding this property.
 		 *
-		 * By default this is the same as the property name in Kotlin.
+		 * By default, this is the same as the property name in Kotlin.
 		 */
 		val serializedName: String = automatic
 	)

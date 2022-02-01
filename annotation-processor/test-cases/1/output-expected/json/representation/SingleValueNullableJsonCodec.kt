@@ -19,13 +19,13 @@ import io.fluidsonic.json.readValueOfTypeOrNull
 import io.fluidsonic.json.writeValueOrNull
 import kotlin.Unit
 
-internal object SingleValueNullableJsonCodec : AbstractJsonCodec<SingleValueNullable,
-		CustomCodingContext>() {
+internal object SingleValueNullableJsonCodec :
+		AbstractJsonCodec<SingleValueNullable, CustomCodingContext>() {
 	public override
 			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<SingleValueNullable>):
-			SingleValueNullable = SingleValueNullable(value = readValueOfTypeOrNull())
+			SingleValueNullable = SingleValueNullable(`value` = readValueOfTypeOrNull())
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: SingleValueNullable): Unit {
-		writeValueOrNull(value.value)
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: SingleValueNullable): Unit {
+		writeValueOrNull(value.`value`)
 	}
 }

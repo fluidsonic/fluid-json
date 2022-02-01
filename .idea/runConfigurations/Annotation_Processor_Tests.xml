@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Annotation Processor Tests" type="JUnit" factoryName="JUnit">
-    <module name="fluid-json.fluid-json-annotation-processor.jvmJdk8Test" />
+    <module name="fluid-json.fluid-json-annotation-processor.jvmTest" />
     <useClassPathOnly />
     <option name="PACKAGE_NAME" value="" />
     <option name="MAIN_CLASS_NAME" value="" />

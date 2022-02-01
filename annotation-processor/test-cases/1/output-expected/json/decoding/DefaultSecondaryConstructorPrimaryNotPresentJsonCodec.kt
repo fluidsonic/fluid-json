@@ -53,15 +53,15 @@ internal object DefaultSecondaryConstructorPrimaryNotPresentJsonCodec :
 		value_isPresent || missingPropertyError("value")
 
 		return DefaultSecondaryConstructorPrimaryNotPresent(
-			value = _value
+			`value` = _value
 		)
 	}
 
 	public override
-			fun JsonEncoder<CustomCodingContext>.encode(value: DefaultSecondaryConstructorPrimaryNotPresent):
+			fun JsonEncoder<CustomCodingContext>.encode(`value`: DefaultSecondaryConstructorPrimaryNotPresent):
 			Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

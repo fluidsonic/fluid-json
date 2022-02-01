@@ -17,7 +17,7 @@ internal val doubleData: TestData<Double> = TestData(
 	decodableOnly = mapOf(
 		"-1e20000" to Double.NEGATIVE_INFINITY,
 		"-1000000000000000000000000000000" to -1000000000000000000000000000000.0,
-		"-9223372036854775809" to -9223372036854775809.0, // just too large for Long
+		"-9223372036854775809" to -9.223372036854776E18, // just too large for Long
 		"-1.0e+2" to -100.0,
 		"-1.0e2" to -100.0,
 		"-1e+2" to -100.0,
@@ -44,7 +44,7 @@ internal val doubleData: TestData<Double> = TestData(
 		"1e+2" to 100.0,
 		"1.0e2" to 100.0,
 		"1.0e+2" to 100.0,
-		"9223372036854775808" to 9223372036854775808.0, // just too large for Long
+		"9223372036854775808" to 9.223372036854776E18, // just too large for Long
 		"1000000000000000000000000000000" to 1000000000000000000000000000000.0,
 		"1e20000" to Double.POSITIVE_INFINITY
 	),

@@ -8,7 +8,7 @@ class CompanionTest {
 
 	@Test
 	fun testInitialization() {
-		// just make sure all companions initialize properly and we get more code coverage :)
+		// just make sure all companions initialize properly, and we get more code coverage :)
 		listOf(
 			JsonException.Companion,
 			JsonReader.Companion,

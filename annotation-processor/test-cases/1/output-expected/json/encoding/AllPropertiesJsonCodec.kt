@@ -52,7 +52,7 @@ internal object AllPropertiesJsonCodec : AbstractJsonCodec<AllProperties, Custom
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: AllProperties): Unit {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: AllProperties): Unit {
 		writeIntoMap {
 			writeMapElement("value1", string = value.value1)
 			writeMapElement("value2", string = value.value2)

@@ -53,15 +53,15 @@ internal object AutomaticSecondaryConstructorPrimaryInaccessibleJsonCodec :
 		value_isPresent || missingPropertyError("value")
 
 		return AutomaticSecondaryConstructorPrimaryInaccessible(
-			value = _value
+			`value` = _value
 		)
 	}
 
 	public override
-			fun JsonEncoder<CustomCodingContext>.encode(value: AutomaticSecondaryConstructorPrimaryInaccessible):
+			fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticSecondaryConstructorPrimaryInaccessible):
 			Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

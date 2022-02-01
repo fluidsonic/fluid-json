@@ -17,7 +17,7 @@ internal val floatData: TestData<Float> = TestData(
 	decodableOnly = mapOf(
 		"-1e20000" to Float.NEGATIVE_INFINITY,
 		"-1000000000000000000000000000000" to -1000000000000000000000000000000.0f,
-		"-9223372036854775809" to -9223372036854775809.0f, // just too large for Long
+		"-9223372036854775809" to -9.223372E18f, // just too large for Long
 		"-1.0e+2" to -100.0f,
 		"-1.0e2" to -100.0f,
 		"-1e+2" to -100.0f,
@@ -40,7 +40,7 @@ internal val floatData: TestData<Float> = TestData(
 		"1e+2" to 100.0f,
 		"1.0e2" to 100.0f,
 		"1.0e+2" to 100.0f,
-		"9223372036854775808" to 9223372036854775808.0f, // just too large for Long
+		"9223372036854775808" to 9.223372E18f, // just too large for Long
 		"1000000000000000000000000000000" to 1000000000000000000000000000000.0f,
 		"1e20000" to Float.POSITIVE_INFINITY
 	),

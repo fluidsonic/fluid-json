@@ -45,13 +45,13 @@ internal object DefaultRootJsonCodec : AbstractJsonCodec<DefaultRoot, CustomCodi
 		}
 
 		return DefaultRoot(
-			value = _value ?: missingPropertyError("value")
+			`value` = _value ?: missingPropertyError("value")
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: DefaultRoot): Unit {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: DefaultRoot): Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

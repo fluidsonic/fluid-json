@@ -50,7 +50,7 @@ internal object CustomJsonCodec : AbstractJsonCodec<Custom, CustomCodingContext>
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: Custom): Unit {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: Custom): Unit {
 		writeIntoMap {
 			writeMapElement("V A L U E 1", string = value.value1)
 			writeMapElement("V A L U E 2", string = value.value2)

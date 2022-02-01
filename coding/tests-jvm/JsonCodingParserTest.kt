@@ -159,9 +159,6 @@ class JsonCodingParserTest {
 			}
 		}
 
-		if (expectedValue != null)
-			expect(parser.testBody(expectedType)).toBe(expectedValue)
-		else
-			expect(parser.testBody(expectedType)).toBe(expectedValue)
+		expect(parser.testBody(expectedType)).toBe(expectedValue)
 	}
 }

@@ -65,14 +65,14 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 
 	fun peekCharacter() =
 		if (tryPreloadCharacters(1) > 0)
-			buffer[bufferStartIndex].toInt()
+			buffer[bufferStartIndex].code
 		else
 			JsonCharacter.end
 
 
 	fun readCharacter(): Int {
 		val character = if (tryPreloadCharacters(1) > 0)
-			buffer[bufferStartIndex].toInt()
+			buffer[bufferStartIndex].code
 		else
 			JsonCharacter.end
 
@@ -114,7 +114,7 @@ internal class TextInput(private val source: Reader) : Closeable by source {
 				bufferEndIndex = this.bufferEndIndex
 			}
 
-			val character = buffer[bufferStartIndex].toInt()
+			val character = buffer[bufferStartIndex].code
 			bufferStartIndex += 1
 		}
 		while (JsonCharacter.isWhitespace(character))

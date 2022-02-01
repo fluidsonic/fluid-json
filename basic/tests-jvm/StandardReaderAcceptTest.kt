@@ -127,8 +127,8 @@ class StandardReaderAcceptTest {
 		expect(reader("-1.0e+2").readDouble()).toBe(-100.0)
 		expect(reader("1.0e-2").readDouble()).toBe(0.01)
 		expect(reader("-1.0e-2").readDouble()).toBe(-0.01)
-		expect(reader("9223372036854775808").readDouble()).toBe(9223372036854775808.0)
-		expect(reader("-9223372036854775809").readDouble()).toBe(-9223372036854775809.0)
+		expect(reader("9223372036854775808").readDouble()).toBe(9.223372036854776E18)
+		expect(reader("-9223372036854775809").readDouble()).toBe(-9.223372036854776E18)
 		expect(reader("1000000000000000000000000000000").readDouble()).toBe(1000000000000000000000000000000.0)
 		expect(reader("-1000000000000000000000000000000").readDouble()).toBe(-1000000000000000000000000000000.0)
 		expect(reader("1e20000").readDouble()).toBe(Double.POSITIVE_INFINITY)
@@ -156,8 +156,8 @@ class StandardReaderAcceptTest {
 		expect(reader("-1.0e+2").readDoubleOrNull()).toBe(-100.0)
 		expect(reader("1.0e-2").readDoubleOrNull()).toBe(0.01)
 		expect(reader("-1.0e-2").readDoubleOrNull()).toBe(-0.01)
-		expect(reader("9223372036854775808").readDoubleOrNull()).toBe(9223372036854775808.0)
-		expect(reader("-9223372036854775809").readDoubleOrNull()).toBe(-9223372036854775809.0)
+		expect(reader("9223372036854775808").readDoubleOrNull()).toBe(9.223372036854776E18)
+		expect(reader("-9223372036854775809").readDoubleOrNull()).toBe(-9.223372036854776E18)
 		expect(reader("1000000000000000000000000000000").readDoubleOrNull()).toBe(1000000000000000000000000000000.0)
 		expect(reader("-1000000000000000000000000000000").readDoubleOrNull()).toBe(-1000000000000000000000000000000.0)
 		expect(reader("1e20000").readDoubleOrNull()).toBe(Double.POSITIVE_INFINITY)
@@ -186,8 +186,8 @@ class StandardReaderAcceptTest {
 		expect(reader("-1.0e+2").readFloat()).toBe(-100.0f)
 		expect(reader("1.0e-2").readFloat()).toBe(0.01f)
 		expect(reader("-1.0e-2").readFloat()).toBe(-0.01f)
-		expect(reader("9223372036854775808").readFloat()).toBe(9223372036854775808.0f)
-		expect(reader("-9223372036854775809").readFloat()).toBe(-9223372036854775809.0f)
+		expect(reader("9223372036854775808").readFloat()).toBe(9.223372E18f)
+		expect(reader("-9223372036854775809").readFloat()).toBe(-9.223372E18f)
 		expect(reader("1000000000000000000000000000000").readFloat()).toBe(1000000000000000000000000000000.0f)
 		expect(reader("-1000000000000000000000000000000").readFloat()).toBe(-1000000000000000000000000000000.0f)
 		expect(reader("1e20000").readFloat()).toBe(Float.POSITIVE_INFINITY)
@@ -215,8 +215,8 @@ class StandardReaderAcceptTest {
 		expect(reader("-1.0e+2").readFloatOrNull()).toBe(-100.0f)
 		expect(reader("1.0e-2").readFloatOrNull()).toBe(0.01f)
 		expect(reader("-1.0e-2").readFloatOrNull()).toBe(-0.01f)
-		expect(reader("9223372036854775808").readFloatOrNull()).toBe(9223372036854775808.0f)
-		expect(reader("-9223372036854775809").readFloatOrNull()).toBe(-9223372036854775809.0f)
+		expect(reader("9223372036854775808").readFloatOrNull()).toBe(9.223372E18f)
+		expect(reader("-9223372036854775809").readFloatOrNull()).toBe(-9.223372E18f)
 		expect(reader("1000000000000000000000000000000").readFloatOrNull()).toBe(1000000000000000000000000000000.0f)
 		expect(reader("-1000000000000000000000000000000").readFloatOrNull()).toBe(-1000000000000000000000000000000.0f)
 		expect(reader("1e20000").readFloatOrNull()).toBe(Float.POSITIVE_INFINITY)
@@ -342,7 +342,7 @@ class StandardReaderAcceptTest {
 	@Test
 	fun testReadFromMapByElement() {
 		reader("""{ "one": 1, "two": 2 }""").apply {
-			val map = buildMap<String, Int> {
+			val map = buildMap {
 				readFromMapByElement { put(readMapKey(), readInt()) }
 			}
 			expect(map).toBe(mapOf("one" to 1, "two" to 2))
@@ -353,7 +353,7 @@ class StandardReaderAcceptTest {
 	@Test
 	fun testReadFromMapByElementValue() {
 		reader("""{ "one": 1, "two": 2 }""").apply {
-			val map = buildMap<String, Int> {
+			val map = buildMap {
 				readFromMapByElementValue { key -> put(key, readInt()) }
 			}
 			expect(map).toBe(mapOf("one" to 1, "two" to 2))
@@ -709,8 +709,8 @@ class StandardReaderAcceptTest {
 		expect(reader("-2147483648").readNumber()).toBe(-2147483648)
 		expect(reader("9223372036854775807").readNumber()).toBe(9223372036854775807L)
 		expect(reader("-9223372036854775808").readNumber()).toBe(-9223372036854775807L - 1) // https://youtrack.jetbrains.com/issue/KT-17172
-		expect(reader("9223372036854775808").readNumber()).toBe(9223372036854775808.0)
-		expect(reader("-9223372036854775809").readNumber()).toBe(-9223372036854775809.0)
+		expect(reader("9223372036854775808").readNumber()).toBe(9.223372036854776E18)
+		expect(reader("-9223372036854775809").readNumber()).toBe(-9.223372036854776E18)
 		expect(reader("1e2").readNumber()).toBe(100.0)
 		expect(reader("-1e2").readNumber()).toBe(-100.0)
 		expect(reader("1.0e2").readNumber()).toBe(100.0)
@@ -744,8 +744,8 @@ class StandardReaderAcceptTest {
 		expect(reader("-2147483648").readNumberOrNull()).toBe(-2147483648)
 		expect(reader("9223372036854775807").readNumberOrNull()).toBe(9223372036854775807L)
 		expect(reader("-9223372036854775808").readNumberOrNull()).toBe(-9223372036854775807L - 1) // https://youtrack.jetbrains.com/issue/KT-17172
-		expect(reader("9223372036854775808").readNumberOrNull()).toBe(9223372036854775808.0)
-		expect(reader("-9223372036854775809").readNumberOrNull()).toBe(-9223372036854775809.0)
+		expect(reader("9223372036854775808").readNumberOrNull()).toBe(9.223372036854776E18)
+		expect(reader("-9223372036854775809").readNumberOrNull()).toBe(-9.223372036854776E18)
 		expect(reader("1e2").readNumberOrNull()).toBe(100.0)
 		expect(reader("-1e2").readNumberOrNull()).toBe(-100.0)
 		expect(reader("1.0e2").readNumberOrNull()).toBe(100.0)

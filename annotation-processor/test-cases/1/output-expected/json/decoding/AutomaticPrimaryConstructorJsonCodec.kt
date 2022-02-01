@@ -48,14 +48,14 @@ internal object AutomaticPrimaryConstructorJsonCodec :
 		}
 
 		return AutomaticPrimaryConstructor(
-			value = _value ?: missingPropertyError("value")
+			`value` = _value ?: missingPropertyError("value")
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: AutomaticPrimaryConstructor):
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticPrimaryConstructor):
 			Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

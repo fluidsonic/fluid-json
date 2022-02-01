@@ -303,7 +303,7 @@ internal class ProcessingPhase(
 			fail("type is neither decodable nor encodable")
 
 		val isSingleValue = when (annotation.representation) {
-			Json.Representation.automatic -> meta is MInlineable && meta.isInline
+			Json.Representation.automatic -> meta is MClass && meta.isValue
 			Json.Representation.structured -> false
 			Json.Representation.singleValue -> true
 		}
@@ -339,7 +339,7 @@ internal class ProcessingPhase(
 					?: meta.name.packageName.kotlin,
 				typeName = annotation.codecName
 					.takeIf { it != "<automatic>" }
-					?: meta.name.withoutPackage().kotlin.replace('.', '_') + "JsonCodec"
+					?: meta.name.withoutPackage().kotlin.replace('.', '_').plus("JsonCodec")
 			),
 			valueType = meta.name.forKotlinPoet().let {
 				if (meta is MGeneralizable && meta.typeParameters.isNotEmpty()) it.parameterizedBy(*Array(meta.typeParameters.size) { STAR })

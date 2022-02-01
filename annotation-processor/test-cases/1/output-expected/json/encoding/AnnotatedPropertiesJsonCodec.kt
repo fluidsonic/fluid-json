@@ -34,8 +34,8 @@ import json.encoding.value9
 import kotlin.String
 import kotlin.Unit
 
-internal object AnnotatedPropertiesJsonCodec : AbstractJsonCodec<AnnotatedProperties,
-		CustomCodingContext>() {
+internal object AnnotatedPropertiesJsonCodec :
+		AbstractJsonCodec<AnnotatedProperties, CustomCodingContext>() {
 	public override
 			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<AnnotatedProperties>):
 			AnnotatedProperties {
@@ -53,7 +53,7 @@ internal object AnnotatedPropertiesJsonCodec : AbstractJsonCodec<AnnotatedProper
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: AnnotatedProperties): Unit {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: AnnotatedProperties): Unit {
 		writeIntoMap {
 			writeMapElement("value3", string = value.value3)
 			writeMapElement("value6", string = value.value6)

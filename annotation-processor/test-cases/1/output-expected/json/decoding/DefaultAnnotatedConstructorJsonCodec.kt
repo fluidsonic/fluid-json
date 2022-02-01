@@ -53,14 +53,14 @@ internal object DefaultAnnotatedConstructorJsonCodec :
 		value_isPresent || missingPropertyError("value")
 
 		return DefaultAnnotatedConstructor(
-			value = _value
+			`value` = _value
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: DefaultAnnotatedConstructor):
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: DefaultAnnotatedConstructor):
 			Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

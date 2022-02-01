@@ -54,10 +54,10 @@ public object ExternalPairCodec : AbstractJsonCodec<Pair<*, *>, CustomCodingCont
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: Pair<*, *>): Unit {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: Pair<*, *>): Unit {
 		writeIntoMap {
-			writeMapElement("first", value = value.first)
-			writeMapElement("second", value = value.second)
+			writeMapElement("first", `value` = value.first)
+			writeMapElement("second", `value` = value.second)
 		}
 	}
 }

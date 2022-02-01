@@ -53,15 +53,15 @@ internal object AutomaticSecondaryConstructorPrimaryExcludedJsonCodec :
 		value_isPresent || missingPropertyError("value")
 
 		return AutomaticSecondaryConstructorPrimaryExcluded(
-			value = _value
+			`value` = _value
 		)
 	}
 
 	public override
-			fun JsonEncoder<CustomCodingContext>.encode(value: AutomaticSecondaryConstructorPrimaryExcluded):
+			fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticSecondaryConstructorPrimaryExcluded):
 			Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

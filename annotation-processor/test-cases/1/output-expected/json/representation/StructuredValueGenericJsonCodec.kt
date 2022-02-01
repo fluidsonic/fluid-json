@@ -33,8 +33,8 @@ import io.fluidsonic.json.writeValueOrNull
 import kotlin.Any
 import kotlin.Unit
 
-internal object StructuredValueGenericJsonCodec : AbstractJsonCodec<StructuredValueGeneric<*>,
-		CustomCodingContext>() {
+internal object StructuredValueGenericJsonCodec :
+		AbstractJsonCodec<StructuredValueGeneric<*>, CustomCodingContext>() {
 	public override
 			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<StructuredValueGeneric<*>>):
 			StructuredValueGeneric<*> {
@@ -48,14 +48,14 @@ internal object StructuredValueGenericJsonCodec : AbstractJsonCodec<StructuredVa
 		}
 
 		return StructuredValueGeneric(
-			value = _value
+			`value` = _value
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: StructuredValueGeneric<*>):
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: StructuredValueGeneric<*>):
 			Unit {
 		writeIntoMap {
-			writeMapElement("value", value = value.value)
+			writeMapElement("value", `value` = value.`value`)
 		}
 	}
 }

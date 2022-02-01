@@ -408,7 +408,7 @@ internal class StandardReader(private val source: TextInput) : JsonReader {
 	}
 
 
-	private fun peekValueToken(expected: String): JsonToken? =
+	private fun peekValueToken(expected: String): JsonToken =
 		when (val character = source.peekCharacter()) {
 			JsonCharacter.Symbol.quotationMark ->
 				JsonToken.stringValue

@@ -46,13 +46,13 @@ internal object ClassJsonCodec : AbstractJsonCodec<Class, CustomCodingContext>()
 		}
 
 		return Class(
-			value = _value ?: missingPropertyError("value")
+			`value` = _value ?: missingPropertyError("value")
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: Class): Unit {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: Class): Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

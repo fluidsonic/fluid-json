@@ -3,7 +3,7 @@ fluid-json
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.fluidsonic.json/fluid-json-basic?label=Maven%20Central)](https://search.maven.org/search?q=io.fluidsonic.json)
 [![Tests](https://github.com/fluidsonic/fluid-json/workflows/Tests/badge.svg)](https://github.com/fluidsonic/fluid-json/actions?workflow=Tests)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.4.31-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.4.31)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.6.10-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.6.10)
 [![#fluid-libraries Slack Channel](https://img.shields.io/badge/slack-%23fluid--libraries-543951.svg)](https://kotlinlang.slack.com/messages/C7UDFSVT2/)
 
 A JSON library written in pure Kotlin.

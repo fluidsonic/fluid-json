@@ -3,7 +3,8 @@ package tests.coding
 import kotlin.test.*
 
 
-inline class Expect<Value>(private val actual: Any?) {
+@JvmInline
+value class Expect<Value>(private val actual: Any?) {
 
 	fun notToBeNull() {
 		assertNotNull(actual)

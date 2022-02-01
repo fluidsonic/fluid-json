@@ -47,13 +47,13 @@ public object AutomaticPublicJsonCodec : AbstractJsonCodec<AutomaticPublic, Cust
 		}
 
 		return AutomaticPublic(
-			value = _value ?: missingPropertyError("value")
+			`value` = _value ?: missingPropertyError("value")
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: AutomaticPublic): Unit {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticPublic): Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

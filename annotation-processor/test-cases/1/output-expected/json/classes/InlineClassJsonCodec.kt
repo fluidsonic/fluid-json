@@ -22,9 +22,9 @@ import kotlin.Unit
 internal object InlineClassJsonCodec : AbstractJsonCodec<InlineClass, CustomCodingContext>() {
 	public override
 			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<InlineClass>): InlineClass
-			= InlineClass(value = readString())
+			= InlineClass(`value` = readString())
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: InlineClass): Unit {
-		writeString(value.value)
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: InlineClass): Unit {
+		writeString(value.`value`)
 	}
 }

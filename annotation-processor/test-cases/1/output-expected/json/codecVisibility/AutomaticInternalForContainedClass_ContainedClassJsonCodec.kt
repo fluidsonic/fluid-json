@@ -48,15 +48,15 @@ internal object AutomaticInternalForContainedClass_ContainedClassJsonCodec :
 		}
 
 		return AutomaticInternalForContainedClass.ContainedClass(
-			value = _value ?: missingPropertyError("value")
+			`value` = _value ?: missingPropertyError("value")
 		)
 	}
 
 	public override
-			fun JsonEncoder<CustomCodingContext>.encode(value: AutomaticInternalForContainedClass.ContainedClass):
+			fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticInternalForContainedClass.ContainedClass):
 			Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

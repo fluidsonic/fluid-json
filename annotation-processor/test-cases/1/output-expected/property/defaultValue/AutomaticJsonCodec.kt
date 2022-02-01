@@ -125,18 +125,18 @@ internal object AutomaticJsonCodec : AbstractJsonCodec<Automatic, CustomCodingCo
 		return constructor.callBy(arguments)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: Automatic): Unit {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: Automatic): Unit {
 		writeIntoMap {
 			writeMapElement("value1", string = value.value1)
-			writeMapElement("value10", value = value.value10)
+			writeMapElement("value10", `value` = value.value10)
 			writeMapElement("value2", string = value.value2)
-			writeMapElement("value3", value = value.value3)
-			writeMapElement("value4", value = value.value4)
+			writeMapElement("value3", `value` = value.value3)
+			writeMapElement("value4", `value` = value.value4)
 			writeMapElement("value5", double = value.value5)
 			writeMapElement("value6", double = value.value6)
-			writeMapElement("value7", value = value.value7)
-			writeMapElement("value8", value = value.value8)
-			writeMapElement("value9", value = value.value9)
+			writeMapElement("value7", `value` = value.value7)
+			writeMapElement("value8", `value` = value.value8)
+			writeMapElement("value9", `value` = value.value9)
 		}
 	}
 }

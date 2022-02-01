@@ -29,7 +29,7 @@ public sealed class EnumJsonTransformation {
 
 private fun wordToLowerCamelCase(index: Int, word: String) =
 	if (index == 0)
-		word.toLowerCase()
+		word.lowercase()
 	else
 		word.camelize()
 
@@ -38,21 +38,21 @@ internal fun Case?.convert(string: String) =
 	when (this) {
 		null -> string
 		Case.lowerCamelCase -> string.words().mapIndexed(::wordToLowerCamelCase).joinToString(separator = "")
-		Case.`lower-kebab-case` -> string.words().joinToString(separator = "-").toLowerCase()
-		Case.lower_snake_case -> string.words().joinToString(separator = "_").toLowerCase()
-		Case.lowercase -> string.toLowerCase()
-		Case.lowercase_words -> string.words().joinToString(separator = " ").toLowerCase()
+		Case.`lower-kebab-case` -> string.words().joinToString(separator = "-").lowercase()
+		Case.lower_snake_case -> string.words().joinToString(separator = "_").lowercase()
+		Case.lowercase -> string.lowercase()
+		Case.lowercase_words -> string.words().joinToString(separator = " ").lowercase()
 		Case.UpperCamelCase -> string.words().joinToString(separator = "") { it.camelize() }
-		Case.`UPPER-KEBAB-CASE` -> string.words().joinToString(separator = "-").toUpperCase()
-		Case.UPPER_SNAKE_CASE -> string.words().joinToString(separator = "_").toUpperCase()
-		Case.UPPERCASE -> string.toUpperCase()
-		Case.UPPERCASE_WORDS -> string.words().joinToString(separator = " ").toUpperCase()
+		Case.`UPPER-KEBAB-CASE` -> string.words().joinToString(separator = "-").uppercase()
+		Case.UPPER_SNAKE_CASE -> string.words().joinToString(separator = "_").uppercase()
+		Case.UPPERCASE -> string.uppercase()
+		Case.UPPERCASE_WORDS -> string.words().joinToString(separator = " ").uppercase()
 	}
 
 
 private fun String.camelize() =
 	if (isNotEmpty())
-		substring(0, 1).toUpperCase() + substring(1).toLowerCase()
+		substring(0, 1).uppercase() + substring(1).lowercase()
 	else
 		this
 

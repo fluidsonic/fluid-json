@@ -5,62 +5,62 @@ internal object JsonCharacter {
 
 	object Digit {
 
-		const val one = '1'.toInt()
-		const val two = '2'.toInt()
-		const val three = '3'.toInt()
-		const val four = '4'.toInt()
-		const val five = '5'.toInt()
-		const val six = '6'.toInt()
-		const val seven = '7'.toInt()
-		const val eight = '8'.toInt()
-		const val nine = '9'.toInt()
-		const val zero = '0'.toInt()
+		const val one = '1'.code
+		const val two = '2'.code
+		const val three = '3'.code
+		const val four = '4'.code
+		const val five = '5'.code
+		const val six = '6'.code
+		const val seven = '7'.code
+		const val eight = '8'.code
+		const val nine = '9'.code
+		const val zero = '0'.code
 	}
 
 	object Letter {
 
-		const val a = 'a'.toInt()
-		const val A = 'A'.toInt()
-		const val b = 'b'.toInt()
-		const val B = 'B'.toInt()
-		const val c = 'c'.toInt()
-		const val C = 'C'.toInt()
-		const val d = 'd'.toInt()
-		const val D = 'D'.toInt()
-		const val e = 'e'.toInt()
-		const val E = 'E'.toInt()
-		const val f = 'f'.toInt()
-		const val F = 'F'.toInt()
-		const val l = 'l'.toInt()
-		const val n = 'n'.toInt()
-		const val r = 'r'.toInt()
-		const val s = 's'.toInt()
-		const val t = 't'.toInt()
-		const val u = 'u'.toInt()
+		const val a = 'a'.code
+		const val A = 'A'.code
+		const val b = 'b'.code
+		const val B = 'B'.code
+		const val c = 'c'.code
+		const val C = 'C'.code
+		const val d = 'd'.code
+		const val D = 'D'.code
+		const val e = 'e'.code
+		const val E = 'E'.code
+		const val f = 'f'.code
+		const val F = 'F'.code
+		const val l = 'l'.code
+		const val n = 'n'.code
+		const val r = 'r'.code
+		const val s = 's'.code
+		const val t = 't'.code
+		const val u = 'u'.code
 	}
 
 	object Symbol {
 
-		const val colon = ':'.toInt()
-		const val comma = ','.toInt()
-		const val fullStop = '.'.toInt()
-		const val hyphenMinus = '-'.toInt()
-		const val leftCurlyBracket = '{'.toInt()
-		const val leftSquareBracket = '['.toInt()
-		const val plusSign = '+'.toInt()
-		const val quotationMark = '"'.toInt()
-		const val reverseSolidus = '\\'.toInt()
-		const val rightCurlyBracket = '}'.toInt()
-		const val rightSquareBracket = ']'.toInt()
-		const val solidus = '/'.toInt()
+		const val colon = ':'.code
+		const val comma = ','.code
+		const val fullStop = '.'.code
+		const val hyphenMinus = '-'.code
+		const val leftCurlyBracket = '{'.code
+		const val leftSquareBracket = '['.code
+		const val plusSign = '+'.code
+		const val quotationMark = '"'.code
+		const val reverseSolidus = '\\'.code
+		const val rightCurlyBracket = '}'.code
+		const val rightSquareBracket = ']'.code
+		const val solidus = '/'.code
 	}
 
 	object Whitespace {
 
-		const val carriageReturn = '\r'.toInt()
-		const val characterTabulation = '\t'.toInt()
-		const val lineFeed = '\n'.toInt()
-		const val space = ' '.toInt()
+		const val carriageReturn = '\r'.code
+		const val characterTabulation = '\t'.code
+		const val lineFeed = '\n'.code
+		const val space = ' '.code
 	}
 
 	const val end = -1

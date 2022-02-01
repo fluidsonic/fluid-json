@@ -101,7 +101,7 @@ class JsonDecoderTest {
 				get() = error("")
 
 
-			override val nextToken: JsonToken?
+			override val nextToken: JsonToken
 				get() = if (expectedValue == null) JsonToken.nullValue else JsonToken.stringValue
 
 
@@ -121,9 +121,6 @@ class JsonDecoderTest {
 			}
 		}
 
-		if (expectedValue != null)
-			expect(decoder.testBody(expectedType)).toBe(expectedValue)
-		else
-			expect(decoder.testBody(expectedType)).toBe(expectedValue)
+		expect(decoder.testBody(expectedType)).toBe(expectedValue)
 	}
 }

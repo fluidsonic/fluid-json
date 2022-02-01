@@ -33,8 +33,8 @@ import io.fluidsonic.json.writeValueOrNull
 import kotlin.String
 import kotlin.Unit
 
-internal object DefaultPrimaryConstructorJsonCodec : AbstractJsonCodec<DefaultPrimaryConstructor,
-		CustomCodingContext>() {
+internal object DefaultPrimaryConstructorJsonCodec :
+		AbstractJsonCodec<DefaultPrimaryConstructor, CustomCodingContext>() {
 	public override
 			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<DefaultPrimaryConstructor>):
 			DefaultPrimaryConstructor {
@@ -48,14 +48,14 @@ internal object DefaultPrimaryConstructorJsonCodec : AbstractJsonCodec<DefaultPr
 		}
 
 		return DefaultPrimaryConstructor(
-			value = _value ?: missingPropertyError("value")
+			`value` = _value ?: missingPropertyError("value")
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: DefaultPrimaryConstructor):
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: DefaultPrimaryConstructor):
 			Unit {
 		writeIntoMap {
-			writeMapElement("value", string = value.value)
+			writeMapElement("value", string = value.`value`)
 		}
 	}
 }

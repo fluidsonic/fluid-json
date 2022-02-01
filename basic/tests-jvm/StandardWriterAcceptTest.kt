@@ -756,7 +756,7 @@ class StandardWriterAcceptTest {
 		}).toBe("""{"0":0,"1":1}""")
 
 		expect(write {
-			writeMapOrNullByElement(null as Map<String, Int>?) { _, _ -> Unit }
+			writeMapOrNullByElement(null as Map<String, Int>?) { _, _ -> }
 		}).toBe("null")
 	}
 

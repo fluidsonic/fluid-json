@@ -36,8 +36,8 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
-internal object AutomaticGenericJsonCodec : AbstractJsonCodec<AutomaticGeneric<*>,
-		CustomCodingContext>() {
+internal object AutomaticGenericJsonCodec :
+		AbstractJsonCodec<AutomaticGeneric<*>, CustomCodingContext>() {
 	private val `constructor`: KFunction<AutomaticGeneric<*>> =
 			AutomaticGeneric::class.constructors.single { constructor ->
 		if (constructor.parameters.size != 4) return@single false
@@ -94,12 +94,12 @@ internal object AutomaticGenericJsonCodec : AbstractJsonCodec<AutomaticGeneric<*
 		return constructor.callBy(arguments)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(value: AutomaticGeneric<*>): Unit {
+	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticGeneric<*>): Unit {
 		writeIntoMap {
-			writeMapElement("value1", value = value.value1)
-			writeMapElement("value2", value = value.value2)
-			writeMapElement("value3", value = value.value3)
-			writeMapElement("value4", value = value.value4)
+			writeMapElement("value1", `value` = value.value1)
+			writeMapElement("value2", `value` = value.value2)
+			writeMapElement("value3", `value` = value.value3)
+			writeMapElement("value4", `value` = value.value4)
 		}
 	}
 }

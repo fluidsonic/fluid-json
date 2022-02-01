@@ -3,7 +3,8 @@ package tests.basic
 import kotlin.test.*
 
 
-inline class Expect<Value>(private val actual: Any?) {
+@JvmInline
+value class Expect<Value>(private val actual: Any?) {
 
 	fun toBe(expected: Value) {
 		assertEquals(expected = expected, actual = actual)

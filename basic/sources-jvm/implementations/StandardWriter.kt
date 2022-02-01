@@ -50,6 +50,8 @@ internal class StandardWriter(private val destination: Writer)
 
 			TokenLocation.afterMapElement ->
 				state.currentValueMapKey = null
+
+			else -> {}
 		}
 
 		if (state.isInValueIsolation) {
@@ -336,6 +338,8 @@ internal class StandardWriter(private val destination: Writer)
 				TokenLocation.afterMapElement,
 				TokenLocation.afterMapStart ->
 					state.currentValueMapKey = value
+
+				else -> {}
 			}
 
 			// TODO optimize
@@ -345,7 +349,7 @@ internal class StandardWriter(private val destination: Writer)
 				when (character) {
 					'"', '\\' -> {
 						destination.write(JsonCharacter.Symbol.reverseSolidus)
-						destination.write(character.toInt())
+						destination.write(character.code)
 					}
 
 					'\b' -> {
@@ -382,18 +386,18 @@ internal class StandardWriter(private val destination: Writer)
 						destination.write(JsonCharacter.Digit.zero)
 						destination.write(JsonCharacter.Digit.zero)
 
-						if (character.toInt() >= 0x10) {
+						if (character.code >= 0x10) {
 							destination.write(JsonCharacter.Digit.one)
 						}
 						else {
 							destination.write(JsonCharacter.Digit.zero)
 						}
 
-						destination.write(hexCharacters[character.toInt() and 0xF].toInt())
+						destination.write(hexCharacters[character.code and 0xF].code)
 					}
 
 					else ->
-						destination.write(character.toInt())
+						destination.write(character.code)
 				}
 			}
 
