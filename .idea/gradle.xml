@@ -18,6 +18,7 @@
             <option value="$PROJECT_DIR$/coding-jdk8" />
             <option value="$PROJECT_DIR$/examples" />
             <option value="$PROJECT_DIR$/ktor-client" />
+            <option value="$PROJECT_DIR$/ktor-serialization" />
           </set>
         </option>
       </GradleProjectSettings>

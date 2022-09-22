@@ -10,16 +10,16 @@ fluidLibraryModule(description = "A JSON library written in pure Kotlin (annotat
 				implementation(project(":fluid-json-annotations"))
 				implementation(project(":fluid-json-coding"))
 				implementation(kotlin("reflect"))
-				implementation(fluid("meta", "0.12.0"))
+				implementation(fluid("meta", "0.13.0"))
 				implementation("com.google.auto:auto-common:1.2.1")
 				implementation("com.google.auto.service:auto-service:1.0.1")
-				implementation("com.squareup:kotlinpoet:1.10.2")
+				implementation("com.squareup:kotlinpoet:1.12.0")
 
 				kapt("com.google.auto.service:auto-service:1.0.1")
 			}
 
 			testDependencies {
-				implementation(fluid("compiler", "0.11.0"))
+				implementation(fluid("compiler", "0.12.0"))
 			}
 		}
 	}

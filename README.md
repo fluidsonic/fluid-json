@@ -3,7 +3,7 @@ fluid-json
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.fluidsonic.json/fluid-json-basic?label=Maven%20Central)](https://search.maven.org/search?q=io.fluidsonic.json)
 [![Tests](https://github.com/fluidsonic/fluid-json/workflows/Tests/badge.svg)](https://github.com/fluidsonic/fluid-json/actions?workflow=Tests)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.6.10-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.6.10)
+[![Kotlin](https://img.shields.io/badge/Kotlin-1.7.10-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.7.10)
 [![#fluid-libraries Slack Channel](https://img.shields.io/badge/slack-%23fluid--libraries-543951.svg)](https://kotlinlang.slack.com/messages/C7UDFSVT2/)
 
 A JSON library written in pure Kotlin.
@@ -19,7 +19,7 @@ Table of Contents
 - [Examples](#examples)
 - [Manual Coding](#manual-coding)
 - [Error Handling](#error-handling)
-- [Ktor Client](#ktor-client)
+- [Ktor Serialization](#ktor-serialization)
 - [Modules](#modules)
 - [Testing](#testing)
 - [Type Mapping](#type-mapping)
@@ -37,8 +37,8 @@ plugins {
 }
 
 dependencies {
-	kapt("io.fluidsonic.json:fluid-json-annotation-processor:1.3.0")
-	implementation("io.fluidsonic.json:fluid-json-coding-jdk8:1.3.0")
+	kapt("io.fluidsonic.json:fluid-json-annotation-processor:1.4.0")
+	implementation("io.fluidsonic.json:fluid-json-coding-jdk8:1.4.0")
 }
 ```
 
@@ -575,35 +575,29 @@ errors explicitly is not needed in your use-case. This is especially important i
 | `JsonException.Schema`        | Thrown when a `JsonReader` or `JsonDecoder` reads data in an unexpected format, i.e. them schema of the JSON data is wrong.
 | `JsonException.Syntax`        | Thrown when a `JsonReader` reads data which is not properly formatted JSON.
 
-Ktor Client
------------
+Ktor Serialization
+------------------
 
-You can use this library with [`JsonFeature`](https://ktor.io/clients/http-client/features/json-feature.html) of Ktor Client.
+You can use this library with [`ContentNegotiation`](https://ktor.io/docs/serialization.html) of Ktor.
 
 `build.gradle.kts`:
 
 ```kotlin
 dependencies {
-	implementation("io.fluidsonic.json:fluid-json-ktor-client:1.3.0")
+	implementation("io.fluidsonic.json:fluid-json-ktor-serialization:1.4.0")
 }
 ```
 
 Setting up your `HttpClient`:
 
 ```kotlin
-val client = HttpClient(…) {
-	install(JsonFeature) {
-		serializer = FluidJsonSerializer(
-			parser = JsonCodingParser
-				.builder()
-				.decodingWith(…)
-			.build(),
-		serializer = JsonCodingSerializer
-			.builder()
-			.encodingWith(…)
-		.build()
-		)
-	}
+HttpClient {
+    install(ContentNegotiation) {
+        fluidJson(
+            parser = JsonCodingParser.builder().decodingWith(…).build(),
+            serializer = JsonCodingSerializer.builder().encodingWith(…).build(),
+        )
+    }
 }
 ```
 
@@ -611,13 +605,13 @@ Modules
 -------
 
 | Module                            | Usage
-| --------------------------------- | -----
+|-----------------------------------| -----
 | `fluid-json-annotation-processor` | `@Json`-based `JsonCodec` creation using `kapt`
 | `fluid-json-annotations`          | contains `@Json` annotations
 | `fluid-json-basic`                | low-level API with `JsonReader`/`JsonParser` and `JsonWriter`/`JsonSerializer`
 | `fluid-json-coding`               | `JsonCodec`-based parsing and serialization using `JsonDecoder`/`JsonCodingParser` and `JsonEncoder`/`JsonCodingSerializer`
 | `fluid-json-coding-jdk8`          | additional `JsonCodec`s for commonly used Java 8 types on top of `fluid-json-coding`
-| `fluid-json-ktor-client`          | plugs in `JsonCodingParser`/`JsonCodingSerializer` to `ktor-client` using its `JsonSerializer`
+| `fluid-json-ktor-serialization`   | plugs in `JsonCodingParser`/`JsonCodingSerializer` to `ktor-serialization` using its `ContentConverter`
 
 Testing
 -------
