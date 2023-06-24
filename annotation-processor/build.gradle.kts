@@ -25,6 +25,10 @@ fluidLibraryModule(description = "A JSON library written in pure Kotlin (annotat
 	}
 }
 
+tasks.named("dokkaHtml") {
+	dependsOn("kaptKotlinJvm")
+}
+
 kotlin {
 	jvmToolchain(8)
 }
