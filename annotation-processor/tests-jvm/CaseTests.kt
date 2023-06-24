@@ -22,7 +22,7 @@ internal class CaseTests {
 					useJavac = false
 				}
 				.includesCurrentClasspath()
-				.jvmTarget(KotlinJvmTarget.v1_8)
+				.jvmTarget(KotlinJvmTarget.v17)
 				.kaptOptions {
 					sourcesOutputDir = actualOutputPath
 						.also { directory ->

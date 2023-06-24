@@ -30,11 +30,10 @@ import io.fluidsonic.json.writeMapElement
 import io.fluidsonic.json.writeShortOrNull
 import io.fluidsonic.json.writeStringOrNull
 import io.fluidsonic.json.writeValueOrNull
-import kotlin.Unit
 
 internal object AutomaticSecondaryConstructorPrimaryExcludedJsonCodec :
 		AbstractJsonCodec<AutomaticSecondaryConstructorPrimaryExcluded, CustomCodingContext>() {
-	public override
+	override
 			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<AutomaticSecondaryConstructorPrimaryExcluded>):
 			AutomaticSecondaryConstructorPrimaryExcluded {
 		var _value = 0
@@ -57,9 +56,8 @@ internal object AutomaticSecondaryConstructorPrimaryExcludedJsonCodec :
 		)
 	}
 
-	public override
-			fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticSecondaryConstructorPrimaryExcluded):
-			Unit {
+	override
+			fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticSecondaryConstructorPrimaryExcluded) {
 		writeIntoMap {
 			writeMapElement("value", string = value.`value`)
 		}

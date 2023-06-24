@@ -17,16 +17,15 @@ import io.fluidsonic.json.readStringOrNull
 import io.fluidsonic.json.readValueOfType
 import io.fluidsonic.json.readValueOfTypeOrNull
 import io.fluidsonic.json.writeValueOrNull
-import kotlin.Unit
 
 internal object SingleValueGenericJsonCodec :
 		AbstractJsonCodec<SingleValueGeneric<*>, CustomCodingContext>() {
-	public override
+	override
 			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<SingleValueGeneric<*>>):
 			SingleValueGeneric<*> = SingleValueGeneric(`value` =
 			readValueOfTypeOrNull(valueType.arguments[0]) as SingleValueGeneric.Bound?)
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: SingleValueGeneric<*>): Unit {
+	override fun JsonEncoder<CustomCodingContext>.encode(`value`: SingleValueGeneric<*>) {
 		writeValueOrNull(value.`value`)
 	}
 }

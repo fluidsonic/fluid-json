@@ -29,11 +29,9 @@ import io.fluidsonic.json.writeShortOrNull
 import io.fluidsonic.json.writeStringOrNull
 import io.fluidsonic.json.writeValueOrNull
 import kotlin.String
-import kotlin.Unit
 
 internal object DefaultRootJsonCodec : AbstractJsonCodec<DefaultRoot, CustomCodingContext>() {
-	public override
-			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<DefaultRoot>):
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<DefaultRoot>):
 			DefaultRoot {
 		var _value: String? = null
 
@@ -49,7 +47,7 @@ internal object DefaultRootJsonCodec : AbstractJsonCodec<DefaultRoot, CustomCodi
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: DefaultRoot): Unit {
+	override fun JsonEncoder<CustomCodingContext>.encode(`value`: DefaultRoot) {
 		writeIntoMap {
 			writeMapElement("value", string = value.`value`)
 		}

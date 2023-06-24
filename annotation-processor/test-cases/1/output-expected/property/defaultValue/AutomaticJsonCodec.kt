@@ -34,7 +34,6 @@ import io.fluidsonic.json.writeValueOrNull
 import kotlin.Double
 import kotlin.Int
 import kotlin.String
-import kotlin.Unit
 import kotlin.collections.List
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
@@ -97,7 +96,7 @@ internal object AutomaticJsonCodec : AbstractJsonCodec<Automatic, CustomCodingCo
 
 	private val parameter_value9: KParameter = constructor.parameters.first { it.name == "value9" }
 
-	public override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<Automatic>):
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<Automatic>):
 			Automatic {
 		val arguments = hashMapOf<KParameter, Any?>()
 		readFromMapByElementValue { key ->
@@ -125,7 +124,7 @@ internal object AutomaticJsonCodec : AbstractJsonCodec<Automatic, CustomCodingCo
 		return constructor.callBy(arguments)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: Automatic): Unit {
+	override fun JsonEncoder<CustomCodingContext>.encode(`value`: Automatic) {
 		writeIntoMap {
 			writeMapElement("value1", string = value.value1)
 			writeMapElement("value10", `value` = value.value10)

@@ -20,8 +20,7 @@ import io.fluidsonic.json.readValueOfTypeOrNull
 import kotlin.String
 
 internal object NoneJsonCodec : AbstractJsonDecoderCodec<None, CustomCodingContext>() {
-	public override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<None>):
-			None {
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<None>): None {
 		var _value1: String? = null
 
 		readFromMapByElementValue { key ->

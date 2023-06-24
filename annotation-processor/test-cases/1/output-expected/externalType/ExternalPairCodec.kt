@@ -32,10 +32,9 @@ import io.fluidsonic.json.writeStringOrNull
 import io.fluidsonic.json.writeValueOrNull
 import kotlin.Any
 import kotlin.Pair
-import kotlin.Unit
 
 public object ExternalPairCodec : AbstractJsonCodec<Pair<*, *>, CustomCodingContext>() {
-	public override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<Pair<*, *>>):
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<Pair<*, *>>):
 			Pair<*, *> {
 		var _first: Any? = null
 		var _second: Any? = null
@@ -54,7 +53,7 @@ public object ExternalPairCodec : AbstractJsonCodec<Pair<*, *>, CustomCodingCont
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: Pair<*, *>): Unit {
+	override fun JsonEncoder<CustomCodingContext>.encode(`value`: Pair<*, *>) {
 		writeIntoMap {
 			writeMapElement("first", `value` = value.first)
 			writeMapElement("second", `value` = value.second)

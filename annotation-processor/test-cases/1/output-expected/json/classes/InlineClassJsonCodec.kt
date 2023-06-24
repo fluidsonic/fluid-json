@@ -17,14 +17,12 @@ import io.fluidsonic.json.readStringOrNull
 import io.fluidsonic.json.readValueOfType
 import io.fluidsonic.json.readValueOfTypeOrNull
 import io.fluidsonic.json.writeValueOrNull
-import kotlin.Unit
 
 internal object InlineClassJsonCodec : AbstractJsonCodec<InlineClass, CustomCodingContext>() {
-	public override
-			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<InlineClass>): InlineClass
-			= InlineClass(`value` = readString())
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<InlineClass>):
+			InlineClass = InlineClass(`value` = readString())
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: InlineClass): Unit {
+	override fun JsonEncoder<CustomCodingContext>.encode(`value`: InlineClass) {
 		writeString(value.`value`)
 	}
 }

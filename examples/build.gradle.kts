@@ -20,3 +20,7 @@ fluidLibraryModule(description = "examples") {
 		}
 	}
 }
+
+kotlin {
+	jvmToolchain(8)
+}

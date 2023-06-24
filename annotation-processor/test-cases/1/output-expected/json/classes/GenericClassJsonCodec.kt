@@ -31,11 +31,10 @@ import io.fluidsonic.json.writeShortOrNull
 import io.fluidsonic.json.writeStringOrNull
 import io.fluidsonic.json.writeValueOrNull
 import kotlin.Any
-import kotlin.Unit
 
 internal object GenericClassJsonCodec :
 		AbstractJsonCodec<GenericClass<*, *, *>, CustomCodingContext>() {
-	public override
+	override
 			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<GenericClass<*, *, *>>):
 			GenericClass<*, *, *> {
 		var _a: Any? = null
@@ -58,7 +57,7 @@ internal object GenericClassJsonCodec :
 		)
 	}
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: GenericClass<*, *, *>): Unit {
+	override fun JsonEncoder<CustomCodingContext>.encode(`value`: GenericClass<*, *, *>) {
 		writeIntoMap {
 			writeMapElement("a", `value` = value.a)
 			writeMapElement("b", `value` = value.b)

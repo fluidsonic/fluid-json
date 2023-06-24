@@ -53,7 +53,7 @@ internal object ConstructorParameterOrderJsonCodec :
 
 	private val parameter_c: KParameter = constructor.parameters.first { it.name == "c" }
 
-	public override
+	override
 			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<ConstructorParameterOrder>):
 			ConstructorParameterOrder {
 		val arguments = hashMapOf<KParameter, Any?>()

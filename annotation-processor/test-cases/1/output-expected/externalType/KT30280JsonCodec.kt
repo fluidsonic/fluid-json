@@ -18,13 +18,12 @@ import io.fluidsonic.json.readStringOrNull
 import io.fluidsonic.json.readValueOfType
 import io.fluidsonic.json.readValueOfTypeOrNull
 import io.fluidsonic.json.writeValueOrNull
-import kotlin.Unit
 
 internal object KT30280JsonCodec : AbstractJsonCodec<KT30280, CustomCodingContext>() {
-	public override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<KT30280>):
-			KT30280 = KT30280(`value` = readString())
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<KT30280>): KT30280 =
+			KT30280(`value` = readString())
 
-	public override fun JsonEncoder<CustomCodingContext>.encode(`value`: KT30280): Unit {
+	override fun JsonEncoder<CustomCodingContext>.encode(`value`: KT30280) {
 		writeString(value.`value`)
 	}
 }
