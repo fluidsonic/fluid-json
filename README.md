@@ -37,8 +37,8 @@ plugins {
 }
 
 dependencies {
-	kapt("io.fluidsonic.json:fluid-json-annotation-processor:1.4.0")
-	implementation("io.fluidsonic.json:fluid-json-coding-jdk8:1.4.0")
+	kapt("io.fluidsonic.json:fluid-json-annotation-processor:1.5.0")
+	implementation("io.fluidsonic.json:fluid-json-coding-jdk8:1.5.0")
 }
 ```
 
@@ -584,7 +584,7 @@ You can use this library with [`ContentNegotiation`](https://ktor.io/docs/serial
 
 ```kotlin
 dependencies {
-	implementation("io.fluidsonic.json:fluid-json-ktor-serialization:1.4.0")
+	implementation("io.fluidsonic.json:fluid-json-ktor-serialization:1.5.0")
 }
 ```
 
