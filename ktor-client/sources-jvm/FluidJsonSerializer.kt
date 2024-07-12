@@ -13,7 +13,6 @@ public class FluidJsonSerializer(
 	private val serializer: JsonCodingSerializer = JsonCodingSerializer.nonRecursive,
 ) : JsonSerializer {
 
-	@Suppress("INVISIBLE_MEMBER")
 	override fun read(type: TypeInfo, body: Input): Any =
 		parser.parseValueOfType(body.readText(), JsonCodingType.of(type.reifiedType))
 

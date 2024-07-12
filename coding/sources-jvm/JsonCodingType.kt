@@ -75,9 +75,7 @@ public class JsonCodingType<Type : Any> private constructor(
 		private val cache = ConcurrentHashMap<Type, JsonCodingType<*>>()
 
 
-		@PublishedApi
-		@Suppress("UNCHECKED_CAST")
-		internal fun of(type: Type): JsonCodingType<*> =
+		public fun of(type: Type): JsonCodingType<*> =
 			cache.getOrPut(type) {
 				type.toCodableType(
 					upperBound = null,
@@ -144,10 +142,12 @@ public class JsonCodingType<Type : Any> private constructor(
 		private fun GenericArrayType.toCodableType(upperBound: KClass<*>?, variance: KVariance) =
 			JsonCodingType(
 				rawClass = Array<Any?>::class,
-				arguments = listOf(genericComponentType.toCodableType(
-					upperBound = null,
-					variance = KVariance.INVARIANT
-				)),
+				arguments = listOf(
+					genericComponentType.toCodableType(
+						upperBound = null,
+						variance = KVariance.INVARIANT
+					)
+				),
 				upperBoundInGenericContext = upperBound,
 				varianceInGenericContext = variance
 			)
@@ -230,6 +230,6 @@ public class JsonCodingType<Type : Any> private constructor(
 public abstract class JsonCodingTypeReference<Type : Any> {
 
 	@Suppress("UNCHECKED_CAST")
-	internal val type = JsonCodingType.of((this::class.java.genericSuperclass as ParameterizedType).actualTypeArguments.first()!!)
+	public val type: JsonCodingType<Type> = JsonCodingType.of((this::class.java.genericSuperclass as ParameterizedType).actualTypeArguments.first()!!)
 		as JsonCodingType<Type>
 }

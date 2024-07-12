@@ -10,3 +10,11 @@ project(":coding-jdk8").name = "fluid-json-coding-jdk8"
 project(":examples").name = "fluid-json-examples"
 project(":ktor-client").name = "fluid-json-ktor-client"
 project(":ktor-serialization").name = "fluid-json-ktor-serialization"
+
+pluginManagement {
+	repositories {
+		gradlePluginPortal()
+		mavenCentral()
+		mavenLocal()
+	}
+}

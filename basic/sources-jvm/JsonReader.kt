@@ -123,6 +123,10 @@ public interface JsonReader : Closeable {
 
 
 public inline fun <Reader : JsonReader, Value> Reader.isolateValueRead(crossinline read: Reader.() -> Value): Value {
+	contract {
+		callsInPlace(read, InvocationKind.EXACTLY_ONCE)
+	}
+
 	val depth = beginValueIsolation()
 	val value = read()
 	endValueIsolation(depth = depth)

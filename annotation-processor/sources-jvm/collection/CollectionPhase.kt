@@ -308,7 +308,7 @@ internal class CollectionPhase(
 
 		val jvmMethodSignature = element.jvmMethodSignature
 
-		if (typeMeta is MConstructable && element.simpleName.contentEquals("<init>")) {
+		if (element.simpleName.contentEquals("<init>")) {
 			if (element.getAnnotation(Json.Constructor::class.java) != null)
 				fail("cannot be used along @Json.Constructor on the same constructor")
 

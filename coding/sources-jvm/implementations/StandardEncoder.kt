@@ -9,6 +9,8 @@ internal class StandardEncoder<out Context : JsonCodingContext>(
 
 	@Suppress("UNCHECKED_CAST")
 	override fun writeValue(value: Any) {
+		val codecProvider = codecProvider
+
 		withErrorChecking {
 			(codecProvider.encoderCodecForClass(value::class) as JsonEncoderCodec<Any, Context>?)
 				?.run {

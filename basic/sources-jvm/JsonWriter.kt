@@ -111,6 +111,10 @@ public interface JsonWriter : Closeable, Flushable {
 
 
 public inline fun <Writer : JsonWriter> Writer.isolateValueWrite(crossinline write: Writer.() -> Unit) {
+	contract {
+		callsInPlace(write, InvocationKind.EXACTLY_ONCE)
+	}
+
 	val depth = beginValueIsolation()
 	val value = write()
 	endValueIsolation(depth = depth)

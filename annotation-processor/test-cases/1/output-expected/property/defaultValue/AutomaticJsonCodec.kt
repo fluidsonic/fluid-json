@@ -75,7 +75,6 @@ internal object AutomaticJsonCodec : AbstractJsonCodec<Automatic, CustomCodingCo
 		return@single true
 	}
 
-
 	private val parameter_value1: KParameter = constructor.parameters.first { it.name == "value1" }
 
 	private val parameter_value10: KParameter = constructor.parameters.first { it.name == "value10" }

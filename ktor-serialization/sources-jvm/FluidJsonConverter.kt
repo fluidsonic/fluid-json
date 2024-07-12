@@ -16,7 +16,6 @@ public class FluidJsonConverter(
 	private val serializer: JsonCodingSerializer = JsonCodingSerializer.nonRecursive,
 ) : ContentConverter {
 
-	@Suppress("INVISIBLE_MEMBER")
 	override suspend fun deserialize(charset: Charset, typeInfo: TypeInfo, content: ByteReadChannel): Any? =
 		withContext(Dispatchers.IO) {
 			parser.parseValueOfTypeOrNull(content.toInputStream().reader(charset), JsonCodingType.of(typeInfo.reifiedType))

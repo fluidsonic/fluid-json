@@ -46,7 +46,6 @@ internal object ConstructorParameterOrderJsonCodec :
 		return@single true
 	}
 
-
 	private val parameter_a: KParameter = constructor.parameters.first { it.name == "a" }
 
 	private val parameter_b: KParameter = constructor.parameters.first { it.name == "b" }
