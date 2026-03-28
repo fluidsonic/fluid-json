@@ -3,6 +3,9 @@ package io.fluidsonic.json
 import java.io.*
 
 
+/**
+ * A [JsonWriter] that can encode values using registered codecs and provides access to a [JsonCodingContext].
+ */
 public interface JsonEncoder<out Context : JsonCodingContext> : JsonWriter {
 
 	public val context: Context
@@ -96,6 +99,7 @@ public interface JsonEncoder<out Context : JsonCodingContext> : JsonWriter {
 }
 
 
+/** Throws a [JsonException.Serialization] with the given [message]. */
 public fun JsonEncoder<*>.serializationError(message: String): Nothing =
 	throw JsonException.Serialization(
 		message = message,

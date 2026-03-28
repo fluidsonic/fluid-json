@@ -3,6 +3,9 @@ package io.fluidsonic.json
 import kotlin.reflect.*
 
 
+/**
+ * Provides [JsonDecoderCodec] and [JsonEncoderCodec] instances for given types.
+ */
 public interface JsonCodecProvider<in Context : JsonCodingContext> {
 
 	public fun <ActualValue : Any> decoderCodecForType(decodableType: JsonCodingType<ActualValue>): JsonDecoderCodec<ActualValue, Context>?
@@ -36,21 +39,26 @@ private val basicProvider = JsonCodecProvider(DefaultJsonCodecs.basic + DefaultJ
 private val extendedProvider = JsonCodecProvider(DefaultJsonCodecs.extended + DefaultJsonCodecs.basic + DefaultJsonCodecs.nonRecursive)
 
 
+/** A [JsonCodecProvider] with codecs for basic Kotlin types (String, Int, List, Map, etc.). */
 public val JsonCodecProvider.Companion.basic: JsonCodecProvider<JsonCodingContext>
 	get() = basicProvider
 
 
+/** Returns a decoder codec for the reified type [ActualValue], if one is registered. */
 public inline fun <reified ActualValue : Any, Context : JsonCodingContext> JsonCodecProvider<Context>.decoderCodecForType(): JsonDecoderCodec<ActualValue, Context>? =
 	decoderCodecForType(jsonCodingType())
 
 
+/** Returns an encoder codec for the reified type [ActualValue], if one is registered. */
 public inline fun <reified ActualValue : Any, Context : JsonCodingContext> JsonCodecProvider<Context>.encoderCodecForClass(): JsonEncoderCodec<ActualValue, Context>? =
 	encoderCodecForClass(ActualValue::class)
 
 
+/** A [JsonCodecProvider] with codecs for basic Kotlin types and extended types (java.time, enums, ranges, etc.). */
 public val JsonCodecProvider.Companion.extended: JsonCodecProvider<JsonCodingContext>
 	get() = extendedProvider
 
 
+/** Returns the annotation-generated implementation of [interfaceClass]. Requires kapt processing. */
 public fun <CodecProvider : JsonCodecProvider<*>> JsonCodecProvider.Companion.generated(interfaceClass: KClass<CodecProvider>): CodecProvider =
 	error("Cannot find annotation-based codec provider. Either $interfaceClass hasn't been annotated with @Json.CodecProvider or kapt hasn't been run.")

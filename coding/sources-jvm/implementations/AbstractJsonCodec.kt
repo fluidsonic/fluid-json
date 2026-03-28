@@ -4,6 +4,9 @@ import java.lang.reflect.*
 import kotlin.reflect.*
 
 
+/**
+ * Base class for implementing a [JsonCodec] that can both decode and encode values of type [Value].
+ */
 public abstract class AbstractJsonCodec<Value : Any, in Context : JsonCodingContext>(
 	private val additionalProviders: List<JsonCodecProvider<Context>> = emptyList(),
 	decodableType: JsonCodingType<Value>? = null

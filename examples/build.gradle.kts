@@ -9,10 +9,8 @@ fluidLibraryModule(description = "examples") {
 
 	targets {
 		jvm {
-			withJava()
-
 			dependencies {
-				implementation(project(":fluid-json-coding-jdk8"))
+				implementation(project(":fluid-json-coding"))
 				implementation(project(":fluid-json-annotations"))
 
 				kapt(project(":fluid-json-annotation-processor"))
@@ -22,5 +20,5 @@ fluidLibraryModule(description = "examples") {
 }
 
 kotlin {
-	jvmToolchain(8)
+	jvmToolchain(21)
 }

@@ -18,11 +18,11 @@ internal class CaseTests {
 				.arguments {
 					// TODO remove once fixed: https://youtrack.jetbrains.com/issue/KT-28011
 					compileJava = false
-					languageVersion = "1.4"
+					languageVersion = "2.0"
 					useJavac = false
 				}
 				.includesCurrentClasspath()
-				.jvmTarget(KotlinJvmTarget.v17)
+				.jvmTarget(KotlinJvmTarget.v21)
 				.kaptOptions {
 					sourcesOutputDir = actualOutputPath
 						.also { directory ->
@@ -70,7 +70,7 @@ internal class CaseTests {
 					if (!processedFiles.contains(file))
 						fail("actual output contains unexpected file '$file'")
 				}
-		}!!
+		}
 
 
 	private fun fail(message: String): Nothing =

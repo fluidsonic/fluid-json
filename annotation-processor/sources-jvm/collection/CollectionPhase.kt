@@ -172,15 +172,18 @@ internal class CollectionPhase(
 			?.forEachIndexed { index, externalTypeAnnotationMirror ->
 				val externalTypeAnnotation = annotation.externalTypes[index]
 
-				val externalType = externalTypeAnnotationMirror.getValue<TypeMirror>("target")
-					?: error("cannot properly parse external type annotation mirror: $externalTypeAnnotationMirror")
+				val externalType = requireNotNull(externalTypeAnnotationMirror.getValue<TypeMirror>("target")) {
+					"cannot properly parse external type annotation mirror: $externalTypeAnnotationMirror"
+				}
 
-				if (externalType !is ReferenceType && externalTypeAnnotation.targetName.isEmpty())
-					error("Json.ExternalType can only be used for reference types, not for '$externalType' (if you are using an inline class you have to specify 'targetName' too)")
+				require(externalType is ReferenceType || externalTypeAnnotation.targetName.isNotEmpty()) {
+					"Json.ExternalType can only be used for reference types, not for '$externalType' (if you are using an inline class you have to specify 'targetName' too)"
+				}
 
 				val externalTypeName = externalTypeAnnotation.targetName.ifEmpty { externalType.toString() }
-				val externalTypeElement = typeResolver.resolveType(externalTypeName)
-					?: error("cannot find external type element for '$externalTypeName'")
+				val externalTypeElement = requireNotNull(typeResolver.resolveType(externalTypeName)) {
+					"cannot find external type element for '$externalTypeName'"
+				}
 
 				withFailureHandling(annotationClass = Json.ExternalType::class, element = externalTypeElement) {
 					collect(

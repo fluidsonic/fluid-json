@@ -1,6 +1,9 @@
 package io.fluidsonic.json
 
 
+/**
+ * Base exception for all JSON-related errors, providing optional [offset] and [path] information.
+ */
 public abstract class JsonException(
 	message: String,
 	public val offset: Int = -1,

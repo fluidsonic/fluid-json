@@ -35,8 +35,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
-internal object AutomaticGenericJsonCodec :
-		AbstractJsonCodec<AutomaticGeneric<*>, CustomCodingContext>() {
+internal object AutomaticGenericJsonCodec : AbstractJsonCodec<AutomaticGeneric<*>, CustomCodingContext>() {
 	private val `constructor`: KFunction<AutomaticGeneric<*>> =
 			AutomaticGeneric::class.constructors.single { constructor ->
 		if (constructor.parameters.size != 4) return@single false
@@ -45,14 +44,10 @@ internal object AutomaticGenericJsonCodec :
 			val erasure = parameter.type.jvmErasure
 
 			when (parameter.name) {
-				"value1" -> if (parameter.index != 0 || parameter.isVararg || erasure !=
-						AutomaticGeneric.SomeInterface::class) return@single false
-				"value2" -> if (parameter.index != 1 || parameter.isVararg || erasure !=
-						AutomaticGeneric.SomeInterface::class) return@single false
-				"value3" -> if (parameter.index != 2 || parameter.isVararg || erasure !=
-						AutomaticGeneric.SomeInterface::class) return@single false
-				"value4" -> if (parameter.index != 3 || parameter.isVararg || erasure !=
-						AutomaticGeneric.SomeInterface::class) return@single false
+				"value1" -> if (parameter.index != 0 || parameter.isVararg || erasure != AutomaticGeneric.SomeInterface::class) return@single false
+				"value2" -> if (parameter.index != 1 || parameter.isVararg || erasure != AutomaticGeneric.SomeInterface::class) return@single false
+				"value3" -> if (parameter.index != 2 || parameter.isVararg || erasure != AutomaticGeneric.SomeInterface::class) return@single false
+				"value4" -> if (parameter.index != 3 || parameter.isVararg || erasure != AutomaticGeneric.SomeInterface::class) return@single false
 				else -> return@single false
 			}
 		}
@@ -68,20 +63,14 @@ internal object AutomaticGenericJsonCodec :
 
 	private val parameter_value4: KParameter = constructor.parameters.first { it.name == "value4" }
 
-	override
-			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<AutomaticGeneric<*>>):
-			AutomaticGeneric<*> {
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<AutomaticGeneric<*>>): AutomaticGeneric<*> {
 		val arguments = hashMapOf<KParameter, Any?>()
 		readFromMapByElementValue { key ->
 			when (key) {
-				"value1" -> arguments[parameter_value1] = readValueOfType(valueType.arguments[0]) as
-						AutomaticGeneric.SomeInterface
-				"value2" -> arguments[parameter_value2] = readValueOfType(valueType.arguments[0]) as
-						AutomaticGeneric.SomeInterface
-				"value3" -> arguments[parameter_value3] = readValueOfType(valueType.arguments[0]) as
-						AutomaticGeneric.SomeInterface
-				"value4" -> arguments[parameter_value4] = readValueOfType(valueType.arguments[0]) as
-						AutomaticGeneric.SomeInterface
+				"value1" -> arguments[parameter_value1] = readValueOfType(valueType.arguments[0]) as AutomaticGeneric.SomeInterface
+				"value2" -> arguments[parameter_value2] = readValueOfType(valueType.arguments[0]) as AutomaticGeneric.SomeInterface
+				"value3" -> arguments[parameter_value3] = readValueOfType(valueType.arguments[0]) as AutomaticGeneric.SomeInterface
+				"value4" -> arguments[parameter_value4] = readValueOfType(valueType.arguments[0]) as AutomaticGeneric.SomeInterface
 				else -> skipValue()
 			}
 		}

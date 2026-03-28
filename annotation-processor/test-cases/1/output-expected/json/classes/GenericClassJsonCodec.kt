@@ -32,11 +32,8 @@ import io.fluidsonic.json.writeStringOrNull
 import io.fluidsonic.json.writeValueOrNull
 import kotlin.Any
 
-internal object GenericClassJsonCodec :
-		AbstractJsonCodec<GenericClass<*, *, *>, CustomCodingContext>() {
-	override
-			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<GenericClass<*, *, *>>):
-			GenericClass<*, *, *> {
+internal object GenericClassJsonCodec : AbstractJsonCodec<GenericClass<*, *, *>, CustomCodingContext>() {
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<GenericClass<*, *, *>>): GenericClass<*, *, *> {
 		var _a: Any? = null
 		var _b: GenericClass.Bound? = null
 		var _c: Any? = null

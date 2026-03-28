@@ -45,6 +45,7 @@ internal class FixedCodecProvider<in Context : JsonCodingContext>(
 }
 
 
+/** Creates a [JsonCodecProvider] that delegates to the given [providers]. */
 @Suppress("FunctionName")
 public fun <Context : JsonCodingContext> JsonCodecProvider(
 	vararg providers: JsonCodecProvider<Context>
@@ -52,6 +53,7 @@ public fun <Context : JsonCodingContext> JsonCodecProvider(
 	JsonCodecProvider(providers.asIterable())
 
 
+/** Creates a [JsonCodecProvider] that delegates to the given [providers]. */
 @Suppress("FunctionName")
 public fun <Context : JsonCodingContext> JsonCodecProvider(
 	providers: Iterable<JsonCodecProvider<Context>>

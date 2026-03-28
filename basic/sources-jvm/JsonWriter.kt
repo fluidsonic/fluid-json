@@ -7,6 +7,9 @@ import kotlin.contracts.*
 import kotlin.internal.*
 
 
+/**
+ * Writes JSON tokens and values to a destination in a streaming fashion.
+ */
 public interface JsonWriter : Closeable, Flushable {
 
 	public val depth: JsonDepth
@@ -110,6 +113,7 @@ public interface JsonWriter : Closeable, Flushable {
 }
 
 
+/** Writes exactly one value in isolation, ensuring no additional tokens are emitted. */
 public inline fun <Writer : JsonWriter> Writer.isolateValueWrite(crossinline write: Writer.() -> Unit) {
 	contract {
 		callsInPlace(write, InvocationKind.EXACTLY_ONCE)
@@ -123,6 +127,7 @@ public inline fun <Writer : JsonWriter> Writer.isolateValueWrite(crossinline wri
 }
 
 
+/** Executes [block] with this writer, then terminates or closes it depending on [withTermination]. */
 public inline fun <Writer : JsonWriter?, Result> Writer.use(withTermination: Boolean = true, block: (Writer) -> Result): Result {
 	contract {
 		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -161,6 +166,7 @@ public inline fun <Writer : JsonWriter?, Result> Writer.use(withTermination: Boo
 }
 
 
+/** Executes [block] and optionally terminates this writer afterward based on [withTermination]. */
 public inline fun <Writer : JsonWriter, Result> Writer.withTermination(withTermination: Boolean = true, block: Writer.() -> Result): Result {
 	contract {
 		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -173,6 +179,7 @@ public inline fun <Writer : JsonWriter, Result> Writer.withTermination(withTermi
 }
 
 
+/** Executes [block], marking this writer as errored if an exception is thrown. */
 public inline fun <Writer : JsonWriter, ReturnValue> Writer.withErrorChecking(block: Writer.() -> ReturnValue): ReturnValue {
 	contract {
 		callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -195,36 +202,43 @@ public inline fun <Writer : JsonWriter, ReturnValue> Writer.withErrorChecking(bl
 }
 
 
+/** Writes a JSON boolean [value], or a JSON null if the value is `null`. */
 public fun JsonWriter.writeBooleanOrNull(value: Boolean?) {
 	writeOrNull(value, JsonWriter::writeBoolean)
 }
 
 
+/** Writes a [Byte] [value] as a JSON number, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeByteOrNull(value: Byte?) {
 	writeOrNull(value, JsonWriter::writeByte)
 }
 
 
+/** Writes a [Char] [value] as a JSON string, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeCharOrNull(value: Char?) {
 	writeOrNull(value, JsonWriter::writeChar)
 }
 
 
+/** Writes a [Double] [value] as a JSON number, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeDoubleOrNull(value: Double?) {
 	writeOrNull(value, JsonWriter::writeDouble)
 }
 
 
+/** Writes a [Float] [value] as a JSON number, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeFloatOrNull(value: Float?) {
 	writeOrNull(value, JsonWriter::writeFloat)
 }
 
 
+/** Writes an [Int] [value] as a JSON number, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeIntOrNull(value: Int?) {
 	writeOrNull(value, JsonWriter::writeInt)
 }
 
 
+/** Writes a complete JSON list, invoking [writeContent] between list start and end tokens. */
 public inline fun <Writer : JsonWriter> Writer.writeIntoList(crossinline writeContent: Writer.() -> Unit) {
 	contract {
 		callsInPlace(writeContent, InvocationKind.EXACTLY_ONCE)
@@ -238,6 +252,7 @@ public inline fun <Writer : JsonWriter> Writer.writeIntoList(crossinline writeCo
 }
 
 
+/** Writes a complete JSON map, invoking [writeContent] between map start and end tokens. */
 public inline fun <Writer : JsonWriter> Writer.writeIntoMap(crossinline writeContent: Writer.() -> Unit) {
 	contract {
 		callsInPlace(writeContent, InvocationKind.EXACTLY_ONCE)
@@ -251,61 +266,73 @@ public inline fun <Writer : JsonWriter> Writer.writeIntoMap(crossinline writeCon
 }
 
 
+/** Writes a [BooleanArray] as a JSON list. */
 public fun JsonWriter.writeList(value: BooleanArray) {
 	writeListByElement(value) { writeBoolean(it) }
 }
 
 
+/** Writes a [ByteArray] as a JSON list. */
 public fun JsonWriter.writeList(value: ByteArray) {
 	writeListByElement(value) { writeByte(it) }
 }
 
 
+/** Writes a [CharArray] as a JSON list. */
 public fun JsonWriter.writeList(value: CharArray) {
 	writeListByElement(value) { writeChar(it) }
 }
 
 
+/** Writes a [DoubleArray] as a JSON list. */
 public fun JsonWriter.writeList(value: DoubleArray) {
 	writeListByElement(value) { writeDouble(it) }
 }
 
 
+/** Writes a [FloatArray] as a JSON list. */
 public fun JsonWriter.writeList(value: FloatArray) {
 	writeListByElement(value) { writeFloat(it) }
 }
 
 
+/** Writes an [IntArray] as a JSON list. */
 public fun JsonWriter.writeList(value: IntArray) {
 	writeListByElement(value) { writeInt(it) }
 }
 
 
+/** Writes a [LongArray] as a JSON list. */
 public fun JsonWriter.writeList(value: LongArray) {
 	writeListByElement(value) { writeLong(it) }
 }
 
 
+/** Writes a [ShortArray] as a JSON list. */
 public fun JsonWriter.writeList(value: ShortArray) {
 	writeListByElement(value) { writeShort(it) }
 }
 
 
+/** Writes an [Array] as a JSON list. */
 public fun JsonWriter.writeList(value: Array<*>) {
 	writeListByElement(value) { writeValueOrNull(it) }
 }
 
 
+/** Writes an [Iterable] as a JSON list. */
 public fun JsonWriter.writeList(value: Iterable<*>) {
 	writeListByElement(value) { writeValueOrNull(it) }
 }
 
 
+/** Writes a [Sequence] as a JSON list. */
 public fun JsonWriter.writeList(value: Sequence<*>) {
 	writeListByElement(value) { writeValueOrNull(it) }
 }
 
 
+/** Writes a [BooleanArray] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 	value: BooleanArray,
 	crossinline writeElement: Writer.(element: Boolean) -> Unit,
@@ -324,6 +351,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 }
 
 
+/** Writes a [ByteArray] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 	value: ByteArray,
 	crossinline writeElement: Writer.(element: Byte) -> Unit,
@@ -342,6 +370,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 }
 
 
+/** Writes a [CharArray] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 	value: CharArray,
 	crossinline writeElement: Writer.(element: Char) -> Unit,
@@ -360,6 +389,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 }
 
 
+/** Writes a [DoubleArray] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 	value: DoubleArray,
 	crossinline writeElement: Writer.(element: Double) -> Unit,
@@ -378,6 +408,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 }
 
 
+/** Writes a [FloatArray] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 	value: FloatArray,
 	crossinline writeElement: Writer.(element: Float) -> Unit,
@@ -396,6 +427,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 }
 
 
+/** Writes an [IntArray] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 	value: IntArray,
 	crossinline writeElement: Writer.(element: Int) -> Unit,
@@ -414,6 +446,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 }
 
 
+/** Writes a [LongArray] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 	value: LongArray,
 	crossinline writeElement: Writer.(element: Long) -> Unit,
@@ -432,6 +465,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 }
 
 
+/** Writes a [ShortArray] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 	value: ShortArray,
 	crossinline writeElement: Writer.(element: Short) -> Unit,
@@ -450,6 +484,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListByElement(
 }
 
 
+/** Writes an [Array] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter, Element> Writer.writeListByElement(
 	value: Array<Element>,
 	crossinline writeElement: Writer.(element: Element) -> Unit,
@@ -468,6 +503,7 @@ public inline fun <Writer : JsonWriter, Element> Writer.writeListByElement(
 }
 
 
+/** Writes an [Iterable] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter, Element> Writer.writeListByElement(
 	value: Iterable<Element>,
 	crossinline writeElement: Writer.(element: Element) -> Unit,
@@ -486,6 +522,7 @@ public inline fun <Writer : JsonWriter, Element> Writer.writeListByElement(
 }
 
 
+/** Writes a [Sequence] as a JSON list, using [writeElement] for each element. */
 public inline fun <Writer : JsonWriter, Element> Writer.writeListByElement(
 	value: Sequence<Element>,
 	crossinline writeElement: Writer.(element: Element) -> Unit,
@@ -504,61 +541,73 @@ public inline fun <Writer : JsonWriter, Element> Writer.writeListByElement(
 }
 
 
+/** Writes a [BooleanArray] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: BooleanArray?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes a [ByteArray] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: ByteArray?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes a [CharArray] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: CharArray?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes a [DoubleArray] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: DoubleArray?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes a [FloatArray] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: FloatArray?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes an [IntArray] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: IntArray?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes a [LongArray] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: LongArray?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes a [ShortArray] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: ShortArray?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes an [Array] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: Array<*>?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes an [Iterable] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: Iterable<*>?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes a [Sequence] as a JSON list, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeListOrNull(value: Sequence<*>?) {
 	writeOrNull(value, JsonWriter::writeList)
 }
 
 
+/** Writes a [BooleanArray] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 	value: BooleanArray?,
 	crossinline writeElement: Writer.(element: Boolean) -> Unit,
@@ -571,6 +620,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 }
 
 
+/** Writes a [ByteArray] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 	value: ByteArray?,
 	crossinline writeElement: Writer.(element: Byte) -> Unit,
@@ -583,6 +633,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 }
 
 
+/** Writes a [CharArray] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 	value: CharArray?,
 	crossinline writeElement: Writer.(element: Char) -> Unit,
@@ -595,6 +646,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 }
 
 
+/** Writes a [DoubleArray] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 	value: DoubleArray?,
 	crossinline writeElement: Writer.(element: Double) -> Unit,
@@ -607,6 +659,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 }
 
 
+/** Writes a [FloatArray] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 	value: FloatArray?,
 	crossinline writeElement: Writer.(element: Float) -> Unit,
@@ -619,6 +672,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 }
 
 
+/** Writes an [IntArray] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 	value: IntArray?,
 	crossinline writeElement: Writer.(element: Int) -> Unit,
@@ -631,6 +685,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 }
 
 
+/** Writes a [LongArray] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 	value: LongArray?,
 	crossinline writeElement: Writer.(element: Long) -> Unit,
@@ -643,6 +698,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 }
 
 
+/** Writes a [ShortArray] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 	value: ShortArray?,
 	crossinline writeElement: Writer.(element: Short) -> Unit,
@@ -655,6 +711,7 @@ public inline fun <Writer : JsonWriter> Writer.writeListOrNullByElement(
 }
 
 
+/** Writes an [Array] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter, Element> Writer.writeListOrNullByElement(
 	value: Array<Element>?,
 	crossinline writeElement: Writer.(element: Element) -> Unit,
@@ -667,6 +724,7 @@ public inline fun <Writer : JsonWriter, Element> Writer.writeListOrNullByElement
 }
 
 
+/** Writes an [Iterable] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter, Element> Writer.writeListOrNullByElement(
 	value: Iterable<Element>?,
 	crossinline writeElement: Writer.(element: Element) -> Unit,
@@ -679,6 +737,7 @@ public inline fun <Writer : JsonWriter, Element> Writer.writeListOrNullByElement
 }
 
 
+/** Writes a [Sequence] as a JSON list using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter, Element> Writer.writeListOrNullByElement(
 	value: Sequence<Element>?,
 	crossinline writeElement: Writer.(element: Element) -> Unit,
@@ -691,16 +750,19 @@ public inline fun <Writer : JsonWriter, Element> Writer.writeListOrNullByElement
 }
 
 
+/** Writes a [Long] [value] as a JSON number, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeLongOrNull(value: Long?) {
 	writeOrNull(value, JsonWriter::writeLong)
 }
 
 
+/** Writes a [Map] as a JSON map. */
 public fun JsonWriter.writeMap(value: Map<*, *>) {
 	writeMapByElementValue(value) { writeValueOrNull(it) }
 }
 
 
+/** Writes a [Map] as a JSON map, using [writeElement] for each entry. */
 public inline fun <Writer : JsonWriter, ElementKey, ElementValue> Writer.writeMapByElement(
 	value: Map<ElementKey, ElementValue>,
 	crossinline writeElement: Writer.(key: ElementKey, value: ElementValue) -> Unit,
@@ -716,6 +778,7 @@ public inline fun <Writer : JsonWriter, ElementKey, ElementValue> Writer.writeMa
 }
 
 
+/** Writes a [Map] as a JSON map, using [writeElementValue] to write each value. */
 public inline fun <Writer : JsonWriter, ElementValue> Writer.writeMapByElementValue(
 	value: Map<*, ElementValue>,
 	crossinline writeElementValue: Writer.(value: ElementValue) -> Unit,
@@ -733,11 +796,13 @@ public inline fun <Writer : JsonWriter, ElementValue> Writer.writeMapByElementVa
 }
 
 
+/** Writes a [Map] as a JSON map, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeMapOrNull(value: Map<*, *>?) {
 	writeOrNull(value, JsonWriter::writeMap)
 }
 
 
+/** Writes a [Map] as a JSON map using [writeElement], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter, ElementKey, ElementValue> Writer.writeMapOrNullByElement(
 	value: Map<ElementKey, ElementValue>?,
 	crossinline writeElement: Writer.(key: ElementKey, value: ElementValue) -> Unit,
@@ -750,6 +815,7 @@ public inline fun <Writer : JsonWriter, ElementKey, ElementValue> Writer.writeMa
 }
 
 
+/** Writes a [Map] as a JSON map using [writeElementValue], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter, ElementValue> Writer.writeMapOrNullByElementValue(
 	value: Map<*, ElementValue>?,
 	crossinline writeElementValue: Writer.(value: ElementValue) -> Unit,
@@ -762,12 +828,14 @@ public inline fun <Writer : JsonWriter, ElementValue> Writer.writeMapOrNullByEle
 }
 
 
+/** Writes a map element with the given [key] and boolean value. */
 public fun JsonWriter.writeMapElement(key: String, boolean: Boolean) {
 	writeMapKey(key)
 	writeBoolean(boolean)
 }
 
 
+/** Writes a map element with the given [key] and nullable boolean value, optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, boolean: Boolean?, skipIfNull: Boolean = false) {
 	if (boolean != null)
 		writeMapElement(key, boolean)
@@ -778,12 +846,14 @@ public fun JsonWriter.writeMapElement(key: String, boolean: Boolean?, skipIfNull
 }
 
 
+/** Writes a map element with the given [key] and [Byte] value. */
 public fun JsonWriter.writeMapElement(key: String, byte: Byte) {
 	writeMapKey(key)
 	writeByte(byte)
 }
 
 
+/** Writes a map element with the given [key] and nullable [Byte] value, optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, byte: Byte?, skipIfNull: Boolean = false) {
 	if (byte != null)
 		writeMapElement(key, byte)
@@ -794,12 +864,14 @@ public fun JsonWriter.writeMapElement(key: String, byte: Byte?, skipIfNull: Bool
 }
 
 
+/** Writes a map element with the given [key] and [Char] value. */
 public fun JsonWriter.writeMapElement(key: String, char: Char) {
 	writeMapKey(key)
 	writeChar(char)
 }
 
 
+/** Writes a map element with the given [key] and nullable [Char] value, optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, char: Char?, skipIfNull: Boolean = false) {
 	if (char != null)
 		writeMapElement(key, char)
@@ -810,12 +882,14 @@ public fun JsonWriter.writeMapElement(key: String, char: Char?, skipIfNull: Bool
 }
 
 
+/** Writes a map element with the given [key] and [Double] value. */
 public fun JsonWriter.writeMapElement(key: String, double: Double) {
 	writeMapKey(key)
 	writeDouble(double)
 }
 
 
+/** Writes a map element with the given [key] and nullable [Double] value, optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, double: Double?, skipIfNull: Boolean = false) {
 	if (double != null)
 		writeMapElement(key, double)
@@ -826,12 +900,14 @@ public fun JsonWriter.writeMapElement(key: String, double: Double?, skipIfNull: 
 }
 
 
+/** Writes a map element with the given [key] and [Float] value. */
 public fun JsonWriter.writeMapElement(key: String, float: Float) {
 	writeMapKey(key)
 	writeFloat(float)
 }
 
 
+/** Writes a map element with the given [key] and nullable [Float] value, optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, float: Float?, skipIfNull: Boolean = false) {
 	if (float != null)
 		writeMapElement(key, float)
@@ -842,12 +918,14 @@ public fun JsonWriter.writeMapElement(key: String, float: Float?, skipIfNull: Bo
 }
 
 
+/** Writes a map element with the given [key] and [Int] value. */
 public fun JsonWriter.writeMapElement(key: String, int: Int) {
 	writeMapKey(key)
 	writeInt(int)
 }
 
 
+/** Writes a map element with the given [key] and nullable [Int] value, optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, int: Int?, skipIfNull: Boolean = false) {
 	if (int != null)
 		writeMapElement(key, int)
@@ -869,6 +947,7 @@ public fun JsonWriter.writeMapElement(key: String, list: Array<*>?, skipIfNull: 
 }
 
 
+/** Writes a map element with the given [key] and an [Array] value as a JSON list, optionally skipping null values. */
 public inline fun <Writer : JsonWriter, Element> Writer.writeMapElement(
 	key: String,
 	list: Array<Element>?,
@@ -1007,6 +1086,7 @@ public fun JsonWriter.writeMapElement(key: String, list: Iterable<*>?, skipIfNul
 }
 
 
+/** Writes a map element with the given [key] and an [Iterable] value as a JSON list, optionally skipping null values. */
 public inline fun <Writer : JsonWriter, Element> Writer.writeMapElement(
 	key: String,
 	list: Iterable<Element>?,
@@ -1055,6 +1135,7 @@ public fun JsonWriter.writeMapElement(key: String, list: Sequence<*>?, skipIfNul
 }
 
 
+/** Writes a map element with the given [key] and a [Sequence] value as a JSON list, optionally skipping null values. */
 public inline fun <Writer : JsonWriter, Element> Writer.writeMapElement(
 	key: String,
 	list: Sequence<Element>?,
@@ -1092,12 +1173,14 @@ public fun JsonWriter.writeMapElement(key: String, list: ShortArray?, skipIfNull
 }
 
 
+/** Writes a map element with the given [key] and [Long] value. */
 public fun JsonWriter.writeMapElement(key: String, long: Long) {
 	writeMapKey(key)
 	writeLong(long)
 }
 
 
+/** Writes a map element with the given [key] and nullable [Long] value, optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, long: Long?, skipIfNull: Boolean = false) {
 	if (long != null)
 		writeMapElement(key, long)
@@ -1119,6 +1202,7 @@ public fun JsonWriter.writeMapElement(key: String, map: Map<*, *>?, skipIfNull: 
 }
 
 
+/** Writes a map element with the given [key] and a [Map] value as a JSON map, optionally skipping null values. */
 public inline fun <Writer : JsonWriter, Child> Writer.writeMapElement(
 	key: String,
 	map: Map<*, Child>?,
@@ -1136,6 +1220,7 @@ public inline fun <Writer : JsonWriter, Child> Writer.writeMapElement(
 }
 
 
+/** Writes a map element with the given [key] and nullable [Number] value, optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, number: Number?, skipIfNull: Boolean = false) {
 	if (number != null) {
 		writeMapKey(key)
@@ -1148,12 +1233,14 @@ public fun JsonWriter.writeMapElement(key: String, number: Number?, skipIfNull: 
 }
 
 
+/** Writes a map element with the given [key] and [Short] value. */
 public fun JsonWriter.writeMapElement(key: String, short: Short) {
 	writeMapKey(key)
 	writeShort(short)
 }
 
 
+/** Writes a map element with the given [key] and nullable [Short] value, optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, short: Short?, skipIfNull: Boolean = false) {
 	if (short != null)
 		writeMapElement(key, short)
@@ -1164,6 +1251,7 @@ public fun JsonWriter.writeMapElement(key: String, short: Short?, skipIfNull: Bo
 }
 
 
+/** Writes a map element with the given [key] and nullable [String] value, optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, string: String?, skipIfNull: Boolean = false) {
 	if (string != null) {
 		writeMapKey(key)
@@ -1176,11 +1264,13 @@ public fun JsonWriter.writeMapElement(key: String, string: String?, skipIfNull: 
 }
 
 
+/** Writes a map element with the given [key] and any [value], optionally skipping null values. */
 public fun JsonWriter.writeMapElement(key: String, value: Any?, skipIfNull: Boolean = false) {
 	writeMapElement(key, value, skipIfNull) { writeValue(it) }
 }
 
 
+/** Writes a map element with the given [key] using [writeCustomValue], optionally skipping null values. */
 public inline fun <Writer : JsonWriter, Value : Any> Writer.writeMapElement(
 	key: String,
 	value: Value?,
@@ -1202,6 +1292,7 @@ public inline fun <Writer : JsonWriter, Value : Any> Writer.writeMapElement(
 }
 
 
+/** Writes a map element with the given [key], using [writeValue] to write the value. */
 public inline fun <Writer : JsonWriter> Writer.writeMapElement(
 	key: String,
 	crossinline writeValue: Writer.() -> Unit,
@@ -1217,17 +1308,20 @@ public inline fun <Writer : JsonWriter> Writer.writeMapElement(
 }
 
 
+/** Writes a map element with the given [key] and a JSON null value. */
 public fun JsonWriter.writeMapNullElement(key: String) {
 	writeMapKey(key)
 	writeNull()
 }
 
 
+/** Writes a [Number] [value] as a JSON number, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeNumberOrNull(value: Number?) {
 	writeOrNull(value, JsonWriter::writeNumber)
 }
 
 
+/** Writes the [value] using [write], or a JSON null if the value is `null`. */
 public inline fun <Writer : JsonWriter, Value : Any> Writer.writeOrNull(value: Value?, crossinline write: Writer.(value: Value) -> Unit) {
 	contract {
 		callsInPlace(write, InvocationKind.AT_MOST_ONCE)
@@ -1240,16 +1334,19 @@ public inline fun <Writer : JsonWriter, Value : Any> Writer.writeOrNull(value: V
 }
 
 
+/** Writes a [Short] [value] as a JSON number, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeShortOrNull(value: Short?) {
 	writeOrNull(value, JsonWriter::writeShort)
 }
 
 
+/** Writes a [String] [value] as a JSON string, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeStringOrNull(value: String?) {
 	writeOrNull(value, JsonWriter::writeString)
 }
 
 
+/** Writes any [value] as JSON, or a JSON null if the value is `null`. */
 public fun JsonWriter.writeValueOrNull(value: Any?) {
 	writeOrNull(value, JsonWriter::writeValue)
 }

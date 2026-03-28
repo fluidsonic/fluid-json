@@ -23,8 +23,7 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.KParameter
 
-internal object ConstructorParameterOrderJsonCodec :
-		AbstractJsonDecoderCodec<ConstructorParameterOrder, CustomCodingContext>() {
+internal object ConstructorParameterOrderJsonCodec : AbstractJsonDecoderCodec<ConstructorParameterOrder, CustomCodingContext>() {
 	private val `constructor`: KFunction<ConstructorParameterOrder> =
 			ConstructorParameterOrder::class.constructors.single { constructor ->
 		if (constructor.parameters.size != 3) return@single false
@@ -33,12 +32,9 @@ internal object ConstructorParameterOrderJsonCodec :
 			val erasure = parameter.type.jvmErasure
 
 			when (parameter.name) {
-				"a" -> if (parameter.index != 1 || parameter.isVararg || erasure != String::class)
-						return@single false
-				"b" -> if (parameter.index != 0 || parameter.isVararg || erasure != String::class)
-						return@single false
-				"c" -> if (parameter.index != 2 || parameter.isVararg || erasure != String::class)
-						return@single false
+				"a" -> if (parameter.index != 1 || parameter.isVararg || erasure != String::class) return@single false
+				"b" -> if (parameter.index != 0 || parameter.isVararg || erasure != String::class) return@single false
+				"c" -> if (parameter.index != 2 || parameter.isVararg || erasure != String::class) return@single false
 				else -> return@single false
 			}
 		}
@@ -52,9 +48,7 @@ internal object ConstructorParameterOrderJsonCodec :
 
 	private val parameter_c: KParameter = constructor.parameters.first { it.name == "c" }
 
-	override
-			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<ConstructorParameterOrder>):
-			ConstructorParameterOrder {
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<ConstructorParameterOrder>): ConstructorParameterOrder {
 		val arguments = hashMapOf<KParameter, Any?>()
 		readFromMapByElementValue { key ->
 			when (key) {

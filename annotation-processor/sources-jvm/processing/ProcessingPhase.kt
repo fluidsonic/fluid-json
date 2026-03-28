@@ -295,7 +295,7 @@ internal class ProcessingPhase(
 
 	private fun process(type: CollectionResult.Type) {
 		val annotation = type.annotation
-		val meta = type.meta as? MNamedType ?: fail("cannot use @Json on this type")
+		val meta = type.meta
 
 		val decodingStrategy = decodingStrategyForType(type)
 		val encodingStrategy = encodingStrategyForType(type, decodingStrategy = decodingStrategy)

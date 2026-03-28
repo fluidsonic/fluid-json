@@ -3,6 +3,9 @@ package io.fluidsonic.json
 import java.io.*
 
 
+/**
+ * A [JsonParser] that uses codecs to decode typed values from JSON.
+ */
 public interface JsonCodingParser<out Context : JsonCodingContext> : JsonParser {
 
 	public fun createDecoder(source: JsonReader): JsonDecoder<Context>
@@ -106,6 +109,7 @@ public interface JsonCodingParser<out Context : JsonCodingContext> : JsonParser 
 }
 
 
+/** Parses a non-null JSON value from a [JsonReader] source using codecs. */
 public fun JsonCodingParser<*>.parseValue(source: JsonReader, withTermination: Boolean = true): Any =
 	parseValueOrNull(source, withTermination = withTermination)
 		?: throw JsonException.Schema(
@@ -115,57 +119,71 @@ public fun JsonCodingParser<*>.parseValue(source: JsonReader, withTermination: B
 		)
 
 
+/** Parses a non-null JSON value from a [Reader] source using codecs. */
 public fun JsonCodingParser<*>.parseValue(source: Reader, withTermination: Boolean = true): Any =
 	parseValue(JsonReader.build(source), withTermination = withTermination)
 
 
+/** Parses a non-null JSON value from a [String] source using codecs. */
 public fun JsonCodingParser<*>.parseValue(source: String): Any =
 	parseValue(JsonReader.build(source))
 
 
+/** Parses a JSON value from a [JsonReader] and decodes it as the reified type [Value]. */
 public inline fun <reified Value : Any> JsonCodingParser<*>.parseValueOfType(source: JsonReader, withTermination: Boolean = true): Value =
 	parseValueOfType(source, valueType = jsonCodingType(), withTermination = withTermination)
 
 
+/** Parses a JSON value from a [Reader] and decodes it as the reified type [Value]. */
 public inline fun <reified Value : Any> JsonCodingParser<*>.parseValueOfType(source: Reader, withTermination: Boolean = true): Value =
 	parseValueOfType(JsonReader.build(source), withTermination = withTermination)
 
 
+/** Parses a JSON value from a [String] and decodes it as the reified type [Value]. */
 public inline fun <reified Value : Any> JsonCodingParser<*>.parseValueOfType(source: String): Value =
 	parseValueOfType(JsonReader.build(source))
 
 
+/** Parses a JSON value from a [Reader] and decodes it as [valueType]. */
 public fun <Value : Any> JsonCodingParser<*>.parseValueOfType(source: Reader, valueType: JsonCodingType<Value>, withTermination: Boolean = true): Value =
 	parseValueOfType(JsonReader.build(source), valueType = valueType, withTermination = withTermination)
 
 
+/** Parses a JSON value from a [String] and decodes it as [valueType]. */
 public fun <Value : Any> JsonCodingParser<*>.parseValueOfType(source: String, valueType: JsonCodingType<Value>): Value =
 	parseValueOfType(JsonReader.build(source), valueType = valueType)
 
 
+/** Parses a JSON value from a [JsonReader] as the reified type [Value], or `null` if the value is a JSON null. */
 public inline fun <reified Value : Any> JsonCodingParser<*>.parseValueOfTypeOrNull(source: JsonReader, withTermination: Boolean = true): Value? =
 	parseValueOfTypeOrNull(source, valueType = jsonCodingType(), withTermination = withTermination)
 
 
+/** Parses a JSON value from a [Reader] as the reified type [Value], or `null` if the value is a JSON null. */
 public inline fun <reified Value : Any> JsonCodingParser<*>.parseValueOfTypeOrNull(source: Reader, withTermination: Boolean = true): Value? =
 	parseValueOfTypeOrNull(JsonReader.build(source), withTermination = withTermination)
 
 
+/** Parses a JSON value from a [String] as the reified type [Value], or `null` if the value is a JSON null. */
 public inline fun <reified Value : Any> JsonCodingParser<*>.parseValueOfTypeOrNull(source: String): Value? =
 	parseValueOfTypeOrNull(JsonReader.build(source))
 
 
+/** Parses a JSON value from a [Reader] as [valueType], or `null` if the value is a JSON null. */
 public fun <Value : Any> JsonCodingParser<*>.parseValueOfTypeOrNull(source: Reader, valueType: JsonCodingType<Value>, withTermination: Boolean = true): Value? =
 	parseValueOfTypeOrNull(JsonReader.build(source), valueType = valueType, withTermination = withTermination)
 
 
+/** Parses a JSON value from a [String] as [valueType], or `null` if the value is a JSON null. */
 public fun <Value : Any> JsonCodingParser<*>.parseValueOfTypeOrNull(source: String, valueType: JsonCodingType<Value>): Value? =
 	parseValueOfTypeOrNull(JsonReader.build(source), valueType = valueType)
 
 
+/** Parses a nullable JSON value from a [Reader] source using codecs. */
 public fun JsonCodingParser<*>.parseValueOrNull(source: Reader, withTermination: Boolean = true): Any? =
 	parseValueOrNull(JsonReader.build(source), withTermination = withTermination)
 
 
+/** Parses a nullable JSON value from a [String] source using codecs. */
 public fun JsonCodingParser<*>.parseValueOrNull(source: String): Any? =
 	parseValueOrNull(JsonReader.build(source))

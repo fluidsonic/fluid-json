@@ -3,11 +3,26 @@ package io.fluidsonic.json
 import io.fluidsonic.json.EnumJsonTransformation.*
 
 
+/**
+ * Defines how enum values are transformed when encoding to and decoding from JSON.
+ */
 public sealed class EnumJsonTransformation {
 
-	public class Name(public val case: Case? = null) : EnumJsonTransformation()
+	public class Name(public val case: Case? = null) : EnumJsonTransformation() {
+
+		override fun equals(other: Any?): Boolean = this === other || (other is Name && case == other.case)
+		override fun hashCode(): Int = case.hashCode()
+		override fun toString(): String = "EnumJsonTransformation.Name(case=$case)"
+	}
+
 	public object Ordinal : EnumJsonTransformation()
-	public class ToString(public val case: Case? = null) : EnumJsonTransformation()
+
+	public class ToString(public val case: Case? = null) : EnumJsonTransformation() {
+
+		override fun equals(other: Any?): Boolean = this === other || (other is ToString && case == other.case)
+		override fun hashCode(): Int = case.hashCode()
+		override fun toString(): String = "EnumJsonTransformation.ToString(case=$case)"
+	}
 
 
 	@Suppress("EnumEntryName")

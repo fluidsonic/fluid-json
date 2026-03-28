@@ -9,6 +9,4 @@ private object GeneratedStandardContextCodecProvider : StandardContextCodecProvi
 		JsonCodecProvider<JsonCodingContext> by JsonCodecProvider()
 
 @Suppress("UNUSED_PARAMETER")
-public
-		fun JsonCodecProvider.Companion.generated(interfaceClass: KClass<StandardContextCodecProvider>):
-		StandardContextCodecProvider = GeneratedStandardContextCodecProvider
+public fun JsonCodecProvider.Companion.generated(interfaceClass: KClass<StandardContextCodecProvider>): StandardContextCodecProvider = GeneratedStandardContextCodecProvider

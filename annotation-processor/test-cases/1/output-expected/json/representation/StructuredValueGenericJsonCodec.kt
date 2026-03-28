@@ -32,11 +32,8 @@ import io.fluidsonic.json.writeStringOrNull
 import io.fluidsonic.json.writeValueOrNull
 import kotlin.Any
 
-internal object StructuredValueGenericJsonCodec :
-		AbstractJsonCodec<StructuredValueGeneric<*>, CustomCodingContext>() {
-	override
-			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<StructuredValueGeneric<*>>):
-			StructuredValueGeneric<*> {
+internal object StructuredValueGenericJsonCodec : AbstractJsonCodec<StructuredValueGeneric<*>, CustomCodingContext>() {
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<StructuredValueGeneric<*>>): StructuredValueGeneric<*> {
 		var _value: Any? = null
 
 		readFromMapByElementValue { key ->

@@ -19,8 +19,7 @@ import io.fluidsonic.json.readValueOfTypeOrNull
 import io.fluidsonic.json.writeValueOrNull
 
 internal object SingleValueJsonCodec : AbstractJsonCodec<SingleValue, CustomCodingContext>() {
-	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<SingleValue>):
-			SingleValue = SingleValue(`value` = readString())
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<SingleValue>): SingleValue = SingleValue(`value` = readString())
 
 	override fun JsonEncoder<CustomCodingContext>.encode(`value`: SingleValue) {
 		writeString(value.`value`)

@@ -54,6 +54,7 @@ internal class FactoryCodecProvider<out Value : Any, in Context : JsonCodingCont
 }
 
 
+/** Creates a [JsonCodecProvider] that produces decoder codecs on demand via [factory]. */
 @JvmName("JsonCodecProviderForDecoding")
 @Suppress("FunctionName")
 public fun JsonCodecProvider.Companion.factory(
@@ -62,6 +63,7 @@ public fun JsonCodecProvider.Companion.factory(
 	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces decoder codecs on demand via [factory] with a custom context. */
 @JvmName("JsonCodecProviderForDecodingWithContext")
 @Suppress("FunctionName")
 public fun <Context : JsonCodingContext> JsonCodecProvider.Companion.factory(
@@ -70,6 +72,7 @@ public fun <Context : JsonCodingContext> JsonCodecProvider.Companion.factory(
 	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces encoder codecs on demand via [factory]. */
 @JvmName("JsonCodecProviderForEncoding")
 @Suppress("FunctionName")
 public fun JsonCodecProvider.Companion.factory(
@@ -78,6 +81,7 @@ public fun JsonCodecProvider.Companion.factory(
 	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces encoder codecs on demand via [factory] with a custom context. */
 @JvmName("JsonCodecProviderForEncodingWithContext")
 @Suppress("FunctionName")
 public fun <Context : JsonCodingContext> JsonCodecProvider.Companion.factory(
@@ -86,6 +90,7 @@ public fun <Context : JsonCodingContext> JsonCodecProvider.Companion.factory(
 	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces full codecs on demand via [factory]. */
 @JvmName("JsonCodecProviderForCoding")
 @Suppress("FunctionName")
 public fun JsonCodecProvider.Companion.factory(
@@ -94,6 +99,7 @@ public fun JsonCodecProvider.Companion.factory(
 	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces full codecs on demand via [factory] with a custom context. */
 @JvmName("JsonCodecProviderForCodingWithContext")
 @Suppress("FunctionName")
 public fun <Context : JsonCodingContext> JsonCodecProvider.Companion.factory(
@@ -102,6 +108,7 @@ public fun <Context : JsonCodingContext> JsonCodecProvider.Companion.factory(
 	JsonCodecProvider.factoryOf(valueClass = Any::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces decoder codecs for subclasses of [Value] via [factory]. */
 @JvmName("JsonCodecProviderForDecodingSpecificValue")
 @Suppress("FunctionName")
 public inline fun <reified Value : Any> JsonCodecProvider.Companion.factoryOf(
@@ -110,6 +117,7 @@ public inline fun <reified Value : Any> JsonCodecProvider.Companion.factoryOf(
 	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces decoder codecs for subclasses of [valueClass] via [factory]. */
 @JvmName("JsonCodecProviderForDecodingSpecificValue")
 @Suppress("FunctionName")
 public fun <Value : Any> JsonCodecProvider.Companion.factoryOf(
@@ -119,6 +127,7 @@ public fun <Value : Any> JsonCodecProvider.Companion.factoryOf(
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces decoder codecs for subclasses of [Value] via [factory] with a custom context. */
 @JvmName("JsonCodecProviderForDecodingSpecificValueWithContext")
 @Suppress("FunctionName")
 public inline fun <reified Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
@@ -127,6 +136,7 @@ public inline fun <reified Value : Any, Context : JsonCodingContext> JsonCodecPr
 	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces decoder codecs for subclasses of [valueClass] via [factory] with a custom context. */
 @JvmName("JsonCodecProviderForDecodingSpecificValueWithContext")
 @Suppress("FunctionName")
 public fun <Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
@@ -136,6 +146,7 @@ public fun <Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companio
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces encoder codecs for subclasses of [Value] via [factory]. */
 @JvmName("JsonCodecProviderForEncodingSpecificValue")
 @Suppress("FunctionName")
 public inline fun <reified Value : Any> JsonCodecProvider.Companion.factoryOf(
@@ -144,6 +155,7 @@ public inline fun <reified Value : Any> JsonCodecProvider.Companion.factoryOf(
 	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces encoder codecs for subclasses of [valueClass] via [factory]. */
 @JvmName("JsonCodecProviderForEncodingSpecificValue")
 @Suppress("FunctionName")
 public fun <Value : Any> JsonCodecProvider.Companion.factoryOf(
@@ -153,6 +165,7 @@ public fun <Value : Any> JsonCodecProvider.Companion.factoryOf(
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces encoder codecs for subclasses of [Value] via [factory] with a custom context. */
 @JvmName("JsonCodecProviderForEncodingSpecificValueWithContext")
 @Suppress("FunctionName")
 public inline fun <reified Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
@@ -161,6 +174,7 @@ public inline fun <reified Value : Any, Context : JsonCodingContext> JsonCodecPr
 	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces encoder codecs for subclasses of [valueClass] via [factory] with a custom context. */
 @JvmName("JsonCodecProviderForEncodingSpecificValueWithContext")
 @Suppress("FunctionName")
 public fun <Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
@@ -170,6 +184,7 @@ public fun <Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companio
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces full codecs for subclasses of [Value] via [factory]. */
 @JvmName("JsonCodecProviderForCodingSpecificValue")
 @Suppress("FunctionName")
 public inline fun <reified Value : Any> JsonCodecProvider.Companion.factoryOf(
@@ -178,6 +193,7 @@ public inline fun <reified Value : Any> JsonCodecProvider.Companion.factoryOf(
 	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces full codecs for subclasses of [valueClass] via [factory]. */
 @JvmName("JsonCodecProviderForCodingSpecificValue")
 @Suppress("FunctionName")
 public fun <Value : Any> JsonCodecProvider.Companion.factoryOf(
@@ -187,6 +203,7 @@ public fun <Value : Any> JsonCodecProvider.Companion.factoryOf(
 	FactoryCodecProvider(valueClass = valueClass, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces full codecs for subclasses of [Value] via [factory] with a custom context. */
 @JvmName("JsonCodecProviderForCodingSpecificValueWithContext")
 @Suppress("FunctionName")
 public inline fun <reified Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(
@@ -195,6 +212,7 @@ public inline fun <reified Value : Any, Context : JsonCodingContext> JsonCodecPr
 	JsonCodecProvider.factoryOf(valueClass = Value::class, factory = factory)
 
 
+/** Creates a [JsonCodecProvider] that produces full codecs for subclasses of [valueClass] via [factory] with a custom context. */
 @JvmName("JsonCodecProviderForCodingSpecificValueWithContext")
 @Suppress("FunctionName")
 public fun <Value : Any, Context : JsonCodingContext> JsonCodecProvider.Companion.factoryOf(

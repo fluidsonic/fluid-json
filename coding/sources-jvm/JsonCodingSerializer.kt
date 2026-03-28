@@ -1,6 +1,9 @@
 package io.fluidsonic.json
 
 
+/**
+ * A [JsonSerializer] that uses codecs to encode typed values to JSON.
+ */
 public interface JsonCodingSerializer : JsonSerializer {
 
 	override fun serializeValue(value: Any?, destination: JsonWriter, withTermination: Boolean)

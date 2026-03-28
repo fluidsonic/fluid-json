@@ -48,26 +48,16 @@ internal object AutomaticJsonCodec : AbstractJsonCodec<Automatic, CustomCodingCo
 			val erasure = parameter.type.jvmErasure
 
 			when (parameter.name) {
-				"value1" -> if (parameter.index != 0 || parameter.isVararg || erasure != String::class)
-						return@single false
-				"value10" -> if (parameter.index != 9 || parameter.isVararg || erasure != List::class)
-						return@single false
-				"value2" -> if (parameter.index != 1 || parameter.isVararg || erasure != String::class)
-						return@single false
-				"value3" -> if (parameter.index != 2 || parameter.isVararg || erasure != String::class)
-						return@single false
-				"value4" -> if (parameter.index != 3 || parameter.isVararg || erasure != String::class)
-						return@single false
-				"value5" -> if (parameter.index != 4 || parameter.isVararg || erasure != Double::class)
-						return@single false
-				"value6" -> if (parameter.index != 5 || parameter.isVararg || erasure != Double::class)
-						return@single false
-				"value7" -> if (parameter.index != 6 || parameter.isVararg || erasure != Double::class)
-						return@single false
-				"value8" -> if (parameter.index != 7 || parameter.isVararg || erasure != Double::class)
-						return@single false
-				"value9" -> if (parameter.index != 8 || parameter.isVararg || erasure != List::class)
-						return@single false
+				"value1" -> if (parameter.index != 0 || parameter.isVararg || erasure != String::class) return@single false
+				"value10" -> if (parameter.index != 9 || parameter.isVararg || erasure != List::class) return@single false
+				"value2" -> if (parameter.index != 1 || parameter.isVararg || erasure != String::class) return@single false
+				"value3" -> if (parameter.index != 2 || parameter.isVararg || erasure != String::class) return@single false
+				"value4" -> if (parameter.index != 3 || parameter.isVararg || erasure != String::class) return@single false
+				"value5" -> if (parameter.index != 4 || parameter.isVararg || erasure != Double::class) return@single false
+				"value6" -> if (parameter.index != 5 || parameter.isVararg || erasure != Double::class) return@single false
+				"value7" -> if (parameter.index != 6 || parameter.isVararg || erasure != Double::class) return@single false
+				"value8" -> if (parameter.index != 7 || parameter.isVararg || erasure != Double::class) return@single false
+				"value9" -> if (parameter.index != 8 || parameter.isVararg || erasure != List::class) return@single false
 				else -> return@single false
 			}
 		}
@@ -95,8 +85,7 @@ internal object AutomaticJsonCodec : AbstractJsonCodec<Automatic, CustomCodingCo
 
 	private val parameter_value9: KParameter = constructor.parameters.first { it.name == "value9" }
 
-	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<Automatic>):
-			Automatic {
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<Automatic>): Automatic {
 		val arguments = hashMapOf<KParameter, Any?>()
 		readFromMapByElementValue { key ->
 			when (key) {

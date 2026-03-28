@@ -6,14 +6,17 @@ import kotlin.Array
 import kotlin.reflect.*
 
 
+/** Creates a [JsonCodingType] for the reified type [Type]. */
 public inline fun <reified Type : Any> jsonCodingType(): JsonCodingType<Type> =
 	object : JsonCodingTypeReference<Type>() {}.type
 
 
+/** Creates a [JsonCodingType] for the given [clazz] with optional generic type [arguments]. */
 public fun <Type : Any> jsonCodingType(clazz: KClass<Type>, vararg arguments: KClass<*>): JsonCodingType<Type> =
 	JsonCodingType.of(clazz, arguments = arguments)
 
 
+/** Creates a [JsonCodingType] from a [JsonCodingTypeReference] subclass. */
 @JvmName("jsonCodingTypeOfReference")
 public fun <Type : Any> jsonCodingType(clazz: KClass<out JsonCodingTypeReference<out Type>>): JsonCodingType<Type> {
 	val javaClass = clazz.java
@@ -24,6 +27,9 @@ public fun <Type : Any> jsonCodingType(clazz: KClass<out JsonCodingTypeReference
 }
 
 
+/**
+ * Represents a fully resolved generic type for use with JSON coding, preserving type arguments that are erased at runtime.
+ */
 public class JsonCodingType<Type : Any> private constructor(
 	public val rawClass: KClass<Type>,
 	public val arguments: List<JsonCodingType<*>>,
@@ -227,6 +233,9 @@ public class JsonCodingType<Type : Any> private constructor(
 }
 
 
+/**
+ * Base class for creating [JsonCodingType] instances that preserve generic type information via subclassing.
+ */
 public abstract class JsonCodingTypeReference<Type : Any> {
 
 	@Suppress("UNCHECKED_CAST")

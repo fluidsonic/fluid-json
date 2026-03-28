@@ -16,8 +16,7 @@ import io.fluidsonic.json.writeShortOrNull
 import io.fluidsonic.json.writeStringOrNull
 import io.fluidsonic.json.writeValueOrNull
 
-internal object DefaultObjectJsonCodec :
-		AbstractJsonEncoderCodec<DefaultObject, CustomCodingContext>() {
+internal object DefaultObjectJsonCodec : AbstractJsonEncoderCodec<DefaultObject, CustomCodingContext>() {
 	override fun JsonEncoder<CustomCodingContext>.encode(`value`: DefaultObject) {
 		writeIntoMap {
 		}

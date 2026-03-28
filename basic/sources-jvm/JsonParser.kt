@@ -3,6 +3,9 @@ package io.fluidsonic.json
 import java.io.*
 
 
+/**
+ * Parses JSON data from a [JsonReader] into basic Kotlin types (maps, lists, strings, numbers, booleans, and null).
+ */
 public interface JsonParser {
 
 	public fun parseList(source: JsonReader, withTermination: Boolean = true): List<*> =
@@ -34,37 +37,46 @@ public interface JsonParser {
 }
 
 
+/** Parses a JSON list from a [Reader] source. */
 public fun JsonParser.parseList(source: Reader, withTermination: Boolean = true): List<*> =
 	parseList(JsonReader.build(source), withTermination = withTermination)
 
 
+/** Parses a JSON list from a [String] source. */
 public fun JsonParser.parseList(source: String): List<*> =
 	parseList(JsonReader.build(source))
 
 
+/** Parses a JSON map from a [Reader] source. */
 public fun JsonParser.parseMap(source: Reader, withTermination: Boolean = true): Map<String, *> =
 	parseMap(JsonReader.build(source), withTermination = withTermination)
 
 
+/** Parses a JSON map from a [String] source. */
 public fun JsonParser.parseMap(source: String): Map<String, *> =
 	parseMap(JsonReader.build(source))
 
 
+/** Parses a non-null JSON value from a [JsonReader] source. */
 public fun JsonParser.parseValue(source: JsonReader, withTermination: Boolean = true): Any =
 	parseValueOrNull(source, withTermination = withTermination) ?: throw JsonException.Schema("Unexpected null value at top-level")
 
 
+/** Parses a non-null JSON value from a [Reader] source. */
 public fun JsonParser.parseValue(source: Reader, withTermination: Boolean = true): Any =
 	parseValue(JsonReader.build(source), withTermination = withTermination)
 
 
+/** Parses a non-null JSON value from a [String] source. */
 public fun JsonParser.parseValue(source: String): Any =
 	parseValue(JsonReader.build(source))
 
 
+/** Parses a nullable JSON value from a [Reader] source. */
 public fun JsonParser.parseValueOrNull(source: Reader, withTermination: Boolean = true): Any? =
 	parseValueOrNull(JsonReader.build(source), withTermination = withTermination)
 
 
+/** Parses a nullable JSON value from a [String] source. */
 public fun JsonParser.parseValueOrNull(source: String): Any? =
 	parseValueOrNull(JsonReader.build(source))

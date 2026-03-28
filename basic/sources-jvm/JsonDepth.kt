@@ -1,6 +1,7 @@
 package io.fluidsonic.json
 
 
+/** Represents the nesting depth within a JSON structure. */
 @JvmInline
 public value class JsonDepth(public val value: Int) : Comparable<JsonDepth> {
 

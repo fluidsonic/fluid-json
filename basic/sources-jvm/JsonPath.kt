@@ -1,6 +1,9 @@
 package io.fluidsonic.json
 
 
+/**
+ * Represents the path to a specific value within a JSON structure, composed of map keys and list indices.
+ */
 public class JsonPath(elements: List<Element> = emptyList()) {
 
 	public val elements: List<Element> = elements.toList()

@@ -1,8 +1,7 @@
 package io.fluidsonic.json
 
-import io.fluidsonic.json.dynamic.*
 
-
+/** Contains the default lists of [JsonCodecProvider]s for basic, extended, and non-recursive codec configurations. */
 public object DefaultJsonCodecs {
 
 	public val basic: List<JsonCodecProvider<JsonCodingContext>> =
@@ -36,7 +35,34 @@ public object DefaultJsonCodecs {
 
 
 	public val extended: List<JsonCodecProvider<JsonCodingContext>> =
-		codingImplementationsJava.extendedCodecProviders()
+		listOf(
+			// Ranges (specific to unspecific)
+			CharRangeJsonCodec,
+			IntRangeJsonCodec,
+			LongRangeJsonCodec,
+			ClosedRangeJsonCodec,
+			// Enum
+			EnumJsonCodecProvider(
+				transformation = EnumJsonTransformation.ToString(case = EnumJsonTransformation.Case.lowerCamelCase)
+			),
+			// Temporal (Java Time)
+			DayOfWeekJsonCodec,
+			DurationJsonCodec,
+			InstantJsonCodec,
+			LocalDateJsonCodec,
+			LocalDateTimeJsonCodec,
+			LocalTimeJsonCodec,
+			MonthDayJsonCodec,
+			MonthJsonCodec,
+			OffsetDateTimeJsonCodec,
+			OffsetTimeJsonCodec,
+			PeriodJsonCodec,
+			YearJsonCodec,
+			YearMonthJsonCodec,
+			ZonedDateTimeJsonCodec,
+			ZoneIdJsonCodec,
+			ZoneOffsetJsonCodec,
+		)
 
 
 	public val nonRecursive: List<JsonCodecProvider<JsonCodingContext>> =

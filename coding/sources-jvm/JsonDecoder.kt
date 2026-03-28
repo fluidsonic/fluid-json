@@ -3,6 +3,9 @@ package io.fluidsonic.json
 import java.io.*
 
 
+/**
+ * A [JsonReader] that can decode values using registered codecs and provides access to a [JsonCodingContext].
+ */
 public interface JsonDecoder<out Context : JsonCodingContext> : JsonReader {
 
 	public val context: Context
@@ -107,18 +110,22 @@ public interface JsonDecoder<out Context : JsonCodingContext> : JsonReader {
 }
 
 
+/** Throws a [JsonException.Schema] indicating an invalid value for the given [property]. */
 public fun JsonDecoder<*>.invalidPropertyError(property: String, details: String): Nothing =
 	schemaError("Invalid value for property '$property': $details")
 
 
+/** Throws a [JsonException.Schema] indicating an invalid value. */
 public fun JsonDecoder<*>.invalidValueError(details: String): Nothing =
 	schemaError("Invalid value: $details")
 
 
+/** Throws a [JsonException.Schema] indicating a missing required [property]. */
 public fun JsonDecoder<*>.missingPropertyError(property: String): Nothing =
 	schemaError("Missing value for property '$property'")
 
 
+/** Throws a [JsonException.Parsing] with the given [message]. */
 public fun JsonDecoder<*>.parsingError(message: String): Nothing =
 	throw JsonException.Parsing(
 		message = message,
@@ -127,22 +134,27 @@ public fun JsonDecoder<*>.parsingError(message: String): Nothing =
 	)
 
 
+/** Reads any JSON value using codecs, or `null` if the next token is a JSON null. */
 public fun JsonDecoder<*>.readValueOrNull(): Any? =
 	if (nextToken != JsonToken.nullValue) readValue() else readNull()
 
 
+/** Reads a JSON value and decodes it as the reified type [Value] using registered codecs. */
 public inline fun <reified Value : Any> JsonDecoder<*>.readValueOfType(): Value =
 	readValueOfType(jsonCodingType())
 
 
+/** Reads a JSON value and decodes it as the reified type [Value], or `null` if the next token is a JSON null. */
 public inline fun <reified Value : Any> JsonDecoder<*>.readValueOfTypeOrNull(): Value? =
 	readValueOfTypeOrNull(jsonCodingType())
 
 
+/** Reads a JSON value and decodes it as [valueType], or `null` if the next token is a JSON null. */
 public fun <Value : Any> JsonDecoder<*>.readValueOfTypeOrNull(valueType: JsonCodingType<Value>): Value? =
 	readOrNull { readValueOfType(valueType) }
 
 
+/** Throws a [JsonException.Schema] with the given [message]. */
 public fun JsonDecoder<*>.schemaError(message: String): Nothing =
 	throw JsonException.Schema(
 		message = message,

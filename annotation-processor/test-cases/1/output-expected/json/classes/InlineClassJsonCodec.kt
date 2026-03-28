@@ -19,8 +19,7 @@ import io.fluidsonic.json.readValueOfTypeOrNull
 import io.fluidsonic.json.writeValueOrNull
 
 internal object InlineClassJsonCodec : AbstractJsonCodec<InlineClass, CustomCodingContext>() {
-	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<InlineClass>):
-			InlineClass = InlineClass(`value` = readString())
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<InlineClass>): InlineClass = InlineClass(`value` = readString())
 
 	override fun JsonEncoder<CustomCodingContext>.encode(`value`: InlineClass) {
 		writeString(value.`value`)

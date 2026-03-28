@@ -3,6 +3,9 @@ package io.fluidsonic.json
 import kotlin.reflect.*
 
 
+/**
+ * A combined [JsonDecoderCodec] and [JsonEncoderCodec] that can both decode and encode values of type [Value].
+ */
 public interface JsonCodec<Value : Any, in Context : JsonCodingContext>
 	: JsonDecoderCodec<Value, Context>, JsonEncoderCodec<Value, Context> {
 

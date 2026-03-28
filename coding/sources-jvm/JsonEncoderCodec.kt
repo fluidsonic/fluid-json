@@ -3,6 +3,9 @@ package io.fluidsonic.json
 import kotlin.reflect.*
 
 
+/**
+ * Defines how to encode a value of type [Value] to JSON.
+ */
 public interface JsonEncoderCodec<in Value : Any, in Context : JsonCodingContext> : JsonCodecProvider<Context> {
 
 	public val encodableClass: KClass<in Value>

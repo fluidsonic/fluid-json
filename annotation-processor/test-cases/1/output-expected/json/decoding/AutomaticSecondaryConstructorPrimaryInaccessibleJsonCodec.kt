@@ -31,11 +31,8 @@ import io.fluidsonic.json.writeShortOrNull
 import io.fluidsonic.json.writeStringOrNull
 import io.fluidsonic.json.writeValueOrNull
 
-internal object AutomaticSecondaryConstructorPrimaryInaccessibleJsonCodec :
-		AbstractJsonCodec<AutomaticSecondaryConstructorPrimaryInaccessible, CustomCodingContext>() {
-	override
-			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<AutomaticSecondaryConstructorPrimaryInaccessible>):
-			AutomaticSecondaryConstructorPrimaryInaccessible {
+internal object AutomaticSecondaryConstructorPrimaryInaccessibleJsonCodec : AbstractJsonCodec<AutomaticSecondaryConstructorPrimaryInaccessible, CustomCodingContext>() {
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<AutomaticSecondaryConstructorPrimaryInaccessible>): AutomaticSecondaryConstructorPrimaryInaccessible {
 		var _value = 0
 		var value_isPresent = false
 
@@ -56,8 +53,7 @@ internal object AutomaticSecondaryConstructorPrimaryInaccessibleJsonCodec :
 		)
 	}
 
-	override
-			fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticSecondaryConstructorPrimaryInaccessible) {
+	override fun JsonEncoder<CustomCodingContext>.encode(`value`: AutomaticSecondaryConstructorPrimaryInaccessible) {
 		writeIntoMap {
 			writeMapElement("value", string = value.`value`)
 		}

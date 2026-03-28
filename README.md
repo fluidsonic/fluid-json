@@ -3,8 +3,8 @@ fluid-json
 
 [![Maven Central](https://img.shields.io/maven-central/v/io.fluidsonic.json/fluid-json-basic?label=Maven%20Central)](https://search.maven.org/search?q=io.fluidsonic.json)
 [![Tests](https://github.com/fluidsonic/fluid-json/workflows/Tests/badge.svg)](https://github.com/fluidsonic/fluid-json/actions?workflow=Tests)
-[![Kotlin](https://img.shields.io/badge/Kotlin-1.8.22-blue.svg)](https://github.com/JetBrains/kotlin/releases/v1.8.22)
-[![#fluid-libraries Slack Channel](https://img.shields.io/badge/slack-%23fluid--libraries-543951.svg)](https://kotlinlang.slack.com/messages/C7UDFSVT2/)
+[![Kotlin](https://img.shields.io/badge/Kotlin-2.3.20%20(JVM)-blue.svg)](https://github.com/JetBrains/kotlin/releases/v2.3.20)
+[![#fluid-libraries Slack Channel](https://img.shields.io/badge/slack-%23fluid--libraries-543951.svg?label=Slack)](https://kotlinlang.slack.com/messages/C7UDFSVT2/)
 
 A JSON library written in pure Kotlin.
 
@@ -29,6 +29,8 @@ Table of Contents
 Installation
 ------------
 
+Requires JDK 21 or later.
+
 `build.gradle.kts`:
 
 ```kotlin
@@ -37,15 +39,13 @@ plugins {
 }
 
 dependencies {
-	kapt("io.fluidsonic.json:fluid-json-annotation-processor:1.5.0")
-	implementation("io.fluidsonic.json:fluid-json-coding-jdk8:1.5.0")
+	kapt("io.fluidsonic.json:fluid-json-annotation-processor:2.0.0")
+	implementation("io.fluidsonic.json:fluid-json-coding:2.0.0")
 }
 ```
 
-If you cannot use Java 8, e.g. when supporting Android API 25 or below, replace `fluid-json-coding-jdk8` with `fluid-json-coding`.
-
 If you're using IntelliJ IDEA (not Android Studio) then you have to manually enable the following project setting in order to use annotation processing directly
-within the IDE (this is an [open issue](https://youtrack.jetbrains.com/issue/KT-15040) in IntelliJ IDEA):  
+within the IDE (this is an [open issue](https://youtrack.jetbrains.com/issue/KT-15040) in IntelliJ IDEA):
 _Preferences > Build, Execution, Deployment > Build Tools > Gradle > Runner > Delegate IDE build/run actions to gradle_
 
 
@@ -54,7 +54,7 @@ Basic Usage
 -----------
 
 `fluid-json` uses `@Json`-annotations for automatically generating codec classes at compile-time which are responsible for decoding and encoding from and to
-JSON.  
+JSON.
 You can also [create these codecs on your own](#manual-coding) instead of relying on annotation processing.
 
 ```kotlin
@@ -136,7 +136,7 @@ Annotation Customization
 In this section are a few examples on how JSON codec generation can be customized.
 
 The full documentation on all annotations and properties controlling the JSON codec generation can be found in the
-[KDoc for `@Json`](https://github.com/fluidsonic/fluid-json/blob/master/annotations/sources/Json.kt).
+[KDoc for `@Json`](https://github.com/fluidsonic/fluid-json/blob/main/annotations/sources/Json.kt).
 
 ### Collect all generated codecs in one codec provider
 
@@ -355,7 +355,7 @@ interface MyCodecProvider : JsonCodecProvider<JsonCodingContext>
 Examples
 --------
 
-Have a look at the [examples](https://github.com/fluidsonic/fluid-json/tree/master/examples/sources) directory. If you've checked out this project locally then
+Have a look at the [examples](https://github.com/fluidsonic/fluid-json/tree/main/examples/sources) directory. If you've checked out this project locally then
 you can run them directly from within [IntelliJ IDEA](https://www.jetbrains.com/idea/).
 
 
@@ -380,7 +380,7 @@ mapOf(
 
 You can also accept a `null` value by using `parseValueOrNull` instead.
 
-[Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0010-Parsing.kt)
+[Full example](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0010-Parsing.kt)
 
 ### Simple Serializing
 
@@ -394,7 +394,7 @@ JsonSerializer.default.serializeValue(mapOf(
 // {"hello":"world","test":123}
 ```
 
-[Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0020-Serializing.kt)
+[Full example](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0020-Serializing.kt)
 
 ### Using Reader and Writer
 
@@ -408,8 +408,8 @@ val writer: Writer = …
 JsonSerializer.default.serializeValue(…, destination = writer)
 ```
 
-Full example [for Reader](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0011-ParsingFromReader.kt)
-and [for Writer](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0021-SerializingToWriter.kt)
+Full example [for Reader](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0011-ParsingFromReader.kt)
+and [for Writer](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0021-SerializingToWriter.kt)
 
 ### Parsing Lists and Maps
 
@@ -428,8 +428,8 @@ parser.parseValueOfType<Map<String, String?>>(…)  // returns Map<String,String
 Note that you can also specify non-nullable `String` instead of nullable `String?`. But due to a limitation of Kotlin and the JVM the resulting list/map can
 always contain `null` keys and values. This can cause an unexpected `NullPointerException` at runtime if the source data contains `null`s.
 
-Full example [for Lists](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0012-ParsingLists.kt)
-and [for Maps](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0013-ParsingMaps.kt)
+Full example [for Lists](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0012-ParsingLists.kt)
+and [for Maps](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0013-ParsingMaps.kt)
 
 ### Streaming Parser
 
@@ -449,8 +449,8 @@ JsonReader.build(input).use { reader ->
 ```
 
 Full example
-[using higher-order functions](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0014-ParsingAsStream.kt) and
-[using low-level functions](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0015-ParsingAsStreamLowLevel.kt)
+[using higher-order functions](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0014-ParsingAsStream.kt) and
+[using low-level functions](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0015-ParsingAsStreamLowLevel.kt)
 
 ### Streaming Writer
 
@@ -472,8 +472,8 @@ JsonWriter.build(output).use { writer ->
 ```
 
 Full example
-[using higher-order functions](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0022-SerializingAsStream.kt) and
-[using low-level functions](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0023-SerializingAsStreamLowLevel.kt)
+[using higher-order functions](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0022-SerializingAsStream.kt) and
+[using low-level functions](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0023-SerializingAsStreamLowLevel.kt)
 
 ### Type Encoder Codecs
 
@@ -499,7 +499,7 @@ object MyTypeCodec : AbstractJsonEncoderCodec<MyType, JsonCodingContext>() {
 }
 ```
 
-[Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0030-TypeEncoderCodecs.kt)
+[Full example](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0030-TypeEncoderCodecs.kt)
 
 ### Type Decoder Codecs
 
@@ -529,7 +529,7 @@ A `JsonDecoderCodec` can also decode generic types. The instance passed to `Json
 which caused this codec to be invoked. For `List<Something>` for example a single generic argument of type `Something` would be reported which allows for
 example the list codec to serialize the list value's directly as `Something` using the respective codec.
 
-[Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0031-TypeDecoderCodecs.kt)
+[Full example](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0031-TypeDecoderCodecs.kt)
 
 ### Type Codecs
 
@@ -538,14 +538,14 @@ If you want to be able to encode and decode the same type you can implement the 
 
 Because `JsonCodec` is simply an interface you can use `AbstractJsonCodec` as base class for your codec which simplifies implementing that interface.
 
-[Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0032-TypeCodecs.kt)
+[Full example](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0032-TypeCodecs.kt)
 
 ### Coding and Streaming
 
 You can use encoding and decoding codecs not just for high-level encoding and decoding using `JsonCodingSerializer` and `JsonCodingParser` but also for
 streaming-based encoding and decoding using `JsonEncoder` and `JsonDecoder`.
 
-[Full example](https://github.com/fluidsonic/fluid-json/blob/master/examples/sources/0033-CodingAsStream.kt)
+[Full example](https://github.com/fluidsonic/fluid-json/blob/main/examples/sources/0033-CodingAsStream.kt)
 
 ### Thread Safety
 
@@ -560,7 +560,7 @@ separate instance per thread and not share these mutable instances at all.
 Error Handling
 --------------
 
-Errors occurring during I/O operations in the underlying `Reader` or `Writer` cause an `IOException`.  
+Errors occurring during I/O operations in the underlying `Reader` or `Writer` cause an `IOException`.
 Errors occurring due to unsupported or mismatching types, malformed JSON or misused API cause a subclass of `JsonException` being thrown.
 
 Since in Kotlin every method can throw any kind of exception it's recommended to simply catch `Exception` when encoding or decoding JSON - unless handling
@@ -568,12 +568,12 @@ errors explicitly is not needed in your use-case. This is especially important i
 
 ### Default `JsonException` subclasses
 
-| Exception                     | Usage                                                                                                                       
+| Exception                     | Usage
 |-------------------------------|-----------------------------------------------------------------------------------------------------------------------------
-| `JsonException.Parsing`       | Thrown when a `JsonReader` was used improperly, i.e. it's a development error.                                              
-| `JsonException.Serialization` | Thrown when a `JsonWriter` was used improperly, e.g. if it would result in malformed JSON.                                  
-| `JsonException.Schema`        | Thrown when a `JsonReader` or `JsonDecoder` reads data in an unexpected format, i.e. them schema of the JSON data is wrong. 
-| `JsonException.Syntax`        | Thrown when a `JsonReader` reads data which is not properly formatted JSON.                                                 
+| `JsonException.Parsing`       | Thrown when a `JsonReader` was used improperly, i.e. it's a development error.
+| `JsonException.Serialization` | Thrown when a `JsonWriter` was used improperly, e.g. if it would result in malformed JSON.
+| `JsonException.Schema`        | Thrown when a `JsonReader` or `JsonDecoder` reads data in an unexpected format, i.e. them schema of the JSON data is wrong.
+| `JsonException.Syntax`        | Thrown when a `JsonReader` reads data which is not properly formatted JSON.
 
 Ktor Serialization
 ------------------
@@ -584,18 +584,29 @@ You can use this library with [`ContentNegotiation`](https://ktor.io/docs/serial
 
 ```kotlin
 dependencies {
-	implementation("io.fluidsonic.json:fluid-json-ktor-serialization:1.5.0")
+	implementation("io.fluidsonic.json:fluid-json-ktor-serialization:2.0.0")
 }
 ```
 
-Setting up your `HttpClient`:
+Setting up `ContentNegotiation` on the server:
+
+```kotlin
+install(ContentNegotiation) {
+	fluidJson(
+		parser = JsonCodingParser.builder().decodingWith(…).build(),
+		serializer = JsonCodingSerializer.builder().encodingWith(…).build(),
+	)
+}
+```
+
+Setting up `ContentNegotiation` on the client:
 
 ```kotlin
 HttpClient {
 	install(ContentNegotiation) {
 		fluidJson(
 			parser = JsonCodingParser.builder().decodingWith(…).build(),
-		serializer = JsonCodingSerializer.builder().encodingWith(…).build(),
+			serializer = JsonCodingSerializer.builder().encodingWith(…).build(),
 		)
 	}
 }
@@ -604,21 +615,20 @@ HttpClient {
 Modules
 -------
 
-| Module                            | Usage                                                                                                                       
+| Module                            | Usage
 |-----------------------------------|-----------------------------------------------------------------------------------------------------------------------------
-| `fluid-json-annotation-processor` | `@Json`-based `JsonCodec` creation using `kapt`                                                                             
-| `fluid-json-annotations`          | contains `@Json` annotations                                                                                                
-| `fluid-json-basic`                | low-level API with `JsonReader`/`JsonParser` and `JsonWriter`/`JsonSerializer`                                              
-| `fluid-json-coding`               | `JsonCodec`-based parsing and serialization using `JsonDecoder`/`JsonCodingParser` and `JsonEncoder`/`JsonCodingSerializer` 
-| `fluid-json-coding-jdk8`          | additional `JsonCodec`s for commonly used Java 8 types on top of `fluid-json-coding`                                        
-| `fluid-json-ktor-serialization`   | plugs in `JsonCodingParser`/`JsonCodingSerializer` to `ktor-serialization` using its `ContentConverter`                     
+| `fluid-json-annotation-processor` | `@Json`-based `JsonCodec` creation using `kapt`
+| `fluid-json-annotations`          | contains `@Json` annotations
+| `fluid-json-basic`                | low-level API with `JsonReader`/`JsonParser` and `JsonWriter`/`JsonSerializer`
+| `fluid-json-coding`               | `JsonCodec`-based parsing and serialization using `JsonDecoder`/`JsonCodingParser` and `JsonEncoder`/`JsonCodingSerializer`, includes `java.time` codecs
+| `fluid-json-ktor-serialization`   | plugs in `JsonCodingParser`/`JsonCodingSerializer` to `ktor-serialization` using its `ContentConverter`
 
 Testing
 -------
 
-This library is tested automatically using [extensive](https://github.com/fluidsonic/fluid-json/tree/master/basic/tests/sources)
-[unit](https://github.com/fluidsonic/fluid-json/tree/master/coding/tests/sources)
-[tests](https://github.com/fluidsonic/fluid-json/tree/master/coding-jdk8/tests/sources). Some parser tests are imported directly from
+This library is tested automatically using [extensive](https://github.com/fluidsonic/fluid-json/tree/main/basic/tests/sources)
+[unit](https://github.com/fluidsonic/fluid-json/tree/main/coding/tests/sources)
+[tests](https://github.com/fluidsonic/fluid-json/tree/main/coding/tests/sources). Some parser tests are imported directly from
 [JSONTestSuite](https://github.com/nst/JSONTestSuite) (kudos to [Nicolas Seriot](https://github.com/nst) for that suite).
 
 You can run the tests manually using `Tests` run configuration in IntelliJ IDEA or from the command line by using:
@@ -636,7 +646,7 @@ Type Mapping
 
 The default implementations of `JsonWriter` and `JsonSerializer` encode Kotlin types as follows:
 
-| Kotlin          | JSON               | Remarks                                                       
+| Kotlin          | JSON               | Remarks
 |-----------------|--------------------|---------------------------------------------------------------
 | `Array<*>`      | `array<*>`         |
 | `Boolean`       | `boolean`          |
@@ -645,21 +655,21 @@ The default implementations of `JsonWriter` and `JsonSerializer` encode Kotlin t
 | `ByteArray`     | `array<number>`    |
 | `Char`          | `string`           |
 | `CharArray`     | `array<string>`    |
-| `Collection<E>` | `array<*>`         | using decoder/encoder for `E`                                 
-| `Double`        | `number`           | must be finite                                                
+| `Collection<E>` | `array<*>`         | using decoder/encoder for `E`
+| `Double`        | `number`           | must be finite
 | `DoubleArray`   | `array<number>`    |
-| `Float`         | `number`           | must be finite                                                
+| `Float`         | `number`           | must be finite
 | `FloatArray`    | `array<number>`    |
 | `Int`           | `number`           |
 | `IntArray`      | `array<number>`    |
-| `Iterable<E>`   | `array<*>`         | using decoder/encoder for `E`                                 
-| `List<E>`       | `array<*>`         | using decoder/encoder for `E`                                 
+| `Iterable<E>`   | `array<*>`         | using decoder/encoder for `E`
+| `List<E>`       | `array<*>`         | using decoder/encoder for `E`
 | `Long`          | `number`           |
 | `LongArray`     | `array<number>`    |
-| `Map<K,V>`      | `object<string,*>` | key must be `String`, using decoders/encoders for `K` and `V` 
-| `Number`        | `number`           | unless matched by subclass; encodes as `toDouble()`           
-| `Sequence<E>`   | `array<*>`         | using decoder/encoder for `E`                                 
-| `Set<E>`        | `array<*>`         | using decoder/encoder for `E`                                 
+| `Map<K,V>`      | `object<string,*>` | key must be `String`, using decoders/encoders for `K` and `V`
+| `Number`        | `number`           | unless matched by subclass; encodes as `toDouble()`
+| `Sequence<E>`   | `array<*>`         | using decoder/encoder for `E`
+| `Set<E>`        | `array<*>`         | using decoder/encoder for `E`
 | `Short`         | `number`           |
 | `ShortArray`    | `array<number>`    |
 | `String`        | `string`           |
@@ -669,45 +679,44 @@ The default implementations of `JsonWriter` and `JsonSerializer` encode Kotlin t
 
 The default implementations of `JsonReader` and `JsonParser` decode JSON types as follows:
 
-| JSON               | Kotlin          | Remarks                                                                                            
+| JSON               | Kotlin          | Remarks
 |--------------------|-----------------|----------------------------------------------------------------------------------------------------
 | `array<*>`         | `List<*>`       |
 | `boolean`          | `Boolean`       |
 | `null`             | `null`          |
-| `number`           | `Int`           | if number doesn't include `.` (decimal separator) or `e` (exponent separator) and fits into `Int`  
-| `number`           | `Long`          | if number doesn't include `.` (decimal separator) or `e` (exponent separator) and fits into `Long` 
-| `number`           | `Double`        | otherwise                                                                                          
+| `number`           | `Int`           | if number doesn't include `.` (decimal separator) or `e` (exponent separator) and fits into `Int`
+| `number`           | `Long`          | if number doesn't include `.` (decimal separator) or `e` (exponent separator) and fits into `Long`
+| `number`           | `Double`        | otherwise
 | `object<string,*>` | `Map<String,*>` |
 | `string`           | `String`        |
 
 ### Extended Types
 
-The following classes of the can also be decoded and encoded out of the box.  
-For types in the `java.time` package the `-coding-jdk8` library variant must be used.
+The following types can also be decoded and encoded out of the box using the `fluid-json-coding` module.
 
-| Kotlin           | JSON                                | Remarks                                                                 
+| Kotlin           | JSON                                | Remarks
 |------------------|-------------------------------------|-------------------------------------------------------------------------
-| `CharRange`      | `{ "start": …, "endInclusive": … }` | using `string` value                                                    
-| `ClosedRange<C>` | `{ "start": …, "endInclusive": … }` | using decoder/encoder for `C`                                           
-| `Enum`           | `string`                            | uses `.toString()` and converts to `lowerCamelCase` (can be configured) 
-| `DayOfWeek`      | `string`                            | `"monday"`, …, `"friday"`                                               
-| `Duration`       | `string`                            | using `.parse()` / `.toString()`                                        
-| `Instant`        | `string`                            | using `.parse()` / `.toString()`                                        
-| `IntRange`       | `{ "start": …, "endInclusive": … }` | using `number` values                                                   
-| `LocalDate`      | `string`                            | using `.parse()` / `.toString()`                                        
-| `LocalDateTime`  | `string`                            | using `.parse()` / `.toString()`                                        
-| `LocalTime`      | `string`                            | using `.parse()` / `.toString()`                                        
-| `LongRange`      | `{ "start": …, "endInclusive": … }` | using `number` values                                                   
-| `MonthDay`       | `string`                            | using `.parse()` / `.toString()`                                        
-| `Month`          | `string`                            | `"january"`, …, `"december"`                                            
-| `OffsetDateTime` | `string`                            | using `.parse()` / `.toString()`                                        
-| `OffsetTime`     | `string`                            | using `.parse()` / `.toString()`                                        
-| `Period`         | `string`                            | using `.parse()` / `.toString()`                                        
-| `Year`           | `int`                               | using `.value`                                                          
-| `YearMonth`      | `string`                            | using `.parse()` / `.toString()`                                        
-| `ZonedDateTime`  | `string`                            | using `.parse()` / `.toString()`                                        
-| `ZoneId`         | `string`                            | using `.of()` / `.id`                                                   
-| `ZoneOffset`     | `string`                            | using `.of()` / `.id`                                                   
+| `CharRange`      | `{ "start": …, "endInclusive": … }` | using `string` value
+| `ClosedRange<C>` | `{ "start": …, "endInclusive": … }` | using decoder/encoder for `C`
+| `Enum`           | `string`                            | uses `.toString()` and converts to `lowerCamelCase` (can be configured)
+| `DayOfWeek`      | `string`                            | `"monday"`, …, `"friday"`
+| `Duration`       | `string`                            | using `.parse()` / `.toString()`
+| `Instant`        | `string`                            | using `.parse()` / `.toString()`
+| `IntRange`       | `{ "start": …, "endInclusive": … }` | using `number` values
+| `LocalDate`      | `string`                            | using `.parse()` / `.toString()`
+| `LocalDateTime`  | `string`                            | using `.parse()` / `.toString()`
+| `LocalTime`      | `string`                            | using `.parse()` / `.toString()`
+| `LongRange`      | `{ "start": …, "endInclusive": … }` | using `number` values
+| `MonthDay`       | `string`                            | using `.parse()` / `.toString()`
+| `Month`          | `string`                            | `"january"`, …, `"december"`
+| `OffsetDateTime` | `string`                            | using `.parse()` / `.toString()`
+| `OffsetTime`     | `string`                            | using `.parse()` / `.toString()`
+| `Period`         | `string`                            | using `.parse()` / `.toString()`
+| `Year`           | `int`                               | using `.value`
+| `YearMonth`      | `string`                            | using `.parse()` / `.toString()`
+| `ZonedDateTime`  | `string`                            | using `.parse()` / `.toString()`
+| `ZoneId`         | `string`                            | using `.of()` / `.id`
+| `ZoneOffset`     | `string`                            | using `.of()` / `.id`
 
 Architecture
 ------------
@@ -743,7 +752,7 @@ Most public API is provided as `interface`s in order to allow for plugging in cu
 JSON.
 
 The default implementations of `JsonDecoder`/`JsonEncoder` use a set of pre-defined codecs in order to support decoding/encoding various basic Kotlin types like
-`String`, `List`, `Map`, `Boolean` and so on. Codecs for classes which are available only since Java 8 are provided by the `-coding-jdk8` library variant.
+`String`, `List`, `Map`, `Boolean` and so on. Codecs for `java.time` types are included in the `-coding` module.
 
 ### Recursive vs. Non-Recursive
 
@@ -756,29 +765,29 @@ non-basic types.
 
 ### Classes and Interfaces
 
-| Type                       | Description                                                                                                                                                                                                                                                                    
+| Type                       | Description
 |----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-| `AbstractJsonCodec`        | Abstract base class which simplifies implementing `JsonCodec`.                                                                                                                                                                                                                 
-| `AbstractJsonDecoderCodec` | Abstract base class which simplifies implementing `JsonDecoderCodec`.                                                                                                                                                                                                          
-| `AbstractJsonEncoderCodec` | Abstract base class which simplifies implementing `JsonEncoderCodec`.                                                                                                                                                                                                          
-| `DefaultJsonCodecs`        | Contains lists of default codecs which can be used when constructing custom `JsonCodecProvider`s.                                                                                                                                                                              
-| `JsonCodec`                | Interface for classes which implement both, `JsonEncoderCodec` and `JsonDecoderCodec`. Also simplifies creating such codecs.                                                                                                                                                   
-| `JsonCodecProvider`        | Interface for classes which when given a `JsonCodingType` (for decoding) or `KClass` (for encoding) return a codec which is able to decode/encode values of that type.                                                                                                         
-| `JsonCodingContext`        | Interface for context types. Instances of context types can be passed to `JsonParser`, `JsonSerializer`, `JsonDecoder` and `JsonEncoder`. They in turn can be used by custom codecs to help decoding/encoding values if needed.                                                
-| `JsonCodingParser`         | Interface for high-level reusable JSON parsers with codec providers and context already configured.                                                                                                                                                                            
-| `JsonCodingSerializer`     | Interface for high-level reusable JSON serializers where codec providers and context are already configured.                                                                                                                                                                   
-| `JsonCodingType`           | Roughly describes a Kotlin type which can be decoded from JSON. It includes relevant generic information which allows decoding for example `List<Something>` instead of just `List<*>`. Also known as [type token](http://gafter.blogspot.de/2006/12/super-type-tokens.html)). 
-| `JsonDecoder`              | Interface which extends `JsonReader` to enable reading values of any Kotlin type from JSON using `JsonCodecProvider`s for type mapping.                                                                                                                                        
-| `JsonDecoderCodec`         | Interface for decoding a value of a specific Kotlin type using a `JsonDecoder`.                                                                                                                                                                                                
-| `JsonEncoder`              | Interface which extends `JsonWriter` to enable writing values of any Kotlin type as JSON using `JsonCodecProvider`s for type mapping.                                                                                                                                          
-| `JsonEncoderCodec`         | Interface for encoding a value of a specific Kotlin type using a `JsonEncoder`.                                                                                                                                                                                                
-| `JsonException`            | Exception base class which is thrown whenever JSON cannot be written or read for non-IO reasons (e.g. malformed JSON, wrong state in reader/writer, missing type mapping).                                                                                                     
-| `JsonParser`               | Interface for high-level reusable JSON parsers which support only basic types.                                                                                                                                                                                                 
-| `JsonReader`               | Interface for low-level JSON parsing on a token-by-token basis.                                                                                                                                                                                                                
-| `JsonSerializer`           | Interface for high-level reusable JSON serializers which support only basic types.                                                                                                                                                                                             
-| `JsonToken`                | Enum containing all types of tokens a `JsonReader` can read.                                                                                                                                                                                                                   
-| `JsonWriter`               | Interface for low-level JSON serialization on a token-by-token basis.                                                                                                                                                                                                          
-| `*Codec`                   | The various codec classes are concrete codecs for common Kotlin types.                                                                                                                                                                                                         
+| `AbstractJsonCodec`        | Abstract base class which simplifies implementing `JsonCodec`.
+| `AbstractJsonDecoderCodec` | Abstract base class which simplifies implementing `JsonDecoderCodec`.
+| `AbstractJsonEncoderCodec` | Abstract base class which simplifies implementing `JsonEncoderCodec`.
+| `DefaultJsonCodecs`        | Contains lists of default codecs which can be used when constructing custom `JsonCodecProvider`s.
+| `JsonCodec`                | Interface for classes which implement both, `JsonEncoderCodec` and `JsonDecoderCodec`. Also simplifies creating such codecs.
+| `JsonCodecProvider`        | Interface for classes which when given a `JsonCodingType` (for decoding) or `KClass` (for encoding) return a codec which is able to decode/encode values of that type.
+| `JsonCodingContext`        | Interface for context types. Instances of context types can be passed to `JsonParser`, `JsonSerializer`, `JsonDecoder` and `JsonEncoder`. They in turn can be used by custom codecs to help decoding/encoding values if needed.
+| `JsonCodingParser`         | Interface for high-level reusable JSON parsers with codec providers and context already configured.
+| `JsonCodingSerializer`     | Interface for high-level reusable JSON serializers where codec providers and context are already configured.
+| `JsonCodingType`           | Roughly describes a Kotlin type which can be decoded from JSON. It includes relevant generic information which allows decoding for example `List<Something>` instead of just `List<*>`. Also known as [type token](http://gafter.blogspot.de/2006/12/super-type-tokens.html)).
+| `JsonDecoder`              | Interface which extends `JsonReader` to enable reading values of any Kotlin type from JSON using `JsonCodecProvider`s for type mapping.
+| `JsonDecoderCodec`         | Interface for decoding a value of a specific Kotlin type using a `JsonDecoder`.
+| `JsonEncoder`              | Interface which extends `JsonWriter` to enable writing values of any Kotlin type as JSON using `JsonCodecProvider`s for type mapping.
+| `JsonEncoderCodec`         | Interface for encoding a value of a specific Kotlin type using a `JsonEncoder`.
+| `JsonException`            | Exception base class which is thrown whenever JSON cannot be written or read for non-IO reasons (e.g. malformed JSON, wrong state in reader/writer, missing type mapping).
+| `JsonParser`               | Interface for high-level reusable JSON parsers which support only basic types.
+| `JsonReader`               | Interface for low-level JSON parsing on a token-by-token basis.
+| `JsonSerializer`           | Interface for high-level reusable JSON serializers which support only basic types.
+| `JsonToken`                | Enum containing all types of tokens a `JsonReader` can read.
+| `JsonWriter`               | Interface for low-level JSON serialization on a token-by-token basis.
+| `*Codec`                   | The various codec classes are concrete codecs for common Kotlin types.
 
 Future Planning
 ---------------

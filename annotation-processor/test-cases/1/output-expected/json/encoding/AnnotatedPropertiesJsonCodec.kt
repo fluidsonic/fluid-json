@@ -33,11 +33,8 @@ import io.fluidsonic.json.writeValueOrNull
 import json.encoding.value9
 import kotlin.String
 
-internal object AnnotatedPropertiesJsonCodec :
-		AbstractJsonCodec<AnnotatedProperties, CustomCodingContext>() {
-	override
-			fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<AnnotatedProperties>):
-			AnnotatedProperties {
+internal object AnnotatedPropertiesJsonCodec : AbstractJsonCodec<AnnotatedProperties, CustomCodingContext>() {
+	override fun JsonDecoder<CustomCodingContext>.decode(valueType: JsonCodingType<AnnotatedProperties>): AnnotatedProperties {
 		var _value1: String? = null
 
 		readFromMapByElementValue { key ->

@@ -6,6 +6,11 @@ import kotlin.test.*
 @JvmInline
 value class Expect<Value>(private val actual: Any?) {
 
+	fun notToBeNull() {
+		assertNotNull(actual)
+	}
+
+
 	fun toBe(expected: Value) {
 		assertEquals(expected = expected, actual = actual)
 	}

@@ -1,6 +1,9 @@
 package io.fluidsonic.json
 
 
+/**
+ * Represents the type of the next token available in a [JsonReader].
+ */
 public enum class JsonToken {
 
 	booleanValue,
@@ -32,5 +35,6 @@ public enum class JsonToken {
 }
 
 
+/** Returns a human-readable description of this token, or "end of data" for `null`. */
 public fun JsonToken?.toString(): String =
 	this?.toString() ?: "end of data"
