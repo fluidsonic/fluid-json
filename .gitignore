@@ -12,3 +12,4 @@
 build
 out
 *.iml
+.claude/worktrees/
