@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: read
+  packages: read
 
 jobs:
   test:
@@ -26,3 +27,5 @@ jobs:
           java-version: ${{ matrix.java-version }}
       - uses: gradle/actions/setup-gradle@v5
       - run: ./gradlew jvmTest
+        env:
+          GITHUB_PACKAGES_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
